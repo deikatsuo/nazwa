@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// NoRoute ...
+// PageNoRoute ...
 // Jika route gak ada yang cocok
 // Maka jalankan ini
 // Menggantikan default "halaman tidak ditemukan"
-func NoRoute(c *gin.Context) {
+func PageNoRoute(c *gin.Context) {
 	gh := gin.H{
 		"site_title": "Halaman tidak ditemukan",
 		"l_back":     "Kembali",

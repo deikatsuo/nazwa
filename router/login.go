@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Login ...
+// PageLogin ...
 // Halaman login
-func Login(c *gin.Context) {
+func PageLogin(c *gin.Context) {
 	gh := gin.H{
 		"site_title": "Masuk akun",
 

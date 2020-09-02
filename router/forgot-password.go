@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Forgot ...
+// PageForgot ...
 // Halaman pemulihan password
-func Forgot(c *gin.Context) {
+func PageForgot(c *gin.Context) {
 	gh := gin.H{
 		"site_title": "Lupa password",
 
