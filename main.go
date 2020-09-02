@@ -25,10 +25,16 @@ func main() {
 	server.LoadHTMLGlob("./templates/*")
 
 	// Router
+	// Halaman muka
 	server.GET("/", router.PageHome)
 	server.GET("/login", router.PageLogin)
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
+
+	// Halaman Admin
+	admin := server.Group("/admin")
+	admin.GET("/", router.PageAdmin)
+
 	server.NoRoute(router.PageNoRoute)
 
 	// Jalankan server
