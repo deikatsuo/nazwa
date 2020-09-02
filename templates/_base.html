@@ -1,0 +1,23 @@
+{{ define "base" }}
+<!DOCTYPE html>
+<html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
+    <head>
+        {{ template "head" .}}
+        {{ block "extend_head" .}}{{ end }}
+    </head>
+<body>
+    <div
+        class="flex h-screen bg-gray-50 dark:bg-gray-900"
+        :class="{ 'overflow-hidden': isSideMenuOpen }"
+    >
+    {{ template "sidebar" .}}
+        <div class="flex flex-col flex-1 w-full">
+            {{ template "navbar" .}}
+            <main class="h-full overflow-y-auto">
+                {{ block "content" .}}<!-- contets -->{{ end }}
+            </main>
+        </div>
+    </div>
+</body>
+</html>
+{{ end }}
