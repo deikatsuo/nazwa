@@ -13,7 +13,16 @@
       <div class="flex flex-col flex-1 w-full">
         {{ template "navbar" .}}
         <main class="h-full overflow-y-auto">
-          {{ block "content" .}}<!-- contents -->{{ end }}
+          <div class="container px-6 mx-auto grid">
+            <!-- contents -->
+            {{ if eq .page "dashboard" }}
+              {{ block "admin_dashboard_content" .}}{{ end }}
+            {{ end }}
+            {{ block "content" .}}{{ end }}
+            {{ if eq .page "blank" }}
+              {{ block "admin_blank_content" .}}{{ end }}
+            {{ end }}
+          </div>
         </main>
       </div>
     </div>
