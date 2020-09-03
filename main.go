@@ -31,6 +31,8 @@ func main() {
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
 
+	// Konfigurasi default admin
+	server.Use(misc.NewAdminDefaultConfig())
 	// Halaman Admin
 	admin := server.Group("/admin")
 	admin.GET("/", router.PageAdmin)

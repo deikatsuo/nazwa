@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// PageAdmin ...
+// Halaman admin
 func PageAdmin(c *gin.Context) {
 	gh := gin.H{
 		"site_title": "Halaman Admin",

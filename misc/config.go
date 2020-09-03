@@ -4,13 +4,16 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/imdario/mergo"
 )
 
+// DefaultConfig ...
 // Struct untuk menyimpan konfigurasi bawaan
 type DefaultConfig struct {
 	Site map[string]interface{}
 }
 
+// NewDefaultConfig ...
 // Atur konfigurasi bawaan
 func NewDefaultConfig() gin.HandlerFunc {
 	config := map[string]interface{}{
@@ -20,7 +23,21 @@ func NewDefaultConfig() gin.HandlerFunc {
 	}
 
 	return func(c *gin.Context) {
-		c.Set("config", DefaultConfig{config})
+		c.Set("config", DefaultConfig{Site: config})
+		c.Next()
+	}
+}
+
+// NewAdminDefaultConfig ...
+// Ambil konfigurasi admin default
+func NewAdminDefaultConfig() gin.HandlerFunc {
+	config := map[string]interface{}{
+		"l_admin_create_customer": "Buat pelanggan",
+	}
+	return func(c *gin.Context) {
+		siteDefault := c.MustGet("config").(DefaultConfig).Site
+		mergo.Map(&siteDefault, config, mergo.WithOverride)
+		c.Set("config", DefaultConfig{Site: siteDefault})
 		c.Next()
 	}
 }
