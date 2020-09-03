@@ -14,6 +14,7 @@ func PageForgot(c *gin.Context) {
 
 		"l_forgot_title":       "Pulihkan password",
 		"l_forgot_recover_btn": "Pulihkan",
+		"l_forgot_login":       "Masuk",
 	}
 
 	df := c.MustGet("config").(misc.DefaultConfig).Site
