@@ -36,6 +36,7 @@ func main() {
 	// Halaman Admin
 	admin := server.Group("/admin")
 	admin.GET("/", router.PageAdmin)
+	admin.GET("/blank", router.PageAdminBlank)
 
 	server.NoRoute(router.PageNoRoute)
 
