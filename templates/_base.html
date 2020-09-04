@@ -18,6 +18,11 @@
             {{ if eq .page "dashboard" }}
               {{ block "admin_dashboard_content" .}}{{ end }}
             {{ end }}
+
+            {{ if eq .page "customers" }}
+              {{ block "admin_customers_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "blank" }}
               {{ block "admin_blank_content" .}}{{ end }}
             {{ end }}
