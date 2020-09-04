@@ -18,7 +18,6 @@
             {{ if eq .page "dashboard" }}
               {{ block "admin_dashboard_content" .}}{{ end }}
             {{ end }}
-            {{ block "content" .}}{{ end }}
             {{ if eq .page "blank" }}
               {{ block "admin_blank_content" .}}{{ end }}
             {{ end }}
