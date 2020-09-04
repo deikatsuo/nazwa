@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +18,8 @@ type Login struct {
 // APIUserLogin ...
 // API untuk login user
 func APIUserLogin(c *gin.Context) {
+	// Mulai session
+	session := sessions.Default(c)
 	var json Login
 	if err := c.ShouldBindJSON(&json); err != nil {
 		var message string
@@ -40,12 +43,14 @@ func APIUserLogin(c *gin.Context) {
 		},
 		"deri@deri": {
 			"password": "rika",
-			"picture":  "..assets/img/test/deri.jpg",
+			"picture":  "../assets/img/test/deri.jpeg",
 		},
 	}
 
+	var picture string
 	for i, v := range users {
 		if json.Email == i && json.Password == v["password"] {
+			picture = v["picture"]
 			break
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{
@@ -54,6 +59,16 @@ func APIUserLogin(c *gin.Context) {
 			})
 			return
 		}
+	}
+
+	// Simpan user ke session
+	session.Set("email", json.Email)
+	session.Set("picture", picture)
+	if err := session.Save(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Gagal membuat session",
+			"fail":    true,
+		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{

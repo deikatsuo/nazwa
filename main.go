@@ -5,6 +5,7 @@ import (
 	"nazwa/misc"
 	"nazwa/router"
 
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -17,6 +18,7 @@ func init() {
 
 func main() {
 	server := gin.Default()
+	server.Use(sessions.Sessions("nazwasession", sessions.NewCookieStore([]byte("secret"))))
 	server.Use(misc.NewDefaultConfig())
 
 	server.Static("/assets", "./statics")
@@ -28,6 +30,7 @@ func main() {
 	// Halaman muka
 	server.GET("/", router.PageHome)
 	server.GET("/login", router.PageLogin)
+	server.GET("/logout", router.PageLogout)
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
 

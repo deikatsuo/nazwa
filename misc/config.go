@@ -3,6 +3,7 @@ package misc
 import (
 	"os"
 
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/imdario/mergo"
 )
@@ -31,10 +32,18 @@ func NewDefaultConfig() gin.HandlerFunc {
 // NewAdminDefaultConfig ...
 // Ambil konfigurasi admin default
 func NewAdminDefaultConfig() gin.HandlerFunc {
-	config := map[string]interface{}{
-		"l_admin_create_customer": "Buat pelanggan",
-	}
 	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		email := session.Get("email")
+		picture := session.Get("picture")
+
+		config := map[string]interface{}{
+			"email":   email,
+			"picture": picture,
+
+			"l_admin_create_customer": "Buat pelanggan",
+		}
+
 		siteDefault := c.MustGet("config").(DefaultConfig).Site
 		mergo.Map(&siteDefault, config, mergo.WithOverride)
 		c.Set("config", DefaultConfig{Site: siteDefault})
