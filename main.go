@@ -39,6 +39,9 @@ func main() {
 	admin.GET("/customers", router.PageAdminCustomers)
 	admin.GET("/blank", router.PageAdminBlank)
 
+	api := server.Group("/api")
+	api.POST("/login", router.APIUserLogin)
+
 	server.NoRoute(router.PageNoRoute)
 
 	// Jalankan server
