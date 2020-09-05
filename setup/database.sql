@@ -1,3 +1,7 @@
+/* Tabel Nazwa
+ * By Deri Herdianto
+ */
+
 CREATE TABLE "users" (
 	"user_id" serial(11) NOT NULL,
 	"first_name" varchar(25) NOT NULL,
