@@ -34,13 +34,13 @@ func main() {
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
 
-	// Konfigurasi default admin
-	server.Use(misc.NewAdminDefaultConfig())
-	// Halaman Admin
-	admin := server.Group("/admin")
-	admin.GET("/", router.PageAdmin)
-	admin.GET("/customers", router.PageAdminCustomers)
-	admin.GET("/blank", router.PageAdminBlank)
+	// Konfigurasi default dashboard
+	server.Use(misc.NewDashboardDefaultConfig())
+	// Halaman Dashboard
+	dashboard := server.Group("/dashboard")
+	dashboard.GET("/", router.PageDashboard)
+	dashboard.GET("/customers", router.PageDashboardCustomers)
+	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	api := server.Group("/api")
 	api.POST("/login", router.APIUserLogin)

@@ -29,9 +29,10 @@ func NewDefaultConfig() gin.HandlerFunc {
 	}
 }
 
-// NewAdminDefaultConfig ...
-// Ambil konfigurasi admin default
-func NewAdminDefaultConfig() gin.HandlerFunc {
+// NewDashboardDefaultConfig ...
+// Ambil konfigurasi default untuk
+// Halaman dashboard
+func NewDashboardDefaultConfig() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		email := session.Get("email")

@@ -6,14 +6,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageAdmin ...
-// Halaman admin
-func PageAdmin(c *gin.Context) {
+// PageDashboard ...
+// Halaman dashboard utama
+func PageDashboard(c *gin.Context) {
 	gh := gin.H{
-		"site_title": "Halaman Dashboard Admin",
+		"site_title": "Halaman Dashboard",
 		"page":       "dashboard",
 	}
 
 	df := c.MustGet("config").(misc.DefaultConfig).Site
-	c.HTML(200, "admin.dashboard.html", misc.Mete(df, gh))
+	c.HTML(200, "dashboard.html", misc.Mete(df, gh))
 }
