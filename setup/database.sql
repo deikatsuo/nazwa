@@ -157,6 +157,7 @@ CREATE TABLE "installments" (
 	"remaining" DECIMAL(15,2) NOT NULL,
 	"monthly" DECIMAL(15,2) NOT NULL,
 	"completed" BOOLEAN NOT NULL DEFAULT '0',
+	"expire_date" DATE NOT NULL,
 	CONSTRAINT "installments_pk" PRIMARY KEY ("installment_id")
 ) WITH (
   OIDS=FALSE
