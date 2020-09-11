@@ -2,6 +2,7 @@
  * By Deri Herdianto
  */
 
+/* Tabel User */
 CREATE TABLE "users" (
 	"user_id" serial(11) NOT NULL,
 	"first_name" varchar(25) NOT NULL,
@@ -19,7 +20,7 @@ CREATE TABLE "users" (
 );
 
 
-
+/* Tabel Role */
 CREATE TABLE "roles" (
 	"user_id" int(11) NOT NULL,
 	"role" char(4) NOT NULL DEFAULT 'CUST',
@@ -29,7 +30,7 @@ CREATE TABLE "roles" (
 );
 
 
-
+/* Tabel Email */
 CREATE TABLE "emails" (
 	"email_id" serial(11) NOT NULL,
 	"user_id" int(11) NOT NULL,
@@ -40,7 +41,18 @@ CREATE TABLE "emails" (
 );
 
 
+/* Tabel Nomor HP */
+CREATE TABLE "phones" (
+	"phone_id" serial(11) NOT NULL,
+	"user_id" int(11) NOT NULL,
+	"phone" int(12) NOT NULL UNIQUE,
+	CONSTRAINT "phones_pk" PRIMARY KEY ("phone_id")
+) WITH (
+	OIDS=FALSE
+);
 
+
+/* Tabel Alamat */
 CREATE TABLE "addresses" (
 	"address_id" serial(11) NOT NULL,
 	"user_id" int(11) NOT NULL,
@@ -58,7 +70,7 @@ CREATE TABLE "addresses" (
 );
 
 
-
+/* Tabel Pembelian */
 CREATE TABLE "orders" (
 	"order_id" serial(11) NOT NULL,
 	"customer_id" int(11) NOT NULL,
@@ -77,7 +89,7 @@ CREATE TABLE "orders" (
 );
 
 
-
+/* Tabel Provinsi */
 CREATE TABLE "provinces" (
 	"province_id" serial(11) NOT NULL,
 	"province" varchar(50) NOT NULL,
@@ -87,7 +99,7 @@ CREATE TABLE "provinces" (
 );
 
 
-
+/* Tabel Kota */
 CREATE TABLE "cities" (
 	"city_id" serial(11) NOT NULL,
 	"province_id" int(11) NOT NULL,
@@ -98,7 +110,7 @@ CREATE TABLE "cities" (
 );
 
 
-
+/* Tabel Sub District/Kecamatan */
 CREATE TABLE "sub-districts" (
 	"sub_district_id" serial(11) NOT NULL,
 	"cityid" int(11) NOT NULL,
@@ -109,7 +121,7 @@ CREATE TABLE "sub-districts" (
 );
 
 
-
+/* Tabel Desa */
 CREATE TABLE "villages" (
 	"village_id" serial(11) NOT NULL,
 	"sub_district_id" int(11) NOT NULL,
@@ -120,7 +132,7 @@ CREATE TABLE "villages" (
 );
 
 
-
+/* Tabel barang yang dibeli */
 CREATE TABLE "order_items" (
 	"order_item_id" serial(11) NOT NULL,
 	"order_id" int(11) NOT NULL,
@@ -132,7 +144,7 @@ CREATE TABLE "order_items" (
 );
 
 
-
+/* Tabel Produk */
 CREATE TABLE "products" (
 	"product_id" serial(11) NOT NULL,
 	"product" varchar(100) NOT NULL,
@@ -144,7 +156,7 @@ CREATE TABLE "products" (
 );
 
 
-
+/* Tabel Kredit */
 CREATE TABLE "installments" (
 	"installment_id" serial(11) NOT NULL,
 	"order_id" int(11) NOT NULL,
@@ -164,7 +176,7 @@ CREATE TABLE "installments" (
 );
 
 
-
+/* Tabel histori kredit */
 CREATE TABLE "installment_histories" (
 	"installment_history_id" serial(11) NOT NULL,
 	"issuer_id" int(11) NOT NULL,
@@ -183,6 +195,8 @@ CREATE TABLE "installment_histories" (
 ALTER TABLE "roles" ADD CONSTRAINT "roles_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("user_id");
 
 ALTER TABLE "emails" ADD CONSTRAINT "emails_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("user_id");
+
+ALTER TABLE "phones" ADD CONSTRAINT "phones_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("user_id");
 
 ALTER TABLE "addresses" ADD CONSTRAINT "addresses_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("user_id");
 ALTER TABLE "addresses" ADD CONSTRAINT "addresses_fk1" FOREIGN KEY ("village_id") REFERENCES "villages"("village_id");
