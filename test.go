@@ -1,8 +1,26 @@
 package main
 
-import "fmt"
+import (
+	"encoding/csv"
+	"fmt"
+	"os"
+)
 
 // Buat ngetest csv hhh
 func main() {
-	fmt.Println("Test ok")
+	openCountries()
+}
+
+func openCountries() {
+	file, err := os.Open("./setup/sub-districts.csv")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+
+	read := csv.NewReader(file)
+	records, err := read.ReadAll()
+
+	fmt.Println("Rekor", records)
+
 }
