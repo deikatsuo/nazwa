@@ -13,7 +13,7 @@ type Data struct {
 	Name      string  `csv:"Name"`
 	Latitude  float32 `csv:"Latitude"`
 	Longitude float32 `csv:"Longitude"`
-	//Postal    string  `csv:"Postal"`
+	Postal    string  `csv:"Postal"`
 }
 
 // Buat ngetest csv hhh
