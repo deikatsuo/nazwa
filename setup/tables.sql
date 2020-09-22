@@ -7,6 +7,8 @@
 -- DROP semua
 DROP TABLE IF EXISTS "user_role";
 DROP TABLE IF EXISTS "role";
+DROP TABLE IF EXISTS "email";
+DROP TABLE IF EXISTS "phone";
 DROP TABLE IF EXISTS "user";
 DROP TYPE IF EXISTS "gender";
 
@@ -46,8 +48,28 @@ CREATE TABLE "user" (
 CREATE TABLE "user_role" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "role_id" INT NOT NULL,
-    "user_id" INT NOT NULL,
+    "user_id" INT UNIQUE NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (role_id) REFERENCES "role"("id"),
+    FOREIGN KEY (user_id) REFERENCES "user"("id")
+);
+
+-- Tabel email
+-- Pengguna boleh memiliki beberapa email
+CREATE TABLE "email" (
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "user_id" INT NOT NULL,
+    "email" VARCHAR(60) UNIQUE NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES "user"("id")
+);
+
+-- Tabel nomor HP
+-- Pengguna boleh memiliki lebih dari satu nomor HP
+CREATE TABLE "phone" (
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "user_id" INT NOT NULL,
+    "phone" NUMERIC(12,0) UNIQUE NOT NULL,
+    PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES "user"("id")
 );
