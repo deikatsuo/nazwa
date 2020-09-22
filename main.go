@@ -1,13 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"nazwa/misc"
 	"nazwa/router"
+	"nazwa/setup"
+	"os"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func init() {
@@ -17,6 +21,25 @@ func init() {
 }
 
 func main() {
+	if iag := len(os.Args); iag > 1 {
+		arg := os.Args[1]
+		switch arg {
+		case "run":
+			fmt.Println("Menjalankan server...")
+			runServer()
+		case "setup":
+			fmt.Println("Menjalankan setup...")
+			setup.RunSetup()
+		case "version":
+			fmt.Println("Authored by", misc.AUTHOR)
+			fmt.Println("Version ", misc.VERSION)
+		default:
+			fmt.Println("Argument salah...")
+		}
+	}
+}
+
+func runServer() {
 	server := gin.Default()
 	server.Use(sessions.Sessions("nazwasession", sessions.NewCookieStore([]byte("secret"))))
 	server.Use(misc.NewDefaultConfig())
