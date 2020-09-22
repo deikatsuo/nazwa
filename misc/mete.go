@@ -4,6 +4,7 @@ import (
 	"github.com/imdario/mergo"
 )
 
+// Mete ...
 // Fungsi untuk menggabungkan template
 func Mete(m1, m2 map[string]interface{}) map[string]interface{} {
 	// Gabungkan
