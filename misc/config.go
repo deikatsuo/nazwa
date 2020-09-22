@@ -52,10 +52,54 @@ func NewDashboardDefaultConfig() gin.HandlerFunc {
 	}
 }
 
-// Cari konfigurasi dari .env
+// Cari konfigurasi dari .env, dengan nilai default
+// Jika belum ditentukan atau kosong
 func getEnv(k string, df interface{}) interface{} {
 	if v, e := os.LookupEnv(k); e {
 		return v
 	}
 	return df
+}
+
+// Ambil nilai dari konfigurasi dari .env tanpa default
+func getEnvND(k string) string {
+	if v, e := os.LookupEnv(k); e {
+		return v
+	}
+	return ""
+}
+
+// Cek konfigurasi tidak kosong ""
+func checkEnv(k string) bool {
+	if v, e := os.LookupEnv(k); e {
+		if v != "" {
+			return true
+		}
+	}
+	return false
+}
+
+// Tipe database
+func SetupDBType() string {
+	return getEnv("DB_TYPE", "").(string)
+}
+
+// Setup db
+func SetupDBSource() string {
+	var source = ""
+
+	if checkEnv("DB_NAME") {
+		source = "dbname=" + getEnvND("DB_NAME")
+	}
+	if checkEnv("DB_USER") {
+		source = source + " user=" + getEnvND("DB_USER")
+	}
+	if checkEnv("DB_PASSWORD") {
+		source = source + " password=" + getEnvND("DB_PASSWORD")
+	}
+	if checkEnv("DB_SSLMODE") {
+		source = source + " sslmode=" + getEnvND("DB_SSLMODE")
+	}
+
+	return source
 }
