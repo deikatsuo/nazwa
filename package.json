@@ -1,0 +1,22 @@
+{
+  "name": "nazwa",
+  "version": "1.0.0",
+  "description": "Project nazwa buat teteh",
+  "scripts": {
+    "build": ""
+  },
+  "keywords": [
+    "nazwa",
+    "elektronik",
+    "furniture",
+    "kredit"
+  ],
+  "author": "Deri Herdianto <thisisderi@gmail.com>",
+  "license": "MIT",
+  "npm": {
+    "publish": false
+  },
+  "dependencies": {
+    "tailwindcss": "^1.8.10"
+  }
+}
