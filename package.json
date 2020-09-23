@@ -1,24 +1,51 @@
 {
   "name": "nazwa",
-  "version": "1.0.0",
-  "description": "Project nazwa buat teteh",
+  "version": "1.0.9",
+  "description": "Projek Nazwa",
   "scripts": {
-    "build": ""
+    "tailwind": "tailwindcss build build/style.css -o statics/css/tailwind.optimized.css",
+    "build": "env NODE_ENV=production postcss build/style.css -o statics/css/tailwind.optimized.css",
+    "cz": "git-cz",
+    "release": "release-it"
+  },
+  "author": "Deri Herdianto <derryherdianto@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@release-it/conventional-changelog": "1.1.4",
+    "@tailwindcss/custom-forms": "0.2.1",
+    "autoprefixer": "9.8.0",
+    "color": "3.1.2",
+    "commitizen": "4.1.2",
+    "cssnano": "4.1.10",
+    "cz-conventional-changelog": "3.2.0",
+    "postcss-cli": "7.1.1",
+    "release-it": "13.6.4",
+    "tailwindcss": "1.4.6",
+    "tailwindcss-multi-theme": "1.0.3"
   },
   "keywords": [
-    "nazwa",
-    "elektronik",
-    "furniture",
-    "kredit"
+    "Nazwa",
+    "Elektronik",
+    "Furniture",
+    "Kredit"
   ],
-  "author": "Deri Herdianto <thisisderi@gmail.com>",
-  "license": "MIT",
-  "npm": {
-    "publish": false
+  "release-it": {
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "publish": false
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular",
+        "infile": "CHANGELOG.md"
+      }
+    }
   },
-  "dependencies": {
-    "autoprefixer": "^10.0.0",
-    "postcss-cli": "^8.0.0",
-    "tailwindcss": "^1.8.10"
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
