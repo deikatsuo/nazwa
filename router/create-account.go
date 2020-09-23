@@ -15,6 +15,8 @@ func PageCreateAccount(c *gin.Context) {
 		// Formulir
 		"l_c_form_title":        "Buat akun",
 		"l_c_form_phone":        "Nomor Hp",
+		"l_c_form_firstname":    "Nama depan",
+		"l_c_form_lastname":     "Nama belakang",
 		"l_c_form_password":     "Kata sandi",
 		"l_c_form_repassword":   "Ulangi kata sandi",
 		"l_c_form_agree":        "Saya setuju dengan",
