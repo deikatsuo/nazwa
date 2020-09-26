@@ -45,10 +45,12 @@
 
               <div x-data="login()">
                 <label class="block text-sm">
-                  <span class="text-gray-700 dark:text-gray-400">Email</span>
+                  <span class="text-gray-700 dark:text-gray-400"
+                    >{{ .l_login_loginid }}</span
+                  >
                   <input
                     class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    placeholder="rika@nazwa"
+                    placeholder="Email / No. HP / Username"
                     x-model="formData.loginid"
                     @keydown.enter="submitData()"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errLoginid }"
@@ -61,7 +63,9 @@
                   </span>
                 </label>
                 <label class="block mt-4 text-sm">
-                  <span class="text-gray-700 dark:text-gray-400">Password</span>
+                  <span class="text-gray-700 dark:text-gray-400"
+                    >{{ .l_login_password }}</span
+                  >
                   <input
                     class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                     placeholder="***************"
@@ -87,13 +91,11 @@
                   {{ .l_login_btn }}
                 </button>
 
-                <div
-                  :class="{'hidden': showNotif == false}"
-                >
+                <div :class="{'hidden': showNotif == false}">
                   <hr class="my-8" />
                   <div
-                    class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800"
-                    :style="bgColor"
+                    class="px-4 py-3 mb-8 rounded-lg shadow-md dark:bg-gray-800"
+                    :class="{'bg-red-400': notifStatus == 'error', 'bg-orange-400': notifStatus == 'fail', 'bg-green-400': notifStatus == 'success'}"
                   >
                     <p
                       class="text-sm text-gray-600 dark:text-gray-400"
@@ -116,6 +118,7 @@
                     errmLoginid: "",
                     errPassword: false,
                     errmPassword: "",
+                    notifStatus: "",
 
                     submitData() {
                       //this.loading = true;
@@ -142,11 +145,17 @@
                             this.errmPassword = "";
                           }
 
-                          if (data.fail) {
-                            this.bgColor = "background-color: #fbd38d";
+                          if (data.status == "error") {
+                            this.notifStatus = "error";
                           }
-                          if (data.success) {
-                            this.bgColor = "background-color: #68d391";
+
+                          if (data.status == "fail") {
+                            //this.bgColor = "background-color: #fbd38d";
+                            this.notifStatus = "fail";
+                          }
+                          if (data.status == "success") {
+                            //this.bgColor = "background-color: #68d391";
+                            this.notifStatus = "success";
                             window.location.replace(
                               "{{ .site_url }}/dashboard"
                             );

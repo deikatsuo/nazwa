@@ -20,10 +20,15 @@ type Login struct {
 func APIUserLogin(c *gin.Context) {
 	// Mulai session
 	session := sessions.Default(c)
+
 	errLoginid := false
 	errmLoginid := ""
 	errPassword := false
 	errmPassword := ""
+	var status string
+	statusMessage := ""
+	var httpStatus int
+
 	var json Login
 	if err := c.ShouldBindJSON(&json); err != nil {
 		if strings.Contains(err.Error(), "Loginid") {
@@ -34,13 +39,7 @@ func APIUserLogin(c *gin.Context) {
 			errPassword = true
 			errmPassword = "Password harus diisi \n"
 		}
-		c.JSON(http.StatusBadRequest, gin.H{
-			"err_loginid":   errLoginid,
-			"errm_loginid":  errmLoginid,
-			"err_password":  errPassword,
-			"errm_password": errmPassword,
-		})
-		return
+		httpStatus = http.StatusBadRequest
 	}
 
 	users := map[string]map[string]string{
@@ -55,31 +54,42 @@ func APIUserLogin(c *gin.Context) {
 	}
 
 	var picture string
+	userExist := false
 	for i, v := range users {
 		if json.Loginid == i && json.Password == v["password"] {
 			picture = v["picture"]
+			userExist = true
 			break
-		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "User tidak ditemukan",
-				"fail":    true,
-			})
-			return
 		}
 	}
 
-	// Simpan user ke session
-	session.Set("loginid", json.Loginid)
-	session.Set("picture", picture)
-	if err := session.Save(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Gagal membuat session",
-			"fail":    true,
-		})
+	// Check apakah user ditemukan
+	// Atau tidak
+	if userExist == false {
+		httpStatus = http.StatusUnauthorized
+		statusMessage = "User tidak ditemukan"
+		status = "fail"
+	} else {
+		// Simpan user ke session
+		session.Set("loginid", json.Loginid)
+		session.Set("picture", picture)
+		if err := session.Save(); err != nil {
+			httpStatus = http.StatusInternalServerError
+			statusMessage = "Gagal membuat session"
+			status = "error"
+		} else {
+			httpStatus = http.StatusOK
+			statusMessage = "Berhasil masuk"
+			status = "success"
+		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Berhasil masuk",
-		"success": true,
+	c.JSON(httpStatus, gin.H{
+		"message":       statusMessage,
+		"status":        status,
+		"err_loginid":   errLoginid,
+		"errm_loginid":  errmLoginid,
+		"err_password":  errPassword,
+		"errm_password": errmPassword,
 	})
 }
