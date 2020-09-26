@@ -12,11 +12,11 @@ import (
 func PageLogout(c *gin.Context) {
 	// Ambil session
 	session := sessions.Default(c)
-	email := session.Get("email")
+	loginid := session.Get("loginid")
 	picture := session.Get("picture")
 
 	// Cek session
-	if email == nil || picture == nil {
+	if loginid == nil || picture == nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Token session salah",
 		})
@@ -24,7 +24,7 @@ func PageLogout(c *gin.Context) {
 	}
 
 	// Menghapus session
-	session.Delete("email")
+	session.Delete("loginid")
 	session.Delete("picture")
 	if err := session.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -33,7 +33,5 @@ func PageLogout(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Berhasil logout",
-	})
+	c.Redirect(http.StatusFound, "/")
 }
