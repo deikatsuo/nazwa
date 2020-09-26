@@ -11,7 +11,7 @@ import (
 // Login ...
 // Struct untuk menyimpan data login
 type Login struct {
-	Email    string `json:"email" binding:"required"`
+	Loginid  string `json:"loginid" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
@@ -20,18 +20,25 @@ type Login struct {
 func APIUserLogin(c *gin.Context) {
 	// Mulai session
 	session := sessions.Default(c)
+	errLoginid := false
+	errmLoginid := ""
+	errPassword := false
+	errmPassword := ""
 	var json Login
 	if err := c.ShouldBindJSON(&json); err != nil {
-		var message string
-		if strings.Contains(err.Error(), "Email") {
-			message = "Email harus diisi \n"
+		if strings.Contains(err.Error(), "Loginid") {
+			errLoginid = true
+			errmLoginid = "ID login harus diisi \n"
 		}
 		if strings.Contains(err.Error(), "Password") {
-			message = message + "Password harus diisi \n"
+			errPassword = true
+			errmPassword = "Password harus diisi \n"
 		}
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": message,
-			"error":   true,
+			"err_loginid":   errLoginid,
+			"errm_loginid":  errmLoginid,
+			"err_password":  errPassword,
+			"errm_password": errmPassword,
 		})
 		return
 	}
@@ -49,7 +56,7 @@ func APIUserLogin(c *gin.Context) {
 
 	var picture string
 	for i, v := range users {
-		if json.Email == i && json.Password == v["password"] {
+		if json.Loginid == i && json.Password == v["password"] {
 			picture = v["picture"]
 			break
 		} else {
@@ -62,7 +69,7 @@ func APIUserLogin(c *gin.Context) {
 	}
 
 	// Simpan user ke session
-	session.Set("email", json.Email)
+	session.Set("loginid", json.Loginid)
 	session.Set("picture", picture)
 	if err := session.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

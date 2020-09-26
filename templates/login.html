@@ -49,9 +49,16 @@
                   <input
                     class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                     placeholder="rika@nazwa"
-                    x-model="formData.email"
+                    x-model="formData.loginid"
                     @keydown.enter="submitData()"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errLoginid }"
                   />
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmLoginid"
+                    :class="{'invisible': errLoginid == false}"
+                  >
+                  </span>
                 </label>
                 <label class="block mt-4 text-sm">
                   <span class="text-gray-700 dark:text-gray-400">Password</span>
@@ -61,7 +68,14 @@
                     type="password"
                     x-model="formData.password"
                     @keydown.enter="submitData()"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPassword }"
                   />
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmPassword"
+                    :class="{'invisible': errPassword == false}"
+                  >
+                  </span>
                 </label>
 
                 <button
@@ -73,7 +87,9 @@
                   {{ .l_login_btn }}
                 </button>
 
-                <template x-if="message">
+                <div
+                  :class="{'hidden': showNotif == false}"
+                >
                   <hr class="my-8" />
                   <div
                     class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800"
@@ -84,21 +100,25 @@
                       x-text="message"
                     ></p>
                   </div>
-                </template>
+                </div>
               </div>
 
               <script>
                 function login() {
                   return {
                     formData: {
-                      email: "",
+                      loginid: "",
                       password: "",
                     },
                     loading: false,
+                    showNotif: false,
+                    errLoginid: false,
+                    errmLoginid: "",
+                    errPassword: false,
+                    errmPassword: "",
 
                     submitData() {
                       //this.loading = true;
-                      this.error = null;
 
                       fetch("/api/login", {
                         method: "POST",
@@ -107,9 +127,21 @@
                       })
                         .then((res) => res.json())
                         .then((data) => {
-                          if (data.error) {
-                            this.bgColor = "background-color: #fc8181";
+                          if (data.err_loginid) {
+                            this.errLoginid = true;
+                            this.errmLoginid = data.errm_loginid;
+                          } else {
+                            this.errLoginid = false;
+                            this.errmLoginid = "";
                           }
+                          if (data.err_password) {
+                            this.errPassword = true;
+                            this.errmPassword = data.errm_password;
+                          } else {
+                            this.errPassword = false;
+                            this.errmPassword = "";
+                          }
+
                           if (data.fail) {
                             this.bgColor = "background-color: #fbd38d";
                           }
@@ -119,8 +151,13 @@
                               "{{ .site_url }}/dashboard"
                             );
                           }
-
-                          this.message = data.message;
+                          if (data.message) {
+                            this.message = data.message;
+                            this.showNotif = true;
+                          } else {
+                            this.showNotif = false;
+                            this.message = "";
+                          }
                         })
                         .catch(() => {
                           console.log("error");
