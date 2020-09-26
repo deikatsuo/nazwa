@@ -21,6 +21,7 @@ func APIUserLogin(c *gin.Context) {
 	// Mulai session
 	session := sessions.Default(c)
 
+	// Nilai awal
 	errLoginid := false
 	errmLoginid := ""
 	errPassword := false
@@ -29,6 +30,7 @@ func APIUserLogin(c *gin.Context) {
 	statusMessage := ""
 	var httpStatus int
 
+	// Variabel untuk di bind ke Login
 	var json Login
 	if err := c.ShouldBindJSON(&json); err != nil {
 		if strings.Contains(err.Error(), "Loginid") {
@@ -42,6 +44,8 @@ func APIUserLogin(c *gin.Context) {
 		httpStatus = http.StatusBadRequest
 	}
 
+	// Generate user
+	// Sementara belum ada data dari database
 	users := map[string]map[string]string{
 		"rika@nazwa": {
 			"password": "deri",
@@ -53,6 +57,7 @@ func APIUserLogin(c *gin.Context) {
 		},
 	}
 
+	// Iterate users dan cocokan dengan input dari user
 	var picture string
 	userExist := false
 	for i, v := range users {
@@ -78,12 +83,15 @@ func APIUserLogin(c *gin.Context) {
 			statusMessage = "Gagal membuat session"
 			status = "error"
 		} else {
+			// User ditemukan
+			// Dan berhasil diverifikasi
 			httpStatus = http.StatusOK
 			statusMessage = "Berhasil masuk"
 			status = "success"
 		}
 	}
 
+	// Kirim data ke browser klien
 	c.JSON(httpStatus, gin.H{
 		"message":       statusMessage,
 		"status":        status,
