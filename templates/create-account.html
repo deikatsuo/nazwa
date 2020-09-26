@@ -42,80 +42,165 @@
               >
                 {{ .l_c_form_title }}
               </h1>
-              <label class="block text-sm">
-                <span class="text-gray-700 dark:text-gray-400"
-                  >{{ .l_c_form_phone }}</span
-                >
-                <input
-                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="081xxx"
-                />
-              </label>
 
-              <div class="flex flex-wrap mb-6">
-                <div class="w-full md:w-1/2 md:pr-3">
-                  <label class="block mt-4 text-sm">
-                    <span class="text-gray-700 dark:text-gray-400"
-                      >{{ .l_c_form_firstname }}</span
-                    >
-                    <input
-                      class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                      placeholder="Rika"
-                    />
-                  </label>
-                </div>
-                <div class="w-full md:w-1/2 md:pl-3">
-                  <label class="block mt-4 text-sm">
-                    <span class="text-gray-700 dark:text-gray-400"
-                      >{{ .l_c_form_lastname }}</span
-                    >
-                    <input
-                      class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                      placeholder="Artamevia"
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <label class="block mt-4 text-sm">
-                <span class="text-gray-700 dark:text-gray-400"
-                  >{{ .l_c_form_password }}</span
-                >
-                <input
-                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="***************"
-                  type="password"
-                />
-              </label>
-              <label class="block mt-4 text-sm">
-                <span class="text-gray-700 dark:text-gray-400">
-                  {{ .l_c_form_repassword }}
-                </span>
-                <input
-                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="***************"
-                  type="password"
-                />
-              </label>
-
-              <div class="flex mt-6 text-sm">
-                <label class="flex items-center dark:text-gray-400">
+              <div x-data="create()">
+                <label class="block text-sm">
+                  <span class="text-gray-700 dark:text-gray-400"
+                    >{{ .l_c_form_phone }}</span
+                  >
                   <input
-                    type="checkbox"
-                    class="text-purple-600 form-checkbox focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    placeholder="081xxx"
+                    x-model="formData.phone"
+                    @keydown.enter="submitData()"
                   />
-                  <span class="ml-2">
-                    {{ .l_c_form_agree }}
-                    <span class="underline">{{ .l_c_form_privacy_link }}</span>
-                  </span>
                 </label>
+
+                <div class="flex flex-wrap mb-6">
+                  <div class="w-full md:w-1/2 md:pr-3">
+                    <label class="block mt-4 text-sm">
+                      <span class="text-gray-700 dark:text-gray-400"
+                        >{{ .l_c_form_firstname }}</span
+                      >
+                      <input
+                        class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                        placeholder="Rika"
+                        x-model="formData.firstname"
+                        @keydown.enter="submitData()"
+                        :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': err_firstname }"
+                      />
+                      <span
+                        class="text-xs text-red-600 dark:text-red-400"
+                        x-text="errm_firstname"
+                      >
+                      </span>
+                    </label>
+                  </div>
+                  <div class="w-full md:w-1/2 md:pl-3">
+                    <label class="block mt-4 text-sm">
+                      <span class="text-gray-700 dark:text-gray-400"
+                        >{{ .l_c_form_lastname }}</span
+                      >
+                      <input
+                        class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                        placeholder="Artamevia"
+                        x-model="formData.lastname"
+                        @keydown.enter="submitData()"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <label class="block mt-4 text-sm">
+                  <span class="text-gray-700 dark:text-gray-400"
+                    >{{ .l_c_form_password }}</span
+                  >
+                  <input
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    placeholder="***************"
+                    type="password"
+                    x-model="formData.password"
+                    @keydown.enter="submitData()"
+                  />
+                </label>
+                <label class="block mt-4 text-sm">
+                  <span class="text-gray-700 dark:text-gray-400">
+                    {{ .l_c_form_repassword }}
+                  </span>
+                  <input
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    placeholder="***************"
+                    type="password"
+                    x-model="formData.repassword"
+                    @keydown.enter="submitData()"
+                  />
+                </label>
+
+                <div class="flex mt-6 text-sm">
+                  <label class="flex items-center dark:text-gray-400">
+                    <input
+                      type="checkbox"
+                      class="text-purple-600 form-checkbox focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                      x-model="formData.policy"
+                      value="agree"
+                    />
+                    <span class="ml-2">
+                      {{ .l_c_form_agree }}
+                      <span class="underline"
+                        >{{ .l_c_form_privacy_link }}</span
+                      >
+                    </span>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                  @click="submitData()"
+                  :disabled="loading"
+                >
+                  {{ .l_c_form_create }}
+                </button>
+
+                <template x-if="message">
+                  <hr class="my-8" />
+                  <div
+                    class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800"
+                    :style="bgColor"
+                  >
+                    <p
+                      class="text-sm text-gray-600 dark:text-gray-400"
+                      x-text="message"
+                    ></p>
+                  </div>
+                </template>
               </div>
 
-              <button
-                class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-              >
-                {{ .l_c_form_create }}
-              </button>
+              <script>
+                function create() {
+                  return {
+                    formData: {
+                      phone: "",
+                      firstname: "",
+                      lastname: "",
+                      password: "",
+                      repassword: "",
+                      policy: "",
+                    },
+                    loading: false,
+                    err_firstname: false,
+                    errm_firstname: "",
+
+                    submitData() {
+                      //this.loading = true;
+
+                      fetch("/api/create-account", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(this.formData),
+                      })
+                        .then((res) => res.json())
+                        .then((data) => {
+                          if (data.error) {
+                            this.bgColor = "background-color: #fc8181";
+                          }
+                          if (data.fail) {
+                            this.bgColor = "background-color: #fbd38d";
+                          }
+                          if (data.success) {
+                            this.bgColor = "background-color: #68d391";
+                            this.errm_firstname = "Nama depan harus diisi";
+                          }
+
+                          this.message = data.message;
+                        })
+                        .catch(() => {
+                          console.log("error");
+                        });
+                    },
+                  };
+                }
+              </script>
 
               <hr class="my-8" />
 

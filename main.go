@@ -67,6 +67,7 @@ func runServer() {
 
 	api := server.Group("/api")
 	api.POST("/login", router.APIUserLogin)
+	api.POST("/create-account", router.APIUserCreate)
 
 	server.NoRoute(router.PageNoRoute)
 
