@@ -22,9 +22,7 @@ func APIUserLogin(c *gin.Context) {
 	session := sessions.Default(c)
 
 	// Nilai awal
-	errLoginid := false
 	errmLoginid := ""
-	errPassword := false
 	errmPassword := ""
 	var status string
 	statusMessage := ""
@@ -34,11 +32,9 @@ func APIUserLogin(c *gin.Context) {
 	var json Login
 	if err := c.ShouldBindJSON(&json); err != nil {
 		if strings.Contains(err.Error(), "Loginid") {
-			errLoginid = true
 			errmLoginid = "ID login harus diisi \n"
 		}
 		if strings.Contains(err.Error(), "Password") {
-			errPassword = true
 			errmPassword = "Password harus diisi \n"
 		}
 		httpStatus = http.StatusBadRequest
@@ -95,9 +91,7 @@ func APIUserLogin(c *gin.Context) {
 	c.JSON(httpStatus, gin.H{
 		"message":       statusMessage,
 		"status":        status,
-		"err_loginid":   errLoginid,
 		"errm_loginid":  errmLoginid,
-		"err_password":  errPassword,
 		"errm_password": errmPassword,
 	})
 }
