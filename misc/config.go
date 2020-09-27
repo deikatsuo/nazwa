@@ -1,6 +1,7 @@
 package misc
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gin-gonic/contrib/sessions"
@@ -79,12 +80,14 @@ func checkEnv(k string) bool {
 	return false
 }
 
-// Tipe database
+// SetupDBType ...
+// Mendapatkan tipe database
 func SetupDBType() string {
 	return getEnv("DB_TYPE", "").(string)
 }
 
-// Setup db
+// SetupDBSource ...
+// Mengambil konfigurasi db source
 func SetupDBSource() string {
 	var source = ""
 
@@ -102,4 +105,36 @@ func SetupDBSource() string {
 	}
 
 	return source
+}
+
+// SetupMigrationURL ...
+// Mengambil URL migration
+func SetupMigrationURL() string {
+	var db string
+	var user string
+	var password string
+	var host string
+	var name string
+	var ssl string
+
+	if checkEnv("DB_TYPE") {
+		db = getEnvND("DB_TYPE")
+	}
+	if checkEnv("DB_USER") {
+		user = getEnvND("DB_USER")
+	}
+	if checkEnv("DB_PASSWORD") {
+		password = getEnvND("DB_PASSWORD")
+	}
+	if checkEnv("DB_HOST") {
+		host = getEnvND("DB_HOST")
+	}
+	if checkEnv("DB_NAME") {
+		name = getEnvND("DB_NAME")
+	}
+	if checkEnv("DB_SSLMODE") {
+		ssl = getEnvND("DB_SSLMODE")
+	}
+	url := fmt.Sprintf("%s://%s:%s@%s/%s?sslmode=%s", db, user, password, host, name, ssl)
+	return url
 }

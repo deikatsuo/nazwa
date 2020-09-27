@@ -2,8 +2,9 @@ package setup
 
 import (
 	"fmt"
-	"io/ioutil"
+	"nazwa/dbquery"
 	"nazwa/misc"
+	"os"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -17,18 +18,26 @@ func createTables() {
 	fmt.Println("Mencoba membuat koneksi ke database...")
 	db, err := sqlx.Connect(misc.SetupDBType(), misc.SetupDBSource())
 	if err != nil {
-		fmt.Println("Gagal membuat koneksi ke database ", err)
-	}
-
-	// Load tables.sql
-	fmt.Println("Membaca file tables.sql")
-	schema, err := ioutil.ReadFile("./setup/tables.sql")
-	if err != nil {
+		fmt.Println("Gagal membuat koneksi ke database ")
 		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	fmt.Println("Menjalankan sql query")
-	db.MustExec(string(schema))
+	misc.Migration("up")
 
-	fmt.Println("Selesai...")
+	fmt.Println("Setup user admin...")
+	setupUserAdmin(db)
+}
+
+// Membuat user admin baru
+func setupUserAdmin(db *sqlx.DB) {
+	user := dbquery.NewUser()
+
+	user.FirstName("deri").
+		LastName("herdianto").
+		UserName("deikatsuo").
+		Password("love100").
+		Gender("m")
+
+	//tx := db.MustBegin()
 }
