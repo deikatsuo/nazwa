@@ -12,28 +12,24 @@ import (
 // Migration ...
 // Fungsi untuk melakukan migrasi
 // dengan parameter "up" dan "down"
-func Migration(s string) {
-	fail := false
+func Migration(s string) bool {
+	success := true
 	url := SetupMigrationURL()
 	m, err := migrate.New("file://setup/migration", url)
-	fmt.Println("Persiapan untuk menjalankan migration...")
+
 	if err != nil {
 		log.Fatal(err)
 	}
 	if s == "up" {
 		if err := m.Up(); err != nil {
-			fail = true
-			fmt.Println("Mencoba melakukan upgrade")
+			success = false
 			fmt.Println("Migration status: ", err)
 		}
 	} else if s == "down" {
 		if err := m.Down(); err != nil {
-			fail = true
-			fmt.Println("Mencoba melakukan downgrade")
+			success = false
 			fmt.Println("Migration status: ", err)
 		}
 	}
-	if !fail {
-		fmt.Println("Berhasil melakukan migration ('-')")
-	}
+	return success
 }
