@@ -36,6 +36,7 @@ CREATE TABLE "user" (
     "first_name" VARCHAR(25) NOT NULL,
     "last_name" VARCHAR(25),
     "username" VARCHAR(25) UNIQUE,
+    "avatar" VARCHAR(25),
     "password" CHAR(100),
     "password_salt" CHAR(100),
     "gender" GENDER NOT NULL,
