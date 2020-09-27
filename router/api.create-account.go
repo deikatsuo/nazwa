@@ -13,33 +13,50 @@ type FormUser struct {
 	Lastname   string `json:"lastname"`
 	Password   string `json:"password" binding:"required"`
 	Repassword string `json:"repassword" binding:"required"`
-	Policy     string `json:"policy" binding:"required"`
+	Policy     bool   `json:"policy" binding:"required"`
 }
 
 // APIUserCreate ...
 // API untuk membuat user baru
 func APIUserCreate(c *gin.Context) {
 	var json FormUser
+
+	var status string
+	var httpStatus int
 	message := ""
+	errmPhone := ""
+	errmFirstname := ""
+	errmPassword := ""
+	errmRepassword := ""
+	errmPolicy := ""
 	if err := c.ShouldBindJSON(&json); err != nil {
 		if strings.Contains(err.Error(), "Phone") {
-			message = message + "Phone harus diisi \n"
+			errmPhone = "Phone harus diisi \n"
 		}
 		if strings.Contains(err.Error(), "Firstname") {
-			message = message + "Nama depan harus diisi \n"
+			errmFirstname = "Nama depan harus diisi \n"
 		}
 		if strings.Contains(err.Error(), "Password") {
-			message = message + "Password harus diisi \n"
+			errmPassword = "Password harus diisi \n"
 		}
 		if strings.Contains(err.Error(), "Repassword") {
-			message = message + "Ulangi password harus diisi \n"
+			errmRepassword = "Ulangi password harus diisi \n"
 		}
 		if strings.Contains(err.Error(), "Policy") {
-			message = message + "Kebijakan privasi harus dicheck \n"
+			errmPolicy = "Kebijakan privasi harus dicheck \n"
 		}
+		httpStatus = http.StatusBadRequest
+		status = "fail"
+		message = "Data tidak lengkap"
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"message": message,
-		"success": true,
+
+	c.JSON(httpStatus, gin.H{
+		"message":         message,
+		"status":          status,
+		"errm_phone":      errmPhone,
+		"errm_firstname":  errmFirstname,
+		"errm_password":   errmPassword,
+		"errm_repassword": errmRepassword,
+		"errm_policy":     errmPolicy,
 	})
 }

@@ -53,7 +53,14 @@
                     placeholder="081xxx"
                     x-model="formData.phone"
                     @keydown.enter="submitData()"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPhone }"
                   />
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmPhone"
+                    :class="{'invisible': errPhone == false}"
+                  >
+                  </span>
                 </label>
 
                 <div class="flex flex-wrap mb-6">
@@ -67,13 +74,8 @@
                         placeholder="Rika"
                         x-model="formData.firstname"
                         @keydown.enter="submitData()"
-                        :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': err_firstname }"
+                        :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFirstname }"
                       />
-                      <span
-                        class="text-xs text-red-600 dark:text-red-400"
-                        x-text="errm_firstname"
-                      >
-                      </span>
                     </label>
                   </div>
                   <div class="w-full md:w-1/2 md:pl-3">
@@ -89,6 +91,12 @@
                       />
                     </label>
                   </div>
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmFirstname"
+                    :class="{'invisible': errFirstname == false}"
+                  >
+                  </span>
                 </div>
 
                 <label class="block mt-4 text-sm">
@@ -101,7 +109,14 @@
                     type="password"
                     x-model="formData.password"
                     @keydown.enter="submitData()"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPassword }"
                   />
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmPassword"
+                    :class="{'invisible': errPassword == false}"
+                  >
+                  </span>
                 </label>
                 <label class="block mt-4 text-sm">
                   <span class="text-gray-700 dark:text-gray-400">
@@ -113,22 +128,35 @@
                     type="password"
                     x-model="formData.repassword"
                     @keydown.enter="submitData()"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRepassword }"
                   />
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmRepassword"
+                    :class="{'invisible': errRepassword == false}"
+                  >
+                  </span>
                 </label>
 
                 <div class="flex mt-6 text-sm">
-                  <label class="flex items-center dark:text-gray-400">
+                  <label class="items-center dark:text-gray-400">
                     <input
                       type="checkbox"
                       class="text-purple-600 form-checkbox focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                       x-model="formData.policy"
-                      value="agree"
+                      :class="{'border-red-600': errPolicy }"
                     />
                     <span class="ml-2">
                       {{ .l_c_form_agree }}
                       <span class="underline"
                         >{{ .l_c_form_privacy_link }}</span
-                      >
+                      > </span
+                    ><br />
+                    <span
+                      class="text-xs text-red-600 dark:text-red-400"
+                      x-text="errmPolicy"
+                      :class="{'invisible': errPolicy == false}"
+                    >
                     </span>
                   </label>
                 </div>
@@ -142,18 +170,18 @@
                   {{ .l_c_form_create }}
                 </button>
 
-                <template x-if="message">
+                <div :class="{'hidden': showNotif == false}">
                   <hr class="my-8" />
                   <div
-                    class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800"
-                    :style="bgColor"
+                    class="px-4 py-3 mb-8 rounded-lg shadow-md dark:bg-gray-800"
+                    :class="{'bg-red-400': notifStatus == 'error', 'bg-orange-400': notifStatus == 'fail', 'bg-green-400': notifStatus == 'success'}"
                   >
                     <p
                       class="text-sm text-gray-600 dark:text-gray-400"
                       x-text="message"
                     ></p>
                   </div>
-                </template>
+                </div>
               </div>
 
               <script>
@@ -165,11 +193,22 @@
                       lastname: "",
                       password: "",
                       repassword: "",
-                      policy: "",
+                      policy: false,
                     },
                     loading: false,
-                    err_firstname: false,
-                    errm_firstname: "",
+                    message: "",
+                    errPhone: false,
+                    errmPhone: "",
+                    errFirstname: false,
+                    errmFirstname: "",
+                    errPassword: false,
+                    errmPassword: "",
+                    errRepassword: false,
+                    errmRepassword: "",
+                    errPolicy: false,
+                    errmPolicy: "",
+                    showNotif: false,
+                    notifStatus: "",
 
                     submitData() {
                       //this.loading = true;
@@ -181,18 +220,59 @@
                       })
                         .then((res) => res.json())
                         .then((data) => {
-                          if (data.error) {
-                            this.bgColor = "background-color: #fc8181";
+                          if (data.errm_phone) {
+                            this.errPhone = true;
+                            this.errmPhone = data.errm_phone;
+                          } else {
+                            this.errPhone = false;
+                            this.errmPhone = "";
                           }
-                          if (data.fail) {
-                            this.bgColor = "background-color: #fbd38d";
+                          if (data.errm_firstname) {
+                            this.errFirstname = true;
+                            this.errmFirstname = data.errm_firstname;
+                          } else {
+                            this.errFirstname = false;
+                            this.errmFirstname = "";
                           }
-                          if (data.success) {
-                            this.bgColor = "background-color: #68d391";
-                            this.errm_firstname = "Nama depan harus diisi";
+                          if (data.errm_password) {
+                            this.errPassword = true;
+                            this.errmPassword = data.errm_password;
+                          } else {
+                            this.errPassword = false;
+                            this.errmPassword = "";
+                          }
+                          if (data.errm_repassword) {
+                            this.errRepassword = true;
+                            this.errmRepassword = data.errm_repassword;
+                          } else {
+                            this.errRepassword = false;
+                            this.errmRepassword = "";
+                          }
+                          if (data.errm_policy) {
+                            this.errPolicy = true;
+                            this.errmPolicy = data.errm_policy;
+                          } else {
+                            this.errPolicy = false;
+                            this.errmPolicy = "";
                           }
 
-                          this.message = data.message;
+                          if (data.status == "error") {
+                            this.notifStatus = "error";
+                          }
+                          if (data.status == "fail") {
+                            this.notifStatus = "fail";
+                          }
+                          if (data.status == "success") {
+                            this.notifStatus = "success";
+                          }
+
+                          if (data.message) {
+                            this.message = data.message;
+                            this.showNotif = true;
+                          } else {
+                            this.showNotif = false;
+                            this.message = "";
+                          }
                         })
                         .catch(() => {
                           console.log("error");
