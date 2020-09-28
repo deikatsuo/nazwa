@@ -38,8 +38,33 @@ func createTables() {
 }
 
 // Membuat user admin baru
-func setupUserAdmin(db *sqlx.DB) {
+func setupUserAdmin(db *sqlx.DB) error {
 	user := dbquery.NewUser()
 
-	fmt.Println(user)
+	var firstname, lastname, username, password, gender string
+
+	fmt.Print("Nama depan: ")
+	fmt.Scanf("%s", &firstname)
+	fmt.Print("Nama belakang: ")
+	fmt.Scanf("%s", &lastname)
+	fmt.Println("Jenis kelamin [m/f]")
+	fmt.Scanf("%s", &gender)
+	fmt.Print("Username: ")
+	fmt.Scanf("%s", &username)
+	fmt.Print("Password: ")
+	fmt.Scanf("%s", &password)
+
+	var uid int
+	err := user.SetFirstName(firstname).
+		SetLastName(lastname).
+		SetUserName(username).
+		SetPassword(password).
+		SetGender(gender).
+		ReturnID(&uid).
+		Save(db)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
