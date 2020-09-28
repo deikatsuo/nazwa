@@ -9,6 +9,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// RunSetup ...
+// Menjalankan setup
 func RunSetup() {
 	createTables()
 }
@@ -23,7 +25,13 @@ func createTables() {
 		os.Exit(1)
 	}
 
-	misc.Migration("up")
+	fmt.Println("Membuat tabel...")
+	if misc.Migration("down") {
+		fmt.Println("Mereset tabel ('-')")
+	}
+	if misc.Migration("up") {
+		fmt.Println("Membuat tabel ('-')")
+	}
 
 	fmt.Println("Setup user admin...")
 	setupUserAdmin(db)
@@ -33,11 +41,5 @@ func createTables() {
 func setupUserAdmin(db *sqlx.DB) {
 	user := dbquery.NewUser()
 
-	user.FirstName("deri").
-		LastName("herdianto").
-		UserName("deikatsuo").
-		Password("love100").
-		Gender("m")
-
-	//tx := db.MustBegin()
+	fmt.Println(user)
 }
