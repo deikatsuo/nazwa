@@ -43,6 +43,7 @@ func setupUserAdmin(db *sqlx.DB) error {
 
 	var firstname, lastname, username, password, gender string
 
+	fmt.Print("\033[H\033[2J")
 	fmt.Print("Nama depan: ")
 	fmt.Scanf("%s", &firstname)
 	fmt.Print("Nama belakang: ")
