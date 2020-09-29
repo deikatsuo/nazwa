@@ -59,8 +59,12 @@ func setupUserAdmin(db *sqlx.DB) error {
 	fmt.Scanf("%s", &input.Gender)
 	fmt.Print("Username: ")
 	fmt.Scanf("%s", &input.Username)
+	fmt.Print("Nomor HP: ")
+	fmt.Scanf("%s", &input.Phone)
 	fmt.Print("Password: ")
 	fmt.Scanf("%s", &input.Password)
+	fmt.Print("Email: ")
+	fmt.Scanf("%s", &input.Email)
 
 	// Validasi hasil input dari user
 	validate := validator.New()
@@ -85,14 +89,18 @@ func setupUserAdmin(db *sqlx.DB) error {
 	err := user.SetFirstName(input.Firstname).
 		SetLastName(input.Lastname).
 		SetUserName(input.Username).
+		SetPhone(input.Phone).
+		SetEmail(input.Email).
 		SetPassword(input.Password).
 		SetGender(input.Gender).
+		UseDefaultAvatar().
 		ReturnID(&uid).
 		Save(db)
 
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -104,4 +112,6 @@ type adminInput struct {
 	Username  string `validate:"alphanum,min=4,max=25"`
 	Password  string `validate:"alphanumunicode,min=8,max=25"`
 	Gender    string `validate:"required,oneof=m f"`
+	Phone     string `validate:"numeric,min=6,max=15"`
+	Email     string `validate:"email"`
 }

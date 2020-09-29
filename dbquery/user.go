@@ -24,16 +24,38 @@ type User struct {
 
 	tempPassword string
 	into         map[string]string
-	returnid     bool
-	returnidto   *int
+	returnID     bool
+	returnIDTO   *int
+	picDefault   bool
+	role         int8
+	phone        string
+	email        string
 }
+
+// RoleAdmin memiliki akses penuh
+// sebagai admin
+const RoleAdmin int8 = 1
+
+// RoleSurveyor adalah penyurvey
+const RoleSurveyor int8 = 2
+
+// RoleCollector sebagai seorang penagih
+const RoleCollector int8 = 3
+
+// RoleSales bagian marketing atau pemasaran
+const RoleSales int8 = 4
+
+// RoleCustomer pelanggan
+const RoleCustomer int8 = 5
 
 // NewUser ...
 // Membuat user baru
 // mengembalikan struct User {}
 func NewUser() *User {
 	return &User{
-		into: make(map[string]string),
+		into:       make(map[string]string),
+		picDefault: false,
+		role:       RoleCustomer,
 	}
 }
 
@@ -61,8 +83,7 @@ func (u *User) SetUserName(p string) *User {
 	return u
 }
 
-// SetAvatar ...
-// Set avatar
+// SetAvatar tetapkan gambar avatar untuk user ini
 func (u *User) SetAvatar(p string) *User {
 	u.Avatar = p
 	u.into["avatar"] = ":avatar"
@@ -99,11 +120,40 @@ func matchPassword(hash, password string) bool {
 	return err == nil
 }
 
-// SetGender ...
+// SetGender meng set jenis kelamin user
 // Set gender/jenis kelamin
 func (u *User) SetGender(p string) *User {
 	u.Gender = p
 	u.into["gender"] = ":gender"
+	return u
+}
+
+// UseDefaultAvatar gunakan gambar profile bawaan
+// untuk user baru
+func (u *User) UseDefaultAvatar() *User {
+	u.picDefault = true
+	u.into["avatar"] = ":avatar"
+	return u
+}
+
+// SetRole tentukan peran/role
+func (u *User) SetRole(p int8) *User {
+	if p >= 1 && p <= 5 {
+		u.role = p
+	}
+	return u
+}
+
+// SetPhone fungsi untuk menambahkan nomor
+// hp untuk user baru
+func (u *User) SetPhone(p string) *User {
+	u.phone = p
+	return u
+}
+
+// SetEmail fungsi untuk menambahkan email
+func (u *User) SetEmail(p string) *User {
+	u.email = p
 	return u
 }
 
@@ -113,17 +163,57 @@ func (u *User) Save(db *sqlx.DB) error {
 	if u.hashPassword() != nil {
 		return errors.New("Gagal meng enkripsi password")
 	}
+	// Jika set avatar default
+	if u.picDefault {
+		if u.Gender == "m" {
+			u.SetAvatar("male.png")
+		} else if u.Gender == "f" {
+			u.SetAvatar("female.png")
+		}
+	}
+
+	// Mulai transaksi
 	tx := db.MustBegin()
 	userInsertQuery := fmt.Sprintf(`INSERT INTO "user" %s`, u.generateInsertQuery())
 	rows, err := tx.NamedQuery(userInsertQuery, u)
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
-	if u.returnid {
+	// Ambil id dari transaksi terakhir
+	if u.returnID {
 		if rows.Next() {
-			rows.Scan(u.returnidto)
+			rows.Scan(u.returnIDTO)
+		}
+		err = rows.Close()
+		if err != nil {
+			return err
 		}
 	}
+
+	// Set role user
+	_, err = tx.Exec(`INSERT INTO "user_role" (role_id, user_id) VALUES ($1, $2)`, u.role, *u.returnIDTO)
+	if err != nil {
+		return err
+	}
+
+	// Simpan nomor hp user jika tersedia
+	if len(u.phone) >= 6 && len(u.phone) <= 15 {
+		_, err = tx.Exec(`INSERT INTO "phone" (user_id, phone) VALUES ($1, $2)`, *u.returnIDTO, u.phone)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Simpan email user jika ada
+	if u.email != "" {
+		_, err = tx.Exec(`INSERT INTO "email" (user_id, email) VALUES ($1, $2)`, *u.returnIDTO, u.email)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Komit
 	err = tx.Commit()
 	return err
 }
@@ -138,7 +228,7 @@ func (u User) generateInsertQuery() string {
 		kv = append(kv, v)
 	}
 	var result string
-	if u.returnid {
+	if u.returnID {
 		result = fmt.Sprintf("(%s) VALUES (%s) RETURNING id", strings.Join(kk, ","), strings.Join(kv, ","))
 	} else {
 		result = fmt.Sprintf("(%s) VALUES (%s)", strings.Join(kk, ","), strings.Join(kv, ","))
@@ -149,7 +239,7 @@ func (u User) generateInsertQuery() string {
 // ReturnID ...
 // Mengembalikan ID user terakhir
 func (u *User) ReturnID(id *int) *User {
-	u.returnid = true
-	u.returnidto = id
+	u.returnID = true
+	u.returnIDTO = id
 	return u
 }

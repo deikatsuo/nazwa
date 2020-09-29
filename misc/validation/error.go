@@ -58,4 +58,6 @@ var ValidationErrorsMask = map[string]string{
 	"required":        "tidak boleh kosong",
 	"min":             "tidak boleh kurang dari %s",
 	"oneof":           "hanya boleh di isi oleh '%s'",
+	"numeric":         "hanya boleh di isi dengan nomor",
+	"email":           "format email salah",
 }
