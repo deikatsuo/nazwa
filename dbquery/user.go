@@ -110,13 +110,9 @@ func (u *User) SetGender(p string) *User {
 // Save ...
 // Simpan user ke database
 func (u *User) Save(db *sqlx.DB) error {
-	if len(u.tempPassword) > 20 {
-		return errors.New("Password tidak boleh melebihi 20 huruf")
-	}
 	if u.hashPassword() != nil {
 		return errors.New("Gagal meng enkripsi password")
 	}
-
 	tx := db.MustBegin()
 	userInsertQuery := fmt.Sprintf(`INSERT INTO "user" %s`, u.generateInsertQuery())
 	rows, err := tx.NamedQuery(userInsertQuery, u)
