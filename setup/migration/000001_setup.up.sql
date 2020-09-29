@@ -14,7 +14,7 @@ CREATE TABLE "role" (
 -- Buat peran
 INSERT INTO "role" ("id", "name")
 VALUES  (1, 'admin'),
-        (2, 'surveyer'),
+        (2, 'surveyor'),
         (3, 'collector'),
         (4, 'sales'),
         (5, 'customer');
@@ -61,7 +61,7 @@ CREATE TABLE "email" (
 CREATE TABLE "phone" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "user_id" INT NOT NULL,
-    "phone" NUMERIC(12,0) UNIQUE NOT NULL,
+    "phone" VARCHAR(15) UNIQUE NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES "user"("id")
 );
