@@ -45,6 +45,7 @@ func runServer() {
 	server.Use(misc.NewDefaultConfig())
 
 	server.Static("/assets", "./statics")
+	server.Static("/file", "./upload")
 	server.StaticFile("/favicon.ico", "./statics/favicon.ico")
 
 	server.LoadHTMLGlob("./templates/*")
