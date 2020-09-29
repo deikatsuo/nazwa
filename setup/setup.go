@@ -4,18 +4,20 @@ import (
 	"fmt"
 	"nazwa/dbquery"
 	"nazwa/misc"
+	"nazwa/misc/validation"
 	"os"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jmoiron/sqlx"
 )
 
-// RunSetup ...
+// RunSetup menjalankan setup servers
 // Menjalankan setup
 func RunSetup() {
 	createTables()
 }
 
+// Fungsi untuk inisialisasi tabel
 func createTables() {
 	// Membuat koneksi database
 	fmt.Println("Mencoba membuat koneksi ke database...")
@@ -34,6 +36,7 @@ func createTables() {
 		fmt.Println("Membuat tabel ('-')")
 	}
 
+	// Minta user untuk melakukan pendaftaran admin baru
 	fmt.Println("Setup user admin...")
 	if err := setupUserAdmin(db); err != nil {
 		fmt.Println(err)
@@ -44,6 +47,7 @@ func createTables() {
 func setupUserAdmin(db *sqlx.DB) error {
 	user := dbquery.NewUser()
 
+	// Variabel untuk menyimpan hasil input
 	var input adminInput
 
 	fmt.Print("\033[H\033[2J")
@@ -58,12 +62,26 @@ func setupUserAdmin(db *sqlx.DB) error {
 	fmt.Print("Password: ")
 	fmt.Scanf("%s", &input.Password)
 
+	// Validasi hasil input dari user
 	validate := validator.New()
 	if err := validate.Struct(&input); err != nil {
-		return err
+		erbar := validation.SimpleVErr(err)
+		fmt.Println(erbar)
+
+		// Looping jika input tidak benar
+		var again string
+		fmt.Print("Ulangi lagi? [y/N]?")
+		fmt.Scanf("%s", &again)
+		if again == "y" || again == "Y" {
+			setupUserAdmin(db)
+		} else {
+			os.Exit(1)
+		}
 	}
 
+	// Variabel untuk menyimpan ID dari insert terakhir
 	var uid int
+
 	err := user.SetFirstName(input.Firstname).
 		SetLastName(input.Lastname).
 		SetUserName(input.Username).
@@ -78,6 +96,8 @@ func setupUserAdmin(db *sqlx.DB) error {
 	return nil
 }
 
+// Input user untuk registrasi admin setelah
+// melakukan setup
 type adminInput struct {
 	Firstname string `validate:"required,alpha,min=3,max=25"`
 	Lastname  string `validate:"alpha,min=1,max=25"`
