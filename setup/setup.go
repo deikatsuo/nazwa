@@ -74,9 +74,9 @@ func setupUserAdmin(db *sqlx.DB) error {
 		fmt.Scanf("%s", &again)
 		if again == "y" || again == "Y" {
 			setupUserAdmin(db)
-		} else {
-			os.Exit(1)
+			return nil
 		}
+		os.Exit(1)
 	}
 
 	// Variabel untuk menyimpan ID dari insert terakhir
