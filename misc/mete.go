@@ -4,8 +4,8 @@ import (
 	"github.com/imdario/mergo"
 )
 
-// Mete ...
-// Fungsi untuk menggabungkan template
+// Mete menggabungkan dua map
+// digunakan untuk menggabungkan template
 func Mete(m1, m2 map[string]interface{}) map[string]interface{} {
 	// Gabungkan
 	mergo.Map(&m1, m2, mergo.WithOverride)
