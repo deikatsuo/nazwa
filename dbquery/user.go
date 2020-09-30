@@ -1,7 +1,6 @@
 package dbquery
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -11,7 +10,7 @@ import (
 
 // User ...
 // Struct data user
-type User struct {
+type CreateUser struct {
 	ID        string
 	Firstname string `db:"first_name"`
 	Lastname  string `db:"last_name"`
@@ -51,8 +50,8 @@ const RoleCustomer int8 = 5
 // NewUser ...
 // Membuat user baru
 // mengembalikan struct User {}
-func NewUser() *User {
-	return &User{
+func NewUser() *CreateUser {
+	return &CreateUser{
 		into:       make(map[string]string),
 		picDefault: false,
 		role:       RoleCustomer,
@@ -61,7 +60,7 @@ func NewUser() *User {
 
 // SetFirstName ...
 // Set nama depan
-func (u *User) SetFirstName(p string) *User {
+func (u *CreateUser) SetFirstName(p string) *CreateUser {
 	u.Firstname = p
 	u.into["first_name"] = ":first_name"
 	return u
@@ -69,7 +68,7 @@ func (u *User) SetFirstName(p string) *User {
 
 // SetLastName ...
 // Set nama belakang
-func (u *User) SetLastName(p string) *User {
+func (u *CreateUser) SetLastName(p string) *CreateUser {
 	u.Lastname = p
 	u.into["last_name"] = ":last_name"
 	return u
@@ -77,14 +76,14 @@ func (u *User) SetLastName(p string) *User {
 
 // SetUserName ...
 // Set nilai username
-func (u *User) SetUserName(p string) *User {
+func (u *CreateUser) SetUserName(p string) *CreateUser {
 	u.Username = p
 	u.into["username"] = ":username"
 	return u
 }
 
 // SetAvatar tetapkan gambar avatar untuk user ini
-func (u *User) SetAvatar(p string) *User {
+func (u *CreateUser) SetAvatar(p string) *CreateUser {
 	u.Avatar = p
 	u.into["avatar"] = ":avatar"
 	return u
@@ -92,37 +91,14 @@ func (u *User) SetAvatar(p string) *User {
 
 // SetPassword ...
 // Set password
-func (u *User) SetPassword(p string) *User {
+func (u *CreateUser) SetPassword(p string) *CreateUser {
 	u.tempPassword = p
 	return u
 }
 
-// Hash password dan secret/salt
-// jika password telah di tetapkan
-func (u *User) hashPassword() error {
-	var hashedpwd []byte
-	var err error
-	if len(u.tempPassword) > 0 {
-		hashedpwd, err = bcrypt.GenerateFromPassword([]byte(u.tempPassword), 10)
-		if err == nil {
-			u.Password = string(hashedpwd)
-			u.into["password"] = ":password"
-		}
-	}
-
-	return err
-}
-
-// Cocokan password
-func matchPassword(hash, password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	fmt.Println(err)
-	return err == nil
-}
-
 // SetGender meng set jenis kelamin user
 // Set gender/jenis kelamin
-func (u *User) SetGender(p string) *User {
+func (u *CreateUser) SetGender(p string) *CreateUser {
 	u.Gender = p
 	u.into["gender"] = ":gender"
 	return u
@@ -130,14 +106,14 @@ func (u *User) SetGender(p string) *User {
 
 // UseDefaultAvatar gunakan gambar profile bawaan
 // untuk user baru
-func (u *User) UseDefaultAvatar() *User {
+func (u *CreateUser) UseDefaultAvatar() *CreateUser {
 	u.picDefault = true
 	u.into["avatar"] = ":avatar"
 	return u
 }
 
 // SetRole tentukan peran/role
-func (u *User) SetRole(p int8) *User {
+func (u *CreateUser) SetRole(p int8) *CreateUser {
 	if p >= 1 && p <= 5 {
 		u.role = p
 	}
@@ -146,23 +122,29 @@ func (u *User) SetRole(p int8) *User {
 
 // SetPhone fungsi untuk menambahkan nomor
 // hp untuk user baru
-func (u *User) SetPhone(p string) *User {
+func (u *CreateUser) SetPhone(p string) *CreateUser {
 	u.phone = p
 	return u
 }
 
 // SetEmail fungsi untuk menambahkan email
-func (u *User) SetEmail(p string) *User {
+func (u *CreateUser) SetEmail(p string) *CreateUser {
 	u.email = p
 	return u
 }
 
 // Save ...
 // Simpan user ke database
-func (u *User) Save(db *sqlx.DB) error {
-	if u.hashPassword() != nil {
-		return errors.New("Gagal meng enkripsi password")
+func (u *CreateUser) Save(db *sqlx.DB) error {
+	if len(u.tempPassword) > 0 {
+		hash, err := hashPassword(u.tempPassword)
+		if err != nil {
+			return err
+		}
+		u.Password = hash
+		u.into["password"] = ":password"
 	}
+
 	// Jika set avatar default
 	if u.picDefault {
 		if u.Gender == "m" {
@@ -219,7 +201,7 @@ func (u *User) Save(db *sqlx.DB) error {
 }
 
 // Insert query berdasarka data yang diisi
-func (u User) generateInsertQuery() string {
+func (u CreateUser) generateInsertQuery() string {
 	iq := u.into
 	var kk []string
 	var kv []string
@@ -238,8 +220,31 @@ func (u User) generateInsertQuery() string {
 
 // ReturnID ...
 // Mengembalikan ID user terakhir
-func (u *User) ReturnID(id *int) *User {
+func (u *CreateUser) ReturnID(id *int) *CreateUser {
 	u.returnID = true
 	u.returnIDTO = id
 	return u
+}
+
+// Hash password dan secret/salt
+// jika password telah di tetapkan
+func hashPassword(key string) (string, error) {
+	var hashedpwd []byte
+	var result string
+	var err error
+	if len(key) > 0 {
+		hashedpwd, err = bcrypt.GenerateFromPassword([]byte(key), 10)
+		if err != nil {
+			return "", err
+		}
+		result = string(hashedpwd)
+	}
+	return result, nil
+}
+
+// Cocokan password
+func matchPassword(hash, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	fmt.Println(err)
+	return err == nil
 }

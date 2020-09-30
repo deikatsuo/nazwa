@@ -40,6 +40,8 @@ func createTables() {
 	fmt.Println("Setup user admin...")
 	if err := setupUserAdmin(db); err != nil {
 		fmt.Println(err)
+	} else {
+		fmt.Println("Setup selesai")
 	}
 }
 
@@ -48,7 +50,7 @@ func setupUserAdmin(db *sqlx.DB) error {
 	user := dbquery.NewUser()
 
 	// Variabel untuk menyimpan hasil input
-	var input adminInput
+	var input createAdminInput
 
 	fmt.Print("\033[H\033[2J")
 	fmt.Print("Nama depan: ")
@@ -69,7 +71,7 @@ func setupUserAdmin(db *sqlx.DB) error {
 	// Validasi hasil input dari user
 	validate := validator.New()
 	if err := validate.Struct(&input); err != nil {
-		erbar := validation.SimpleVErr(err)
+		erbar := validation.SimpleValErr(err)
 		fmt.Println(erbar)
 
 		// Looping jika input tidak benar
@@ -96,7 +98,6 @@ func setupUserAdmin(db *sqlx.DB) error {
 		UseDefaultAvatar().
 		ReturnID(&uid).
 		Save(db)
-
 	if err != nil {
 		return err
 	}
@@ -104,9 +105,9 @@ func setupUserAdmin(db *sqlx.DB) error {
 	return nil
 }
 
-// Input user untuk registrasi admin setelah
+// createAdminInput user untuk registrasi admin setelah
 // melakukan setup
-type adminInput struct {
+type createAdminInput struct {
 	Firstname string `validate:"required,alpha,min=3,max=25"`
 	Lastname  string `validate:"alpha,min=1,max=25"`
 	Username  string `validate:"alphanum,min=4,max=25"`
