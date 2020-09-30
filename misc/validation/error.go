@@ -7,10 +7,10 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// SimpleVErr memparse error dari `validator` menjadi lebih simple
+// SimpleValErr memparse error dari `validator` menjadi lebih simple
 //
 // Dikembalikan error versi sederhana
-func SimpleVErr(verr interface{}) string {
+func SimpleValErr(verr interface{}) string {
 	ve := verr.(validator.ValidationErrors)
 
 	/*
@@ -48,6 +48,21 @@ func SimpleVErr(verr interface{}) string {
 	}
 
 	return erbar
+}
+
+// SimpleValErrMap menyederhanakan error dari validator
+// dan mengembalikannya dalam bentuk map
+func SimpleValErrMap(verr interface{}) map[string]interface{} {
+	ve := verr.(validator.ValidationErrors)
+	errmap := make(map[string]interface{})
+	for _, v := range ve {
+		for mi, mv := range ValidationErrorsMask {
+			if v.Tag() == mi {
+				errmap[strings.ToLower(v.StructField())] = mv
+			}
+		}
+	}
+	return errmap
 }
 
 // ValidationErrorsMask mengubah pesan error default dari validator
