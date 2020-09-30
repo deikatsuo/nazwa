@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// User ...
+// CreateUser struk buat user baru
 // Struct data user
 type CreateUser struct {
 	ID        string
@@ -25,7 +25,6 @@ type CreateUser struct {
 	into         map[string]string
 	returnID     bool
 	returnIDTO   *int
-	picDefault   bool
 	role         int8
 	phone        string
 	email        string
@@ -52,9 +51,8 @@ const RoleCustomer int8 = 5
 // mengembalikan struct User {}
 func NewUser() *CreateUser {
 	return &CreateUser{
-		into:       make(map[string]string),
-		picDefault: false,
-		role:       RoleCustomer,
+		into: make(map[string]string),
+		role: RoleCustomer,
 	}
 }
 
@@ -104,14 +102,6 @@ func (u *CreateUser) SetGender(p string) *CreateUser {
 	return u
 }
 
-// UseDefaultAvatar gunakan gambar profile bawaan
-// untuk user baru
-func (u *CreateUser) UseDefaultAvatar() *CreateUser {
-	u.picDefault = true
-	u.into["avatar"] = ":avatar"
-	return u
-}
-
 // SetRole tentukan peran/role
 func (u *CreateUser) SetRole(p int8) *CreateUser {
 	if p >= 1 && p <= 5 {
@@ -145,8 +135,8 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 		u.into["password"] = ":password"
 	}
 
-	// Jika set avatar default
-	if u.picDefault {
+	// Set avatar default
+	if u.Avatar == "" {
 		if u.Gender == "m" {
 			u.SetAvatar("male.png")
 		} else if u.Gender == "f" {

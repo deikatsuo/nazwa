@@ -95,7 +95,6 @@ func setupUserAdmin(db *sqlx.DB) error {
 		SetEmail(input.Email).
 		SetPassword(input.Password).
 		SetGender(input.Gender).
-		UseDefaultAvatar().
 		ReturnID(&uid).
 		Save(db)
 	if err != nil {
