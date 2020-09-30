@@ -1,44 +1,42 @@
 package router
 
 import (
+	"nazwa/misc"
+	"nazwa/misc/validation"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
-// Login ...
-// Struct untuk menyimpan data login
+// Login struk formulir login
+// menyimpan data login
 type Login struct {
 	Loginid  string `json:"loginid" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
-// APIUserLogin ...
+// APIUserLogin gerbang user login
 // API untuk login user
 func APIUserLogin(c *gin.Context) {
 	// Mulai session
 	session := sessions.Default(c)
 
 	// Nilai awal
-	errmLoginid := ""
-	errmPassword := ""
 	var status string
 	statusMessage := ""
 	var httpStatus int
+	var simpleErrMap map[string]interface{}
 
 	// Variabel untuk di bind ke Login
 	var json Login
 	if err := c.ShouldBindJSON(&json); err != nil {
-		if strings.Contains(err.Error(), "Loginid") {
-			errmLoginid = "ID login harus diisi \n"
-		}
-		if strings.Contains(err.Error(), "Password") {
-			errmPassword = "Password harus diisi \n"
-		}
+		// Sederhanakan pesan error
+		simpleErrMap = validation.SimpleValErrMap(err)
 		httpStatus = http.StatusBadRequest
 	}
+
+	// Periksa user di database
 
 	// Generate user
 	// Sementara belum ada data dari database
@@ -87,11 +85,11 @@ func APIUserLogin(c *gin.Context) {
 		}
 	}
 
+	m := gin.H{
+		"message": statusMessage,
+		"status":  status,
+	}
+
 	// Kirim data ke browser klien
-	c.JSON(httpStatus, gin.H{
-		"message":       statusMessage,
-		"status":        status,
-		"errm_loginid":  errmLoginid,
-		"errm_password": errmPassword,
-	})
+	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
 }

@@ -130,16 +130,16 @@
                       })
                         .then((res) => res.json())
                         .then((data) => {
-                          if (data.errm_loginid) {
+                          if (data.loginid) {
                             this.errLoginid = true;
-                            this.errmLoginid = data.errm_loginid;
+                            this.errmLoginid = data.loginid;
                           } else {
                             this.errLoginid = false;
                             this.errmLoginid = "";
                           }
-                          if (data.errm_password) {
+                          if (data.password) {
                             this.errPassword = true;
-                            this.errmPassword = data.errm_password;
+                            this.errmPassword = data.password;
                           } else {
                             this.errPassword = false;
                             this.errmPassword = "";
