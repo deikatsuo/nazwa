@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -40,6 +41,15 @@ func main() {
 }
 
 func runServer() {
+	// Membuat koneksi database
+	fmt.Println("Mencoba membuat koneksi ke database...")
+	db, err := sqlx.Connect(misc.SetupDBType(), misc.SetupDBSource())
+	if err != nil {
+		fmt.Println("Gagal membuat koneksi ke database ")
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	server := gin.Default()
 	server.Use(sessions.Sessions("nazwasession", sessions.NewCookieStore([]byte("secret"))))
 	server.Use(misc.NewDefaultConfig())
@@ -67,7 +77,7 @@ func runServer() {
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	api := server.Group("/api")
-	api.POST("/login", router.APIUserLogin)
+	api.POST("/login", router.APIUserLogin(db))
 	api.POST("/create-account", router.APIUserCreate)
 
 	server.NoRoute(router.PageNoRoute)
