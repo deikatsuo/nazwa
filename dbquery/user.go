@@ -8,9 +8,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// CreateUser struk buat user baru
-// Struct data user
-type CreateUser struct {
+// User base struk
+type User struct {
 	ID        string
 	Firstname string `db:"first_name"`
 	Lastname  string `db:"last_name"`
@@ -20,7 +19,12 @@ type CreateUser struct {
 	Gender    string `db:"gender"`
 	CreatedAt string `db:"created_at"`
 	Balance   int    `db:"balance"`
+}
 
+// CreateUser struk buat user baru
+// Struct data user
+type CreateUser struct {
+	User
 	tempPassword string
 	into         map[string]string
 	returnID     bool
@@ -237,4 +241,41 @@ func matchPassword(hash, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	fmt.Println(err)
 	return err == nil
+}
+
+// Login user kedatabase
+func Login(db *sqlx.DB, loginid, password string) (int, error) {
+	var userid int
+	// Cari ID user berdasarkan login id
+	var query = `SELECT id
+	FROM "user"
+	WHERE username=$1
+	UNION
+	SELECT user_id
+	FROM "phone"
+	WHERE phone=$1
+	UNION
+	SELECT user_id
+	FROM "email"
+	WHERE email=$1`
+	err := db.Get(&userid, query, loginid)
+	if err != nil {
+		return 0, err
+	}
+
+	// Cocokan password user
+	var pwd string
+	query = `SELECT password 
+	FROM "user"
+	WHERE id=$1`
+	err = db.Get(&pwd, query, userid)
+	if err != nil {
+		return 0, err
+	}
+	if matchPassword(pwd, password) {
+		fmt.Println("COCOK")
+	} else {
+		fmt.Println("Salah")
+	}
+	return userid, err
 }
