@@ -12,6 +12,7 @@ func balance(u []uint8) string {
 	return string(u)
 }
 
+// Membuat huruf pertama pada string menjadi kapital
 func title(s string) string {
 	return strings.Title(s)
 }
