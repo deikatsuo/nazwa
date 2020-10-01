@@ -15,4 +15,23 @@ WHERE phone='081282683627'
 UNION
 SELECT user_id
 FROM "email"
-WHERE email='thisisderi@gmail.com'
+WHERE email='thisisderi@gmail.com';
+
+SELECT
+    u.first_name,
+    u.last_name,
+    u.username,
+    u.avatar,
+    u.gender,
+    u.created_at,
+    u.balance,
+    string_agg(DISTINCT p.phone, ',' ORDER BY p.phone) AS phone,
+    string_agg(DISTINCT e.email, ',' ORDER BY e.email) AS email,
+    r.name AS role
+FROM "user" u
+JOIN "phone" p ON p.user_id=u.id
+JOIN "email" e ON e.user_id=u.id
+JOIN "user_role" ur ON ur.user_id=u.id
+JOIN "role" r ON r.id=ur.role_id
+WHERE u.id=1
+GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name
