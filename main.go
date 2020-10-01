@@ -22,6 +22,7 @@ func init() {
 }
 
 func main() {
+	// Ambil argumen CLI
 	if iag := len(os.Args); iag > 1 {
 		arg := os.Args[1]
 		switch arg {
@@ -59,14 +60,22 @@ func runServer() {
 		os.Exit(1)
 	}
 
+	// Buat server
 	server := gin.Default()
+	// Daftarkan fungsi ke template
+	server.SetFuncMap(misc.RegTmplFunc())
+
+	// Buat session
 	server.Use(sessions.Sessions("NAZWA_SESSION", sessions.NewCookieStore([]byte("secret"))))
 	server.Use(misc.NewDefaultConfig())
 
+	// Daftarkan aset statik
+	// misal css, js, dan beragam file gambar
 	server.Static("/assets", "./statics")
 	server.Static("/file", "./upload")
 	server.StaticFile("/favicon.ico", "./statics/favicon.ico")
 
+	// Load file template
 	server.LoadHTMLGlob("./templates/*")
 
 	// Router
@@ -77,18 +86,21 @@ func runServer() {
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
 
-	// Konfigurasi default dashboard
-	server.Use(misc.NewDashboardDefaultConfig())
+	// Middleware untuk mengambil pengaturan default untuk dashboard
+	server.Use(misc.NewDashboardDefaultConfig(db))
+
 	// Halaman Dashboard
 	dashboard := server.Group("/dashboard")
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/customers", router.PageDashboardCustomers)
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
+	// API
 	api := server.Group("/api")
 	api.POST("/login", router.APIUserLogin(db))
 	api.POST("/create-account", router.APIUserCreate)
 
+	// Halaman tidak ditemukan
 	server.NoRoute(router.PageNoRoute)
 
 	// Jalankan server
