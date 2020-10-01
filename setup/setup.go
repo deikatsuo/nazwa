@@ -13,21 +13,7 @@ import (
 
 // RunSetup menjalankan setup servers
 // Menjalankan setup
-func RunSetup(reset bool) {
-	createTables(reset)
-}
-
-// Fungsi untuk inisialisasi tabel
-func createTables(reset bool) {
-	// Membuat koneksi database
-	fmt.Println("Mencoba membuat koneksi ke database...")
-	db, err := sqlx.Connect(misc.SetupDBType(), misc.SetupDBSource())
-	if err != nil {
-		fmt.Println("Gagal membuat koneksi ke database ")
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
+func RunSetup(db *sqlx.DB, reset bool) {
 	// jika full-reset
 	// maka hapus tabel (reset) pada database
 	if reset {

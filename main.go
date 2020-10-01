@@ -22,16 +22,24 @@ func init() {
 }
 
 func main() {
+	// Membuat koneksi database
+	fmt.Println("Mencoba membuat koneksi ke database...")
+	db, err := sqlx.Connect(misc.SetupDBType(), misc.SetupDBSource())
+	if err != nil {
+		fmt.Println("Gagal membuat koneksi ke database ")
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	// Ambil argumen CLI
 	if iag := len(os.Args); iag > 1 {
 		arg := os.Args[1]
 		switch arg {
 		case "run":
 			fmt.Println("Menjalankan server...")
-			runServer()
+			runServer(db)
 		case "setup":
 			fmt.Println("Menjalankan konfigurasi database...")
-			setup.RunSetup(false)
+			setup.RunSetup(db, false)
 		case "setup-reset":
 			fmt.Println("PERINGATAN: Ini akan menghapus semua data di database!")
 			var lanjut string
@@ -39,7 +47,7 @@ func main() {
 			fmt.Scanf("%s", &lanjut)
 			if lanjut == "Y" || lanjut == "y" {
 				fmt.Println("Menjalankan konfigurasi dan mereset database...")
-				setup.RunSetup(true)
+				setup.RunSetup(db, true)
 			}
 		case "version":
 			fmt.Println("Authored by", misc.AUTHOR)
@@ -50,16 +58,7 @@ func main() {
 	}
 }
 
-func runServer() {
-	// Membuat koneksi database
-	fmt.Println("Mencoba membuat koneksi ke database...")
-	db, err := sqlx.Connect(misc.SetupDBType(), misc.SetupDBSource())
-	if err != nil {
-		fmt.Println("Gagal membuat koneksi ke database ")
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
+func runServer(db *sqlx.DB) {
 	// Buat server
 	server := gin.Default()
 	// Daftarkan fungsi ke template
