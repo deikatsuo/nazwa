@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"
@@ -31,7 +30,8 @@ func APIUserLogin(db *sqlx.DB) gin.HandlerFunc {
 		statusMessage := ""
 		var httpStatus int
 		var simpleErrMap map[string]interface{}
-
+		var userid int
+		var userExist bool
 		// Variabel untuk di bind ke Login
 		var json Login
 		if err := c.ShouldBindJSON(&json); err != nil {
@@ -40,31 +40,9 @@ func APIUserLogin(db *sqlx.DB) gin.HandlerFunc {
 			httpStatus = http.StatusBadRequest
 		} else {
 			// Periksa user di database
-			in, er := dbquery.Login(db, json.Loginid, json.Password)
-			fmt.Println("ID ", in, " Err ", er)
-		}
-
-		// Generate user
-		// Sementara belum ada data dari database
-		users := map[string]map[string]string{
-			"rika@nazwa": {
-				"password": "deri",
-				"picture":  "../assets/img/test/teteh.jpeg",
-			},
-			"deri@deri": {
-				"password": "rika",
-				"picture":  "../assets/img/test/deri.jpeg",
-			},
-		}
-
-		// Iterate users dan cocokan dengan input dari user
-		var picture string
-		userExist := false
-		for i, v := range users {
-			if json.Loginid == i && json.Password == v["password"] {
-				picture = v["picture"]
+			if id, err := dbquery.Login(db, json.Loginid, json.Password); err == nil {
+				userid = id
 				userExist = true
-				break
 			}
 		}
 
@@ -76,8 +54,7 @@ func APIUserLogin(db *sqlx.DB) gin.HandlerFunc {
 			status = "fail"
 		} else {
 			// Simpan user ke session
-			session.Set("loginid", json.Loginid)
-			session.Set("picture", picture)
+			session.Set("userid", userid)
 			if err := session.Save(); err != nil {
 				httpStatus = http.StatusInternalServerError
 				statusMessage = "Gagal membuat session"

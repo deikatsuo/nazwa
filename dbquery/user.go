@@ -237,13 +237,14 @@ func hashPassword(key string) (string, error) {
 }
 
 // Cocokan password
-func matchPassword(hash, password string) bool {
+func matchPassword(hash, password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	fmt.Println(err)
-	return err == nil
+	return err
 }
 
-// Login user kedatabase
+// Login - User login
+// loginid: ID login dari input user
+// password: Password dari input user
 func Login(db *sqlx.DB, loginid, password string) (int, error) {
 	var userid int
 	// Cari ID user berdasarkan login id
@@ -272,10 +273,9 @@ func Login(db *sqlx.DB, loginid, password string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	if matchPassword(pwd, password) {
-		fmt.Println("COCOK")
-	} else {
-		fmt.Println("Salah")
+	err = matchPassword(pwd, password)
+	if err != nil {
+		return 0, err
 	}
 	return userid, err
 }
