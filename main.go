@@ -29,8 +29,17 @@ func main() {
 			fmt.Println("Menjalankan server...")
 			runServer()
 		case "setup":
-			fmt.Println("Menjalankan setup...")
-			setup.RunSetup()
+			fmt.Println("Menjalankan konfigurasi database...")
+			setup.RunSetup(false)
+		case "setup-reset":
+			fmt.Println("PERINGATAN: Ini akan menghapus semua data di database!")
+			var lanjut string
+			fmt.Print("Lanjutkan? [y/N]")
+			fmt.Scanf("%s", &lanjut)
+			if lanjut == "Y" || lanjut == "y" {
+				fmt.Println("Menjalankan konfigurasi dan mereset database...")
+				setup.RunSetup(true)
+			}
 		case "version":
 			fmt.Println("Authored by", misc.AUTHOR)
 			fmt.Println("Version ", misc.VERSION)

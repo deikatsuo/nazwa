@@ -13,12 +13,12 @@ import (
 
 // RunSetup menjalankan setup servers
 // Menjalankan setup
-func RunSetup() {
-	createTables()
+func RunSetup(reset bool) {
+	createTables(reset)
 }
 
 // Fungsi untuk inisialisasi tabel
-func createTables() {
+func createTables(reset bool) {
 	// Membuat koneksi database
 	fmt.Println("Mencoba membuat koneksi ke database...")
 	db, err := sqlx.Connect(misc.SetupDBType(), misc.SetupDBSource())
@@ -28,21 +28,38 @@ func createTables() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Membuat tabel...")
-	if misc.Migration("down") {
-		fmt.Println("Mereset tabel ('-')")
+	// jika full-reset
+	// maka hapus tabel (reset) pada database
+	if reset {
+		fmt.Println("Menghapus semua tabel...")
+		if misc.Migration("down") {
+			fmt.Println("Mereset tabel ('-')")
+		}
 	}
+
+	// Upgrade tabel, atau buat baru jika belum ada
 	if misc.Migration("up") {
 		fmt.Println("Membuat tabel ('-')")
 	}
+	fmt.Println()
+	fmt.Println("Setup tabel di database selesai")
+	fmt.Println()
 
-	// Minta user untuk melakukan pendaftaran admin baru
-	fmt.Println("Setup user admin...")
-	if err := setupUserAdmin(db); err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Setup selesai")
+	var buatAdmin string
+	fmt.Print("Buat user admin? [y/N]")
+	fmt.Scanf("%s", &buatAdmin)
+	if buatAdmin == "Y" || buatAdmin == "y" {
+		// Lakukan pendaftaran admin baru
+		fmt.Println("Setup user admin...")
+		if err := setupUserAdmin(db); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
+
+	fmt.Println()
+	fmt.Println("Setup selesai")
+
 }
 
 // Membuat user admin baru
