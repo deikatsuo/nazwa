@@ -38,21 +38,19 @@ type CreateUser struct {
 	email        string
 }
 
-// RoleAdmin memiliki akses penuh
-// sebagai admin
-const RoleAdmin int8 = 1
-
-// RoleSurveyor adalah penyurvey
-const RoleSurveyor int8 = 2
-
-// RoleCollector sebagai seorang penagih
-const RoleCollector int8 = 3
-
-// RoleSales bagian marketing atau pemasaran
-const RoleSales int8 = 4
-
-// RoleCustomer pelanggan
-const RoleCustomer int8 = 5
+const (
+	// RoleAdmin memiliki akses penuh
+	// sebagai admin
+	RoleAdmin int8 = 1
+	// RoleSurveyor adalah penyurvey
+	RoleSurveyor int8 = 2
+	// RoleCollector sebagai seorang penagih
+	RoleCollector int8 = 3
+	// RoleSales bagian marketing atau pemasaran
+	RoleSales int8 = 4
+	// RoleCustomer pelanggan
+	RoleCustomer int8 = 5
+)
 
 // NewUser ...
 // Membuat user baru
@@ -284,6 +282,7 @@ func Login(db *sqlx.DB, loginid, password string) (int, error) {
 	return userid, err
 }
 
+// DashboardUser struk untuk menyimpan data user login
 type DashboardUser struct {
 	BasicUser
 	Phone string `db:"phone"`
@@ -291,6 +290,7 @@ type DashboardUser struct {
 	Role  string `db:"role"`
 }
 
+// Fullname mengambil nama lengkap
 func (u DashboardUser) Fullname() string {
 	return u.Firstname + " " + u.Lastname
 }
