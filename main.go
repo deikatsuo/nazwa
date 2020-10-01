@@ -60,7 +60,7 @@ func runServer() {
 	}
 
 	server := gin.Default()
-	server.Use(sessions.Sessions("nazwasession", sessions.NewCookieStore([]byte("secret"))))
+	server.Use(sessions.Sessions("NAZWA_SESSION", sessions.NewCookieStore([]byte("secret"))))
 	server.Use(misc.NewDefaultConfig())
 
 	server.Static("/assets", "./statics")
