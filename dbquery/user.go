@@ -291,6 +291,10 @@ type DashboardUser struct {
 	Role  string `db:"role"`
 }
 
+func (u DashboardUser) Fullname() string {
+	return u.Firstname + " " + u.Lastname
+}
+
 // GetUser - mengambil data user berdasarkan ID
 func GetUser(db *sqlx.DB, userid int) (DashboardUser, error) {
 	var dashboard DashboardUser
