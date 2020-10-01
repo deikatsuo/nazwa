@@ -38,14 +38,15 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 		userid := session.Get("userid")
 		var user dbquery.DashboardUser
 
-		if userid.(int) > 0 {
-			if u, err := dbquery.GetUser(db, userid.(int)); err != nil {
-				fmt.Println(err)
-			} else {
-				user = u
+		if userid != nil {
+			if userid.(int) > 0 {
+				if u, err := dbquery.GetUser(db, userid.(int)); err != nil {
+					fmt.Println(err)
+				} else {
+					user = u
+				}
 			}
 		}
-		fmt.Println(string(user.Balance))
 
 		config := map[string]interface{}{
 			"userid": userid,
