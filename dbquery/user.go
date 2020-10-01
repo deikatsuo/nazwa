@@ -8,17 +8,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// User base struk
+// BasicUser base struk
+type BasicUser struct {
+	Firstname string  `db:"first_name"`
+	Lastname  string  `db:"last_name"`
+	Username  string  `db:"username"`
+	Avatar    string  `db:"avatar"`
+	Gender    string  `db:"gender"`
+	CreatedAt string  `db:"created_at"`
+	Balance   []uint8 `db:"balance"`
+}
+
+// User - lebih advanced
 type User struct {
-	ID        string
-	Firstname string `db:"first_name"`
-	Lastname  string `db:"last_name"`
-	Username  string `db:"username"`
-	Avatar    string `db:"avatar"`
-	Password  string `db:"password"`
-	Gender    string `db:"gender"`
-	CreatedAt string `db:"created_at"`
-	Balance   int    `db:"balance"`
+	BasicUser
+	Password string `db:"password"`
 }
 
 // CreateUser struk buat user baru
@@ -278,4 +282,40 @@ func Login(db *sqlx.DB, loginid, password string) (int, error) {
 		return 0, err
 	}
 	return userid, err
+}
+
+type DashboardUser struct {
+	BasicUser
+	Phone string `db:"phone"`
+	Email string `db:"email"`
+	Role  string `db:"role"`
+}
+
+// GetUser - mengambil data user berdasarkan ID
+func GetUser(db *sqlx.DB, userid int) (DashboardUser, error) {
+	var dashboard DashboardUser
+	query := `SELECT
+    u.first_name,
+    u.last_name,
+    u.username,
+    u.avatar,
+    u.gender,
+    u.created_at,
+    u.balance,
+    string_agg(DISTINCT p.phone, ',' ORDER BY p.phone) AS phone,
+    string_agg(DISTINCT e.email, ',' ORDER BY e.email) AS email,
+    r.name AS role
+	FROM "user" u
+	JOIN "phone" p ON p.user_id=u.id
+	JOIN "email" e ON e.user_id=u.id
+	JOIN "user_role" ur ON ur.user_id=u.id
+	JOIN "role" r ON r.id=ur.role_id
+	WHERE u.id=$1
+	GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name`
+	err := db.Get(&dashboard, query, userid)
+	if err != nil {
+		return DashboardUser{}, err
+	}
+
+	return dashboard, err
 }
