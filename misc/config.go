@@ -38,6 +38,8 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 		userid := session.Get("userid")
 		var user dbquery.DashboardUser
 
+		// Periksa apakah session nil
+		// guna menghindari error saat konversi nil ke int
 		if userid != nil {
 			if userid.(int) > 0 {
 				if u, err := dbquery.GetUser(db, userid.(int)); err != nil {
@@ -49,8 +51,7 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		config := map[string]interface{}{
-			"userid": userid,
-			"user":   user,
+			"user": user,
 
 			"l_admin_create_customer": "Buat pelanggan",
 		}
