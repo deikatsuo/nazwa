@@ -2,21 +2,21 @@ package misc
 
 import (
 	"fmt"
+	"nazwa/dbquery"
 	"os"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/imdario/mergo"
+	"github.com/jmoiron/sqlx"
 )
 
-// DefaultConfig ...
-// Struct untuk menyimpan konfigurasi bawaan
+// DefaultConfig - untuk menyimpan konfigurasi bawaan
 type DefaultConfig struct {
 	Site map[string]interface{}
 }
 
-// NewDefaultConfig ...
-// Atur konfigurasi bawaan
+// NewDefaultConfig - mengambil konfigurasi default dari .env
 func NewDefaultConfig() gin.HandlerFunc {
 	config := map[string]interface{}{
 		"site_url":   getEnv("SITE_URL", ""),
@@ -30,18 +30,26 @@ func NewDefaultConfig() gin.HandlerFunc {
 	}
 }
 
-// NewDashboardDefaultConfig ...
-// Ambil konfigurasi default untuk
-// Halaman dashboard
-func NewDashboardDefaultConfig() gin.HandlerFunc {
+// NewDashboardDefaultConfig - konfigurasi default halaman
+// dashboard
+func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		email := session.Get("email")
-		picture := session.Get("picture")
+		userid := session.Get("userid")
+		var user dbquery.DashboardUser
+
+		if userid.(int) > 0 {
+			if u, err := dbquery.GetUser(db, userid.(int)); err != nil {
+				fmt.Println(err)
+			} else {
+				user = u
+			}
+		}
+		fmt.Println(string(user.Balance))
 
 		config := map[string]interface{}{
-			"email":   email,
-			"picture": picture,
+			"userid": userid,
+			"user":   user,
 
 			"l_admin_create_customer": "Buat pelanggan",
 		}
@@ -80,14 +88,13 @@ func checkEnv(k string) bool {
 	return false
 }
 
-// SetupDBType ...
-// Mendapatkan tipe database
+// SetupDBType - mengambil value tipe database dari .env
 func SetupDBType() string {
 	return getEnv("DB_TYPE", "").(string)
 }
 
-// SetupDBSource ...
-// Mengambil konfigurasi db source
+// SetupDBSource - mengambil konfigurasi db dan mengubahnya menjadi
+// source string
 func SetupDBSource() string {
 	var source = ""
 
@@ -107,8 +114,7 @@ func SetupDBSource() string {
 	return source
 }
 
-// SetupMigrationURL ...
-// Mengambil URL migration
+// SetupMigrationURL - mengambil URL migration
 func SetupMigrationURL() string {
 	var db string
 	var user string
