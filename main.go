@@ -85,11 +85,10 @@ func runServer(db *sqlx.DB) {
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
 
-	// Middleware untuk mengambil pengaturan default untuk dashboard
-	server.Use(misc.NewDashboardDefaultConfig(db))
-
 	// Halaman Dashboard
 	dashboard := server.Group("/dashboard")
+	// Middleware untuk mengambil pengaturan default untuk dashboard
+	dashboard.Use(misc.NewDashboardDefaultConfig(db))
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/customers", router.PageDashboardCustomers)
 	dashboard.GET("/blank", router.PageDashboardBlank)

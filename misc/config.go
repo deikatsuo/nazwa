@@ -50,15 +50,15 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 			}
 		}
 
-		config := map[string]interface{}{
+		dashboard := map[string]interface{}{
 			"user": user,
 
 			"l_admin_create_customer": "Buat pelanggan",
 		}
 
 		siteDefault := c.MustGet("config").(DefaultConfig).Site
-		mergo.Map(&siteDefault, config, mergo.WithOverride)
-		c.Set("config", DefaultConfig{Site: siteDefault})
+		mergo.Map(&dashboard, siteDefault, mergo.WithOverride)
+		c.Set("dashboard", dashboard)
 		c.Next()
 	}
 }
