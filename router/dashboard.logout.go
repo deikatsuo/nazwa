@@ -7,9 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageLogout ...
-// Halaman logout akun
-func PageLogout(c *gin.Context) {
+// PageDashboardLogout menghapus session userid
+func PageDashboardLogout(c *gin.Context) {
 	// Ambil session
 	session := sessions.Default(c)
 	userid := session.Get("userid")
