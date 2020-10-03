@@ -213,7 +213,7 @@
                     submitData() {
                       //this.loading = true;
 
-                      fetch("/api/create-account", {
+                      fetch("/api/v1/local/create-account", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(this.formData),

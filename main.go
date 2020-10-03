@@ -78,7 +78,7 @@ func runServer(db *sqlx.DB) {
 	server.Use(misc.NewDefaultConfig())
 
 	// Periksa user role
-	server.Use(middleware.RoutePermission(e))
+	server.Use(middleware.RoutePermission(db, e))
 
 	// Daftarkan aset statik
 	// misal css, js, dan beragam file gambar
@@ -109,8 +109,13 @@ func runServer(db *sqlx.DB) {
 
 	// API
 	api := server.Group("/api")
-	api.POST("/login", router.APIUserLogin(db))
-	api.POST("/create-account", router.APIUserCreate)
+
+	// V1
+	v1 := api.Group("/v1")
+
+	v1local := v1.Group("/local")
+	v1local.POST("/login", router.APIUserLogin(db))
+	v1local.POST("/create-account", router.APIUserCreate)
 
 	// Jalankan server
 	server.Run()
