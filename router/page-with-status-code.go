@@ -27,7 +27,7 @@ func Page403(c *gin.Context) {
 		"title":         "Akses dilarang",
 		"type":          403,
 		"picture":       "403.png",
-		"l_reason":      "Oops! halaman rahasia.",
+		"l_reason":      "Oops! Akses dilarang.",
 		"l_description": "Mohon maaf, anda tidak memiliki ijin untuk mengakses halaman ini",
 	}
 	df := c.MustGet("config").(misc.DefaultConfig).Site
