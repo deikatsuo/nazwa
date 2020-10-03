@@ -8,8 +8,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// BasicUser base struk
-type BasicUser struct {
+// User base struk
+type User struct {
 	Firstname string  `db:"first_name"`
 	Lastname  string  `db:"last_name"`
 	Username  string  `db:"username"`
@@ -17,12 +17,10 @@ type BasicUser struct {
 	Gender    string  `db:"gender"`
 	CreatedAt string  `db:"created_at"`
 	Balance   []uint8 `db:"balance"`
-}
-
-// User - lebih advanced
-type User struct {
-	BasicUser
-	Password string `db:"password"`
+	Password  string  `db:"password"`
+	Phone     string  `db:"phone"`
+	Email     string  `db:"email"`
+	Role      string  `db:"role"`
 }
 
 // CreateUser struk buat user baru
@@ -282,22 +280,14 @@ func Login(db *sqlx.DB, loginid, password string) (int, error) {
 	return userid, err
 }
 
-// DashboardUser struk untuk menyimpan data user login
-type DashboardUser struct {
-	BasicUser
-	Phone string `db:"phone"`
-	Email string `db:"email"`
-	Role  string `db:"role"`
-}
-
 // Fullname mengambil nama lengkap
-func (u DashboardUser) Fullname() string {
+func (u User) Fullname() string {
 	return u.Firstname + " " + u.Lastname
 }
 
 // GetUser - mengambil data user berdasarkan ID
-func GetUser(db *sqlx.DB, userid int) (DashboardUser, error) {
-	var dashboard DashboardUser
+func GetUser(db *sqlx.DB, userid int) (User, error) {
+	var user User
 	query := `SELECT
     u.first_name,
     u.last_name,
@@ -316,10 +306,10 @@ func GetUser(db *sqlx.DB, userid int) (DashboardUser, error) {
 	JOIN "role" r ON r.id=ur.role_id
 	WHERE u.id=$1
 	GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name`
-	err := db.Get(&dashboard, query, userid)
+	err := db.Get(&user, query, userid)
 	if err != nil {
-		return DashboardUser{}, err
+		return User{}, err
 	}
 
-	return dashboard, err
+	return user, err
 }

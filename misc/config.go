@@ -36,7 +36,7 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		userid := session.Get("userid")
-		var user dbquery.DashboardUser
+		var user dbquery.User
 
 		// Periksa apakah session nil
 		// guna menghindari error saat konversi nil ke int
