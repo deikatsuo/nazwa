@@ -114,8 +114,8 @@ func runServer(db *sqlx.DB) {
 	v1 := apis.Group("/v1")
 
 	v1local := v1.Group("/local")
-	v1local.POST("/login", api.APIUserLogin(db))
-	v1local.POST("/create-account", api.APIUserCreate)
+	v1local.POST("/login", api.UserLogin(db))
+	v1local.POST("/create-account", api.UserCreate(db))
 
 	// Jalankan server
 	server.Run()

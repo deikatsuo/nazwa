@@ -9,10 +9,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/assets/css/tailwind.optimized.css" />
-    <script
-      src="/assets/js/alpine.min.js"
-      defer
-    ></script>
+    <script src="/assets/js/alpine.min.js" defer></script>
     <script src="/assets/js/init-alpine.js"></script>
   </head>
   <body>
@@ -99,6 +96,42 @@
                   </span>
                 </div>
 
+                <div class="mt-4 text-sm">
+                  <span class="text-gray-700 dark:text-gray-400">
+                    {{ .l_c_form_gender }}
+                  </span>
+                  <div class="mt-2">
+                    <label
+                      class="inline-flex items-center text-gray-600 dark:text-gray-400"
+                    >
+                      <input
+                        type="radio"
+                        class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                        name="gender"
+                        @click="formData.gender = 'm'"
+                      />
+                      <span class="ml-2">{{ .l_c_form_gender_m }}</span>
+                    </label>
+                    <label
+                      class="inline-flex items-center ml-6 text-gray-600 dark:text-gray-400"
+                    >
+                      <input
+                        type="radio"
+                        class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                        name="gender"
+                        @click="formData.gender = 'f'"
+                      />
+                      <span class="ml-2">{{ .l_c_form_gender_f }}</span>
+                    </label>
+                  </div>
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmGender"
+                    :class="{'invisible': errGender == false}"
+                  >
+                  </span>
+                </div>
+
                 <label class="block mt-4 text-sm">
                   <span class="text-gray-700 dark:text-gray-400"
                     >{{ .l_c_form_password }}</span
@@ -165,7 +198,8 @@
                   type="submit"
                   class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                   @click="submitData()"
-                  :disabled="loading"
+                  :disabled="loadingText == 'Loading. . . .'"
+                  x-text="loadingText"
                 >
                   {{ .l_c_form_create }}
                 </button>
@@ -191,16 +225,19 @@
                       phone: "",
                       firstname: "",
                       lastname: "",
+                      gender: "",
                       password: "",
                       repassword: "",
                       policy: false,
                     },
-                    loading: false,
+                    loadingText: "{{ .l_c_form_create }}",
                     message: "",
                     errPhone: false,
                     errmPhone: "",
                     errFirstname: false,
                     errmFirstname: "",
+                    errGender: false,
+                    errmGender: "",
                     errPassword: false,
                     errmPassword: "",
                     errRepassword: false,
@@ -211,7 +248,7 @@
                     notifStatus: "",
 
                     submitData() {
-                      //this.loading = true;
+                      this.loadingText = "Loading . . .";
 
                       fetch("/api/v1/local/create-account", {
                         method: "POST",
@@ -220,37 +257,45 @@
                       })
                         .then((res) => res.json())
                         .then((data) => {
-                          if (data.errm_phone) {
+                          this.loadingText = "{{ .l_c_form_create }}";
+                          if (data.phone) {
                             this.errPhone = true;
-                            this.errmPhone = data.errm_phone;
+                            this.errmPhone = data.phone;
                           } else {
                             this.errPhone = false;
                             this.errmPhone = "";
                           }
-                          if (data.errm_firstname) {
+                          if (data.firstname) {
                             this.errFirstname = true;
-                            this.errmFirstname = data.errm_firstname;
+                            this.errmFirstname = data.firstname;
                           } else {
                             this.errFirstname = false;
                             this.errmFirstname = "";
                           }
-                          if (data.errm_password) {
+                          if (data.gender) {
+                            this.errGender = true;
+                            this.errmGender = data.gender;
+                          } else {
+                            this.errGender = false;
+                            this.errmGender = "";
+                          }
+                          if (data.password) {
                             this.errPassword = true;
-                            this.errmPassword = data.errm_password;
+                            this.errmPassword = data.password;
                           } else {
                             this.errPassword = false;
                             this.errmPassword = "";
                           }
-                          if (data.errm_repassword) {
+                          if (data.repassword) {
                             this.errRepassword = true;
-                            this.errmRepassword = data.errm_repassword;
+                            this.errmRepassword = data.repassword;
                           } else {
                             this.errRepassword = false;
                             this.errmRepassword = "";
                           }
-                          if (data.errm_policy) {
+                          if (data.policy) {
                             this.errPolicy = true;
-                            this.errmPolicy = data.errm_policy;
+                            this.errmPolicy = data.policy;
                           } else {
                             this.errPolicy = false;
                             this.errmPolicy = "";

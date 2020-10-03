@@ -59,6 +59,15 @@ func SimpleValErrMap(verr interface{}) map[string]interface{} {
 		for mi, mv := range ValidationErrorsMask {
 			if v.Tag() == mi {
 				errmap[strings.ToLower(v.StructField())] = mv
+				if v.Tag() == "min" {
+					errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, v.Param())
+				}
+				if v.Tag() == "max" {
+					errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, v.Param())
+				}
+				if v.Tag() == "oneof" {
+					errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, strings.Replace(v.Param(), " ", "' atau '", 1))
+				}
 			}
 		}
 	}

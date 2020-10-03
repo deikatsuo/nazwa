@@ -2,6 +2,7 @@ package dbquery
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -149,6 +150,7 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 
 	// Mulai transaksi
 	tx := db.MustBegin()
+	var tempReturnID int
 	userInsertQuery := fmt.Sprintf(`INSERT INTO "user" %s`, u.generateInsertQuery())
 	rows, err := tx.NamedQuery(userInsertQuery, u)
 	if err != nil {
@@ -156,25 +158,26 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 		return err
 	}
 	// Ambil id dari transaksi terakhir
-	if u.returnID {
-		if rows.Next() {
-			rows.Scan(u.returnIDTO)
-		}
-		err = rows.Close()
-		if err != nil {
-			return err
-		}
+	if rows.Next() {
+		rows.Scan(&tempReturnID)
+	}
+	err = rows.Close()
+	if err != nil {
+		return err
+	}
+	if u.returnID && tempReturnID != 0 {
+		*u.returnIDTO = tempReturnID
 	}
 
 	// Set role user
-	_, err = tx.Exec(`INSERT INTO "user_role" (role_id, user_id) VALUES ($1, $2)`, u.role, *u.returnIDTO)
+	_, err = tx.Exec(`INSERT INTO "user_role" (role_id, user_id) VALUES ($1, $2)`, u.role, tempReturnID)
 	if err != nil {
 		return err
 	}
 
 	// Simpan nomor hp user jika tersedia
 	if len(u.phone) >= 6 && len(u.phone) <= 15 {
-		_, err = tx.Exec(`INSERT INTO "phone" (user_id, phone) VALUES ($1, $2)`, *u.returnIDTO, u.phone)
+		_, err = tx.Exec(`INSERT INTO "phone" (user_id, phone) VALUES ($1, $2)`, tempReturnID, u.phone)
 		if err != nil {
 			return err
 		}
@@ -182,7 +185,7 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 
 	// Simpan email user jika ada
 	if u.email != "" {
-		_, err = tx.Exec(`INSERT INTO "email" (user_id, email) VALUES ($1, $2)`, *u.returnIDTO, u.email)
+		_, err = tx.Exec(`INSERT INTO "email" (user_id, email) VALUES ($1, $2)`, tempReturnID, u.email)
 		if err != nil {
 			return err
 		}
@@ -202,12 +205,8 @@ func (u CreateUser) generateInsertQuery() string {
 		kk = append(kk, k)
 		kv = append(kv, v)
 	}
-	var result string
-	if u.returnID {
-		result = fmt.Sprintf("(%s) VALUES (%s) RETURNING id", strings.Join(kk, ","), strings.Join(kv, ","))
-	} else {
-		result = fmt.Sprintf("(%s) VALUES (%s)", strings.Join(kk, ","), strings.Join(kv, ","))
-	}
+	result := fmt.Sprintf("(%s) VALUES (%s) RETURNING id", strings.Join(kk, ","), strings.Join(kv, ","))
+
 	return result
 }
 
@@ -327,4 +326,19 @@ func GetRole(db *sqlx.DB, userid int) (string, error) {
 	}
 
 	return role, err
+}
+
+// PhoneExist check nomor telepon
+func PhoneExist(db *sqlx.DB, phone string) bool {
+	var p string
+	query := `SELECT id FROM "phone" WHERE phone=$1`
+	err := db.Get(&p, query, phone)
+	if err == nil {
+		if p != "" {
+			return true
+		}
+	} else {
+		log.Print(err)
+	}
+	return false
 }

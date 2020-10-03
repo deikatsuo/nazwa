@@ -18,9 +18,8 @@ type Login struct {
 	Password string `json:"password" binding:"required"`
 }
 
-// APIUserLogin gerbang user login
-// API untuk login user
-func APIUserLogin(db *sqlx.DB) gin.HandlerFunc {
+// UserLogin gerbang user login
+func UserLogin(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		// Mulai session
 		session := sessions.Default(c)
@@ -49,7 +48,6 @@ func APIUserLogin(db *sqlx.DB) gin.HandlerFunc {
 		// Check apakah user ditemukan
 		// Atau tidak
 		if userExist == false {
-			httpStatus = http.StatusUnauthorized
 			statusMessage = "User tidak ditemukan"
 			status = "fail"
 		} else {
