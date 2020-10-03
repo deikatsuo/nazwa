@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
+	"nazwa/middleware"
 	"nazwa/misc"
 	"nazwa/router"
 	"nazwa/setup"
 	"os"
 
+	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -59,14 +61,24 @@ func main() {
 }
 
 func runServer(db *sqlx.DB) {
+	// Ambil konfigurasi role
+	e, err := casbin.NewEnforcer("auth_model.conf", "auth_policy.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Buat server
 	server := gin.Default()
+
 	// Daftarkan fungsi ke template
 	server.SetFuncMap(misc.RegTmplFunc())
 
 	// Buat session
 	server.Use(sessions.Sessions("NAZWA_SESSION", sessions.NewCookieStore([]byte("secret"))))
 	server.Use(misc.NewDefaultConfig())
+
+	// Periksa user role
+	server.Use(middleware.RoutePermission(e))
 
 	// Daftarkan aset statik
 	// misal css, js, dan beragam file gambar
@@ -84,6 +96,8 @@ func runServer(db *sqlx.DB) {
 	server.GET("/logout", router.PageLogout)
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
+	// Halaman tidak ditemukan
+	server.NoRoute(router.Page404)
 
 	// Halaman Dashboard
 	dashboard := server.Group("/dashboard")
@@ -97,9 +111,6 @@ func runServer(db *sqlx.DB) {
 	api := server.Group("/api")
 	api.POST("/login", router.APIUserLogin(db))
 	api.POST("/create-account", router.APIUserCreate)
-
-	// Halaman tidak ditemukan
-	server.NoRoute(router.PageNoRoute)
 
 	// Jalankan server
 	server.Run()
