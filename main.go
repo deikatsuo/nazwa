@@ -6,6 +6,7 @@ import (
 	"nazwa/middleware"
 	"nazwa/misc"
 	"nazwa/router"
+	"nazwa/router/api"
 	"nazwa/setup"
 	"os"
 
@@ -107,14 +108,14 @@ func runServer(db *sqlx.DB) {
 	dashboard.GET("/logout", router.PageDashboardLogout)
 
 	// API
-	api := server.Group("/api")
+	apis := server.Group("/api")
 
 	// V1
-	v1 := api.Group("/v1")
+	v1 := apis.Group("/v1")
 
 	v1local := v1.Group("/local")
-	v1local.POST("/login", router.APIUserLogin(db))
-	v1local.POST("/create-account", router.APIUserCreate)
+	v1local.POST("/login", api.APIUserLogin(db))
+	v1local.POST("/create-account", api.APIUserCreate)
 
 	// Jalankan server
 	server.Run()
