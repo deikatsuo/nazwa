@@ -280,7 +280,7 @@ func Login(db *sqlx.DB, loginid, password string) (int, error) {
 	return userid, err
 }
 
-// Fullname mengambil nama lengkap
+// Fullname menampilkan nama lengkap
 func (u User) Fullname() string {
 	return u.Firstname + " " + u.Lastname
 }
@@ -312,4 +312,20 @@ func GetUser(db *sqlx.DB, userid int) (User, error) {
 	}
 
 	return user, err
+}
+
+// GetRole mengambil role berdasarkan id
+func GetRole(db *sqlx.DB, userid int) (string, error) {
+	var role string
+	query := `SELECT
+		r.name
+		FROM "role" r
+		JOIN user_role ur ON ur.role_id=r.id
+		WHERE ur.user_id=$1`
+	err := db.Get(&role, query, userid)
+	if err != nil {
+		return "", err
+	}
+
+	return role, err
 }

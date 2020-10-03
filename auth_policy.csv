@@ -3,6 +3,7 @@ p, perm::basic, /assets/*, GET
 p, perm::basic, /favicon.ico, GET
 p, perm::basic, /create-account, GET
 p, perm::basic, /forgot-password, GET
+p, perm::basic, /api/*, *
 
 p, role::admin, /*, *
 p, role::guest, /login, *
@@ -10,3 +11,4 @@ p, role::login, /logout/*, *
 p, role::login, /dashboard/*, *
 
 g, role::guest, perm::basic
+g, role::guest, role::login
