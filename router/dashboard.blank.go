@@ -14,6 +14,6 @@ func PageDashboardBlank(c *gin.Context) {
 		"page":       "blank",
 	}
 
-	df := c.MustGet("config").(misc.DefaultConfig).Site
+	df := c.MustGet("dashboard").(map[string]interface{})
 	c.HTML(200, "dashboard.blank.html", misc.Mete(df, gh))
 }

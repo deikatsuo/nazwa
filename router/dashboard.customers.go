@@ -14,6 +14,6 @@ func PageDashboardCustomers(c *gin.Context) {
 		"page":       "customers",
 	}
 
-	df := c.MustGet("config").(misc.DefaultConfig).Site
+	df := c.MustGet("dashboard").(map[string]interface{})
 	c.HTML(200, "dashboard.customers.html", misc.Mete(df, gh))
 }
