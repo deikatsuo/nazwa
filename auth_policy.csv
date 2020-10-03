@@ -1,18 +1,12 @@
-p, perm::basic, /, *
-p, perm::basic, /assets/*, GET
-p, perm::basic, /favicon.ico, GET
-p, perm::basic, /create-account, GET
-p, perm::basic, /forgot-password, GET
-p, perm::basic, /api/*, *
+p, role::customer, /dashboard/, *
+p, role::customer, /dashboard/logout, *
+p, role::customer, /dashboard/account, *
 
-p, perm::guest, /login, GET
-p, perm::guest, /forgot-password, GET
+p, role::sales, /dashboard/customers, *
+g, role::sales, role::customer
 
-p, perm::login, /logout, *
-p, perm::login, /dashboard/*, *
+g, role::surveyor, role::sales
 
-g, role::guest, perm::basic
-g, role::guest, perm::guest
+g, role::collector, role::surveyor
 
-g, role::admin, perm::basic
-g, role::admin, perm::login
+g, role::admin, role::collector
