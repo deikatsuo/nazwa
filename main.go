@@ -63,6 +63,7 @@ func main() {
 func runServer(db *sqlx.DB) {
 	// Ambil konfigurasi role
 	e, err := casbin.NewEnforcer("auth_model.conf", "auth_policy.csv")
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -77,9 +78,6 @@ func runServer(db *sqlx.DB) {
 	server.Use(sessions.Sessions("NAZWA_SESSION", sessions.NewCookieStore([]byte("secret"))))
 	server.Use(misc.NewDefaultConfig())
 
-	// Periksa user role
-	server.Use(middleware.RoutePermission(db, e))
-
 	// Daftarkan aset statik
 	// misal css, js, dan beragam file gambar
 	server.Static("/assets", "./statics")
@@ -93,7 +91,6 @@ func runServer(db *sqlx.DB) {
 	// Halaman muka
 	server.GET("/", router.PageHome)
 	server.GET("/login", router.PageLogin)
-	server.GET("/logout", router.PageLogout)
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
 	// Halaman tidak ditemukan
@@ -101,11 +98,13 @@ func runServer(db *sqlx.DB) {
 
 	// Halaman Dashboard
 	dashboard := server.Group("/dashboard")
+	dashboard.Use(middleware.RoutePermission(db, e))
 	// Middleware untuk mengambil pengaturan default untuk dashboard
 	dashboard.Use(misc.NewDashboardDefaultConfig(db))
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/customers", router.PageDashboardCustomers)
 	dashboard.GET("/blank", router.PageDashboardBlank)
+	dashboard.GET("/logout", router.PageDashboardLogout)
 
 	// API
 	api := server.Group("/api")
