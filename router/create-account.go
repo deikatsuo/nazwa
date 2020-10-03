@@ -3,12 +3,21 @@ package router
 import (
 	"nazwa/misc"
 
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 // PageCreateAccount ...
 // Halaman buat akun
 func PageCreateAccount(c *gin.Context) {
+	// Larang akses untuk user login
+	session := sessions.Default(c)
+	userid := session.Get("userid")
+	if userid != nil {
+		Page403(c)
+		return
+	}
+
 	gh := gin.H{
 		"site_title": "Membuat akun baru",
 
