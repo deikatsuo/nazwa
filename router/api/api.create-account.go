@@ -18,7 +18,7 @@ type FormUser struct {
 	Lastname   string `json:"lastname"`
 	Gender     string `json:"gender" binding:"required,oneof=m f"`
 	Password   string `json:"password" binding:"alphanumunicode,min=8,max=25"`
-	Repassword string `json:"repassword" binding:"alphanumunicode,min=8,max=25"`
+	Repassword string `json:"repassword" binding:"eqfield=Password"`
 	Policy     bool   `json:"policy" binding:"required"`
 }
 

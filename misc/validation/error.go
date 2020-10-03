@@ -59,10 +59,7 @@ func SimpleValErrMap(verr interface{}) map[string]interface{} {
 		for mi, mv := range ValidationErrorsMask {
 			if v.Tag() == mi {
 				errmap[strings.ToLower(v.StructField())] = mv
-				if v.Tag() == "min" {
-					errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, v.Param())
-				}
-				if v.Tag() == "max" {
+				if v.Tag() == "min" || v.Tag() == "max" {
 					errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, v.Param())
 				}
 				if v.Tag() == "oneof" {
@@ -81,7 +78,9 @@ var ValidationErrorsMask = map[string]string{
 	"alphanumunicode": "hanya boleh menggunakan huruf alphabet, nomor dan simbol",
 	"required":        "tidak boleh kosong",
 	"min":             "tidak boleh kurang dari %s",
+	"max":             "tidak boleh lebih dari %s",
 	"oneof":           "hanya boleh di isi oleh '%s'",
 	"numeric":         "hanya boleh di isi dengan nomor",
 	"email":           "format email salah",
+	"eqfield":         "Harus sama",
 }
