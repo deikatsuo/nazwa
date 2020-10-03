@@ -50,8 +50,7 @@ const (
 	RoleCustomer int8 = 5
 )
 
-// NewUser ...
-// Membuat user baru
+// NewUser membuat user baru
 // mengembalikan struct User {}
 func NewUser() *CreateUser {
 	return &CreateUser{

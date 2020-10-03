@@ -53,15 +53,14 @@ func APIUserLogin(db *sqlx.DB) gin.HandlerFunc {
 			statusMessage = "User tidak ditemukan"
 			status = "fail"
 		} else {
-			// Simpan user ke session
+			// Simpan userid ke session
 			session.Set("userid", userid)
 			if err := session.Save(); err != nil {
 				httpStatus = http.StatusInternalServerError
 				statusMessage = "Gagal membuat session"
 				status = "error"
 			} else {
-				// User ditemukan
-				// Dan berhasil diverifikasi
+				// userid berhasil disimpan ke session
 				httpStatus = http.StatusOK
 				statusMessage = "Berhasil masuk"
 				status = "success"
