@@ -2,39 +2,78 @@ package setup
 
 import (
 	"fmt"
+	"log"
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"
 	"os"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/gocarina/gocsv"
 	"github.com/jmoiron/sqlx"
 )
 
 // RunSetup menjalankan setup servers
 // Menjalankan setup
-func RunSetup(db *sqlx.DB, reset bool) {
-	// jika full-reset
+func RunSetup(db *sqlx.DB) {
+	var reset bool
+
+	// Tanya user apakah ingin mereset database
+	var doreset string
+	fmt.Println()
+	fmt.Println("Apakah anda ingin melakukan reset DATABASE? [y/N]")
+	fmt.Scanf("%s", &doreset)
+	if doreset == "y" || doreset == "Y" {
+		reset = true
+	}
+
+	// jika ya
 	// maka hapus tabel (reset) pada database
 	if reset {
-		fmt.Println("Menghapus semua tabel...")
-		if misc.Migration("down") {
-			fmt.Println("Mereset tabel ('-')")
+		fmt.Println("PERINGATAN: Ini akan menghapus semua data di database!")
+		var lanjut string
+		fmt.Println("Lanjutkan? [y/N]")
+		fmt.Scanf("%s", &lanjut)
+		if lanjut == "y" || lanjut == "Y" {
+			fmt.Println("Sedang mencoba menghapus semua tabel...")
+			if misc.Migration("down") {
+				fmt.Println("Tabel berhasil dihapus ('-')")
+			}
 		}
 	}
 
 	// Upgrade tabel, atau buat baru jika belum ada
-	if misc.Migration("up") {
-		fmt.Println("Membuat tabel ('-')")
+	if reset {
+		fmt.Println("Mencoba kembali memulihkan tabel yang telah dihapus")
+	} else {
+		fmt.Println("Sedang memutakhirkan tabel")
 	}
+	if misc.Migration("up") {
+		fmt.Println("Tabel berhasil dibuat ('-')")
+	}
+
 	fmt.Println()
 	fmt.Println("Setup tabel di database selesai")
 	fmt.Println()
 
+	// Tanya user apakah ingin melakukan
+	// konfigurasi daerah
+	var setdaerah string
+	fmt.Println("Apakah anda ingin melakukan setup daerah? [y/N]")
+	fmt.Scanf("%s", &setdaerah)
+	if setdaerah == "y" || setdaerah == "Y" {
+		if err := setupDaerah(db); err != nil {
+			fmt.Println("Terjadi kesalahan saat konfigurasi daerah")
+			log.Fatal(err)
+		}
+		fmt.Println()
+		fmt.Println("Konfigurasi daerah selesai!")
+	}
+
 	var buatAdmin string
 	fmt.Print("Buat user admin? [y/N]")
 	fmt.Scanf("%s", &buatAdmin)
-	if buatAdmin == "Y" || buatAdmin == "y" {
+	if buatAdmin == "y" || buatAdmin == "Y" {
 		// Lakukan pendaftaran admin baru
 		fmt.Println("Setup user admin...")
 		if err := setupUserAdmin(db); err != nil {
@@ -118,4 +157,51 @@ type createAdminInput struct {
 	Gender    string `validate:"required,oneof=m f"`
 	Phone     string `validate:"numeric,min=6,max=15"`
 	Email     string `validate:"email"`
+}
+
+// Daerah - struk untuk menyimpan data daerah
+type Daerah struct {
+	ID        string  `csv:"Code" db:"id"`
+	Parent    int     `csv:"Parent" db:"parent"`
+	Name      string  `csv:"Name" db:"name"`
+	Latitude  float32 `csv:"-"`
+	Longitude float32 `csv:"-"`
+	Postal    string  `csv:"-"`
+}
+
+func setupDaerah(db *sqlx.DB) error {
+	tx := db.MustBegin()
+	fmt.Println("Membuat data provinsi")
+	if provinces, err := openData("provinces.csv"); err != nil {
+		return err
+	} else {
+		query := `INSERT INTO "province" (id, parent, name) VALUES (:id, :parent, :name)`
+		if _, err := tx.NamedExec(query, provinces); err != nil {
+			log.Print("ERRSETUP-20")
+			return err
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		log.Print("ERRSETUP-21")
+		return err
+	}
+	return nil
+}
+
+func openData(d string) ([]Daerah, error) {
+	file, err := os.Open(fmt.Sprintf("./setup/%s", d))
+	//file, err := os.OpenFile("./setup/villages.csv", os.O_RDWR|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		return []Daerah{}, err
+	}
+	defer file.Close()
+
+	data := []Daerah{}
+
+	if err := gocsv.UnmarshalFile(file, &data); err != nil {
+		log.Print("ERRSETUP-22")
+		return []Daerah{}, err
+	}
+
+	return data, nil
 }
