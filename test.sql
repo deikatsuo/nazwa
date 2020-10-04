@@ -1,9 +1,9 @@
-SELECT u.first_name, u.last_name, p.phone, e.email, r.name AS role_name
+SELECT u.id, u.first_name, u.last_name, p.phone, e.email, r.name AS role_name
 FROM "user" u
-JOIN "phone" p ON u.id = p.user_id
-JOIN "email" e ON u.id = e.user_id
-JOIN "user_role" ur ON u.id = ur.user_id
-JOIN "role" r ON ur.role_id = r.id;
+LEFT JOIN "phone" p ON u.id = p.user_id
+LEFT JOIN "email" e ON u.id = e.user_id
+LEFT JOIN "user_role" ur ON ur.user_id = u.id
+LEFT JOIN "role" r ON ur.role_id = r.id;
 
 SELECT id
 FROM "user"
@@ -29,9 +29,8 @@ SELECT
     string_agg(DISTINCT e.email, ',' ORDER BY e.email) AS email,
     r.name AS role
 FROM "user" u
-JOIN "phone" p ON p.user_id=u.id
-JOIN "email" e ON e.user_id=u.id
-JOIN "user_role" ur ON ur.user_id=u.id
-JOIN "role" r ON r.id=ur.role_id
-WHERE u.id=1
+LEFT JOIN "phone" p ON p.user_id=u.id
+LEFT JOIN "email" e ON e.user_id=u.id
+LEFT JOIN "user_role" ur ON ur.user_id=u.id
+LEFT JOIN "role" r ON r.id=ur.role_id
 GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name
