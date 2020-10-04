@@ -5,6 +5,9 @@
 */
 
 -- DROP tabel
+DROP TABLE IF EXISTS "village";
+DROP TABLE IF EXISTS "district";
+DROP TABLE IF EXISTS "city";
 DROP TABLE IF EXISTS "province";
 DROP TABLE IF EXISTS "user_role";
 DROP TABLE IF EXISTS "role";

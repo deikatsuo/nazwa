@@ -171,20 +171,101 @@ type Daerah struct {
 
 func setupDaerah(db *sqlx.DB) error {
 	tx := db.MustBegin()
-	fmt.Println("Membuat data provinsi")
-	if provinces, err := openData("provinces.csv"); err != nil {
+	var err error
+	var query string
+	var provinces []Daerah
+	var city []Daerah
+	var district []Daerah
+	var village []Daerah
+
+	fmt.Println()
+	// PROVINSI
+	fmt.Println(">>Membuat data provinsi")
+	// Load data provinsi dari file csv
+	provinces, err = openData("provinces.csv")
+	if err != nil {
+		log.Print("ERRSETUP-19")
 		return err
-	} else {
-		query := `INSERT INTO "province" (id, parent, name) VALUES (:id, :parent, :name)`
-		if _, err := tx.NamedExec(query, provinces); err != nil {
-			log.Print("ERRSETUP-20")
-			return err
+	}
+	// Masukan data provinsi ke database
+	query = `INSERT INTO "province" (id, country_id, name) VALUES (:id, :parent, :name)`
+	if _, err := tx.NamedExec(query, provinces); err != nil {
+		log.Print("ERRSETUP-20")
+		return err
+	}
+
+	// KOTA/KABUPATEN
+	fmt.Println(">>Membuat data kota/kabupaten")
+	// Load data kota/kabupaten dari csv
+	city, err = openData("cities.csv")
+	if err != nil {
+		log.Println("ERRSETUP-18")
+		return err
+	}
+	// Masukan data kota/kabupaten ke database
+	query = `INSERT INTO "city" (id, province_id, name) VALUES (:id, :parent, :name)`
+	if _, err := tx.NamedExec(query, city); err != nil {
+		log.Print("ERRSETUP-17")
+		return err
+	}
+
+	// DISTRIK/KECAMATAN
+	fmt.Println(">>Membuat data distrik/kecamatan")
+	// Load data distrik/kecamatan dari csv
+	district, err = openData("sub-districts.csv")
+	if err != nil {
+		log.Println("ERRSETUP-16")
+		return err
+	}
+	// Masukan data distrik/kecamatan ke database
+	query = `INSERT INTO "district" (id, city_id, name) VALUES (:id, :parent, :name)`
+	if _, err := tx.NamedExec(query, district); err != nil {
+		log.Print("ERRSETUP-15")
+		return err
+	}
+
+	// KELURAHAN/DESA
+	fmt.Println(">>Membuat data kelurahan/desa")
+	// Load data kelurahan/desa dari csv
+	village, err = openData("villages.csv")
+	if err != nil {
+		log.Println("ERRSETUP-14")
+		return err
+	}
+	split := 20000
+	start := 0
+	vilen := len(village)
+	query = `INSERT INTO "village" (id, district_id, name) VALUES (:id, :parent, :name)`
+	for {
+		if (start + split) < vilen {
+			if _, err := tx.NamedExec(query, village[start:start+split]); err != nil {
+				log.Print("ERRSETUP-13")
+				return err
+			}
+			start = start + split
+		} else {
+			if _, err := tx.NamedExec(query, village[start:]); err != nil {
+				log.Print("ERRSETUP-13")
+				return err
+			}
+			break
 		}
 	}
+	/*
+		// Masukan data kelurahan/desa ke database
+		query = `INSERT INTO "village" (id, district_id, name) VALUES (:id, :parent, :name)`
+		if _, err := tx.NamedExec(query, village); err != nil {
+			log.Print("ERRSETUP-13")
+			return err
+		}
+	*/
+
+	// Comit
 	if err := tx.Commit(); err != nil {
 		log.Print("ERRSETUP-21")
 		return err
 	}
+	fmt.Println("Selesai membuat data daerah")
 	return nil
 }
 
