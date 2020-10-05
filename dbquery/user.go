@@ -3,6 +3,7 @@ package dbquery
 import (
 	"fmt"
 	"log"
+	"nazwa/wrapper"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -71,8 +72,12 @@ func (u *CreateUser) SetFirstName(p string) *CreateUser {
 // SetLastName ...
 // Set nama belakang
 func (u *CreateUser) SetLastName(p string) *CreateUser {
-	u.Lastname = p
-	u.into["last_name"] = ":last_name"
+	// Nama belakang adalah opsional, jadi gak divalidasi
+	// maka perlu di cek sebelum di input ke database
+	if len(p) > 0 {
+		u.Lastname = p
+		u.into["last_name"] = ":last_name"
+	}
 	return u
 }
 
@@ -307,6 +312,35 @@ func GetUserByID(db *sqlx.DB, userid int) (User, error) {
 	err := db.Get(&user, query, userid)
 	if err != nil {
 		return User{}, err
+	}
+
+	return user, err
+}
+
+// GetNullableUserByID - mengambil data user berdasarkan ID
+func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) {
+	var user wrapper.NullableUser
+	query := `SELECT
+    u.first_name,
+    u.last_name,
+    u.username,
+    u.avatar,
+    u.gender,
+    u.created_at,
+    u.balance,
+    string_agg(DISTINCT p.phone, ',' ORDER BY p.phone) AS phone,
+    string_agg(DISTINCT e.email, ',' ORDER BY e.email) AS email,
+    r.name AS role
+	FROM "user" u
+	LEFT JOIN "phone" p ON p.user_id=u.id
+	LEFT JOIN "email" e ON e.user_id=u.id
+	LEFT JOIN "user_role" ur ON ur.user_id=u.id
+	LEFT JOIN "role" r ON r.id=ur.role_id
+	WHERE u.id=$1
+	GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name`
+	err := db.Get(&user, query, userid)
+	if err != nil {
+		return wrapper.NullableUser{}, err
 	}
 
 	return user, err
