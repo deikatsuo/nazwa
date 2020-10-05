@@ -20,6 +20,7 @@ func Title(s string) string {
 }
 
 // MayNull memeriksa jika data dari database berupa null
+// dan merubahnya ke string
 func MayNull(s interface{}) string {
 	var val string
 	switch v := s.(type) {
