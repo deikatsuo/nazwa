@@ -232,6 +232,8 @@ func setupDaerah(db *sqlx.DB) error {
 		log.Println("ERRSETUP-14")
 		return err
 	}
+	// Karena data kelurahan terlalu besar
+	// maka harus di split per 20000 insert
 	split := 20000
 	start := 0
 	vilen := len(village)
@@ -251,14 +253,6 @@ func setupDaerah(db *sqlx.DB) error {
 			break
 		}
 	}
-	/*
-		// Masukan data kelurahan/desa ke database
-		query = `INSERT INTO "village" (id, district_id, name) VALUES (:id, :parent, :name)`
-		if _, err := tx.NamedExec(query, village); err != nil {
-			log.Print("ERRSETUP-13")
-			return err
-		}
-	*/
 
 	// Comit
 	if err := tx.Commit(); err != nil {
