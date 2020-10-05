@@ -10,5 +10,6 @@ func RegTmplFunc() template.FuncMap {
 	return template.FuncMap{
 		"balance": misc.Balance,
 		"title":   misc.Title,
+		"maynull": misc.MayNull,
 	}
 }

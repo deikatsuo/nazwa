@@ -1,6 +1,9 @@
 package misc
 
 import (
+	"database/sql"
+	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -14,4 +17,25 @@ func Balance(u []uint8) string {
 // Title Membuat huruf pertama pada string menjadi kapital
 func Title(s string) string {
 	return strings.Title(s)
+}
+
+// MayNull memeriksa jika data dari database berupa null
+func MayNull(s interface{}) string {
+	var val string
+	switch v := s.(type) {
+	case sql.NullBool:
+		val = strconv.FormatBool(v.Bool)
+	case sql.NullFloat64:
+		val = fmt.Sprintf("%f", v.Float64)
+	case sql.NullInt32:
+		val = string(v.Int32)
+	case sql.NullInt64:
+		val = string(v.Int64)
+	case sql.NullString:
+		val = v.String
+	case sql.NullTime:
+		val = v.Time.String()
+	default:
+	}
+	return val
 }

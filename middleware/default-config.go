@@ -33,13 +33,13 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		userid := session.Get("userid")
-		var user dbquery.User
+		var user wrapper.NullableUser
 
 		// Periksa apakah session nil
 		// guna menghindari error saat konversi nil ke int
 		if userid != nil {
 			if userid.(int) > 0 {
-				if u, err := dbquery.GetUserByID(db, userid.(int)); err != nil {
+				if u, err := dbquery.GetNullableUserByID(db, userid.(int)); err != nil {
 					log.Print("ERR-500")
 					log.Print(err)
 					router.Page500(c)
