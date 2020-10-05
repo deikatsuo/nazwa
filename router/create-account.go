@@ -2,6 +2,7 @@ package router
 
 import (
 	"nazwa/misc"
+	"nazwa/router/wrapper"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -39,6 +40,6 @@ func PageCreateAccount(c *gin.Context) {
 		"l_c_have": "Sudah punya akun? Masuk",
 	}
 
-	df := c.MustGet("config").(misc.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Site
 	c.HTML(200, "create-account.html", misc.Mete(df, gh))
 }

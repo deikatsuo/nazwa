@@ -2,66 +2,8 @@ package misc
 
 import (
 	"fmt"
-	"nazwa/dbquery"
 	"os"
-
-	"github.com/gin-gonic/contrib/sessions"
-	"github.com/gin-gonic/gin"
-	"github.com/imdario/mergo"
-	"github.com/jmoiron/sqlx"
 )
-
-// DefaultConfig - untuk menyimpan konfigurasi bawaan
-type DefaultConfig struct {
-	Site map[string]interface{}
-}
-
-// NewDefaultConfig - mengambil konfigurasi default dari .env
-func NewDefaultConfig() gin.HandlerFunc {
-	config := map[string]interface{}{
-		"site_url":   getEnv("SITE_URL", ""),
-		"site_name":  getEnv("SITE_NAME", ""),
-		"site_title": getEnv("SITE_TITLE", ""),
-	}
-
-	return func(c *gin.Context) {
-		c.Set("config", DefaultConfig{Site: config})
-		c.Next()
-	}
-}
-
-// NewDashboardDefaultConfig - konfigurasi default halaman
-// dashboard
-func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		session := sessions.Default(c)
-		userid := session.Get("userid")
-		var user dbquery.User
-
-		// Periksa apakah session nil
-		// guna menghindari error saat konversi nil ke int
-		if userid != nil {
-			if userid.(int) > 0 {
-				if u, err := dbquery.GetUser(db, userid.(int)); err != nil {
-					fmt.Println(err)
-				} else {
-					user = u
-				}
-			}
-		}
-
-		dashboard := map[string]interface{}{
-			"user": user,
-
-			"l_admin_create_customer": "Buat pelanggan",
-		}
-
-		siteDefault := c.MustGet("config").(DefaultConfig).Site
-		mergo.Map(&dashboard, siteDefault, mergo.WithOverride)
-		c.Set("dashboard", dashboard)
-		c.Next()
-	}
-}
 
 // Cari konfigurasi dari .env, dengan nilai default
 // Jika belum ditentukan atau kosong
@@ -70,6 +12,11 @@ func getEnv(k string, df interface{}) interface{} {
 		return v
 	}
 	return df
+}
+
+// GetEnv buat ngewrap getEnv
+func GetEnv(k string, df interface{}) interface{} {
+	return getEnv(k, df)
 }
 
 // Ambil nilai dari konfigurasi dari .env tanpa default

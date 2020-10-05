@@ -2,6 +2,7 @@ package router
 
 import (
 	"nazwa/misc"
+	"nazwa/router/wrapper"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -26,6 +27,6 @@ func PageForgot(c *gin.Context) {
 		"l_forgot_login":       "Masuk",
 	}
 
-	df := c.MustGet("config").(misc.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Site
 	c.HTML(200, "forgot-password.html", misc.Mete(df, gh))
 }

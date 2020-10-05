@@ -6,9 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageDashboardCustomers ...
-// Halaman dashboard pelanggan
+// PageDashboardCustomers tampilkan halaman customers
+// Halaman dashboard data pelanggan
 func PageDashboardCustomers(c *gin.Context) {
+
 	gh := gin.H{
 		"site_title": "Halaman Pelanggan",
 		"page":       "customers",

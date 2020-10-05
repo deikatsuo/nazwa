@@ -1,5 +1,7 @@
+p, role::guest, /api/v1/local/login, *
+p, role::guest, /api/v1/local/create-account, *
+
 p, role::customer, /dashboard/, *
-p, role::customer, /dashboard/logout, *
 p, role::customer, /dashboard/account, *
 
 p, role::sales, /dashboard/customers, *

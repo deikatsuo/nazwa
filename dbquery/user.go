@@ -283,9 +283,38 @@ func (u User) Fullname() string {
 	return u.Firstname + " " + u.Lastname
 }
 
-// GetUser - mengambil data user berdasarkan ID
-func GetUser(db *sqlx.DB, userid int) (User, error) {
+// GetUserByID - mengambil data user berdasarkan ID
+func GetUserByID(db *sqlx.DB, userid int) (User, error) {
 	var user User
+	query := `SELECT
+    u.first_name,
+    u.last_name,
+    u.username,
+    u.avatar,
+    u.gender,
+    u.created_at,
+    u.balance,
+    string_agg(DISTINCT p.phone, ',' ORDER BY p.phone) AS phone,
+    string_agg(DISTINCT e.email, ',' ORDER BY e.email) AS email,
+    r.name AS role
+	FROM "user" u
+	LEFT JOIN "phone" p ON p.user_id=u.id
+	LEFT JOIN "email" e ON e.user_id=u.id
+	LEFT JOIN "user_role" ur ON ur.user_id=u.id
+	LEFT JOIN "role" r ON r.id=ur.role_id
+	WHERE u.id=$1
+	GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name`
+	err := db.Get(&user, query, userid)
+	if err != nil {
+		return User{}, err
+	}
+
+	return user, err
+}
+
+// GetAllUser - mengambil data semua user
+func GetAllUser(db *sqlx.DB) ([]User, error) {
+	var user []User
 	query := `SELECT
     u.first_name,
     u.last_name,
@@ -302,11 +331,10 @@ func GetUser(db *sqlx.DB, userid int) (User, error) {
 	JOIN "email" e ON e.user_id=u.id
 	JOIN "user_role" ur ON ur.user_id=u.id
 	JOIN "role" r ON r.id=ur.role_id
-	WHERE u.id=$1
 	GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name`
-	err := db.Get(&user, query, userid)
+	err := db.Select(&user, query)
 	if err != nil {
-		return User{}, err
+		return []User{}, err
 	}
 
 	return user, err

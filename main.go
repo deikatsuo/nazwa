@@ -64,11 +64,11 @@ func runServer(db *sqlx.DB) {
 	server := gin.Default()
 
 	// Daftarkan fungsi ke template
-	server.SetFuncMap(misc.RegTmplFunc())
+	server.SetFuncMap(middleware.RegTmplFunc())
 
 	// Buat session
 	server.Use(sessions.Sessions("NAZWA_SESSION", sessions.NewCookieStore([]byte("secret"))))
-	server.Use(misc.NewDefaultConfig())
+	server.Use(middleware.NewDefaultConfig())
 
 	// Daftarkan aset statik
 	// misal css, js, dan beragam file gambar
@@ -85,6 +85,7 @@ func runServer(db *sqlx.DB) {
 	server.GET("/login", router.PageLogin)
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
+	server.GET("/logout", router.PageLogout)
 	// Halaman tidak ditemukan
 	server.NoRoute(router.Page404)
 
@@ -92,14 +93,14 @@ func runServer(db *sqlx.DB) {
 	dashboard := server.Group("/dashboard")
 	dashboard.Use(middleware.RoutePermission(db, e))
 	// Middleware untuk mengambil pengaturan default untuk dashboard
-	dashboard.Use(misc.NewDashboardDefaultConfig(db))
+	dashboard.Use(middleware.NewDashboardDefaultConfig(db))
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/customers", router.PageDashboardCustomers)
 	dashboard.GET("/blank", router.PageDashboardBlank)
-	dashboard.GET("/logout", router.PageDashboardLogout)
 
 	// API
 	apis := server.Group("/api")
+	apis.Use(middleware.RoutePermission(db, e))
 
 	// V1
 	v1 := apis.Group("/v1")

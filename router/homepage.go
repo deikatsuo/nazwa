@@ -2,6 +2,7 @@ package router
 
 import (
 	"nazwa/misc"
+	"nazwa/router/wrapper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,7 +11,7 @@ import (
 // Halaman homepage
 func PageHome(c *gin.Context) {
 	// Ambil konfigurasi default
-	df := c.MustGet("config").(misc.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Site
 
 	gh := gin.H{
 		"site_title": "Homepage",
