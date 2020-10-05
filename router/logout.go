@@ -7,17 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageDashboardLogout menghapus session userid
-func PageDashboardLogout(c *gin.Context) {
+// PageLogout menghapus session userid
+func PageLogout(c *gin.Context) {
 	// Ambil session
 	session := sessions.Default(c)
 	userid := session.Get("userid")
 
 	// Cek session
 	if userid == nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Token session salah",
-		})
+		Page403(c)
 		return
 	}
 
