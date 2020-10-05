@@ -28,7 +28,7 @@ CREATE TABLE "user" (
     "first_name" VARCHAR(25) NOT NULL,
     "last_name" VARCHAR(25),
     "username" VARCHAR(25) UNIQUE,
-    "avatar" VARCHAR(25) DEFAULT 'default.jpg',
+    "avatar" VARCHAR(25) DEFAULT 'default.jpg' NOT NULL,
     "password" CHAR(60),
     "gender" GENDER NOT NULL,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

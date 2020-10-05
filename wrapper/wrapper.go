@@ -16,10 +16,10 @@ type NullableUser struct {
 	Gender    string         `db:"gender"`
 	CreatedAt string         `db:"created_at"`
 	Balance   []uint8        `db:"balance"`
-	Password  string         `db:"password"`
+	Password  sql.NullString `db:"password"`
 	Phone     string         `db:"phone"`
 	Email     sql.NullString `db:"email"`
-	Role      string         `db:"role"`
+	Role      sql.NullString `db:"role"`
 }
 
 // Fullname menampilkan nama lengkap
