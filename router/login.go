@@ -2,7 +2,7 @@ package router
 
 import (
 	"nazwa/misc"
-	"nazwa/router/wrapper"
+	"nazwa/wrapper"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"

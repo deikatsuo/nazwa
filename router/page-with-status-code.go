@@ -2,7 +2,7 @@ package router
 
 import (
 	"nazwa/misc"
-	"nazwa/router/wrapper"
+	"nazwa/wrapper"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

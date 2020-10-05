@@ -5,7 +5,7 @@ import (
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/router"
-	"nazwa/router/wrapper"
+	"nazwa/wrapper"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -43,6 +43,7 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 					log.Print("ERR-500")
 					log.Print(err)
 					router.Page500(c)
+					c.Abort()
 				} else {
 					user = u
 				}
