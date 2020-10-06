@@ -17,7 +17,7 @@ type NullableUser struct {
 	CreatedAt string         `db:"created_at"`
 	Balance   []uint8        `db:"balance"`
 	Password  sql.NullString `db:"password"`
-	Phone     string         `db:"phone"`
+	Phone     sql.NullString `db:"phone"`
 	Email     sql.NullString `db:"email"`
 	Role      sql.NullString `db:"role"`
 }
