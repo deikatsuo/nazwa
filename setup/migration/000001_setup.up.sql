@@ -52,6 +52,7 @@ CREATE TABLE "email" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "user_id" INT NOT NULL,
     "email" VARCHAR(60) UNIQUE NOT NULL,
+    "verified" BOOLEAN DEFAULT 'false' NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES "user"("id")
 );
@@ -62,6 +63,7 @@ CREATE TABLE "phone" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "user_id" INT NOT NULL,
     "phone" VARCHAR(15) UNIQUE NOT NULL,
+    "verified" BOOLEAN DEFAULT 'false' NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES "user"("id")
 );
