@@ -12,6 +12,7 @@ func PageDashboard(c *gin.Context) {
 	gh := gin.H{
 		"site_title": "Halaman Dashboard",
 		"page":       "dashboard",
+		"chart":      true,
 	}
 
 	df := c.MustGet("dashboard").(map[string]interface{})

@@ -1,0 +1,185 @@
+{{ template "base" .}} {{ define "dashboard_account_content" }}
+<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+  {{ .l_account_header }}
+</h2>
+
+<div class="grid gap-6 mb-8 md:grid-cols-2">
+  <!-- User info -->
+  <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+    <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
+      {{ .l_account_user_contact }}
+    </h4>
+
+    <div x-data="updateContact()">
+      <div class="flex flex-wrap mb-6">
+        <div class="w-full md:w-1/2 md:pr-3">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400"
+              >{{ .l_u_account_firstname }}</span
+            >
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              value="{{ .user.Firstname }}"
+              x-model="contactData.firstname"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFirstname }"
+            />
+          </label>
+        </div>
+        <div class="w-full md:w-1/2 md:pl-3">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400"
+              >{{ .l_u_account_lastname }}</span
+            >
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              value="{{ .user.Lastname | maynull }}"
+              x-model="contactData.lastname"
+            />
+          </label>
+        </div>
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmFirstname"
+          :class="{'invisible': errFirstname == false}"
+        >
+        </span>
+      </div>
+
+      <div class="mt-4 text-sm">
+        <span class="text-gray-700 dark:text-gray-400">
+          {{ .l_u_account_gender }}
+        </span>
+        <div class="mt-2">
+          <label
+            class="inline-flex items-center text-gray-600 dark:text-gray-400"
+          >
+            <input type="radio" class="text-purple-600 form-radio
+            focus:border-purple-400 focus:outline-none
+            focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+            name="gender" disabled {{ if eq .user.Gender "m" }}checked{{ end }}
+            />
+            <span class="ml-2">{{ .l_u_account_gender_m }}</span>
+          </label>
+          <label
+            class="inline-flex items-center ml-6 text-gray-600 dark:text-gray-400"
+          >
+            <input type="radio" class="text-purple-600 form-radio
+            focus:border-purple-400 focus:outline-none
+            focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+            name="gender" disabled {{ if eq .user.Gender "f" }}checked{{ end }}
+            />
+            <span class="ml-2">{{ .l_u_account_gender_f }}</span>
+          </label>
+        </div>
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmGender"
+          :class="{'invisible': errGender == false}"
+        >
+        </span>
+      </div>
+
+      <label class="block mt-4 text-sm">
+        <span class="text-blue-700 dark:text-blue-400">
+          <a href="#" @click="changePassword = !changePassword"
+            >{{ .l_u_account_change_password }}</a
+          ></span
+        >
+      </label>
+      <div x-show="changePassword !== false">
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_account_password }}</span
+          >
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            placeholder="***************"
+            type="password"
+            x-model="contactData.password"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPassword }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmPassword"
+            :class="{'invisible': errPassword == false}"
+          >
+          </span>
+        </label>
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">
+            {{ .l_u_account_repassword }}
+          </span>
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            placeholder="***************"
+            type="password"
+            x-model="contactData.repassword"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRepassword }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmRepassword"
+            :class="{'invisible': errRepassword == false}"
+          >
+          </span>
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+        @click="updateContact()"
+        :disabled="updateSubmit == 'Loading. . . .'"
+        x-text="updateSubmit"
+      >
+        {{ .l_u_account_update }}
+      </button>
+
+      <div :class="{'hidden': showNotif == false }">
+        <hr class="my-8" />
+        <div
+          class="px-4 py-3 mb-8 rounded-lg shadow-md dark:bg-gray-800"
+          :class="{'bg-red-400': notifStatus == 'error', 'bg-orange-400': notifStatus == 'fail', 'bg-green-400': notifStatus == 'success'}"
+        >
+          <p
+            class="text-sm text-gray-600 dark:text-gray-400"
+            x-text="message"
+          ></p>
+        </div>
+      </div>
+    </div>
+    <script>
+      function updateContact() {
+        return {
+          contactData: {
+            firstname: "{{ .user.Firstname }}",
+            lastname: "{{ .user.Lastname | maynull }}",
+            gender: "{{ .user.Gender }}",
+          },
+          showNotif: false,
+          notifStatus: "",
+          message: "",
+          changePassword: false,
+          updateSubmit: "{{ .l_u_account_update }}",
+          errFirstname: false,
+          errGender: false,
+          errPassword: false,
+          errRepassword: false,
+          errmFirstname: "",
+          errmGender: "",
+          errmPassword: "",
+          errmRepassword: "",
+          updateContact() {},
+        };
+      }
+    </script>
+  </div>
+
+  <!-- User address -->
+  <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+    <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
+      {{ .l_account_user_address }}
+    </h4>
+  </div>
+</div>
+{{ end }}

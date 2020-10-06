@@ -19,6 +19,10 @@
               {{ block "dashboard_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "account" }}
+              {{ block "dashboard_account_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "customers" }}
               {{ block "dashboard_customers_content" .}}{{ end }}
             {{ end }}
