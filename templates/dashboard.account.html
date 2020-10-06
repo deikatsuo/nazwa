@@ -79,6 +79,65 @@
         </span>
       </div>
 
+      <!-- Nomor HP -->
+      <div x-show="phones != ''">
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_account_phone }}</span
+          >
+          <template x-for="phone in phones" :key="phone">
+            <div class="relative">
+              <input
+                class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
+                :value="phone"
+                type="text"
+                disabled
+              />
+              <button
+                class="absolute inset-y-0 right-0 px-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+              >
+                {{ .l_u_account_delete_btn }}
+              </button>
+            </div>
+          </template>
+        </label>
+      </div>
+      <label class="block mt-4 text-sm">
+        <span class="text-blue-700 dark:text-blue-400">
+          <a href="#" @click="">{{ .l_u_account_add_phone }}</a></span
+        >
+      </label>
+
+      <!-- Email -->
+      <div x-show="emails != ''">
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_account_email }}</span
+          >
+          <template x-for="email in emails" :key="email">
+            <div class="relative">
+              <input
+                class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
+                :value="email"
+                type="text"
+                disabled
+              />
+              <button
+                class="absolute inset-y-0 right-0 px-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                @click="$dispatch('notif-error')"
+              >
+                {{ .l_u_account_delete_btn }}
+              </button>
+            </div>
+          </template>
+        </label>
+      </div>
+      <label class="block mt-4 text-sm">
+        <span class="text-blue-700 dark:text-blue-400">
+          <a href="#" @click="">{{ .l_u_account_add_email }}</a></span
+        >
+      </label>
+
       <label class="block mt-4 text-sm">
         <span class="text-blue-700 dark:text-blue-400">
           <a href="#" @click="changePassword = !changePassword"
@@ -132,21 +191,8 @@
         :disabled="updateSubmit == 'Loading. . . .'"
         x-text="updateSubmit"
       >
-        {{ .l_u_account_update }}
+        {{ .l_u_account_update_btn }}
       </button>
-
-      <div :class="{'hidden': showNotif == false }">
-        <hr class="my-8" />
-        <div
-          class="px-4 py-3 mb-8 rounded-lg shadow-md dark:bg-gray-800"
-          :class="{'bg-red-400': notifStatus == 'error', 'bg-orange-400': notifStatus == 'fail', 'bg-green-400': notifStatus == 'success'}"
-        >
-          <p
-            class="text-sm text-gray-600 dark:text-gray-400"
-            x-text="message"
-          ></p>
-        </div>
-      </div>
     </div>
     <script>
       function updateContact() {
@@ -156,11 +202,13 @@
             lastname: "{{ .user.Lastname | maynull }}",
             gender: "{{ .user.Gender }}",
           },
+          emails: "{{ .user.Email | maynull }}".split(","),
+          phones: "{{ .user.Phone | maynull }}".split(","),
           showNotif: false,
           notifStatus: "",
           message: "",
           changePassword: false,
-          updateSubmit: "{{ .l_u_account_update }}",
+          updateSubmit: "{{ .l_u_account_update_btn }}",
           errFirstname: false,
           errGender: false,
           errPassword: false,
