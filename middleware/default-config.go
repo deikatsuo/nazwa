@@ -51,7 +51,8 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		dashboard := map[string]interface{}{
-			"user": user,
+			"user":  user,
+			"chart": false,
 
 			"l_admin_create_customer": "Buat pelanggan",
 		}
