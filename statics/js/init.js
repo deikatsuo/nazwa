@@ -47,9 +47,13 @@ function data() {
     togglePagesMenu() {
       this.isPagesMenuOpen = !this.isPagesMenuOpen
     },
+
     // Modal
     isModalOpen: false,
     trapCleanup: null,
+    modalTitle: '',
+    modalContent: '',
+    modalCallback: null,
     openModal() {
       this.isModalOpen = true
       this.trapCleanup = focusTrap(document.querySelector('#modal'))

@@ -15,7 +15,8 @@
     {{ template "head" .}} {{ block "extend_head" .}}{{ end }}
   </head>
   <body>
-    <div @modal.window="openModal()"></div>
+    <div @modal.window="openModal(); modalTitle = $event.detail.title; modalContent = $event.detail.content"></div>
+    <div @confirm.window="openModal(); modalTitle = 'Peringatan!'; modalContent = $event.detail.content; modalCallback = $event.detail.callback"></div>
     <div @notif.window="showAlert($event.detail.type); alertMessage = $event.detail.message"></div>
 
     <template x-if="openAlertBox">
@@ -110,11 +111,15 @@
           <!-- Modal title -->
           <p
             class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
+            x-text="modalTitle"
           >
             {{ .l_modal_header }}
           </p>
           <!-- Modal description -->
-          <p class="text-sm text-gray-700 dark:text-gray-400">
+          <p
+            class="text-sm text-gray-700 dark:text-gray-400"
+            x-text="modalContent"
+          >
             {{ .l_modal_content }}
           </p>
         </div>
@@ -123,12 +128,13 @@
         >
           <button
             @click="closeModal"
-            class="w-full px-5 py-3 text-sm font-medium leading-5 text-white text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray"
+            class="w-full px-5 py-3 text-sm font-medium leading-5 text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray"
           >
             {{ .l_modal_btn_one }}
           </button>
           <button
             class="w-full px-5 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+            @click="modalCallback"
           >
             {{ .l_modal_btn_two }}
           </button>

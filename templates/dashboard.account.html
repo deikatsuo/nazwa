@@ -97,7 +97,11 @@
       </div>
       <label class="block mt-4 text-sm">
         <span class="text-blue-700 dark:text-blue-400">
-          <a href="#" @click="">{{ .l_u_account_add_phone }}</a></span
+          <a
+            href="#"
+            @click="$dispatch('confirm', { content:'Ok', callback: function(){alert('dodol')} })">
+            {{ .l_u_account_add_phone }}
+          </a></span
         >
       </label>
 
@@ -118,7 +122,7 @@
               <div class="absolute inset-y-0 right-0 flex">
                 <button
                   class="px-4 text-sm font-medium leading-5 text-green-500 transition-colors duration-150 hover:text-green-700 focus:text-green-600 focus:outline-none focus:shadow-outline-none"
-                  @click="$dispatch('modal', {type: 'warning', message: 'Sepertinya telah terjadi error'})"
+                  @click="$dispatch('modal', {title: 'Maaf!', content: 'Fitur ini belum di implementasikan'})"
                   x-show="!email.Verified"
                 >
                   {{ .l_u_account_verify_btn }}
