@@ -9,6 +9,7 @@ type DefaultConfig struct {
 
 // NullableUser struk user dari database
 type NullableUser struct {
+	ID        int
 	Firstname string         `db:"first_name"`
 	Lastname  sql.NullString `db:"last_name"`
 	Username  sql.NullString `db:"username"`
