@@ -95,7 +95,8 @@
               />
               <button
                 class="absolute inset-y-0 right-0 px-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-                @click="$dispatch('modal')"
+                @click=""
+                x-show="phones.length > 1"
               >
                 {{ .l_u_account_delete_btn }}
               </button>
@@ -126,6 +127,7 @@
               <button
                 class="absolute inset-y-0 right-0 px-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                 @click="$dispatch('notif', {type: 'warning', message: 'Sepertinya telah terjadi error'})"
+                x-show="emails.length > 1"
               >
                 {{ .l_u_account_delete_btn }}
               </button>
