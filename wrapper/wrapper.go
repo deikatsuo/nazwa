@@ -19,7 +19,7 @@ type NullableUser struct {
 	Password  sql.NullString `db:"password"`
 	Phone     sql.NullString `db:"phone"`
 	Email     sql.NullString `db:"email"`
-	Role      sql.NullString `db:"role"`
+	Role      string         `db:"role"`
 }
 
 // Fullname menampilkan nama lengkap
