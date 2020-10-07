@@ -99,7 +99,7 @@
         <span class="text-blue-700 dark:text-blue-400">
           <a
             href="#"
-            @click="$dispatch('confirm', { content:'Ok', callback: function(){alert('dodol')} })">
+            @click="">
             {{ .l_u_account_add_phone }}
           </a></span
         >
@@ -129,7 +129,7 @@
                 </button>
                 <button
                   class="px-4 text-sm font-medium leading-5 text-red-500 transition-colors duration-150 hover:text-red-700 focus:text-red-600 focus:outline-none focus:shadow-outline-none"
-                  @click="$dispatch('notif', {type: 'warning', message: 'Sepertinya telah terjadi error'})"
+                  @click="$dispatch('confirm', { content:'Apakah yakin ingin menghapus email ini?', callback: function() { deleteEmail($dispatch, email.ID) } })"
                   x-show="emails.length > 1"
                 >
                   {{ template "_svg_icon_close" }}
@@ -226,6 +226,29 @@
           errmPassword: "",
           errmRepassword: "",
           updateContact() {},
+          mailData: {
+            id: null,
+          },
+          deleteEmail($dispatch, eid) {
+            this.mailData.id = eid;
+            fetch("/api/v1/local/user/{{ .user.ID }}/delete/email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.mailData),
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.emails = json.emails;
+              if (json.error) {
+                $dispatch('notif', {type: 'error', message: json.error});
+              } else if (json.success) {
+                $dispatch('notif', {type: 'success', message: json.success});
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
         };
       }
     </script>

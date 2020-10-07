@@ -371,6 +371,14 @@ func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 	return emails, err
 }
 
+// DeleteEmail menghapus email
+func DeleteEmail(db *sqlx.DB, id int64, uid int) error {
+	query := `DELETE FROM "email"
+	WHERE id=$1 AND user_id=$2`
+	_, err := db.Exec(query, id, uid)
+	return err
+}
+
 // GetRole mengambil role berdasarkan id
 func GetRole(db *sqlx.DB, userid int) (string, error) {
 	var role string

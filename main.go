@@ -110,6 +110,9 @@ func runServer(db *sqlx.DB) {
 	v1local.POST("/login", api.UserLogin(db))
 	v1local.POST("/create-account", api.UserCreate(db))
 
+	v1user := v1local.Group("/user")
+	v1user.POST("/:id/delete/email", api.UserDeleteEmail(db))
+
 	// Jalankan server
 	server.Run()
 }
