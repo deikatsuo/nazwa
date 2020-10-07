@@ -15,7 +15,9 @@
     {{ template "head" .}} {{ block "extend_head" .}}{{ end }}
   </head>
   <body>
-    <div x-on:notif.window="showAlert($event.detail.type); alertMessage = $event.detail.message"></div>
+    <div @modal.window="openModal()"></div>
+    <div @notif.window="showAlert($event.detail.type); alertMessage = $event.detail.message"></div>
+
     <template x-if="openAlertBox">
       <div
         class="fixed bottom-0 right-0"
