@@ -88,7 +88,7 @@
           <template x-for="phone in phones" :key="phone">
             <div class="relative">
               <input
-                class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
+                class="cursor-not-allowed opacity-50 block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
                 :value="phone"
                 type="text"
                 disabled
@@ -116,11 +116,11 @@
           <span class="text-gray-700 dark:text-gray-400"
             >{{ .l_u_account_email }}</span
           >
-          <template x-for="email in emails" :key="email">
+          <template x-for="(email, index) in emails" :key="index">
             <div class="relative">
               <input
-                class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
-                :value="email"
+                class="cursor-not-allowed opacity-50 block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
+                :value="email.Email"
                 type="text"
                 disabled
               />
@@ -205,7 +205,7 @@
             lastname: "{{ .user.Lastname | maynull }}",
             gender: "{{ .user.Gender }}",
           },
-          emails: "{{ .user.Email | maynull }}".split(","),
+          emails: {{ .user.Emails }},
           phones: "{{ .user.Phone | maynull }}".split(","),
           showNotif: false,
           notifStatus: "",

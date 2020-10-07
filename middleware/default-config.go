@@ -46,6 +46,11 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 					c.Abort()
 				} else {
 					user = u
+					email, err := dbquery.GetEmail(db, userid.(int))
+					if err != nil {
+						log.Print("User tidak memiliki email ", err)
+					}
+					user.Emails = email
 				}
 			}
 		}

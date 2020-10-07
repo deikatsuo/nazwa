@@ -323,21 +323,52 @@ func GetAllUser(db *sqlx.DB) ([]User, error) {
     u.gender,
     u.created_at,
     u.balance,
-    string_agg(DISTINCT p.phone, ',' ORDER BY p.phone) AS phone,
-    string_agg(DISTINCT e.email, ',' ORDER BY e.email) AS email,
+    p.phone,
+    e.email,
     r.name AS role
 	FROM "user" u
-	JOIN "phone" p ON p.user_id=u.id
-	JOIN "email" e ON e.user_id=u.id
-	JOIN "user_role" ur ON ur.user_id=u.id
-	JOIN "role" r ON r.id=ur.role_id
-	GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name`
+	LEFT JOIN "phone" p ON p.user_id=u.id
+	LEFT JOIN "email" e ON e.user_id=u.id
+	LEFT JOIN "user_role" ur ON ur.user_id=u.id
+	LEFT JOIN "role" r ON r.id=ur.role_id`
+	/*
+			query := `SELECT
+		    u.first_name,
+		    u.last_name,
+		    u.username,
+		    u.avatar,
+		    u.gender,
+		    u.created_at,
+		    u.balance,
+		    string_agg(DISTINCT p.phone, ',' ORDER BY p.phone) AS phone,
+		    string_agg(DISTINCT e.email, ',' ORDER BY e.email) AS email,
+		    r.name AS role
+			FROM "user" u
+			LEFT JOIN "phone" p ON p.user_id=u.id
+			LEFT JOIN "email" e ON e.user_id=u.id
+			LEFT JOIN "user_role" ur ON ur.user_id=u.id
+			LEFT JOIN "role" r ON r.id=ur.role_id
+			GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name`
+	*/
 	err := db.Select(&user, query)
 	if err != nil {
 		return []User{}, err
 	}
 
 	return user, err
+}
+
+// GetEmail mengambil email berdasarkan ID
+func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
+	var emails []wrapper.UserEmail
+	query := `SELECT id, email
+	FROM "email"
+	WHERE user_id=$1`
+	err := db.Select(&emails, query, userid)
+	if err != nil {
+		return []wrapper.UserEmail{}, err
+	}
+	return emails, err
 }
 
 // GetRole mengambil role berdasarkan id

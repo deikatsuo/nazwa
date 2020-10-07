@@ -20,6 +20,13 @@ type NullableUser struct {
 	Phone     sql.NullString `db:"phone"`
 	Email     sql.NullString `db:"email"`
 	Role      string         `db:"role"`
+	Emails    []UserEmail
+}
+
+// UserEmail menampung email user
+type UserEmail struct {
+	ID    int    `db:"id"`
+	Email string `db:"email"`
 }
 
 // Fullname menampilkan nama lengkap
