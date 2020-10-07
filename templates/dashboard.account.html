@@ -118,8 +118,8 @@
               <div class="absolute inset-y-0 right-0 flex">
                 <button
                   class="px-4 text-sm font-medium leading-5 text-green-500 transition-colors duration-150 hover:text-green-700 focus:text-green-600 focus:outline-none focus:shadow-outline-none"
-                  @click="$dispatch('notif', {type: 'warning', message: 'Sepertinya telah terjadi error'})"
-                  x-show="!emails.Verified"
+                  @click="$dispatch('modal', {type: 'warning', message: 'Sepertinya telah terjadi error'})"
+                  x-show="!email.Verified"
                 >
                   {{ .l_u_account_verify_btn }}
                 </button>

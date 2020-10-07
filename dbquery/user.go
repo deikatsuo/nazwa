@@ -361,7 +361,7 @@ func GetAllUser(db *sqlx.DB) ([]User, error) {
 // GetEmail mengambil email berdasarkan ID
 func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 	var emails []wrapper.UserEmail
-	query := `SELECT id, email
+	query := `SELECT id, email, verified
 	FROM "email"
 	WHERE user_id=$1`
 	err := db.Select(&emails, query, userid)
