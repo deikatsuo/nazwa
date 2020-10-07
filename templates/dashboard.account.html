@@ -18,10 +18,9 @@
               >{{ .l_u_account_firstname }}</span
             >
             <input
-              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-              value="{{ .user.Firstname }}"
-              x-model="contactData.firstname"
-              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFirstname }"
+              class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="firstname"
+              disabled
             />
           </label>
         </div>
@@ -31,18 +30,12 @@
               >{{ .l_u_account_lastname }}</span
             >
             <input
-              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-              value="{{ .user.Lastname | maynull }}"
-              x-model="contactData.lastname"
+              class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="lastname"
+              disabled
             />
           </label>
         </div>
-        <span
-          class="text-xs text-red-600 dark:text-red-400"
-          x-text="errmFirstname"
-          :class="{'invisible': errFirstname == false}"
-        >
-        </span>
       </div>
 
       <div class="mt-4 text-sm">
@@ -53,7 +46,7 @@
           <label
             class="inline-flex items-center text-gray-600 dark:text-gray-400"
           >
-            <input type="radio" class="text-purple-600 form-radio
+            <input type="radio" class="cursor-not-allowed opacity-50 text-purple-600 form-radio
             focus:border-purple-400 focus:outline-none
             focus:shadow-outline-purple dark:focus:shadow-outline-gray"
             name="gender" disabled {{ if eq .user.Gender "m" }}checked{{ end }}
@@ -71,12 +64,6 @@
             <span class="ml-2">{{ .l_u_account_gender_f }}</span>
           </label>
         </div>
-        <span
-          class="text-xs text-red-600 dark:text-red-400"
-          x-text="errmGender"
-          :class="{'invisible': errGender == false}"
-        >
-        </span>
       </div>
 
       <!-- Nomor HP -->
@@ -200,11 +187,12 @@
     <script>
       function updateContact() {
         return {
-          contactData: {
-            firstname: "{{ .user.Firstname }}",
-            lastname: "{{ .user.Lastname | maynull }}",
-            gender: "{{ .user.Gender }}",
+          contactData: {       
+        
           },
+          firstname: "{{ .user.Firstname }}",
+          lastname: "{{ .user.Lastname | maynull }}",
+          gender: "{{ .user.Gender }}",
           emails: {{ .user.Emails }},
           phones: "{{ .user.Phone | maynull }}".split(","),
           showNotif: false,
