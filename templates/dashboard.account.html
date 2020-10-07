@@ -46,20 +46,24 @@
           <label
             class="inline-flex items-center text-gray-600 dark:text-gray-400"
           >
-            <input type="radio" class="cursor-not-allowed opacity-50 text-purple-600 form-radio
-            focus:border-purple-400 focus:outline-none
-            focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-            name="gender" disabled {{ if eq .user.Gender "m" }}checked{{ end }}
+            <input
+              type="radio"
+              class="cursor-not-allowed opacity-50 text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+              name="gender"
+              disabled
+              {{ if eq .user.Gender "m" }}checked{{ end }}
             />
             <span class="ml-2">{{ .l_u_account_gender_m }}</span>
           </label>
           <label
             class="inline-flex items-center ml-6 text-gray-600 dark:text-gray-400"
           >
-            <input type="radio" class="text-purple-600 form-radio
-            focus:border-purple-400 focus:outline-none
-            focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-            name="gender" disabled {{ if eq .user.Gender "f" }}checked{{ end }}
+            <input
+              type="radio"
+              class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+              name="gender"
+              disabled
+              {{ if eq .user.Gender "f" }}checked{{ end }}
             />
             <span class="ml-2">{{ .l_u_account_gender_f }}</span>
           </label>
@@ -111,13 +115,22 @@
                 type="text"
                 disabled
               />
-              <button
-                class="absolute inset-y-0 right-0 px-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-                @click="$dispatch('notif', {type: 'warning', message: 'Sepertinya telah terjadi error'})"
-                x-show="emails.length > 1"
-              >
-                {{ .l_u_account_delete_btn }}
-              </button>
+              <div class="absolute inset-y-0 right-0 flex">
+                <button
+                  class="px-4 text-sm font-medium leading-5 text-green-500 transition-colors duration-150 hover:text-green-700 focus:text-green-600 focus:outline-none focus:shadow-outline-none"
+                  @click="$dispatch('notif', {type: 'warning', message: 'Sepertinya telah terjadi error'})"
+                  x-show="!emails.Verified"
+                >
+                  {{ .l_u_account_verify_btn }}
+                </button>
+                <button
+                  class="px-4 text-sm font-medium leading-5 text-red-500 transition-colors duration-150 hover:text-red-700 focus:text-red-600 focus:outline-none focus:shadow-outline-none"
+                  @click="$dispatch('notif', {type: 'warning', message: 'Sepertinya telah terjadi error'})"
+                  x-show="emails.length > 1"
+                >
+                  {{ template "_svg_icon_close" }}
+                </button>
+              </div>
             </div>
           </template>
         </label>

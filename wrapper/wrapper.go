@@ -26,8 +26,9 @@ type NullableUser struct {
 
 // UserEmail menampung email user
 type UserEmail struct {
-	ID    int    `db:"id"`
-	Email string `db:"email"`
+	ID       int    `db:"id"`
+	Email    string `db:"email"`
+	Verified bool   `db:"verified"`
 }
 
 // Fullname menampilkan nama lengkap

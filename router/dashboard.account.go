@@ -30,6 +30,7 @@ func PageDashboardAccount(c *gin.Context) {
 		"l_u_account_old_password":    "Kata sandi saat ini",
 		"l_u_account_delete_btn":      "Hapus",
 		"l_u_account_update_btn":      "Ubah Data",
+		"l_u_account_verify_btn":      "Verifikasi",
 	}
 
 	df := c.MustGet("dashboard").(map[string]interface{})
