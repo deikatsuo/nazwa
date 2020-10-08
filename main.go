@@ -106,10 +106,12 @@ func runServer(db *sqlx.DB) {
 	// V1
 	v1 := apis.Group("/v1")
 
+	// API yang diakses dari Lokal
 	v1local := v1.Group("/local")
 	v1local.POST("/login", api.UserLogin(db))
 	v1local.POST("/create-account", api.UserCreate(db))
 
+	// User API
 	v1user := v1local.Group("/user")
 	v1user.POST("/:id/delete/email", api.UserDeleteEmail(db))
 	v1user.POST("/:id/add/email", api.UserAddEmail(db))
