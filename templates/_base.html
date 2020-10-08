@@ -15,8 +15,7 @@
     {{ template "head" .}} {{ block "extend_head" .}}{{ end }}
   </head>
   <body>
-    <div @modal.window="openModal(); modalTitle = $event.detail.title; modalContent = $event.detail.content"></div>
-    <div @confirm.window="openModal(); modalTitle = 'Peringatan!'; modalContent = $event.detail.content; modalCallback = $event.detail.callback"></div>
+    <div @modal.window="openModal(); modalTitle = $event.detail.title; modalContent = $event.detail.content; if (typeof($event.detail.html) != 'undefined') { showModalHTML = true }; $refs.modalHTML.innerHTML = $event.detail.html; if (typeof($event.detail.callback) != 'undefined') { modalCallback = $event.detail.callback }"></div>
     <div @notif.window="showAlert($event.detail.type); alertMessage = $event.detail.message"></div>
 
     <template x-if="openAlertBox">
@@ -107,7 +106,9 @@
           </button>
         </header>
         <!-- Modal body -->
-        <div class="mt-4 mb-6">
+        <div 
+          class="mt-4 mb-6"          
+        >
           <!-- Modal title -->
           <p
             class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
@@ -115,10 +116,12 @@
           >
             {{ .l_modal_header }}
           </p>
-          <!-- Modal description -->
+          <!-- Modal content -->
+          <div x-ref="modalHTML" x-show="showModalHTML"></div>
           <p
             class="text-sm text-gray-700 dark:text-gray-400"
             x-text="modalContent"
+            x-show="modalContent != ''"
           >
             {{ .l_modal_content }}
           </p>

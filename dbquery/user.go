@@ -379,6 +379,13 @@ func DeleteEmail(db *sqlx.DB, id int64, uid int) error {
 	return err
 }
 
+// AddEmail menambahkan email user
+func AddEmail(db *sqlx.DB, email string, uid int) error {
+	query := `INSERT INTO "email" (email, user_id) VALUES ($1, $2)`
+	_, err := db.Exec(query, email, uid)
+	return err
+}
+
 // GetRole mengambil role berdasarkan id
 func GetRole(db *sqlx.DB, userid int) (string, error) {
 	var role string

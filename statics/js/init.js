@@ -53,13 +53,18 @@ function data() {
     trapCleanup: null,
     modalTitle: '',
     modalContent: '',
-    modalCallback: null,
+    showModalHTML: false,
+    modalCallback: function(){},
     openModal() {
       this.isModalOpen = true
       this.trapCleanup = focusTrap(document.querySelector('#modal'))
     },
     closeModal() {
       this.isModalOpen = false
+      this.modalTitle = ''
+      this.modalContent = ''
+      this.showModalHTML = false
+      this.modalCallback = function() {}
       this.trapCleanup()
     },
 

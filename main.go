@@ -112,6 +112,7 @@ func runServer(db *sqlx.DB) {
 
 	v1user := v1local.Group("/user")
 	v1user.POST("/:id/delete/email", api.UserDeleteEmail(db))
+	v1user.POST("/:id/add/email", api.UserAddEmail(db))
 
 	// Jalankan server
 	server.Run()
