@@ -358,6 +358,34 @@ func GetAllUser(db *sqlx.DB) ([]User, error) {
 	return user, err
 }
 
+// GetPhone mengambil nomor HP berdasarkan ID
+func GetPhone(db *sqlx.DB, userid int) ([]wrapper.UserPhone, error) {
+	var phones []wrapper.UserPhone
+	query := `SELECT id, phone, verified
+	FROM "phone"
+	WHERE user_id=$1`
+	err := db.Select(&phones, query, userid)
+	if err != nil {
+		return []wrapper.UserPhone{}, err
+	}
+	return phones, err
+}
+
+// DeletePhone menghapus nomor HP
+func DeletePhone(db *sqlx.DB, id int64, uid int) error {
+	query := `DELETE FROM "phone"
+	WHERE id=$1 AND user_id=$2`
+	_, err := db.Exec(query, id, uid)
+	return err
+}
+
+// AddPhone menambahkan nomor HP ke database
+func AddPhone(db *sqlx.DB, phone string, uid int) error {
+	query := `INSERT INTO "phone" (phone, user_id) VALUES ($1, $2)`
+	_, err := db.Exec(query, phone, uid)
+	return err
+}
+
 // GetEmail mengambil email berdasarkan ID
 func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 	var emails []wrapper.UserEmail

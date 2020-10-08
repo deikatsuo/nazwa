@@ -76,21 +76,31 @@
           <span class="text-gray-700 dark:text-gray-400"
             >{{ .l_u_account_phone }}</span
           >
-          <template x-for="phone in phones" :key="phone">
+
+          <template x-for="(phone, index) in phones" :key="index">
             <div class="relative">
               <input
                 class="cursor-not-allowed opacity-50 block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
-                :value="phone"
+                :value="phone.Phone"
                 type="text"
                 disabled
               />
-              <button
-                class="absolute inset-y-0 right-0 px-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-                @click=""
-                x-show="phones.length > 1"
-              >
-                {{ .l_u_account_delete_btn }}
-              </button>
+              <div class="absolute inset-y-0 right-0 flex">
+                <button
+                  class="px-4 text-sm font-medium leading-5 text-green-500 transition-colors duration-150 hover:text-green-700 focus:text-green-600 focus:outline-none focus:shadow-outline-none"
+                  @click="$dispatch('modal', {title: 'Maaf!', content: 'Fitur ini belum di implementasikan'})"
+                  x-show="!phone.Verified"
+                >
+                  {{ .l_u_account_verify_btn }}
+                </button>
+                <button
+                  class="px-4 text-sm font-medium leading-5 text-red-500 transition-colors duration-150 hover:text-red-700 focus:text-red-600 focus:outline-none focus:shadow-outline-none"
+                  @click="$dispatch('modal', { title: 'Peringatan!', content:'Apakah yakin ingin menghapus nomor ini?', callback: function() { deletePhone($dispatch, phone.ID) } })"
+                  x-show="phones.length > 1"
+                >
+                  {{ template "_svg_icon_close" }}
+                </button>
+              </div>
             </div>
           </template>
         </label>
@@ -99,11 +109,24 @@
         <span class="text-blue-700 dark:text-blue-400">
           <a
             href="#"
-            @click="">
+            @click="$dispatch('modal', { title: 'Tambahkan nomor HP', html: $refs.addPhoneForm.innerHTML, callback: function() { addPhone($dispatch) } })">
             {{ .l_u_account_add_phone }}
           </a></span
         >
       </label>
+      <template x-ref="addPhoneForm">
+        <div
+          id="newPhDat"
+          x-data="{ newPhone: '' }"
+        >
+          <input
+            class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
+            x-model="newPhone"
+            type="text"
+            placeholder="Nomor HP..."
+          />
+        </div>
+      </template>
 
       <!-- Email -->
       <div x-show="emails.length > 0">
@@ -229,7 +252,7 @@
           lastname: "{{ .user.Lastname | maynull }}",
           gender: "{{ .user.Gender }}",
           emails: {{ if not .user.Emails }} [] {{ else }} {{ .user.Emails }} {{ end }},
-          phones: "{{ .user.Phone | maynull }}".split(","),
+          phones: {{ if not .user.Phones }} [] {{ else }} {{ .user.Phones }} {{ end }},
           showNotif: false,
           notifStatus: "",
           message: "",
@@ -281,6 +304,53 @@
             .then((res) => res.json())
             .then((json) => {
               this.emails = json.emails;
+              if (json.error) {
+                $dispatch('notif', {type: 'error', message: json.error});
+              } else if (json.success) {
+                $dispatch('notif', {type: 'success', message: json.success});
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          deletePhoneData: {
+            id: null,
+          },
+          deletePhone($dispatch, pid) {
+            this.deletePhoneData.id = pid;
+            fetch("/api/v1/local/user/{{ .user.ID }}/delete/phone", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.deletePhoneData),
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.phones = json.phones;
+              if (json.error) {
+                $dispatch('notif', {type: 'error', message: json.error});
+              } else if (json.success) {
+                $dispatch('notif', {type: 'success', message: json.success});
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          addPhoneData: {
+            phone: null,
+          },
+          addPhone($dispatch) {
+            phone = document.getElementById("newPhDat").__x.$data.newPhone;
+            this.addPhoneData.phone = phone;
+            fetch("/api/v1/local/user/{{ .user.ID }}/add/phone", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.addPhoneData),
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.phones = json.phones;
               if (json.error) {
                 $dispatch('notif', {type: 'error', message: json.error});
               } else if (json.success) {

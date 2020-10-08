@@ -22,6 +22,12 @@ type NullableUser struct {
 	Email     sql.NullString `db:"email"`
 	Role      string         `db:"role"`
 	Emails    []UserEmail
+	Phones    []UserPhone
+}
+
+// Fullname menampilkan nama lengkap
+func (u NullableUser) Fullname() string {
+	return u.Firstname + " " + u.Lastname.String
 }
 
 // UserEmail menampung email user
@@ -31,7 +37,9 @@ type UserEmail struct {
 	Verified bool   `db:"verified"`
 }
 
-// Fullname menampilkan nama lengkap
-func (u NullableUser) Fullname() string {
-	return u.Firstname + " " + u.Lastname.String
+// UserPhone menampung email user
+type UserPhone struct {
+	ID       int    `db:"id"`
+	Phone    string `db:"phone"`
+	Verified bool   `db:"verified"`
 }

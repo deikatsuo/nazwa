@@ -47,11 +47,19 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 				} else {
 					user = u
 					user.ID = userid.(int)
+					// Ambil data email
 					email, err := dbquery.GetEmail(db, userid.(int))
 					if err != nil {
 						log.Print("User tidak memiliki email ", err)
 					}
 					user.Emails = email
+
+					// Ambil nomor HP
+					phone, err := dbquery.GetPhone(db, userid.(int))
+					if err != nil {
+						log.Print("User tidak memiliki nomor HP ", err)
+					}
+					user.Phones = phone
 				}
 			}
 		}
