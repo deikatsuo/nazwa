@@ -106,3 +106,23 @@ CREATE TABLE "village" (
     PRIMARY KEY (id),
     FOREIGN KEY (district_id) REFERENCES "district"("id")
 );
+
+-- Tabel address/alamat
+CREATE TABLE "address" (
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "user_id" INT NOT NULL,
+    "name" VARCHAR(50) NOT NULL,
+    "one" VARCHAR(80) NOT NULL,
+    "two" VARCHAR(80),
+    "zip" VARCHAR(5) NOT NULL,
+    "province_id" INT NOT NULL,
+    "city_id" INT NOT NULL,
+    "district_id" INT NOT NULL,
+    "village_id" BIGINT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES "user"("id"),
+    FOREIGN KEY (province_id) REFERENCES "province"("id"),
+    FOREIGN KEY (city_id) REFERENCES "city"("id"),
+    FOREIGN KEY (district_id) REFERENCES "district"("id"),
+    FOREIGN KEY (village_id) REFERENCES "village"("id")
+);

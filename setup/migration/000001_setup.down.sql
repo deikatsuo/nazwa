@@ -5,6 +5,7 @@
 */
 
 -- DROP tabel
+DROP TABLE IF EXISTS "address";
 DROP TABLE IF EXISTS "village";
 DROP TABLE IF EXISTS "district";
 DROP TABLE IF EXISTS "city";
