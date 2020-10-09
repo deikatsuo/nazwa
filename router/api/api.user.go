@@ -213,6 +213,14 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 			}
 		}
 
+		// Periksa jika email sudah digunakan
+		if next {
+			if dbquery.EmailExist(db, newEmail.Email) {
+				errMess = "Email ini sudah digunakan"
+				next = false
+			}
+		}
+
 		// Tambah email
 		if next {
 			if err := dbquery.AddEmail(db, newEmail.Email, nowID.(int)); err != nil {
@@ -343,6 +351,14 @@ func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 		if next {
 			if nowID != uid {
 				errMess = "User tidak memiliki ijin untuk menambahkan nomor HP ke akun ini"
+				next = false
+			}
+		}
+
+		// Periksa jika nomor sudah digunakan
+		if next {
+			if dbquery.PhoneExist(db, newPhone.Phone) {
+				errMess = "Nomor ini sudah digunakan"
 				next = false
 			}
 		}

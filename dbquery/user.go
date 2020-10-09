@@ -449,6 +449,21 @@ func PhoneExist(db *sqlx.DB, phone string) bool {
 	return false
 }
 
+// EmailExist check alamat email
+func EmailExist(db *sqlx.DB, email string) bool {
+	var p string
+	query := `SELECT id FROM "email" WHERE email=$1`
+	err := db.Get(&p, query, email)
+	if err == nil {
+		if p != "" {
+			return true
+		}
+	} else {
+		log.Print(err)
+	}
+	return false
+}
+
 // UsernameExist mengecek apakah username tersedia
 // atau tidak
 func UsernameExist(db *sqlx.DB, uname string) bool {
