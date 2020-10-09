@@ -7,7 +7,9 @@ import (
 	"nazwa/misc"
 	"nazwa/misc/validation"
 	"os"
+	"time"
 
+	"github.com/cheggaaa/pb/v3"
 	"github.com/go-playground/validator/v10"
 	"github.com/gocarina/gocsv"
 	"github.com/jmoiron/sqlx"
@@ -238,7 +240,11 @@ func setupDaerah(db *sqlx.DB) error {
 	start := 0
 	vilen := len(village)
 	query = `INSERT INTO "village" (id, parent, name) VALUES (:id, :parent, :name)`
+	count := 5
+	bar := pb.Simple.Start(count)
 	for {
+		bar.Increment()
+		time.Sleep(time.Millisecond)
 		if (start + split) < vilen {
 			if _, err := tx.NamedExec(query, village[start:start+split]); err != nil {
 				log.Print("ERRSETUP-13")
@@ -253,6 +259,7 @@ func setupDaerah(db *sqlx.DB) error {
 			break
 		}
 	}
+	bar.Finish()
 
 	// Comit
 	if err := tx.Commit(); err != nil {
