@@ -410,7 +410,7 @@ func DeleteEmail(db *sqlx.DB, id int64, uid int) error {
 // AddEmail menambahkan email user
 func AddEmail(db *sqlx.DB, email string, uid int) error {
 	query := `INSERT INTO "email" (email, user_id) VALUES ($1, $2)`
-	_, err := db.Exec(query, email, uid)
+	_, err := db.Exec(query, strings.ToLower(email), uid)
 	return err
 }
 
