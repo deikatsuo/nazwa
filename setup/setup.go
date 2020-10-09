@@ -188,7 +188,7 @@ func setupDaerah(db *sqlx.DB) error {
 		return err
 	}
 	// Masukan data provinsi ke database
-	query = `INSERT INTO "province" (id, country_id, name) VALUES (:id, :parent, :name)`
+	query = `INSERT INTO "province" (id, parent, name) VALUES (:id, :parent, :name)`
 	if _, err := tx.NamedExec(query, provinces); err != nil {
 		log.Print("ERRSETUP-20")
 		return err
@@ -203,7 +203,7 @@ func setupDaerah(db *sqlx.DB) error {
 		return err
 	}
 	// Masukan data kota/kabupaten ke database
-	query = `INSERT INTO "city" (id, province_id, name) VALUES (:id, :parent, :name)`
+	query = `INSERT INTO "city" (id, parent, name) VALUES (:id, :parent, :name)`
 	if _, err := tx.NamedExec(query, city); err != nil {
 		log.Print("ERRSETUP-17")
 		return err
@@ -218,7 +218,7 @@ func setupDaerah(db *sqlx.DB) error {
 		return err
 	}
 	// Masukan data distrik/kecamatan ke database
-	query = `INSERT INTO "district" (id, city_id, name) VALUES (:id, :parent, :name)`
+	query = `INSERT INTO "district" (id, parent, name) VALUES (:id, :parent, :name)`
 	if _, err := tx.NamedExec(query, district); err != nil {
 		log.Print("ERRSETUP-15")
 		return err
@@ -237,7 +237,7 @@ func setupDaerah(db *sqlx.DB) error {
 	split := 20000
 	start := 0
 	vilen := len(village)
-	query = `INSERT INTO "village" (id, district_id, name) VALUES (:id, :parent, :name)`
+	query = `INSERT INTO "village" (id, parent, name) VALUES (:id, :parent, :name)`
 	for {
 		if (start + split) < vilen {
 			if _, err := tx.NamedExec(query, village[start:start+split]); err != nil {
