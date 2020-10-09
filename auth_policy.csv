@@ -4,6 +4,7 @@ p, role::guest, /api/v1/local/create-account, *
 p, role::customer, /dashboard/, *
 p, role::customer, /dashboard/account, *
 p, role::customer, /api/v1/local/user/*, *
+p, role::customer, /api/v1/local/address/*, *
 
 p, role::sales, /dashboard/customers, *
 g, role::sales, role::customer

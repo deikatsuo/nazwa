@@ -111,6 +111,12 @@ func runServer(db *sqlx.DB) {
 	v1local.POST("/login", api.UserLogin(db))
 	v1local.POST("/create-account", api.UserCreate(db))
 
+	address := v1local.Group("/address")
+	address.GET("/provinces", api.PlaceProvinces(db))
+	address.GET("/cities/:id", api.PlaceCities(db))
+	address.GET("/districts/:id", api.PlaceDistricts(db))
+	address.GET("/villages/:id", api.PlaceVillages(db))
+
 	// User API
 	v1user := v1local.Group("/user")
 	v1user.PATCH("/:id/update/contact", api.UserUpdateContact(db))

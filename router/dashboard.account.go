@@ -13,8 +13,9 @@ func PageDashboardAccount(c *gin.Context) {
 		"page":                   "account",
 		"l_account_header":       "Pengaturan Akun",
 		"l_account_user_contact": "Informasi Pengguna",
-		"l_account_user_address": "Alamat",
+		"l_account_user_address": "Informasi Alamat",
 
+		// Akun detail
 		"l_u_account_firstname":       "Nama depan",
 		"l_u_account_lastname":        "Nama belakang",
 		"l_u_account_gender":          "Jenis kelamin",
@@ -32,6 +33,18 @@ func PageDashboardAccount(c *gin.Context) {
 		"l_u_account_delete_btn":      "Hapus",
 		"l_u_account_update_btn":      "Simpan Data",
 		"l_u_account_verify_btn":      "Verifikasi",
+
+		// Detail alamat
+		"l_u_address_add":      "Buat alamat baru",
+		"l_u_address_name":     "Panggilan",
+		"l_u_address_one":      "Alamat",
+		"l_u_address_two_desc": "Bagian ini boleh dikosongkan",
+		"l_u_address_zip":      "Kode pos",
+		"l_u_address_province": "Provinsi",
+		"l_u_address_city":     "Kota/Kabupaten",
+		"l_u_address_district": "Distrik/Kecamatan",
+		"l_u_address_village":  "Kelurahan/Desa",
+		"l_u_address_add_btn":  "Tambah",
 	}
 
 	df := c.MustGet("dashboard").(map[string]interface{})

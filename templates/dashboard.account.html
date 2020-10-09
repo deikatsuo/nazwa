@@ -468,6 +468,299 @@
     <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
       {{ .l_account_user_address }}
     </h4>
+    <div
+      x-data="addAddressDetail()"
+      x-init="initPlaces($watch)"
+    >
+      <!-- Tambah address -->
+      <label class="block mt-4 text-sm">
+        <span class="text-blue-700 dark:text-blue-400">
+          <a href="#" @click="addAddressOpen = !addAddressOpen"
+            >{{ .l_u_address_add }}</a
+          ></span
+        >
+      </label>
+      <div x-show="addAddressOpen">
+        <!-- Nama panggilan alamat -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_name }}</span
+          >
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            type="text"
+            x-model="addAddressData.name"
+            @keydown.enter="addAddress($dispatch)"
+            placeholder="Misal 'Rumahku'"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errAddressName }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressName"
+            :class="{'invisible': errAddressName == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Alamat 1 -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_one }}</span
+          >
+          <div class="rounded-md shadow-sm">
+            <div>
+              <input
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
+                placeholder="Alamat 1"
+                x-model="addAddressData.one"
+              >
+            </div>
+            <div class="-mt-px">
+              <input 
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
+                placeholder="Alamat 2"
+                x-model="addAddressData.two"
+              >
+            </div>
+          </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressOne"
+            :class="{'invisible': errAddressOne == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Kode POS -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_zip }}</span
+          >
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            type="text"
+            x-model="addAddressData.zip"
+            @keydown.enter="addAddress($dispatch)"
+            placeholder="POS"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errAddressZip }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressZip"
+            :class="{'invisible': errAddressZip == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Provinsi -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_province }}</span
+          >
+          <div class="relative">
+            <select
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="addAddressData.province"
+            >
+              <option value="">Pilih provinsi</option>
+              <template x-for="(province, index) in provinces" :key="index">
+                <option :value="province.ID" x-text="province.Name"></option>
+              </template>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              {{ template "_svg_icon_arrow_bottom" }}
+            </div>
+          </div>
+        </label>
+
+        <!-- Kota/Kabupaten -->
+        <label 
+          class="block mt-4 text-sm"
+          x-show="cities.length > 0"
+        >
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_city }}</span
+          >
+          <div class="relative">
+            <select
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="addAddressData.city"
+            >
+              <option value="">Pilih kota/kabupaten</option>
+              <template x-for="(city, index) in cities" :key="index">
+                <option :value="city.ID" x-text="city.Name"></option>
+              </template>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              {{ template "_svg_icon_arrow_bottom" }}
+            </div>
+          </div>
+        </label>
+
+        <!-- Distrik/Kecamatan -->
+        <label 
+          class="block mt-4 text-sm"
+          x-show="districts.length > 0"
+        >
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_district }}</span
+          >
+          <div class="relative">
+            <select
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="addAddressData.district"
+            >
+              <option value="">Pilih distrik/kecamatan</option>
+              <template x-for="(district, index) in districts" :key="index">
+                <option :value="district.ID" x-text="district.Name"></option>
+              </template>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              {{ template "_svg_icon_arrow_bottom" }}
+            </div>
+          </div>
+        </label>
+
+        <!-- Kelurahan/Desa -->
+        <label 
+          class="block mt-4 text-sm"
+          x-show="villages.length > 0"
+        >
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_village }}</span
+          >
+          <div class="relative">
+            <select
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="addAddressData.village"
+            >
+              <option value="">Pilih kelurahan/desa</option>
+              <template x-for="(village, index) in villages" :key="index">
+                <option :value="village.ID" x-text="village.Name"></option>
+              </template>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              {{ template "_svg_icon_arrow_bottom" }}
+            </div>
+          </div>
+        </label>
+
+        <button
+          type="submit"
+          class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+          @click="addAddress($dispatch)"
+          :disabled="addAddressDisable"
+          :class="{'cursor-not-allowed opacity-50': addAddressDisable }"
+          x-text="addAddressBtn"
+        >
+          {{ .l_u_address_add_btn }}
+        </button>
+      </div>
+    </div>
+    <script>
+      function addAddressDetail() {
+        return {
+          addAddressOpen: false,
+          errAddressName: false,
+          errAddressOne: true,
+          errAddressZip: false,
+          errmAddressName: '',
+          errmAddressOne: '',
+          errmAddressZip: '',
+          addAddressData: {
+            name: '',
+            one: '',
+            two: '',
+            zip: '',
+            province: '',
+            city: '',
+            district: '',
+            village: '',
+          },
+          addAddressDisable: false,
+          addAddressBtn: {{ .l_u_address_add_btn }},
+          addAddress: function($dispatch) {
+            
+          },          
+          initPlaces($watch) {
+            $watch('addAddressData.province', (value) => {
+              this.addAddressData.city = '';
+              this.cities = [];
+              if (value != "") {
+                this.fetchCities();
+              }
+            });
+            $watch('addAddressData.city', (value) => {
+              this.addAddressData.district = '';
+              this.districts = [];
+              if (value != "") {
+                this.fetchDistricts();
+              }
+            });
+            $watch('addAddressData.district', (value) => {
+              this.addAddressData.village = '';
+              this.villages = [];
+              if (value != "") {
+                this.fetchVillages();
+              }
+            });
+            this.fetchProvinces();
+          },
+          provinces: [],
+          fetchProvinces() {
+            fetch("/api/v1/local/address/provinces", {
+              method: "GET",
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.provinces = json.province
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          cities: [],
+          fetchCities() {
+            fetch("/api/v1/local/address/cities/"+this.addAddressData.province, {
+              method: "GET",
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.cities = json.cities
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          districts: [],
+          fetchDistricts() {
+            fetch("/api/v1/local/address/districts/"+this.addAddressData.city, {
+              method: "GET",
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.districts = json.districts
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          villages: [],
+          fetchVillages() {
+            fetch("/api/v1/local/address/villages/"+this.addAddressData.district, {
+              method: "GET",
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.villages = json.villages
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+        };
+      }
+    </script>
   </div>
 </div>
 {{ end }}
