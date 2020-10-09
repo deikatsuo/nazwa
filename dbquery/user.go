@@ -460,8 +460,6 @@ func UsernameExist(db *sqlx.DB, uname string) bool {
 		if indb != "" {
 			return true
 		}
-	} else {
-		log.Print(err)
 	}
 
 	return false
