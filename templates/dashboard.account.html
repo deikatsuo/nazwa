@@ -273,7 +273,7 @@
           deleteEmail($dispatch, eid) {
             this.deleteEmailData.id = eid;
             fetch("/api/v1/local/user/{{ .user.ID }}/delete/email", {
-              method: "POST",
+              method: "DELETE",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.deleteEmailData),
             })
@@ -320,7 +320,7 @@
           deletePhone($dispatch, pid) {
             this.deletePhoneData.id = pid;
             fetch("/api/v1/local/user/{{ .user.ID }}/delete/phone", {
-              method: "POST",
+              method: "DELETE",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.deletePhoneData),
             })
