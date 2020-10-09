@@ -715,6 +715,7 @@
           },
           addAddressDisable: false,
           addAddressBtn: {{ .l_u_address_add_btn }},
+          addresses: {{ if not .addresses }} [] {{ else }} {{ .addresses }} {{ end }},
           addAddress($dispatch) {
             this.addAddressBtn = "Loading. . .";
             this.addAddressDisable = true;
@@ -787,6 +788,7 @@
                 $dispatch('notif', {type: 'error', message: json.error});
               } else if (json.success) {
                 $dispatch('notif', {type: 'success', message: json.success});
+                this.addresses = json.addresses
               }
             })
             .catch((err) => {

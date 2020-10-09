@@ -95,7 +95,7 @@ func runServer(db *sqlx.DB) {
 	// Middleware untuk mengambil pengaturan default untuk dashboard
 	dashboard.Use(middleware.NewDashboardDefaultConfig(db))
 	dashboard.GET("/", router.PageDashboard)
-	dashboard.GET("/account", router.PageDashboardAccount)
+	dashboard.GET("/account", router.PageDashboardAccount(db))
 	dashboard.GET("/customers", router.PageDashboardCustomers)
 	dashboard.GET("/blank", router.PageDashboardBlank)
 

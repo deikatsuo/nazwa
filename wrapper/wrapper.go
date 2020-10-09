@@ -23,6 +23,7 @@ type NullableUser struct {
 	Role      string         `db:"role"`
 	Emails    []UserEmail
 	Phones    []UserPhone
+	Addresses []UserAddress
 }
 
 // Fullname menampilkan nama lengkap
@@ -42,19 +43,6 @@ type UserPhone struct {
 	ID       int    `db:"id"`
 	Phone    string `db:"phone"`
 	Verified bool   `db:"verified"`
-}
-
-// UUserAddress menampung alamat user
-type UUserAddress struct {
-	ID       int    `db:"id"`
-	Name     string `db:"name"`
-	One      string `db:"one"`
-	Two      string `db:"two"`
-	Zip      string `db:"zip"`
-	Province string `db:"province"`
-	City     string `db:"city"`
-	District string `db:"district"`
-	Village  string `db:"village"`
 }
 
 // UserAddress menampung data alamat user
