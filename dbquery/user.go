@@ -430,6 +430,10 @@ func GetRole(db *sqlx.DB, userid int) (string, error) {
 	return role, err
 }
 
+///////////
+/* CHECK */
+///////////
+
 // PhoneExist check nomor telepon
 func PhoneExist(db *sqlx.DB, phone string) bool {
 	var p string
@@ -443,4 +447,82 @@ func PhoneExist(db *sqlx.DB, phone string) bool {
 		log.Print(err)
 	}
 	return false
+}
+
+// UsernameExist mengecek apakah username tersedia
+// atau tidak
+func UsernameExist(db *sqlx.DB, uname string) bool {
+	// Check bila username sudah ada di database
+	var indb string
+	query := `SELECT username FROM "user" WHERE username=$1`
+	err := db.Get(&indb, query, uname)
+	if err == nil {
+		if indb != "" {
+			return true
+		}
+	} else {
+		log.Print(err)
+	}
+
+	return false
+}
+
+////////////
+/* UPDATE */
+////////////
+
+// UpdateUsername mengubah username user
+func UpdateUsername(db *sqlx.DB, uid int, uname string) error {
+	query := `UPDATE "user"
+	SET username=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, uname, uid)
+
+	return err
+}
+
+// UpdatePassword mengubah password user
+func UpdatePassword(db *sqlx.DB, uid int, pwd string) error {
+	// Hash password
+	pwd, err := hashPassword(pwd)
+	if err != nil {
+		return err
+	}
+	query := `UPDATE "user"
+	SET password=$1
+	WHERE id=$2`
+	_, err = db.Exec(query, pwd, uid)
+
+	return err
+}
+
+///////////
+/* MATCH */
+///////////
+
+// MatchPassword mencocokan password input user
+// dengan yang ada di database
+func MatchPassword(db *sqlx.DB, uid int, pwd string) bool {
+	// Cocokan password user
+	var inpwd string
+	var next bool
+	query := `SELECT password 
+	FROM "user"
+	WHERE id=$1`
+	err := db.Get(&inpwd, query, uid)
+	if err == nil {
+		if inpwd != "" {
+			next = true
+		}
+	} else {
+		log.Print(err)
+	}
+	if next {
+		err = matchPassword(inpwd, pwd)
+		if err != nil {
+			log.Print(err)
+			next = false
+		}
+	}
+	return next
 }

@@ -73,14 +73,15 @@ func SimpleValErrMap(verr interface{}) map[string]interface{} {
 
 // ValidationErrorsMask mengubah pesan error default dari validator
 var ValidationErrorsMask = map[string]string{
-	"alpha":           "harus menggunakan huruf alphabet",
-	"alphanum":        "harus huruf alphabet atau nomor",
-	"alphanumunicode": "hanya boleh menggunakan huruf alphabet, nomor dan simbol",
-	"required":        "tidak boleh kosong",
-	"min":             "tidak boleh kurang dari %s",
-	"max":             "tidak boleh lebih dari %s",
-	"oneof":           "hanya boleh di isi oleh '%s'",
-	"numeric":         "hanya boleh di isi dengan nomor",
-	"email":           "format email salah",
-	"eqfield":         "Harus sama",
+	"alpha":           "Harus menggunakan huruf alphabet",
+	"alphanum":        "Harus huruf alphabet atau nomor",
+	"alphanumunicode": "Hanya boleh menggunakan huruf alphabet, nomor dan simbol",
+	"required":        "Tidak boleh kosong",
+	"min":             "Tidak boleh kurang dari %s",
+	"max":             "Tidak boleh lebih dari %s",
+	"oneof":           "Hanya boleh di isi oleh '%s'",
+	"numeric":         "Hanya boleh di isi dengan nomor",
+	"email":           "Format email salah",
+	"eqfield":         "Kolom ini harus sama",
+	"required_with":   "Kolom ini perlu diisi",
 }

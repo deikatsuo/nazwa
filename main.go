@@ -113,6 +113,7 @@ func runServer(db *sqlx.DB) {
 
 	// User API
 	v1user := v1local.Group("/user")
+	v1user.PATCH("/:id/update/contact", api.UserUpdateContact(db))
 	v1user.DELETE("/:id/delete/email", api.UserDeleteEmail(db))
 	v1user.POST("/:id/add/email", api.UserAddEmail(db))
 	v1user.DELETE("/:id/delete/phone", api.UserDeletePhone(db))

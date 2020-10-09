@@ -70,6 +70,26 @@
         </div>
       </div>
 
+      <!-- Username -->
+      <label class="block mt-4 text-sm">
+        <span class="text-gray-700 dark:text-gray-400"
+          >{{ .l_u_account_username }}</span
+        >
+        <input
+          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+          type="text"
+          x-model="updateData.username"
+          @keydown.enter="updateContact($dispatch)"
+          :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errUsername }"
+        />
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmUsername"
+          :class="{'invisible': errUsername == false}"
+        >
+        </span>
+      </label>
+
       <!-- Nomor HP -->
       <div x-show="phones != ''">
         <label class="block mt-4 text-sm">
@@ -123,6 +143,7 @@
             class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
             x-model="newPhone"
             type="text"
+            @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
             placeholder="Nomor HP..."
           />
         </div>
@@ -181,6 +202,7 @@
             class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
             x-model="newEmail"
             type="text"
+            @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
             placeholder="Email..."
           />
         </div>
@@ -202,7 +224,8 @@
             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
             placeholder="***************"
             type="password"
-            x-model="contactData.password"
+            x-model="updateData.password"
+            @keydown.enter="updateContact($dispatch)"
             :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPassword }"
           />
           <span
@@ -220,7 +243,8 @@
             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
             placeholder="***************"
             type="password"
-            x-model="contactData.repassword"
+            x-model="updateData.repassword"
+            @keydown.enter="updateContact($dispatch)"
             :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRepassword }"
           />
           <span
@@ -230,13 +254,33 @@
           >
           </span>
         </label>
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">
+            {{ .l_u_account_oldpassword }}
+          </span>
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            placeholder="***************"
+            type="password"
+            x-model="updateData.oldpassword"
+            @keydown.enter="updateContact($dispatch)"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errOldpassword }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmOldpassword"
+            :class="{'invisible': errOldpassword == false}"
+          >
+          </span>
+        </label>
       </div>
 
       <button
         type="submit"
         class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-        @click="updateContact()"
-        :disabled="updateSubmit == 'Loading. . . .'"
+        @click="updateContact($dispatch)"
+        :disabled="updateSubmitDisable"
+        :class="{'cursor-not-allowed opacity-50': updateSubmitDisable }"
         x-text="updateSubmit"
       >
         {{ .l_u_account_update_btn }}
@@ -245,9 +289,6 @@
     <script>
       function updateContact() {
         return {
-          contactData: {       
-        
-          },
           firstname: "{{ .user.Firstname }}",
           lastname: "{{ .user.Lastname | maynull }}",
           gender: "{{ .user.Gender }}",
@@ -258,15 +299,71 @@
           message: "",
           changePassword: false,
           updateSubmit: "{{ .l_u_account_update_btn }}",
-          errFirstname: false,
-          errGender: false,
+          updateSubmitDisable: false,
+          errUsername: false,
           errPassword: false,
           errRepassword: false,
-          errmFirstname: "",
-          errmGender: "",
+          errOldpassword: false,
+          errmUsername: "",
           errmPassword: "",
           errmRepassword: "",
-          updateContact() {},
+          errmOldpassword: "",
+          updateData: {       
+            username: '{{ .user.Username | maynull }}',
+            password: '',
+            repassword: '',
+            oldpassword: '',
+          },
+          updateContact($dispatch) {
+            this.updateSubmit = "Loading. . .";
+            this.updateSubmitDisable = true;
+            fetch("/api/v1/local/user/{{ .user.ID }}/update/contact", {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.updateData),
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.updateSubmit = {{ .l_u_account_update_btn }}
+              this.updateSubmitDisable = false
+              if (json.username) {
+                this.errUsername = true;
+                this.errmUsername = json.username;
+              } else {
+                this.errUsername = false;
+                this.errmUsername = '';
+              }
+              if (json.password) {
+                this.errPassword = true;
+                this.errmPassword = json.password;
+              } else {
+                this.errPassword = false;
+                this.errmPassword = '';
+              }
+              if (json.repassword) {
+                this.errRepassword = true;
+                this.errmRepassword = json.repassword;
+              } else {
+                this.errRepassword = false;
+                this.errmRepassword = '';
+              }
+              if (json.oldpassword) {
+                this.errOldpassword = true;
+                this.errmOldpassword = json.oldpassword;
+              } else {
+                this.errOldpassword = false;
+                this.errmOldpassword = '';
+              }
+              if (json.error) {
+                $dispatch('notif', {type: 'error', message: json.error});
+              } else if (json.success) {
+                $dispatch('notif', {type: 'success', message: json.success});
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
           deleteEmailData: {
             id: null,
           },
