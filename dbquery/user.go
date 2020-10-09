@@ -283,6 +283,10 @@ func Login(db *sqlx.DB, loginid, password string) (int, error) {
 	return userid, err
 }
 
+/////////
+/* GET */
+/////////
+
 // GetNullableUserByID - mengambil data user berdasarkan ID
 func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) {
 	var user wrapper.NullableUser
@@ -371,21 +375,6 @@ func GetPhone(db *sqlx.DB, userid int) ([]wrapper.UserPhone, error) {
 	return phones, err
 }
 
-// DeletePhone menghapus nomor HP
-func DeletePhone(db *sqlx.DB, id int64, uid int) error {
-	query := `DELETE FROM "phone"
-	WHERE id=$1 AND user_id=$2`
-	_, err := db.Exec(query, id, uid)
-	return err
-}
-
-// AddPhone menambahkan nomor HP ke database
-func AddPhone(db *sqlx.DB, phone string, uid int) error {
-	query := `INSERT INTO "phone" (phone, user_id) VALUES ($1, $2)`
-	_, err := db.Exec(query, phone, uid)
-	return err
-}
-
 // GetEmail mengambil email berdasarkan ID
 func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 	var emails []wrapper.UserEmail
@@ -399,19 +388,18 @@ func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 	return emails, err
 }
 
-// DeleteEmail menghapus email
-func DeleteEmail(db *sqlx.DB, id int64, uid int) error {
-	query := `DELETE FROM "email"
-	WHERE id=$1 AND user_id=$2`
-	_, err := db.Exec(query, id, uid)
-	return err
-}
-
-// AddEmail menambahkan email user
-func AddEmail(db *sqlx.DB, email string, uid int) error {
-	query := `INSERT INTO "email" (email, user_id) VALUES ($1, $2)`
-	_, err := db.Exec(query, strings.ToLower(email), uid)
-	return err
+// GetAddress mengambil data alamat user
+func GetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
+	var addresses []wrapper.UserAddress
+	query := `SELECT *
+	FROM "address"
+	WHERE user_id=$1`
+	err := db.Select(&addresses, query, userid)
+	if err != nil {
+		log.Print(err)
+		return []wrapper.UserAddress{}, err
+	}
+	return addresses, err
 }
 
 // GetRole mengambil role berdasarkan id
@@ -428,6 +416,56 @@ func GetRole(db *sqlx.DB, userid int) (string, error) {
 	}
 
 	return role, err
+}
+
+////////////
+/* DELETE */
+////////////
+
+// DeleteEmail menghapus email
+func DeleteEmail(db *sqlx.DB, id int64, uid int) error {
+	query := `DELETE FROM "email"
+	WHERE id=$1 AND user_id=$2`
+	_, err := db.Exec(query, id, uid)
+	return err
+}
+
+// DeletePhone menghapus nomor HP
+func DeletePhone(db *sqlx.DB, id int64, uid int) error {
+	query := `DELETE FROM "phone"
+	WHERE id=$1 AND user_id=$2`
+	_, err := db.Exec(query, id, uid)
+	return err
+}
+
+/////////
+/* ADD */
+/////////
+
+// AddEmail menambahkan email user
+func AddEmail(db *sqlx.DB, email string, uid int) error {
+	query := `INSERT INTO "email" (email, user_id) VALUES ($1, $2)`
+	_, err := db.Exec(query, strings.ToLower(email), uid)
+	return err
+}
+
+// AddPhone menambahkan nomor HP ke database
+func AddPhone(db *sqlx.DB, phone string, uid int) error {
+	query := `INSERT INTO "phone" (phone, user_id) VALUES ($1, $2)`
+	_, err := db.Exec(query, phone, uid)
+	return err
+}
+
+// AddAddress menambahkan alamat baru
+func AddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
+	query := `INSERT INTO "address" (user_id, name, one, two, zip, province_id, city_id, district_id, village_id)
+	VALUES (:user_id, :name, :one, :two, :zip, :province_id, :city_id, :district_id, :village_id)`
+	_, err := db.NamedExec(query, address)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+	return nil
 }
 
 ///////////

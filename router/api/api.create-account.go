@@ -14,8 +14,8 @@ import (
 // FormUser menyimpan input pendaftaran user
 type FormUser struct {
 	Phone      string `json:"phone" binding:"numeric,min=6,max=15"`
-	Firstname  string `json:"firstname" binding:"required,alpha,min=3,max=25"`
-	Lastname   string `json:"lastname"`
+	Firstname  string `json:"firstname" binding:"required,min=3,max=25"`
+	Lastname   string `json:"lastname" binding:"omitempty,min=1,max=25"`
 	Gender     string `json:"gender" binding:"required,oneof=m f"`
 	Password   string `json:"password" binding:"alphanumunicode,min=8,max=25"`
 	Repassword string `json:"repassword" binding:"eqfield=Password"`

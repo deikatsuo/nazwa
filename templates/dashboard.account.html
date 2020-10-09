@@ -512,6 +512,7 @@
               <input
                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
                 placeholder="Alamat 1"
+                @keydown.enter="addAddress($dispatch)"
                 x-model="addAddressData.one"
               >
             </div>
@@ -519,6 +520,7 @@
               <input 
                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
                 placeholder="Alamat 2"
+                @keydown.enter="addAddress($dispatch)"
                 x-model="addAddressData.two"
               >
             </div>
@@ -571,6 +573,12 @@
               {{ template "_svg_icon_arrow_bottom" }}
             </div>
           </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressProvince"
+            :class="{'invisible': errAddressProvince == false}"
+          >
+          </span>
         </label>
 
         <!-- Kota/Kabupaten -->
@@ -595,6 +603,12 @@
               {{ template "_svg_icon_arrow_bottom" }}
             </div>
           </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressCity"
+            :class="{'invisible': errAddressCity == false}"
+          >
+          </span>
         </label>
 
         <!-- Distrik/Kecamatan -->
@@ -619,6 +633,12 @@
               {{ template "_svg_icon_arrow_bottom" }}
             </div>
           </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressDistrict"
+            :class="{'invisible': errAddressDistrict == false}"
+          >
+          </span>
         </label>
 
         <!-- Kelurahan/Desa -->
@@ -643,6 +663,12 @@
               {{ template "_svg_icon_arrow_bottom" }}
             </div>
           </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressVillage"
+            :class="{'invisible': errAddressVillage == false}"
+          >
+          </span>
         </label>
 
         <button
@@ -662,11 +688,21 @@
         return {
           addAddressOpen: false,
           errAddressName: false,
-          errAddressOne: true,
+          errAddressOne: false,
+          errAddressTwo: false,
           errAddressZip: false,
+          errAddressProvince: false,
+          errAddressCity: false,
+          errAddressDistrict: false,
+          errAddressVillage: false,
           errmAddressName: '',
           errmAddressOne: '',
+          errmAddressTwo: '',
           errmAddressZip: '',
+          errmAddressProvince: '',
+          errmAddressCity: '',
+          errmAddressDistrict: '',
+          errmAddressVillage: '',
           addAddressData: {
             name: '',
             one: '',
@@ -679,9 +715,84 @@
           },
           addAddressDisable: false,
           addAddressBtn: {{ .l_u_address_add_btn }},
-          addAddress: function($dispatch) {
-            
-          },          
+          addAddress($dispatch) {
+            this.addAddressBtn = "Loading. . .";
+            this.addAddressDisable = true;
+            fetch("/api/v1/local/user/{{ .user.ID }}/add/address", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.addAddressData),
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.addAddressBtn = {{ .l_u_address_add_btn }}
+              this.addAddressDisable = false
+              if (json.name) {
+                this.errAddressName = true;
+                this.errmAddressName = json.name;
+              } else {
+                this.errAddressName = false;
+                this.errmAddressName = '';
+              }
+              if (json.one) {
+                this.errAddressOne = true;
+                this.errmAddressOne = json.one;
+              } else {
+                this.errAddressOne = false;
+                this.errmAddressOne = '';
+              }
+              if (json.two) {
+                this.errAddressTwo = true;
+                this.errmAddressTwo = json.two;
+              } else {
+                this.errAddressTwo = false;
+                this.errmAddressTwo = '';
+              }
+              if (json.zip) {
+                this.errAddressZip = true;
+                this.errmAddressZip = json.zip;
+              } else {
+                this.errAddressZip = false;
+                this.errmAddressZip = '';
+              }
+              if (json.province) {
+                this.errAddressProvince = true;
+                this.errmAddressProvince = json.province;
+              } else {
+                this.errAddressProvince = false;
+                this.errmAddressProvince = '';
+              }
+              if (json.city) {
+                this.errAddressCity = true;
+                this.errmAddressCity = json.city;
+              } else {
+                this.errAddressCity = false;
+                this.errmAddressCity = '';
+              }
+              if (json.district) {
+                this.errAddressDistrict = true;
+                this.errmAddressDistrict = json.district;
+              } else {
+                this.errAddressDistrict = false;
+                this.errmAddressDistrict = '';
+              }
+              if (json.village) {
+                this.errAddressVillage = true;
+                this.errmAddressVillage = json.village;
+              } else {
+                this.errAddressVillage = false;
+                this.errmAddressVillage = '';
+              }
+              if (json.error) {
+                $dispatch('notif', {type: 'error', message: json.error});
+              } else if (json.success) {
+                $dispatch('notif', {type: 'success', message: json.success});
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },    
           initPlaces($watch) {
             $watch('addAddressData.province', (value) => {
               this.addAddressData.city = '';

@@ -140,7 +140,7 @@ func UserDeleteEmail(db *sqlx.DB) gin.HandlerFunc {
 		// Periksa jika id peng request tidak sama dengan
 		// id yang tersimpan di session
 		if next {
-			if nowID != uid {
+			if nowID.(int) != uid {
 				errMess = "User tidak memiliki ijin untuk menghapus email ini"
 				next = false
 			}
@@ -207,7 +207,7 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 		// Periksa jika id peng request tidak sama dengan
 		// id yang tersimpan di session
 		if next {
-			if nowID != uid {
+			if nowID.(int) != uid {
 				errMess = "User tidak memiliki ijin untuk menambahkan email ke akun ini"
 				next = false
 			}
@@ -250,7 +250,7 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// UserDeletePhone api untuk menghapus email
+// UserDeletePhone api untuk menghapus nomor HP
 func UserDeletePhone(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
@@ -282,7 +282,7 @@ func UserDeletePhone(db *sqlx.DB) gin.HandlerFunc {
 		// Periksa jika id peng request tidak sama dengan
 		// id yang tersimpan di session
 		if next {
-			if nowID != uid {
+			if nowID.(int) != uid {
 				errMess = "User tidak memiliki ijin untuk menghapus nomor ini"
 				next = false
 			}
@@ -321,7 +321,7 @@ type tmpPhone struct {
 	Phone string `json:"phone" binding:"numeric,min=6,max=15"`
 }
 
-// UserAddPhone api untuk menghapus email
+// UserAddPhone api untuk menambah nomor HP
 func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
@@ -349,7 +349,7 @@ func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 		// Periksa jika id peng request tidak sama dengan
 		// id yang tersimpan di session
 		if next {
-			if nowID != uid {
+			if nowID.(int) != uid {
 				errMess = "User tidak memiliki ijin untuk menambahkan nomor HP ke akun ini"
 				next = false
 			}
@@ -388,6 +388,71 @@ func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 			"success": success,
 			"phones":  phones,
 		})
+	}
+	return gin.HandlerFunc(fn)
+}
+
+// UserAddAddress api untuk menambahkan address
+func UserAddAddress(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		nowID := session.Get("userid")
+		// User id yang merequest
+		uid, err := strconv.Atoi(c.Param("id"))
+		if err != nil || nowID == nil {
+			router.Page404(c)
+			return
+		}
+
+		errMess := ""
+		next := true
+		httpStatus := http.StatusBadRequest
+		success := ""
+		var simpleErr map[string]interface{}
+
+		var newAddress wrapper.UserAddress
+		if err := c.ShouldBindJSON(&newAddress); err != nil {
+			simpleErr = validation.SimpleValErrMap(err)
+			next = false
+		}
+
+		// Periksa jika id peng request tidak sama dengan
+		// id yang tersimpan di session
+		if next {
+			if nowID.(int) != uid {
+				errMess = "User tidak memiliki ijin untuk menambahkan alamat ke akun ini"
+				next = false
+			}
+		}
+
+		// Tambahkan alamat
+		newAddress.UserID = nowID.(int)
+		if next {
+			if err := dbquery.AddAddress(db, newAddress); err != nil {
+				errMess = "Gagal menambahkan alamat"
+				next = false
+			}
+		}
+
+		// Ambil data alamat dari database
+		var addresses []wrapper.UserAddress
+		if next {
+			ph, err := dbquery.GetAddress(db, nowID.(int))
+			if err != nil {
+				errMess = "Gagal memuat alamat"
+			} else {
+				addresses = ph
+				httpStatus = http.StatusOK
+				success = "Alamat berhasil ditambahkan"
+			}
+		}
+		gh := gin.H{
+			"error":     errMess,
+			"success":   success,
+			"addresses": addresses,
+		}
+		c.JSON(httpStatus, misc.Mete(gh, simpleErr))
 	}
 	return gin.HandlerFunc(fn)
 }
