@@ -90,27 +90,36 @@ func runServer(db *sqlx.DB) {
 	server.NoRoute(router.Page404)
 
 	// Halaman Dashboard
+	// /dashboard
 	dashboard := server.Group("/dashboard")
 	dashboard.Use(middleware.RoutePermission(db, e))
 	// Middleware untuk mengambil pengaturan default untuk dashboard
 	dashboard.Use(middleware.NewDashboardDefaultConfig(db))
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/account", router.PageDashboardAccount(db))
-	dashboard.GET("/customers", router.PageDashboardCustomers)
+	dashboard.GET("/customers", router.PageDashboardCustomers(db))
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	// API
+	// /api
 	apis := server.Group("/api")
 	apis.Use(middleware.RoutePermission(db, e))
 
 	// V1
+	// /api/v1
 	v1 := apis.Group("/v1")
 
 	// API yang diakses dari Lokal
+	// /api/v1/local
 	v1local := v1.Group("/local")
 	v1local.POST("/login", api.UserLogin(db))
 	v1local.POST("/create-account", api.UserCreate(db))
 
+	// /api/v1/local/customer
+	customer := v1local.Group("/customer")
+	customer.GET("/list", api.CustomerList(db))
+
+	// /api/v1/local/address
 	address := v1local.Group("/address")
 	address.GET("/provinces", api.PlaceProvinces(db))
 	address.GET("/cities/:id", api.PlaceCities(db))
@@ -118,6 +127,7 @@ func runServer(db *sqlx.DB) {
 	address.GET("/villages/:id", api.PlaceVillages(db))
 
 	// User API
+	// /api/v1/local/user
 	v1user := v1local.Group("/user")
 	v1user.PATCH("/:id/update/contact", api.UserUpdateContact(db))
 	v1user.DELETE("/:id/delete/email", api.UserDeleteEmail(db))
