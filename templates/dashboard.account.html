@@ -472,6 +472,69 @@
       x-data="addAddressDetail()"
       x-init="initPlaces($watch)"
     >
+
+      <div x-show="addresses.length > 0">
+        <template x-for="(address, index) in addresses" :key="index">
+        <dl>
+          <div class="bg-gray-50 px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Alamat 1
+            </dt>
+            <dd 
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+              x-text="address.one"
+            >
+            </dd>
+          </div>
+          <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Kode Pos
+            </dt>
+            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+              x-text="address.zip"
+            >
+            </dd>
+          </div>
+          <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Kelurahan/Desa
+            </dt>
+            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+              x-text="address.village"
+            >
+            </dd>
+          </div>
+          <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Distrik/Kecamatan
+            </dt>
+            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+              x-text="address.district"
+            >
+            </dd>
+          </div>
+          <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Kota/Kabupaten
+            </dt>
+            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+              x-text="address.city"
+            >
+            </dd>
+          </div>
+          <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Provinsi
+            </dt>
+            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+              x-text="address.province"
+            >
+            </dd>
+          </div>
+        </dl>
+        </template>
+      </div>
+
       <!-- Tambah address -->
       <label class="block mt-4 text-sm">
         <span class="text-blue-700 dark:text-blue-400">
