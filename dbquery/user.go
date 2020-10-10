@@ -391,8 +391,12 @@ func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 // GetAddress mengambil data alamat user
 func GetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
 	var addresses []wrapper.UserAddress
-	query := `SELECT *
-	FROM "address"
+	query := `SELECT a.id, a.name, a.one, a.two, a.zip, a.village_id, a.district_id, a.city_id, a.province_id, INITCAP(p.name) AS province_name, INITCAP(c.name) AS city_name, INITCAP(d.name) AS district_name, INITCAP(v.name) AS village_name
+	FROM "address" a
+	JOIN "province" p ON p.id=a.province_id
+	JOIN "city" c ON c.id=a.city_id
+	JOIN "district" d ON d.id=a.district_id
+	JOIN "village" v ON v.id=a.village_id
 	WHERE user_id=$1`
 	err := db.Select(&addresses, query, userid)
 	if err != nil {
