@@ -563,7 +563,8 @@
             <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <p
                 class="cursor-pointer text-blue-700"
-                @click="deleteAddress($dispatch, address.ID)"
+                x-show="addresses.length > 1"
+                @click="$dispatch('modal', { title: 'Peringatan!', content:'Apakah yakin ingin menghapus alamat ini?', callback: function() { deleteAddress($dispatch, address.ID) } })"
               >{{ .l_u_address_delete_btn }}</p>
             </div>
           </div>
