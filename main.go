@@ -97,7 +97,7 @@ func runServer(db *sqlx.DB) {
 	dashboard.Use(middleware.NewDashboardDefaultConfig(db))
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/account", router.PageDashboardAccount(db))
-	dashboard.GET("/customers", router.PageDashboardCustomers(db))
+	dashboard.GET("/users", router.PageDashboardUsers(db))
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	// API
@@ -116,8 +116,8 @@ func runServer(db *sqlx.DB) {
 	v1local.POST("/create-account", api.UserCreate(db))
 
 	// /api/v1/local/customer
-	customer := v1local.Group("/customer")
-	customer.GET("/list", api.CustomerList(db))
+	customer := v1local.Group("/users")
+	customer.GET("/list", api.UsersList(db))
 
 	// /api/v1/local/address
 	address := v1local.Group("/address")

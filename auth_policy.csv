@@ -6,7 +6,7 @@ p, role::customer, /dashboard/account, *
 p, role::customer, /api/v1/local/user/*, *
 p, role::customer, /api/v1/local/address/*, *
 
-p, role::sales, /dashboard/customers, *
+p, role::sales, /dashboard/users, *
 g, role::sales, role::customer
 
 g, role::surveyor, role::sales

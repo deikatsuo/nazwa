@@ -57,8 +57,8 @@
               {{ block "dashboard_account_content" .}}{{ end }}
             {{ end }}
 
-            {{ if eq .page "customers" }}
-              {{ block "dashboard_customers_content" .}}{{ end }}
+            {{ if eq .page "users" }}
+              {{ block "dashboard_users_content" .}}{{ end }}
             {{ end }}
 
             {{ if eq .page "blank" }}
