@@ -115,7 +115,7 @@ func runServer(db *sqlx.DB) {
 	v1local.POST("/login", api.UserLogin(db))
 	v1local.POST("/create-account", api.UserCreate(db))
 
-	// /api/v1/local/customer
+	// /api/v1/local/users
 	customer := v1local.Group("/users")
 	customer.GET("/list", api.UsersList(db))
 

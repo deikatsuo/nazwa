@@ -64,7 +64,7 @@ func NewUser() *CreateUser {
 // SetFirstName ...
 // Set nama depan
 func (u *CreateUser) SetFirstName(p string) *CreateUser {
-	u.Firstname = p
+	u.Firstname = strings.ToLower(p)
 	u.into["first_name"] = ":first_name"
 	return u
 }
@@ -75,7 +75,7 @@ func (u *CreateUser) SetLastName(p string) *CreateUser {
 	// Nama belakang adalah opsional, jadi gak divalidasi
 	// maka perlu di cek sebelum di input ke database
 	if len(p) > 0 {
-		u.Lastname = p
+		u.Lastname = strings.ToLower(p)
 		u.into["last_name"] = ":last_name"
 	}
 	return u
@@ -84,7 +84,7 @@ func (u *CreateUser) SetLastName(p string) *CreateUser {
 // SetUserName ...
 // Set nilai username
 func (u *CreateUser) SetUserName(p string) *CreateUser {
-	u.Username = p
+	u.Username = strings.ToLower(p)
 	u.into["username"] = ":username"
 	return u
 }
@@ -106,7 +106,7 @@ func (u *CreateUser) SetPassword(p string) *CreateUser {
 // SetGender meng set jenis kelamin user
 // Set gender/jenis kelamin
 func (u *CreateUser) SetGender(p string) *CreateUser {
-	u.Gender = p
+	u.Gender = strings.ToLower(p)
 	u.into["gender"] = ":gender"
 	return u
 }
@@ -128,7 +128,7 @@ func (u *CreateUser) SetPhone(p string) *CreateUser {
 
 // SetEmail fungsi untuk menambahkan email
 func (u *CreateUser) SetEmail(p string) *CreateUser {
-	u.email = p
+	u.email = strings.ToLower(p)
 	return u
 }
 
@@ -317,49 +317,84 @@ func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) 
 }
 
 // GetAllUser - mengambil data semua user
-func GetAllUser(db *sqlx.DB) ([]User, error) {
-	var user []User
-	query := `SELECT
-    u.first_name,
-    u.last_name,
-    u.username,
-    u.avatar,
-    u.gender,
-    u.created_at,
-    u.balance,
-    p.phone,
-    e.email,
-    r.name AS role
-	FROM "user" u
-	LEFT JOIN "phone" p ON p.user_id=u.id
-	LEFT JOIN "email" e ON e.user_id=u.id
-	LEFT JOIN "user_role" ur ON ur.user_id=u.id
-	LEFT JOIN "role" r ON r.id=ur.role_id`
-	/*
-			query := `SELECT
-		    u.first_name,
-		    u.last_name,
-		    u.username,
-		    u.avatar,
-		    u.gender,
-		    u.created_at,
-		    u.balance,
-		    string_agg(DISTINCT p.phone, ',' ORDER BY p.phone) AS phone,
-		    string_agg(DISTINCT e.email, ',' ORDER BY e.email) AS email,
-		    r.name AS role
-			FROM "user" u
-			LEFT JOIN "phone" p ON p.user_id=u.id
-			LEFT JOIN "email" e ON e.user_id=u.id
-			LEFT JOIN "user_role" ur ON ur.user_id=u.id
-			LEFT JOIN "role" r ON r.id=ur.role_id
-			GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name`
-	*/
-	err := db.Select(&user, query)
-	if err != nil {
-		return []User{}, err
+// @param [limit, start]
+func GetAllUser(db *sqlx.DB, params ...int64) ([]wrapper.User, error) {
+	var user []wrapper.NullableUser
+	var limit int64 = 10
+	var start int64
+	if params != nil {
+		if params[0] != 0 {
+			limit = params[0]
+		}
+		if len(params) > 1 {
+			if params[1] != 0 {
+				start = params[1]
+			}
+		}
 	}
 
-	return user, err
+	if start != 0 {
+		query := `SELECT
+		u.id,
+		u.first_name,
+		u.last_name,
+		u.username,
+		u.avatar,
+		u.gender,
+		TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		u.balance,
+		p.phone,
+		e.email,
+		INITCAP(r.name) AS role
+		FROM "user" u
+		LEFT JOIN "phone" p ON p.user_id=u.id
+		LEFT JOIN "email" e ON e.user_id=u.id
+		LEFT JOIN "user_role" ur ON ur.user_id=u.id
+		LEFT JOIN "role" r ON r.id=ur.role_id
+		LIMIT $1 OFFSET $2`
+		err := db.Select(&user, query, limit, start)
+		if err != nil {
+			return []wrapper.User{}, err
+		}
+	} else {
+		query := `SELECT
+		u.id,
+		u.first_name,
+		u.last_name,
+		u.username,
+		u.avatar,
+		u.gender,
+		TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		u.balance,
+		INITCAP(r.name) AS role
+		FROM "user" u
+		LEFT JOIN "user_role" ur ON ur.user_id=u.id
+		LEFT JOIN "role" r ON r.id=ur.role_id
+		LIMIT $1`
+		err := db.Select(&user, query, limit)
+		if err != nil {
+			return []wrapper.User{}, err
+		}
+	}
+
+	// Parse data hasil dari database
+	var parse []wrapper.User
+	for _, u := range user {
+		parse = append(parse, wrapper.User{
+			ID:        u.ID,
+			Firstname: u.Firstname,
+			Lastname:  u.Lastname.String,
+			Username:  u.Username.String,
+			Avatar:    u.Avatar,
+			Gender:    u.Gender,
+			CreatedAt: u.CreatedAt,
+			Balance:   string(u.Balance),
+			Phone:     u.Phone.String,
+			Role:      u.Role,
+		})
+	}
+
+	return parse, nil
 }
 
 // GetPhone mengambil nomor HP berdasarkan ID

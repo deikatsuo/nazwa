@@ -9,7 +9,7 @@ type DefaultConfig struct {
 
 // NullableUser struk user dari database
 type NullableUser struct {
-	ID        int
+	ID        int            `db:"id"`
 	Firstname string         `db:"first_name"`
 	Lastname  sql.NullString `db:"last_name"`
 	Username  sql.NullString `db:"username"`
@@ -21,6 +21,24 @@ type NullableUser struct {
 	Phone     sql.NullString `db:"phone"`
 	Email     sql.NullString `db:"email"`
 	Role      string         `db:"role"`
+	Emails    []UserEmail
+	Phones    []UserPhone
+	Addresses []UserAddress
+}
+
+// User buat nge map data user
+type User struct {
+	ID        int
+	Firstname string
+	Lastname  string
+	Username  string
+	Avatar    string
+	Gender    string
+	CreatedAt string
+	Balance   string
+	Phone     string
+	Email     string
+	Role      string
 	Emails    []UserEmail
 	Phones    []UserPhone
 	Addresses []UserAddress
