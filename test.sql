@@ -33,4 +33,12 @@ LEFT JOIN "phone" p ON p.user_id=u.id
 LEFT JOIN "email" e ON e.user_id=u.id
 LEFT JOIN "user_role" ur ON ur.user_id=u.id
 LEFT JOIN "role" r ON r.id=ur.role_id
-GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name
+GROUP BY u.first_name, u.last_name, u.username, u.avatar, u.gender, u.created_at, u.balance, r.name;
+
+SELECT a.id, a.name, a.one, a.two, a.zip, p.name AS province_name, c.name AS city_name, d.name AS district_name, v.name AS village_name
+FROM "address" a
+JOIN "province" p ON p.id=a.province_id
+JOIN "city" c ON c.id=a.city_id
+JOIN "district" d ON d.id=a.district_id
+JOIN "village" v ON v.id=a.village_id
+WHERE user_id=1
