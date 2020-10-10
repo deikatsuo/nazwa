@@ -111,7 +111,8 @@ CREATE TABLE "village" (
 CREATE TABLE "address" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "user_id" INT NOT NULL,
-    "name" VARCHAR(50) NOT NULL,
+    "name" VARCHAR(25) NOT NULL,
+    "description" VARCHAR(100),
     "one" VARCHAR(80) NOT NULL,
     "two" VARCHAR(80),
     "zip" VARCHAR(5) NOT NULL,
