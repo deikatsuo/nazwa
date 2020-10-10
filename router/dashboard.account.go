@@ -52,16 +52,27 @@ func PageDashboardAccount(db *sqlx.DB) gin.HandlerFunc {
 			"l_u_account_verify_btn":      "Verifikasi",
 
 			// Detail alamat
-			"l_u_address_add":      "Buat alamat baru",
-			"l_u_address_name":     "Panggilan",
-			"l_u_address_one":      "Alamat",
-			"l_u_address_two_desc": "Bagian ini boleh dikosongkan",
-			"l_u_address_zip":      "Kode pos",
-			"l_u_address_province": "Provinsi",
-			"l_u_address_city":     "Kota/Kabupaten",
-			"l_u_address_district": "Distrik/Kecamatan",
-			"l_u_address_village":  "Kelurahan/Desa",
-			"l_u_address_add_btn":  "Tambah",
+			"l_u_address_delete_btn":    "Hapus",
+			"l_u_address_show_one":      "Alamat 1",
+			"l_u_address_show_two":      "Alamat 2",
+			"l_u_address_show_zip":      "Kode Pos",
+			"l_u_address_show_village":  "Kelurahan/Desa",
+			"l_u_address_show_district": "Distrik/Kecamatan",
+			"l_u_address_show_city":     "Kota/Kabupaten",
+			"l_u_address_show_province": "Provinsi",
+
+			// Detail tambah alamat
+			"l_u_address_add":         "Buat alamat baru",
+			"l_u_address_name":        "Panggilan",
+			"l_u_address_description": "Deskripsi",
+			"l_u_address_one":         "Alamat",
+			"l_u_address_two_desc":    "Bagian ini boleh dikosongkan",
+			"l_u_address_zip":         "Kode pos",
+			"l_u_address_province":    "Provinsi",
+			"l_u_address_city":        "Kota/Kabupaten",
+			"l_u_address_district":    "Distrik/Kecamatan",
+			"l_u_address_village":     "Kelurahan/Desa",
+			"l_u_address_add_btn":     "Tambah",
 		}
 
 		df := c.MustGet("dashboard").(map[string]interface{})

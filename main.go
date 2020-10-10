@@ -125,6 +125,7 @@ func runServer(db *sqlx.DB) {
 	v1user.DELETE("/:id/delete/phone", api.UserDeletePhone(db))
 	v1user.POST("/:id/add/phone", api.UserAddPhone(db))
 	v1user.POST("/:id/add/address", api.UserAddAddress(db))
+	v1user.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
 
 	// Jalankan server
 	server.Run()

@@ -391,7 +391,7 @@ func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 // GetAddress mengambil data alamat user
 func GetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
 	var addresses []wrapper.UserAddress
-	query := `SELECT a.id, a.name, a.one, a.two, a.zip, a.village_id, a.district_id, a.city_id, a.province_id, INITCAP(p.name) AS province_name, INITCAP(c.name) AS city_name, INITCAP(d.name) AS district_name, INITCAP(v.name) AS village_name
+	query := `SELECT a.id, a.name, a.description, a.one, a.two, a.zip, a.village_id, a.district_id, a.city_id, a.province_id, INITCAP(p.name) AS province_name, INITCAP(c.name) AS city_name, INITCAP(d.name) AS district_name, INITCAP(v.name) AS village_name
 	FROM "address" a
 	JOIN "province" p ON p.id=a.province_id
 	JOIN "city" c ON c.id=a.city_id
@@ -442,6 +442,14 @@ func DeletePhone(db *sqlx.DB, id int64, uid int) error {
 	return err
 }
 
+// DeleteAddress menghapus alamat
+func DeleteAddress(db *sqlx.DB, id int64, uid int) error {
+	query := `DELETE FROM "address"
+	WHERE id=$1 AND user_id=$2`
+	_, err := db.Exec(query, id, uid)
+	return err
+}
+
 /////////
 /* ADD */
 /////////
@@ -462,8 +470,8 @@ func AddPhone(db *sqlx.DB, phone string, uid int) error {
 
 // AddAddress menambahkan alamat baru
 func AddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
-	query := `INSERT INTO "address" (user_id, name, one, two, zip, province_id, city_id, district_id, village_id)
-	VALUES (:user_id, :name, :one, :two, :zip, :province_id, :city_id, :district_id, :village_id)`
+	query := `INSERT INTO "address" (user_id, name, description, one, two, zip, province_id, city_id, district_id, village_id)
+	VALUES (:user_id, :name, :description, :one, :two, :zip, :province_id, :city_id, :district_id, :village_id)`
 	_, err := db.NamedExec(query, address)
 	if err != nil {
 		log.Print(err)

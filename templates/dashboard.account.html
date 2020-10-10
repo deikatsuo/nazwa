@@ -485,14 +485,16 @@
               x-text="address.name"
             >         
             </h5>
-            <p class="mt-1 max-w-2xl text-sm leading-5 text-gray-500">
-              Personal details and application.
+            <p 
+              class="mt-1 max-w-2xl text-sm leading-5 text-gray-500"
+              x-text="address.description"
+            >
             </p>
           </div>
           <div x-show="showSelected == address.ID">
             <div class="bg-gray-50 px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt class="text-sm leading-5 font-medium text-gray-500">
-                Alamat 1
+                {{ .l_u_address_show_one }}
               </dt>
               <dd 
                 class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
@@ -500,9 +502,22 @@
               >
               </dd>
             </div>
+            <div
+              class="bg-gray-50 px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              x-show="address.two != ''"
+            >
+              <dt class="text-sm leading-5 font-medium text-gray-500">
+                {{ .l_u_address_show_two }}
+              </dt>
+              <dd 
+                class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+                x-text="address.two"
+              >
+              </dd>
+            </div>
             <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt class="text-sm leading-5 font-medium text-gray-500">
-                Kode Pos
+                {{ .l_u_address_show_zip }}
               </dt>
               <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
                 x-text="address.zip"
@@ -511,7 +526,7 @@
             </div>
             <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt class="text-sm leading-5 font-medium text-gray-500">
-                Kelurahan/Desa
+                {{ .l_u_address_show_village }}
               </dt>
               <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
                 x-text="address.VillageName"
@@ -520,7 +535,7 @@
             </div>
             <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt class="text-sm leading-5 font-medium text-gray-500">
-                Distrik/Kecamatan
+                {{ .l_u_address_show_district }}
               </dt>
               <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
                 x-text="address.DistrictName"
@@ -529,7 +544,7 @@
             </div>
             <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt class="text-sm leading-5 font-medium text-gray-500">
-                Kota/Kabupaten
+                {{ .l_u_address_show_city }}
               </dt>
               <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
                 x-text="address.CityName"
@@ -538,12 +553,18 @@
             </div>
             <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt class="text-sm leading-5 font-medium text-gray-500">
-                Provinsi
+                {{ .l_u_address_show_province }}
               </dt>
               <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
                 x-text="address.ProvinceName"
               >
               </dd>
+            </div>
+            <div class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <p
+                class="cursor-pointer text-blue-700"
+                @click="deleteAddress($dispatch, address.ID)"
+              >{{ .l_u_address_delete_btn }}</p>
             </div>
           </div>
         </dl>
@@ -580,10 +601,31 @@
           </span>
         </label>
 
+        <!-- Deskripsi alamat -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_description }} (opsional)</span
+          >
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            type="text"
+            x-model="addAddressData.description"
+            @keydown.enter="addAddress($dispatch)"
+            placeholder="Misal 'Alamat rumah di jampang deket abah'"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errAddressDescription }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressDescription"
+            :class="{'invisible': errAddressDescription == false}"
+          >
+          </span>
+        </label>
+
         <!-- Alamat 1 -->
         <label class="block mt-4 text-sm">
           <span class="text-gray-700 dark:text-gray-400"
-            >{{ .l_u_address_one }}</span
+            >{{ .l_u_address_one }} (kolom ke-2 opsional)</span
           >
           <div class="rounded-md shadow-sm">
             <div>
@@ -767,6 +809,7 @@
           showSelected: null,
           addAddressOpen: false,
           errAddressName: false,
+          errAddressDescription: false,
           errAddressOne: false,
           errAddressTwo: false,
           errAddressZip: false,
@@ -775,6 +818,7 @@
           errAddressDistrict: false,
           errAddressVillage: false,
           errmAddressName: '',
+          errmAddressDescription: '',
           errmAddressOne: '',
           errmAddressTwo: '',
           errmAddressZip: '',
@@ -782,8 +826,32 @@
           errmAddressCity: '',
           errmAddressDistrict: '',
           errmAddressVillage: '',
+          deleteAddressData: {
+            id: null,
+          },
+          deleteAddress($dispatch, pid) {
+            this.deleteAddressData.id = pid;
+            fetch("/api/v1/local/user/{{ .user.ID }}/delete/address", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.deleteAddressData),
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.addresses = json.addresses;
+              if (json.error) {
+                $dispatch('notif', {type: 'error', message: json.error});
+              } else if (json.success) {
+                $dispatch('notif', {type: 'success', message: json.success});
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
           addAddressData: {
             name: '',
+            description: '',
             one: '',
             two: '',
             zip: '',
@@ -813,6 +881,13 @@
               } else {
                 this.errAddressName = false;
                 this.errmAddressName = '';
+              }
+              if (json.description) {
+                this.errAddressDescription = true;
+                this.errmAddressDescription = json.description;
+              } else {
+                this.errAddressDescription = false;
+                this.errmAddressDescription = '';
               }
               if (json.one) {
                 this.errAddressOne = true;

@@ -50,8 +50,9 @@ type UserAddress struct {
 	ID           int    `db:"id"`
 	UserID       int    `db:"user_id"`
 	Name         string `db:"name" json:"name" binding:"required,min=5,max=50"`
+	Description  string `db:"description" json:"description" binding:"omitempty,max=80"`
 	One          string `db:"one" json:"one" binding:"required,min=5,max=80"`
-	Two          string `db:"two" json:"two" binding:"omitempty,min=5,max=80"`
+	Two          string `db:"two" json:"two" binding:"omitempty,max=80"`
 	Zip          string `db:"zip" json:"zip" binding:"required,numeric,min=5,max=5"`
 	Province     string `db:"province_id" json:"province" binding:"required,numeric"`
 	City         string `db:"city_id" json:"city" binding:"required,numeric"`

@@ -23,6 +23,10 @@ type updateContact struct {
 	Oldpassword string `json:"oldpassword" binding:"required_with=Password"`
 }
 
+////////////
+/* UPDATE */
+////////////
+
 // UserUpdateContact api untuk mengupdate kontak user
 func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
@@ -108,6 +112,77 @@ func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
+////////////
+/* DELETE */
+////////////
+
+// UserDeletePhone api untuk menghapus nomor HP
+func UserDeletePhone(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		nowID := session.Get("userid")
+		// User id yang merequest
+		uid, err := strconv.Atoi(c.Param("id"))
+		if err != nil || nowID == nil {
+			router.Page404(c)
+			return
+		}
+
+		errMess := ""
+		next := true
+		httpStatus := http.StatusBadRequest
+		success := ""
+
+		body, err := ioutil.ReadAll(c.Request.Body)
+		if err != nil {
+			errMess = "Data tidak benar"
+			next = false
+		}
+
+		id, err := jsonparser.GetInt(body, "id")
+		if err != nil {
+			errMess = "Request tidak valid"
+		}
+
+		// Periksa jika id peng request tidak sama dengan
+		// id yang tersimpan di session
+		if next {
+			if nowID.(int) != uid {
+				errMess = "User tidak memiliki ijin untuk menghapus nomor ini"
+				next = false
+			}
+		}
+
+		// Delete nomor HP
+		if next {
+			if err := dbquery.DeletePhone(db, id, nowID.(int)); err != nil {
+				errMess = "Gagal menghapus nomor HP"
+				next = false
+			}
+		}
+
+		// Ambil email sisa jika masih ada
+		var phones []wrapper.UserPhone
+		if next {
+			ph, err := dbquery.GetPhone(db, nowID.(int))
+			if err != nil {
+				errMess = "Gagal memuat nomor HP/semua nomor sudah dihapus"
+			} else {
+				phones = ph
+				httpStatus = http.StatusOK
+				success = "Nomor berhasil dihapus"
+			}
+		}
+		c.JSON(httpStatus, gin.H{
+			"error":   errMess,
+			"success": success,
+			"phones":  phones,
+		})
+	}
+	return gin.HandlerFunc(fn)
+}
+
 // UserDeleteEmail api untuk menghapus email
 func UserDeleteEmail(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
@@ -174,6 +249,77 @@ func UserDeleteEmail(db *sqlx.DB) gin.HandlerFunc {
 	}
 	return gin.HandlerFunc(fn)
 }
+
+// UserDeleteAddress menghapus alamat
+func UserDeleteAddress(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		nowID := session.Get("userid")
+		// User id yang merequest
+		uid, err := strconv.Atoi(c.Param("id"))
+		if err != nil || nowID == nil {
+			router.Page404(c)
+			return
+		}
+
+		errMess := ""
+		next := true
+		httpStatus := http.StatusBadRequest
+		success := ""
+
+		body, err := ioutil.ReadAll(c.Request.Body)
+		if err != nil {
+			errMess = "Data tidak benar"
+			next = false
+		}
+
+		id, err := jsonparser.GetInt(body, "id")
+		if err != nil {
+			errMess = "Request tidak valid"
+		}
+
+		// Periksa jika id peng request tidak sama dengan
+		// id yang tersimpan di session
+		if next {
+			if nowID.(int) != uid {
+				errMess = "User tidak memiliki ijin untuk menghapus alamat ini"
+				next = false
+			}
+		}
+
+		// Hapus alamat
+		if next {
+			if err := dbquery.DeleteAddress(db, id, nowID.(int)); err != nil {
+				errMess = "Gagal menghapus alamat"
+				next = false
+			}
+		}
+
+		// Ambil alamat sisa jika masih ada
+		var addresses []wrapper.UserAddress
+		if next {
+			em, err := dbquery.GetAddress(db, nowID.(int))
+			if err != nil {
+				errMess = "Gagal memuat alamat/semua alamat sudah dihapus"
+			} else {
+				addresses = em
+				httpStatus = http.StatusOK
+				success = "Alamat berhasil dihapus"
+			}
+		}
+		c.JSON(httpStatus, gin.H{
+			"error":     errMess,
+			"success":   success,
+			"addresses": addresses,
+		})
+	}
+	return gin.HandlerFunc(fn)
+}
+
+/////////
+/* ADD */
+/////////
 
 type tmpMail struct {
 	Email string `json:"email" binding:"email"`
@@ -245,73 +391,6 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 			"error":   errMess,
 			"success": success,
 			"emails":  emails,
-		})
-	}
-	return gin.HandlerFunc(fn)
-}
-
-// UserDeletePhone api untuk menghapus nomor HP
-func UserDeletePhone(db *sqlx.DB) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		session := sessions.Default(c)
-		// User session saat ini
-		nowID := session.Get("userid")
-		// User id yang merequest
-		uid, err := strconv.Atoi(c.Param("id"))
-		if err != nil || nowID == nil {
-			router.Page404(c)
-			return
-		}
-
-		errMess := ""
-		next := true
-		httpStatus := http.StatusBadRequest
-		success := ""
-
-		body, err := ioutil.ReadAll(c.Request.Body)
-		if err != nil {
-			errMess = "Data tidak benar"
-			next = false
-		}
-
-		id, err := jsonparser.GetInt(body, "id")
-		if err != nil {
-			errMess = "Request tidak valid"
-		}
-
-		// Periksa jika id peng request tidak sama dengan
-		// id yang tersimpan di session
-		if next {
-			if nowID.(int) != uid {
-				errMess = "User tidak memiliki ijin untuk menghapus nomor ini"
-				next = false
-			}
-		}
-
-		// Delete nomor HP
-		if next {
-			if err := dbquery.DeletePhone(db, id, nowID.(int)); err != nil {
-				errMess = "Gagal menghapus nomor HP"
-				next = false
-			}
-		}
-
-		// Ambil email sisa jika masih ada
-		var phones []wrapper.UserPhone
-		if next {
-			ph, err := dbquery.GetPhone(db, nowID.(int))
-			if err != nil {
-				errMess = "Gagal memuat nomor HP/semua nomor sudah dihapus"
-			} else {
-				phones = ph
-				httpStatus = http.StatusOK
-				success = "Nomor berhasil dihapus"
-			}
-		}
-		c.JSON(httpStatus, gin.H{
-			"error":   errMess,
-			"success": success,
-			"phones":  phones,
 		})
 	}
 	return gin.HandlerFunc(fn)
