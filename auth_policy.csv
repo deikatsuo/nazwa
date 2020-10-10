@@ -13,4 +13,5 @@ g, role::surveyor, role::sales
 
 g, role::collector, role::surveyor
 
+p, role::admin, /*, *
 g, role::admin, role::collector
