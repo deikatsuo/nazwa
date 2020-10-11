@@ -36,8 +36,6 @@ type User struct {
 	Gender    string
 	CreatedAt string
 	Balance   string
-	Phone     string
-	Email     string
 	Role      string
 	Emails    []UserEmail
 	Phones    []UserPhone
