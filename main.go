@@ -117,7 +117,7 @@ func runServer(db *sqlx.DB) {
 
 	// /api/v1/local/users
 	customer := v1local.Group("/users")
-	customer.GET("/list", api.UsersList(db))
+	customer.GET("/list/:limit", api.UsersList(db))
 
 	// /api/v1/local/address
 	address := v1local.Group("/address")

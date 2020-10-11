@@ -1,13 +1,12 @@
 package api
 
 import (
-	"io/ioutil"
 	"nazwa/dbquery"
 	"nazwa/router"
 	"nazwa/wrapper"
 	"net/http"
+	"strconv"
 
-	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -28,44 +27,56 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		next := true
 		httpStatus := http.StatusBadRequest
 
-		body, err := ioutil.ReadAll(c.Request.Body)
-		if err != nil {
-			errMess = "Data tidak benar"
-			next = false
-		}
+		/*
+			body, err := ioutil.ReadAll(c.Request.Body)
+			if err != nil {
+				errMess = "Data tidak benar"
+				next = false
+			}
+		*/
 
-		var offset int64
-		var limit int64 = 10
+		var lastid int
+		limit := 10
 		if next {
-			v, err := jsonparser.GetInt(body, "limit")
-			if err != nil {
-				limit = v
+			lim, err := strconv.Atoi(c.Param("limit"))
+			if err == nil {
+				limit = lim
 			}
-			v, err = jsonparser.GetInt(body, "offset")
-			if err != nil {
-				offset = v
+
+			lst, err := strconv.Atoi(c.Query("lastid"))
+			if err == nil {
+				lastid = lst
 			}
 		}
 
+		var total int
+		if t, err := dbquery.GetTotalRow(db); err == nil {
+			total = t
+		}
 		var users []wrapper.User
 		// Gunakan offset jika tersedia
-		if offset != 0 {
-			u, err := dbquery.GetAllUser(db, limit, offset)
+		if lastid != 0 {
+			u, err := dbquery.GetAllUser(db, limit, lastid)
 			if err != nil {
 				errMess = "Tidak bisa mengambil data"
 			}
 			users = u
+			httpStatus = http.StatusOK
 		} else {
 			u, err := dbquery.GetAllUser(db, limit)
 			if err != nil {
 				errMess = "Tidak bisa mengambil data"
 			}
 			users = u
+			httpStatus = http.StatusOK
 		}
+		nextid := users[len(users)-1].ID
 
 		c.JSON(httpStatus, gin.H{
-			"error": errMess,
-			"users": users,
+			"error":  errMess,
+			"users":  users,
+			"total":  total,
+			"lastid": nextid,
 		})
 	}
 	return gin.HandlerFunc(fn)

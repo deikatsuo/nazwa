@@ -318,22 +318,22 @@ func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) 
 
 // GetAllUser - mengambil data semua user
 // @param [limit, start]
-func GetAllUser(db *sqlx.DB, params ...int64) ([]wrapper.User, error) {
+func GetAllUser(db *sqlx.DB, params ...int) ([]wrapper.User, error) {
 	var user []wrapper.NullableUser
-	var limit int64 = 10
-	var start int64
+	limit := 10
+	var lastid int
 	if params != nil {
 		if params[0] != 0 {
 			limit = params[0]
 		}
 		if len(params) > 1 {
 			if params[1] != 0 {
-				start = params[1]
+				lastid = params[1]
 			}
 		}
 	}
 
-	if start != 0 {
+	if lastid > 0 {
 		query := `SELECT
 		u.id,
 		u.first_name,
@@ -343,16 +343,13 @@ func GetAllUser(db *sqlx.DB, params ...int64) ([]wrapper.User, error) {
 		u.gender,
 		TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
 		u.balance,
-		p.phone,
-		e.email,
 		INITCAP(r.name) AS role
 		FROM "user" u
-		LEFT JOIN "phone" p ON p.user_id=u.id
-		LEFT JOIN "email" e ON e.user_id=u.id
 		LEFT JOIN "user_role" ur ON ur.user_id=u.id
 		LEFT JOIN "role" r ON r.id=ur.role_id
-		LIMIT $1 OFFSET $2`
-		err := db.Select(&user, query, limit, start)
+		WHERE u.id > $1
+		LIMIT $2`
+		err := db.Select(&user, query, lastid, limit)
 		if err != nil {
 			return []wrapper.User{}, err
 		}
@@ -379,22 +376,43 @@ func GetAllUser(db *sqlx.DB, params ...int64) ([]wrapper.User, error) {
 
 	// Parse data hasil dari database
 	var parse []wrapper.User
+
 	for _, u := range user {
+		var emails []wrapper.UserEmail
+		var phones []wrapper.UserPhone
+		if ems, err := GetEmail(db, u.ID); err == nil {
+			emails = ems
+		}
+		if phs, err := GetPhone(db, u.ID); err == nil {
+			phones = phs
+		}
 		parse = append(parse, wrapper.User{
 			ID:        u.ID,
-			Firstname: u.Firstname,
-			Lastname:  u.Lastname.String,
+			Firstname: strings.Title(u.Firstname),
+			Lastname:  strings.Title(u.Lastname.String),
 			Username:  u.Username.String,
 			Avatar:    u.Avatar,
 			Gender:    u.Gender,
 			CreatedAt: u.CreatedAt,
 			Balance:   string(u.Balance),
-			Phone:     u.Phone.String,
 			Role:      u.Role,
+			Emails:    emails,
+			Phones:    phones,
 		})
 	}
 
 	return parse, nil
+}
+
+// GetTotalRow menghitung jumlah row pada tabel user
+func GetTotalRow(db *sqlx.DB) (int, error) {
+	var total int
+	query := `SELECT COUNT(id) FROM "user"`
+	err := db.Get(&total, query)
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
 }
 
 // GetPhone mengambil nomor HP berdasarkan ID

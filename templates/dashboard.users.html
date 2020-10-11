@@ -6,7 +6,7 @@
 <div
   class="mb-8"
   x-data="usersPageData()"
-  x-init="fetchInit()"
+  x-init="fetchInit($watch)"
 >
 <!-- New Table -->
 <div class="w-full overflow-hidden rounded-lg shadow-xs">
@@ -25,7 +25,7 @@
 
       <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
         <template x-for="(user, index) in users" :key="index">
-          <tr class="text-gray-700 dark:text-gray-400">
+          <tr class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer">
             <td class="px-4 py-3">
               <div class="flex items-center text-sm">
                 <!-- Tampilkan avatar -->
@@ -77,12 +77,43 @@
   <div
     class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
   >
-    <span class="flex items-center col-span-3"> Menampilkan 21-30 dari 100 </span>
-    <span class="col-span-2"></span>
+    <span class="flex items-center col-span-3">
+      <div class="relative">
+        <select
+          class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+          x-model="limit"
+        >
+          <option value="">Jumlah per halaman</option>
+          <option value="10">10</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          {{ template "_svg_icon_arrow_bottom" }}
+        </div>
+      </div>
+    </span>
+
+    <!-- Menampilkan total -->
+    <span
+      class="flex items-center col-span-2"
+    >
+      Menampilkan <div x-text="lastid" class="px-1"></div>-<div x-text="to" class="px-1"></div> dari <div x-text="total" class="px-1"></div>
+    </span>
+
     <!-- Pagination -->
     <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
       <nav aria-label="Table navigation">
         <ul class="inline-flex items-center">
+          <template x-for="(list, index) in numpage" :key="index">
+          <li>
+            <button
+              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
+              x-text="list.page"
+            >
+            </button>
+          </li>
+          </template>
           <li>
             <button
               class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
@@ -173,17 +204,32 @@
 <script>
 function usersPageData() {
   return {
-    fetchInit() {
+    fetchInit($watch) {
+      $watch('limit', (value) => {
+        this.users = [];
+        if (value != "") {
+          this.fetchUsersData();
+        }
+      });
       this.fetchUsersData();
     },
     users: [],
+    total: 0,
+    limit: 10,
+    lastid: 0,
+    to: 0,
     fetchUsersData() {
-      fetch("/api/v1/local/users/list", {
+      fetch("/api/v1/local/users/list/"+this.limit+"?lastid="+this.lastid, {
         method: "GET",
       })
       .then((res) => res.json())
       .then((json) => {
         this.users = json.users
+        this.total = json.total
+        this.to = (Number(this.lastid)+Number(this.limit))-1;
+        if (this.to > this.total) {
+          this.to = this.total;
+        }
       })
       .catch((err) => {
         console.log(err)
