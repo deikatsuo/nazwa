@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"nazwa/dbquery"
 	"nazwa/router"
 	"nazwa/wrapper"
@@ -27,15 +28,8 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		next := true
 		httpStatus := http.StatusBadRequest
 
-		/*
-			body, err := ioutil.ReadAll(c.Request.Body)
-			if err != nil {
-				errMess = "Data tidak benar"
-				next = false
-			}
-		*/
-
 		var lastid int
+		var loaded int
 		limit := 10
 		if next {
 			lim, err := strconv.Atoi(c.Param("limit"))
@@ -43,9 +37,16 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 				limit = lim
 			}
 
+			// Ambil id terakhir
 			lst, err := strconv.Atoi(c.Query("lastid"))
 			if err == nil {
 				lastid = lst
+			}
+
+			// Total yang sudah diload
+			lod, err := strconv.Atoi(c.Query("loaded"))
+			if err == nil {
+				loaded = lod
 			}
 		}
 
@@ -70,13 +71,26 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 			users = u
 			httpStatus = http.StatusOK
 		}
-		nextid := users[len(users)-1].ID
+
+		// ID terakhir yang diambil database
+		if len(users) > 0 {
+			log.Print(len(users) - 1)
+			lastid = users[len(users)-1].ID
+		}
+
+		if limit < len(users) {
+			// Total user yang sudah di load
+			loaded = loaded + limit
+		} else {
+			loaded = len(users)
+		}
 
 		c.JSON(httpStatus, gin.H{
 			"error":  errMess,
 			"users":  users,
 			"total":  total,
-			"lastid": nextid,
+			"lastid": lastid,
+			"loaded": loaded,
 		})
 	}
 	return gin.HandlerFunc(fn)

@@ -98,22 +98,13 @@
     <span
       class="flex items-center col-span-2"
     >
-      Menampilkan <div x-text="lastid" class="px-1"></div>-<div x-text="to" class="px-1"></div> dari <div x-text="total" class="px-1"></div>
+      Menampilkan <div x-text="loaded" class="px-1"></div>-<div x-text="to" class="px-1"></div> dari <div x-text="total" class="px-1"></div>
     </span>
 
     <!-- Pagination -->
     <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
       <nav aria-label="Table navigation">
         <ul class="inline-flex items-center">
-          <template x-for="(list, index) in numpage" :key="index">
-          <li>
-            <button
-              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-              x-text="list.page"
-            >
-            </button>
-          </li>
-          </template>
           <li>
             <button
               class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
@@ -208,7 +199,7 @@ function usersPageData() {
       $watch('limit', (value) => {
         this.users = [];
         if (value != "") {
-          this.fetchUsersData();
+          this.fetchUsersData(true);
         }
       });
       this.fetchUsersData();
@@ -217,15 +208,21 @@ function usersPageData() {
     total: 0,
     limit: 10,
     lastid: 0,
+    loaded: 0,
     to: 0,
-    fetchUsersData() {
-      fetch("/api/v1/local/users/list/"+this.limit+"?lastid="+this.lastid, {
+    fetchUsersData(reset) {
+      if (reset) {
+        this.lastid = 0;
+      }
+      fetch(`/api/v1/local/users/list/${this.limit}?lastid=${this.lastid}`, {
         method: "GET",
       })
       .then((res) => res.json())
       .then((json) => {
         this.users = json.users
         this.total = json.total
+        this.lastid = json.lastid
+        this.loaded = json.loaded
         this.to = (Number(this.lastid)+Number(this.limit))-1;
         if (this.to > this.total) {
           this.to = this.total;
