@@ -28,7 +28,9 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		next := true
 		httpStatus := http.StatusBadRequest
 
+		// Id terakhir
 		var lastid int
+		// Total data yang sudah diload
 		var loaded int
 		limit := 10
 		if next {
