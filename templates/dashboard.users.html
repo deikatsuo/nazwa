@@ -98,7 +98,7 @@
     <span
       class="flex items-center col-span-2"
     >
-      Menampilkan <div x-text="loaded" class="px-1"></div>-<div x-text="to" class="px-1"></div> dari <div x-text="total" class="px-1"></div>
+      Menampilkan <div x-text="loaded" class="px-1"></div>-<div x-text="to" class="px-1"></div> dari <div x-text="total" class="px-1"></div> - <div class="px-1"></div> halaman <div x-text="page" class="px-1"></div>
     </span>
 
     <!-- Pagination -->
@@ -106,9 +106,13 @@
       <nav aria-label="Table navigation">
         <ul class="inline-flex items-center">
           <li>
+            <!-- Backward -->
             <button
               class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
               aria-label="Previous"
+              @click="backW()"
+              :class="{'cursor-not-allowed opacity-50': page <= 1}"
+              :disabled="page <= 1"
             >
               <svg
                 aria-hidden="true"
@@ -123,55 +127,12 @@
               </svg>
             </button>
           </li>
-          <li>
-            <button
-              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-            >
-              1
-            </button>
-          </li>
-          <li>
-            <button
-              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-            >
-              2
-            </button>
-          </li>
-          <li>
-            <button
-              class="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple"
-            >
-              3
-            </button>
-          </li>
-          <li>
-            <button
-              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-            >
-              4
-            </button>
-          </li>
-          <li>
-            <span class="px-3 py-1">...</span>
-          </li>
-          <li>
-            <button
-              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-            >
-              8
-            </button>
-          </li>
-          <li>
-            <button
-              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-            >
-              9
-            </button>
-          </li>
+          <!-- Forward -->
           <li>
             <button
               class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
               aria-label="Next"
+              @click="forW()"
             >
               <svg
                 class="w-4 h-4 fill-current"
@@ -210,6 +171,7 @@ function usersPageData() {
     lastid: 0,
     loaded: 0,
     to: 0,
+    page: 1,
     fetchUsersData(reset) {
       if (reset) {
         this.lastid = 0;
@@ -231,6 +193,16 @@ function usersPageData() {
       .catch((err) => {
         console.log(err)
       });
+    },
+    backW() {
+      if (this.page > 1) {
+        this.page = Number(this.page) - 1;
+        alert(this.page);
+      }
+    },
+    forW() {
+      this.page = Number(this.page) + 1;
+      alert(this.page);
     },
   };
 }
