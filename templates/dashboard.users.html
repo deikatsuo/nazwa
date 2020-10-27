@@ -16,6 +16,7 @@
         <tr
           class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
         >
+          <th class="px-4 py-3">ID</th>
           <th class="px-4 py-3">Nama Lengkap</th>
           <th class="px-4 py-3">Sisa Saldo</th>
           <th class="px-4 py-3">Rating</th>
@@ -26,6 +27,11 @@
       <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
         <template x-for="(user, index) in users" :key="index">
           <tr class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer">
+            
+            <td 
+              class="px-4 py-3 text-sm"
+              x-text="user.ID"
+            ></td>
             <td class="px-4 py-3">
               <div class="flex items-center text-sm">
                 <!-- Tampilkan avatar -->
@@ -160,10 +166,10 @@ function usersPageData() {
       $watch('limit', (value) => {
         this.users = [];
         if (value != "") {
-          this.fetchUsersData(true);
+          this.fetchUsersData(true, "next");
         }
       });
-      this.fetchUsersData();
+      this.fetchUsersData(true, "next");
     },
     users: [],
     total: 0,
@@ -172,11 +178,17 @@ function usersPageData() {
     loaded: 0,
     to: 0,
     page: 1,
-    fetchUsersData(reset) {
+    fetchUsersData(reset, go) {
       if (reset) {
         this.lastid = 0;
       }
-      fetch(`/api/v1/local/users/list/${this.limit}?lastid=${this.lastid}`, {
+      alert(this.lastid);
+      if (go == "back") {
+        ffrom = `/api/v1/local/users/list/${this.limit}?lastid=${this.lastid}&loaded=${this.loaded}&direction=back`;
+      } else {
+        ffrom = `/api/v1/local/users/list/${this.limit}?lastid=${this.lastid}&loaded=${this.loaded}`;
+      }
+      fetch(ffrom, {
         method: "GET",
       })
       .then((res) => res.json())
@@ -197,12 +209,12 @@ function usersPageData() {
     backW() {
       if (this.page > 1) {
         this.page = Number(this.page) - 1;
-        alert(this.page);
+        this.fetchUsersData(false, "back");
       }
     },
     forW() {
       this.page = Number(this.page) + 1;
-      alert(this.page);
+      this.fetchUsersData(false, "next");
     },
   };
 }

@@ -318,7 +318,7 @@ func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) 
 
 // GetAllUser - mengambil data semua user
 // @param [limit, start]
-func GetAllUser(db *sqlx.DB, params ...int) ([]wrapper.User, error) {
+func GetAllUser(db *sqlx.DB, forward bool, params ...int) ([]wrapper.User, error) {
 	var user []wrapper.NullableUser
 	limit := 10
 	var lastid int
@@ -334,21 +334,41 @@ func GetAllUser(db *sqlx.DB, params ...int) ([]wrapper.User, error) {
 	}
 
 	if lastid > 0 {
-		query := `SELECT
-		u.id,
-		u.first_name,
-		u.last_name,
-		u.username,
-		u.avatar,
-		u.gender,
-		TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
-		u.balance,
-		INITCAP(r.name) AS role
-		FROM "user" u
-		LEFT JOIN "user_role" ur ON ur.user_id=u.id
-		LEFT JOIN "role" r ON r.id=ur.role_id
-		WHERE u.id > $1
-		LIMIT $2`
+		var query string
+		if forward {
+			query = `SELECT
+			u.id,
+			u.first_name,
+			u.last_name,
+			u.username,
+			u.avatar,
+			u.gender,
+			TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+			u.balance,
+			INITCAP(r.name) AS role
+			FROM "user" u
+			LEFT JOIN "user_role" ur ON ur.user_id=u.id
+			LEFT JOIN "role" r ON r.id=ur.role_id
+			WHERE u.id > $1
+			LIMIT $2`
+		} else {
+			query = `SELECT
+			u.id,
+			u.first_name,
+			u.last_name,
+			u.username,
+			u.avatar,
+			u.gender,
+			TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+			u.balance,
+			INITCAP(r.name) AS role
+			FROM "user" u
+			LEFT JOIN "user_role" ur ON ur.user_id=u.id
+			LEFT JOIN "role" r ON r.id=ur.role_id
+			WHERE u.id < $1
+			ORDER BY u.id DESC
+			LIMIT $2`
+		}
 		err := db.Select(&user, query, lastid, limit)
 		if err != nil {
 			return []wrapper.User{}, err

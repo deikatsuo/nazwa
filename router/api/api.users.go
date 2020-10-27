@@ -33,6 +33,7 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		// Total data yang sudah diload
 		var loaded int
 		limit := 10
+		var direction string
 		if next {
 			lim, err := strconv.Atoi(c.Param("limit"))
 			if err == nil {
@@ -44,6 +45,8 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 			if err == nil {
 				lastid = lst
 			}
+
+			direction = c.Query("direction")
 
 			// Total yang sudah diload
 			lod, err := strconv.Atoi(c.Query("loaded"))
@@ -59,14 +62,29 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		var users []wrapper.User
 		// Gunakan offset jika tersedia
 		if lastid != 0 {
-			u, err := dbquery.GetAllUser(db, limit, lastid)
-			if err != nil {
-				errMess = "Tidak bisa mengambil data"
+			if direction == "back" {
+				u, err := dbquery.GetAllUser(db, false, limit, lastid-limit+1)
+				if err != nil {
+					errMess = "Tidak bisa mengambil data"
+				}
+				users = u
+				tempUsers := make([]wrapper.User, len(users))
+				in := 0
+				for i := len(users) - 1; i >= 0; i-- {
+					tempUsers[in] = users[i]
+					in++
+				}
+				users = tempUsers
+			} else {
+				u, err := dbquery.GetAllUser(db, true, limit, lastid)
+				if err != nil {
+					errMess = "Tidak bisa mengambil data"
+				}
+				users = u
 			}
-			users = u
 			httpStatus = http.StatusOK
 		} else {
-			u, err := dbquery.GetAllUser(db, limit)
+			u, err := dbquery.GetAllUser(db, true, limit)
 			if err != nil {
 				errMess = "Tidak bisa mengambil data"
 			}
@@ -77,14 +95,20 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		// ID terakhir yang diambil database
 		if len(users) > 0 {
 			log.Print(len(users) - 1)
+
 			lastid = users[len(users)-1].ID
+			if len(users) < limit {
+				lastid = users[0].ID - 1
+			}
+
+			log.Print(lastid)
 		}
 
-		if limit < len(users) {
-			// Total user yang sudah di load
-			loaded = loaded + limit
+		// Total user yang sudah di load
+		if direction == "back" {
+			loaded = loaded - len(users)
 		} else {
-			loaded = len(users)
+			loaded = loaded + len(users)
 		}
 
 		c.JSON(httpStatus, gin.H{

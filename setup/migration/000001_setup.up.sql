@@ -127,3 +127,13 @@ CREATE TABLE "address" (
     FOREIGN KEY (district_id) REFERENCES "district"("id"),
     FOREIGN KEY (village_id) REFERENCES "village"("id")
 );
+
+-- Tabel barang/produk
+CREATE TABLE product (
+    "id" INT GENERATED ALWAYS AS IDENTITY,
+    "name" VARCHAR(100) NOT NULL,
+    "code" VARCHAR(10),
+    "price" DECIMAL(15,2) DEFAULT '0',
+    "type" VARCHAR(10),
+    PRIMARY KEY (id)
+);
