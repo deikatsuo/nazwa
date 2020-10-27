@@ -98,6 +98,7 @@ func runServer(db *sqlx.DB) {
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/account", router.PageDashboardAccount(db))
 	dashboard.GET("/users", router.PageDashboardUsers(db))
+	dashboard.GET("/products", router.PageDashboardProducts(db))
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	// API
