@@ -42,3 +42,4 @@ JOIN "city" c ON c.id=a.city_id
 JOIN "district" d ON d.id=a.district_id
 JOIN "village" v ON v.id=a.village_id
 WHERE user_id=1
+
