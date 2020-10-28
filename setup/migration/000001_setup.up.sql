@@ -33,7 +33,9 @@ CREATE TABLE "user" (
     "gender" GENDER NOT NULL,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "balance" DECIMAL(15,2) DEFAULT '0',
-    PRIMARY KEY (id)
+    "refferer" INT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (refferer) REFERENCES "user"("id")
 );
 
 -- Tabel peran user/pengguna
