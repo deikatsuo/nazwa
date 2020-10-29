@@ -182,7 +182,6 @@ function usersPageData() {
       if (reset) {
         this.lastid = 0;
       }
-      alert(this.lastid);
       if (go == "back") {
         ffrom = `/api/v1/local/users/list/${this.limit}?lastid=${this.lastid}&loaded=${this.loaded}&direction=back`;
       } else {

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"log"
 	"nazwa/dbquery"
 	"nazwa/router"
 	"nazwa/wrapper"
@@ -94,14 +93,10 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 
 		// ID terakhir yang diambil database
 		if len(users) > 0 {
-			log.Print(len(users) - 1)
-
 			lastid = users[len(users)-1].ID
 			if len(users) < limit {
-				lastid = users[0].ID - 1
+				lastid = (users[0].ID - 1) + limit
 			}
-
-			log.Print(lastid)
 		}
 
 		// Total user yang sudah di load
