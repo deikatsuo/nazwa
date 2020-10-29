@@ -30,7 +30,6 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		// Id terakhir
 		var lastid int
 		// Total data yang sudah diload
-		var loaded int
 		limit := 10
 		var direction string
 		if next {
@@ -46,12 +45,6 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 			}
 
 			direction = c.Query("direction")
-
-			// Total yang sudah diload
-			lod, err := strconv.Atoi(c.Query("loaded"))
-			if err == nil {
-				loaded = lod
-			}
 		}
 
 		var total int
@@ -67,6 +60,7 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 					errMess = "Tidak bisa mengambil data"
 				}
 				users = u
+				// Reverse urutan array user
 				tempUsers := make([]wrapper.User, len(users))
 				in := 0
 				for i := len(users) - 1; i >= 0; i-- {
@@ -92,18 +86,13 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		// ID terakhir yang diambil database
+		last := false
 		if len(users) > 0 {
 			lastid = users[len(users)-1].ID
 			if len(users) < limit {
 				lastid = (users[0].ID - 1) + limit
+				last = true
 			}
-		}
-
-		// Total user yang sudah di load
-		if direction == "back" {
-			loaded = loaded - len(users)
-		} else {
-			loaded = loaded + len(users)
 		}
 
 		c.JSON(httpStatus, gin.H{
@@ -111,7 +100,7 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 			"users":  users,
 			"total":  total,
 			"lastid": lastid,
-			"loaded": loaded,
+			"last":   last,
 		})
 	}
 	return gin.HandlerFunc(fn)
