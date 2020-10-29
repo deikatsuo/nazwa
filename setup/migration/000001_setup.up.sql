@@ -134,8 +134,14 @@ CREATE TABLE "address" (
 CREATE TABLE product (
     "id" INT GENERATED ALWAYS AS IDENTITY,
     "name" VARCHAR(100) NOT NULL,
-    "code" VARCHAR(10),
+    "code" VARCHAR(10) UNIQUE,
+    "base_price" DECIMAL(15,2) DEFAULT '0',
     "price" DECIMAL(15,2) DEFAULT '0',
+    "credit_six" DECIMAL(15,2) DEFAULT '0',
+    "credit_eight" DECIMAL(15,2) DEFAULT '0',
+    "credit_ten" DECIMAL(15,2) DEFAULT '0',
+    "credit_twelve" DECIMAL(15,2) DEFAULT '0',
+    "credit_fifteen" DECIMAL(15,2) DEFAULT '0',
     "type" VARCHAR(10),
     PRIMARY KEY (id)
 );
