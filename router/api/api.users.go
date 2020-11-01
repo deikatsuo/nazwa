@@ -32,6 +32,7 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		// Total data yang sudah diload
 		limit := 10
 		var direction string
+		userRole := 0
 		if next {
 			lim, err := strconv.Atoi(c.Param("limit"))
 			if err == nil {
@@ -44,6 +45,13 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 				lastid = lst
 			}
 
+			// Filter berdasarkan tipe user
+			uty, err := strconv.Atoi(c.Query("role"))
+			if err == nil {
+				userRole = uty
+			}
+
+			// Forward/backward
 			direction = c.Query("direction")
 		}
 
@@ -55,7 +63,7 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		// Gunakan offset jika tersedia
 		if lastid != 0 {
 			if direction == "back" {
-				u, err := dbquery.GetAllUser(db, false, limit, lastid-limit+1)
+				u, err := dbquery.GetAllUser(db, false, userRole, limit, lastid-limit+1)
 				if err != nil {
 					errMess = "Tidak bisa mengambil data"
 				}
@@ -69,7 +77,7 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 				}
 				users = tempUsers
 			} else {
-				u, err := dbquery.GetAllUser(db, true, limit, lastid)
+				u, err := dbquery.GetAllUser(db, true, userRole, limit, lastid)
 				if err != nil {
 					errMess = "Tidak bisa mengambil data"
 				}
@@ -77,7 +85,7 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 			}
 			httpStatus = http.StatusOK
 		} else {
-			u, err := dbquery.GetAllUser(db, true, limit)
+			u, err := dbquery.GetAllUser(db, true, userRole, limit)
 			if err != nil {
 				errMess = "Tidak bisa mengambil data"
 			}

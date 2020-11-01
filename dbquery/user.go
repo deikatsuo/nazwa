@@ -317,11 +317,22 @@ func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) 
 }
 
 // GetAllUser - mengambil data semua user
-// @param [limit, start]
-func GetAllUser(db *sqlx.DB, forward bool, params ...int) ([]wrapper.User, error) {
+// @params [limit, start]
+func GetAllUser(db *sqlx.DB, forward bool, userRole int, params ...int) ([]wrapper.User, error) {
 	var user []wrapper.NullableUser
 	limit := 10
 	var lastid int
+
+	// Filter user berdasarkan tipe/role
+	FillUserType := ""
+	if userRole > 0 {
+		FillUserType = fmt.Sprintf("AND r.id = %d", userRole)
+	}
+
+	fmt.Println("Role int ", userRole)
+	fmt.Println("Role string ", string(userRole))
+	fmt.Println(FillUserType)
+
 	if params != nil {
 		if params[0] != 0 {
 			limit = params[0]
@@ -333,48 +344,7 @@ func GetAllUser(db *sqlx.DB, forward bool, params ...int) ([]wrapper.User, error
 		}
 	}
 
-	if lastid > 0 {
-		var query string
-		if forward {
-			query = `SELECT
-			u.id,
-			u.first_name,
-			u.last_name,
-			u.username,
-			u.avatar,
-			u.gender,
-			TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
-			u.balance,
-			INITCAP(r.name) AS role
-			FROM "user" u
-			LEFT JOIN "user_role" ur ON ur.user_id=u.id
-			LEFT JOIN "role" r ON r.id=ur.role_id
-			WHERE u.id > $1
-			LIMIT $2`
-		} else {
-			query = `SELECT
-			u.id,
-			u.first_name,
-			u.last_name,
-			u.username,
-			u.avatar,
-			u.gender,
-			TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
-			u.balance,
-			INITCAP(r.name) AS role
-			FROM "user" u
-			LEFT JOIN "user_role" ur ON ur.user_id=u.id
-			LEFT JOIN "role" r ON r.id=ur.role_id
-			WHERE u.id < $1
-			ORDER BY u.id DESC
-			LIMIT $2`
-		}
-		err := db.Select(&user, query, lastid, limit)
-		if err != nil {
-			return []wrapper.User{}, err
-		}
-	} else {
-		query := `SELECT
+	query := `SELECT
 		u.id,
 		u.first_name,
 		u.last_name,
@@ -386,8 +356,20 @@ func GetAllUser(db *sqlx.DB, forward bool, params ...int) ([]wrapper.User, error
 		INITCAP(r.name) AS role
 		FROM "user" u
 		LEFT JOIN "user_role" ur ON ur.user_id=u.id
-		LEFT JOIN "role" r ON r.id=ur.role_id
-		LIMIT $1`
+		LEFT JOIN "role" r ON r.id=ur.role_id`
+
+	if lastid > 0 {
+		if forward {
+			query = fmt.Sprintf(`%s WHERE u.id > %s $1 LIMIT $2`, query, FillUserType)
+		} else {
+			query = fmt.Sprintf(`%s WHERE u.id < $1 %s ORDER BY u.id DESC LIMIT $2`, query, FillUserType)
+		}
+		err := db.Select(&user, query, lastid, limit)
+		if err != nil {
+			return []wrapper.User{}, err
+		}
+	} else {
+		query = fmt.Sprintf(`%s %s LIMIT $1`, query, FillUserType)
 		err := db.Select(&user, query, limit)
 		if err != nil {
 			return []wrapper.User{}, err
