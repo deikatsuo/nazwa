@@ -3,7 +3,8 @@ FROM "user" u
 LEFT JOIN "phone" p ON u.id = p.user_id
 LEFT JOIN "email" e ON u.id = e.user_id
 LEFT JOIN "user_role" ur ON ur.user_id = u.id
-LEFT JOIN "role" r ON ur.role_id = r.id;
+LEFT JOIN "role" r ON ur.role_id = r.id
+WHERE r.id = 1;
 
 SELECT id
 FROM "user"
@@ -56,3 +57,18 @@ VALUES  ('Spring bed merah jambu','SP001','1000000','1500000','spring bed','3500
         ('Pesawat jet hover','JT002','1000000','1500000','pesawat','3500000','4000000'),
         ('Rumah box solo','RM001','1000000','1500000','rumah','3500000','4000000');
 
+SELECT
+		u.id,
+		u.first_name,
+		u.last_name,
+		u.username,
+		u.avatar,
+		u.gender,
+		TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		u.balance,
+		INITCAP(r.name) AS role
+		FROM "user" u
+		LEFT JOIN "user_role" ur ON ur.user_id=u.id
+		LEFT JOIN "role" r ON r.id=ur.role_id
+        WHERE u.id > 1 AND r.id = 1
+        LIMIT 10;
