@@ -117,8 +117,8 @@
               class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
               aria-label="Previous"
               @click="backW()"
-              :class="{'cursor-not-allowed opacity-50': page <= 1}"
-              :disabled="page <= 1"
+              :class="{'cursor-not-allowed opacity-50': page <= 1 || loading == true}"
+              :disabled="page <= 1 || loading == true"
             >
               <svg
                 aria-hidden="true"
@@ -139,8 +139,8 @@
               class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
               aria-label="Next"
               @click="forW()"
-              :class="{'cursor-not-allowed opacity-50': last == true}"
-              :disabled="last == true"
+              :class="{'cursor-not-allowed opacity-50': last == true || loading == true}"
+              :disabled="last == true || loading == true"
             >
               <svg
                 class="w-4 h-4 fill-current"
@@ -179,7 +179,9 @@ function usersPageData() {
     lastid: 0,
     page: 1,
     last: false,
+    loading: false,
     fetchUsersData(reset, go) {
+      loading = true;
       if (reset) {
         this.lastid = 0;
       }
@@ -197,6 +199,7 @@ function usersPageData() {
         this.total = json.total
         this.lastid = json.lastid
         this.last = json.last
+        loading = false;
       })
       .catch((err) => {
         console.log(err)
