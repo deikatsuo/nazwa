@@ -329,10 +329,6 @@ func GetAllUser(db *sqlx.DB, forward bool, userRole int, params ...int) ([]wrapp
 		FillUserType = fmt.Sprintf("AND r.id = %d", userRole)
 	}
 
-	fmt.Println("Role int ", userRole)
-	fmt.Println("Role string ", string(userRole))
-	fmt.Println(FillUserType)
-
 	if params != nil {
 		if params[0] != 0 {
 			limit = params[0]
@@ -360,7 +356,7 @@ func GetAllUser(db *sqlx.DB, forward bool, userRole int, params ...int) ([]wrapp
 
 	if lastid > 0 {
 		if forward {
-			query = fmt.Sprintf(`%s WHERE u.id > %s $1 LIMIT $2`, query, FillUserType)
+			query = fmt.Sprintf(`%s WHERE u.id > $1 %s LIMIT $2`, query, FillUserType)
 		} else {
 			query = fmt.Sprintf(`%s WHERE u.id < $1 %s ORDER BY u.id DESC LIMIT $2`, query, FillUserType)
 		}
@@ -369,7 +365,7 @@ func GetAllUser(db *sqlx.DB, forward bool, userRole int, params ...int) ([]wrapp
 			return []wrapper.User{}, err
 		}
 	} else {
-		query = fmt.Sprintf(`%s %s LIMIT $1`, query, FillUserType)
+		query = fmt.Sprintf(`%s WHERE u.id > 0 %s LIMIT $1`, query, FillUserType)
 		err := db.Select(&user, query, limit)
 		if err != nil {
 			return []wrapper.User{}, err
