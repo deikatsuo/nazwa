@@ -129,7 +129,7 @@
   <div
     class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
   >
-    <span class="flex items-center col-span-3">
+    <span class="flex items-center col-span-1">
       <div class="relative">
         <select
           class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
@@ -148,13 +148,13 @@
 
     <!-- Menampilkan total -->
     <span
-      class="flex items-center col-span-2"
+      class="flex items-center sm:justify-center col-span-7"
     >
       Total <div x-text="total" class="px-1"></div> - <div class="px-1"></div> halaman <div x-text="page" class="px-1"></div>
     </span>
 
     <!-- Pagination -->
-    <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
+    <span class="flex col-span-1 mt-2 sm:mt-auto sm:justify-end">
       <nav aria-label="Table navigation">
         <ul class="inline-flex items-center">
           <li>
@@ -237,7 +237,7 @@ function usersPageData() {
     last: false,
     loading: false,
     fetchUsersData(reset, go) {
-      loading = true;
+      this.loading = true;
       if (reset) {
         this.lastid = 0;
       }
@@ -255,7 +255,7 @@ function usersPageData() {
         this.total = json.total
         this.lastid = json.lastid
         this.last = json.last
-        loading = false;
+        this.loading = false;
       })
       .catch((err) => {
         console.log(err)
