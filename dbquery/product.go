@@ -16,8 +16,9 @@ func GetAllProduct(db *sqlx.DB) ([]wrapper.Product, error) {
 	query := `SELECT
 		id,
 		name,
-		base_price,
-		price,
+		TO_CHAR(base_price,'Rp999G999G999G999G999') AS base_price,
+		TO_CHAR(price,'Rp999G999G999G999G999') AS price,
+		code,
 		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at
 		FROM "product"`
 
@@ -35,6 +36,7 @@ func GetAllProduct(db *sqlx.DB) ([]wrapper.Product, error) {
 			CreatedAt: p.CreatedAt,
 			BasePrice: string(p.BasePrice),
 			Price:     string(p.Price),
+			Code:      string(p.Code.String),
 		})
 	}
 
