@@ -42,6 +42,38 @@ type User struct {
 	Addresses []UserAddress
 }
 
+// NullableProduct menampilkan list produk
+type NullableProduct struct {
+	ID            int            `db:"id"`
+	Name          string         `db:"name"`
+	Code          sql.NullString `db:"code"`
+	BasePrice     []uint8        `db:"base_price"`
+	Price         []uint8        `db:"price"`
+	CreditSix     []uint8        `db:"credit_six"`
+	CreditEight   []uint8        `db:"credit_eight"`
+	CreditTen     []uint8        `db:"credit_ten"`
+	CreditTwelve  []uint8        `db:"credit_twelve"`
+	CreditFifteen []uint8        `db:"credit_fifteen"`
+	Type          sql.NullString `db:"type"`
+	CreatedAt     string         `db:"created_at"`
+}
+
+// Product map data produk
+type Product struct {
+	ID            int
+	Name          string
+	Code          string
+	BasePrice     string
+	Price         string
+	CreditSix     string
+	CreditEight   string
+	CreditTen     string
+	CreditTwelve  string
+	CreditFifteen string
+	Type          string
+	CreatedAt     string
+}
+
 // Fullname menampilkan nama lengkap
 func (u NullableUser) Fullname() string {
 	return u.Firstname + " " + u.Lastname.String

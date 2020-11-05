@@ -127,6 +127,10 @@ func runServer(db *sqlx.DB) {
 	address.GET("/districts/:id", api.PlaceDistricts(db))
 	address.GET("/villages/:id", api.PlaceVillages(db))
 
+	// /api/v1/local/product
+	product := v1local.Group("/product")
+	product.GET("/list/:limit", api.ProductList(db))
+
 	// User API
 	// /api/v1/local/user
 	v1user := v1local.Group("/user")
