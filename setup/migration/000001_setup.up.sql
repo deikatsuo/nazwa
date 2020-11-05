@@ -143,5 +143,6 @@ CREATE TABLE product (
     "credit_twelve" DECIMAL(15,2) DEFAULT '0',
     "credit_fifteen" DECIMAL(15,2) DEFAULT '0',
     "type" VARCHAR(10),
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
