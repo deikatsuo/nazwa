@@ -4,274 +4,266 @@
 </h2>
 
 <div
-  class="mb-8"
+  class="overflow-hidden mb-8 p-1"
   x-data="usersPageData()"
   x-init="fetchInit($watch)"
 >
-
-<!-- Filter -->
-<!-- New Table -->
-<div class="w-full overflow-hidden my-2">
-<h4 class="font-semibold text-gray-700 dark:text-gray-200">
-  Filter
-</h4>
-  <div class="grid py-3 text-xs font-semibold text-gray-500 border-t dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-    
-    <div class="relative">
-      <select
-        class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-        x-model="userType"
-      >
-        <option value="">Tampilkan Semua</option>
-        <option value="1">Admin</option>
-        <option value="2">Surveyor</option>
-        <option value="3">Kolektor</option>
-        <option value="4">Sales</option>
-        <option value="5">Pelanggan</option>
-      </select>
-      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-        {{ template "_svg_icon_arrow_bottom" }}
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- New Table -->
-<div class="w-full overflow-hidden rounded-lg shadow-xs">
-  <div class="w-full overflow-x-auto">
-    <table class="w-full whitespace-no-wrap">
-      <thead>
-        <tr
-          class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-        >
-          <th class="px-4 py-3">ID</th>
-          <th class="px-4 py-3">Nama Lengkap</th>
-          <th class="px-4 py-3">Sisa Saldo</th>
-          <th class="px-4 py-3">Rating</th>
-          <th class="px-4 py-3">Terdaftar</th>
-        </tr>
-      </thead>
-
-      <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-        <template x-for="(user, index) in users" :key="index">
-          <tr 
-            class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
-            @click="$dispatch('modal', { title: 'Tambahkan nomor HP', html: $refs.userDetail.innerHTML, callback: function() { alert($dispatch) } })"
-          >
-            
-            <td 
-              class="px-4 py-3 text-sm"
-              x-text="user.ID"
-            ></td>
-            <td class="px-4 py-3">
-              <div class="flex items-center text-sm">
-                <!-- Tampilkan avatar -->
-                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                  <img
-                    class="object-cover w-full h-full rounded-full"
-                    :src="'/file/profile/'+user.Avatar"
-                    alt=""
-                    loading="lazy"
-                  />
-                  <div
-                    class="absolute inset-0 rounded-full shadow-inner"
-                    aria-hidden="true"
-                  ></div>
-                </div>
-                <div>
-                  <p 
-                    class="font-semibold"
-                    x-text="user.Firstname+' '+user.Lastname"
-                  ></p>
-                  <p 
-                    class="text-xs text-gray-600 dark:text-gray-400"
-                    x-text="user.Role"
-                  ></p>
-                </div>
-              </div>
-            </td>
-            <td 
-              class="px-4 py-3 text-sm"
-              x-text="user.Balance"
-            ></td>
-            <td class="px-4 py-3 text-xs">
-              <span
-                class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
-              >
-                Kredit lancar
-              </span>
-            </td>
-            <td
-              class="px-4 py-3 text-sm"
-              x-text="user.CreatedAt"
-            ></td>
-            
-          </tr>
-        </template>
-        <template x-ref="userDetail">
-        <div
-          id="showUserDetail"
-          x-data="{ user: [] }"
-        >
-          <input
-            class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
-            x-model="user.Fullname"
-            type="text"
-            @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
-            placeholder="User..."
-          />
-        </div>
-       </template>
-      </tbody>
-
-    </table>
-  </div>
-  <div
-    class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
-  >
-    <span class="flex items-center col-span-1">
+  <!-- Filter -->
+  <!-- New Table -->
+  <div class="w-full my-2">
+    <h4 class="font-semibold text-gray-700 dark:text-gray-200">Filter</h4>
+    <div
+      class="grid py-3 text-xs font-semibold text-gray-500 border-t dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+    >
       <div class="relative">
         <select
           class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-          x-model="limit"
+          x-model="userType"
         >
-          <option value="">Jumlah per halaman</option>
-          <option value="10">10</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
+          <option value="">Tampilkan Semua</option>
+          <option value="1">Admin</option>
+          <option value="2">Surveyor</option>
+          <option value="3">Kolektor</option>
+          <option value="4">Sales</option>
+          <option value="5">Pelanggan</option>
         </select>
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <div
+          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+        >
           {{ template "_svg_icon_arrow_bottom" }}
         </div>
       </div>
-    </span>
+    </div>
+  </div>
 
-    <!-- Menampilkan total -->
-    <span
-      class="flex items-center sm:justify-center col-span-7"
+  <!-- New Table -->
+  <div class="w-full overflow-hidden rounded-lg shadow-xs">
+    <div class="w-full overflow-x-auto">
+      <table class="w-full whitespace-no-wrap">
+        <thead>
+          <tr
+            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <th class="px-4 py-3">ID</th>
+            <th class="px-4 py-3">Nama Lengkap</th>
+            <th class="px-4 py-3">Sisa Saldo</th>
+            <th class="px-4 py-3">Rating</th>
+            <th class="px-4 py-3">Terdaftar</th>
+          </tr>
+        </thead>
+
+        <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+          <template x-for="(user, index) in users" :key="index">
+            <tr
+              class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
+              @click="$dispatch('modal', { title: 'Tambahkan nomor HP', html: $refs.userDetail.innerHTML, callback: function() { alert($dispatch) } })"
+            >
+              <td class="px-4 py-3 text-sm" x-text="user.ID"></td>
+              <td class="px-4 py-3">
+                <div class="flex items-center text-sm">
+                  <!-- Tampilkan avatar -->
+                  <div
+                    class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
+                  >
+                    <img
+                      class="object-cover w-full h-full rounded-full"
+                      :src="'/file/profile/'+user.Avatar"
+                      alt=""
+                      loading="lazy"
+                    />
+                    <div
+                      class="absolute inset-0 rounded-full shadow-inner"
+                      aria-hidden="true"
+                    ></div>
+                  </div>
+                  <div>
+                    <p
+                      class="font-semibold"
+                      x-text="user.Firstname+' '+user.Lastname"
+                    ></p>
+                    <p
+                      class="text-xs text-gray-600 dark:text-gray-400"
+                      x-text="user.Role"
+                    ></p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-3 text-sm" x-text="user.Balance"></td>
+              <td class="px-4 py-3 text-xs">
+                <span
+                  class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
+                >
+                  Kredit lancar
+                </span>
+              </td>
+              <td class="px-4 py-3 text-sm" x-text="user.CreatedAt"></td>
+            </tr>
+          </template>
+          <template x-ref="userDetail">
+            <div id="showUserDetail" x-data="{ user: [] }">
+              <input
+                class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
+                x-model="user.Fullname"
+                type="text"
+                @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
+                placeholder="User..."
+              />
+            </div>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <div
+      class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
     >
-      Total <div x-text="total" class="px-1"></div> - <div class="px-1"></div> halaman <div x-text="page" class="px-1"></div>
-    </span>
+      <span class="flex items-center col-span-1">
+        <div class="relative">
+          <select
+            class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+            x-model="limit"
+          >
+            <option value="">Jumlah per halaman</option>
+            <option value="10">10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <div
+            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+          >
+            {{ template "_svg_icon_arrow_bottom" }}
+          </div>
+        </div>
+      </span>
 
-    <!-- Pagination -->
-    <span class="flex col-span-1 mt-2 sm:mt-auto sm:justify-end">
-      <nav aria-label="Table navigation">
-        <ul class="inline-flex items-center">
-          <li>
-            <!-- Backward -->
-            <button
-              class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
-              aria-label="Previous"
-              @click="backW()"
-              :class="{'cursor-not-allowed opacity-50': page <= 1 || loading == true}"
-              :disabled="page <= 1 || loading == true"
-            >
-              <svg
-                aria-hidden="true"
-                class="w-4 h-4 fill-current"
-                viewBox="0 0 20 20"
+      <!-- Menampilkan total -->
+      <span class="flex items-center sm:justify-center col-span-7">
+        Total
+        <div x-text="total" class="px-1"></div>
+        -
+        <div class="px-1"></div>
+        halaman
+        <div x-text="page" class="px-1"></div>
+      </span>
+
+      <!-- Pagination -->
+      <span class="flex col-span-1 mt-2 sm:mt-auto sm:justify-end">
+        <nav aria-label="Table navigation">
+          <ul class="inline-flex items-center">
+            <li>
+              <!-- Backward -->
+              <button
+                class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                aria-label="Previous"
+                @click="backW()"
+                :class="{'cursor-not-allowed opacity-50': page <= 1 || loading == true}"
+                :disabled="page <= 1 || loading == true"
               >
-                <path
-                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                  fill-rule="evenodd"
-                ></path>
-              </svg>
-            </button>
-          </li>
-          <!-- Forward -->
-          <li>
-            <button
-              class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
-              aria-label="Next"
-              @click="forW()"
-              :class="{'cursor-not-allowed opacity-50': last == true || loading == true}"
-              :disabled="last == true || loading == true"
-            >
-              <svg
-                class="w-4 h-4 fill-current"
-                aria-hidden="true"
-                viewBox="0 0 20 20"
+                <svg
+                  aria-hidden="true"
+                  class="w-4 h-4 fill-current"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                    fill-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </li>
+            <!-- Forward -->
+            <li>
+              <button
+                class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                aria-label="Next"
+                @click="forW()"
+                :class="{'cursor-not-allowed opacity-50': last == true || loading == true}"
+                :disabled="last == true || loading == true"
               >
-                <path
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clip-rule="evenodd"
-                  fill-rule="evenodd"
-                ></path>
-              </svg>
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </span>
+                <svg
+                  class="w-4 h-4 fill-current"
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                    fill-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </span>
+    </div>
   </div>
 </div>
-</div>
 <script>
-function usersPageData() {
-  return {
-    fetchInit($watch) {
-      $watch('limit', (value) => {
-        if (value != "") {
-          this.users = [];
-          this.page = 1;
-          this.fetchUsersData(true, "next");
+  function usersPageData() {
+    return {
+      fetchInit($watch) {
+        $watch("limit", (value) => {
+          if (value != "") {
+            this.users = [];
+            this.page = 1;
+            this.fetchUsersData(true, "next");
+          }
+        });
+        $watch("userType", (value) => {
+          if (value != "") {
+            this.users = [];
+            this.page = 1;
+            this.fetchUsersData(true, "next");
+          }
+        });
+        this.fetchUsersData(true, "next");
+      },
+      users: [],
+      showSelected: null,
+      userType: 0,
+      total: 0,
+      limit: 10,
+      lastid: 0,
+      page: 1,
+      last: false,
+      loading: false,
+      fetchUsersData(reset, go) {
+        this.loading = true;
+        if (reset) {
+          this.lastid = 0;
         }
-      });
-      $watch('userType', (value) => {
-        if (value != "") {
-          this.users = [];
-          this.page = 1;
-          this.fetchUsersData(true, "next");
+        if (go == "back") {
+          ffrom = `/api/v1/local/users/list/${this.limit}?lastid=${this.lastid}&direction=back&role=${this.userType}`;
+        } else {
+          ffrom = `/api/v1/local/users/list/${this.limit}?lastid=${this.lastid}&role=${this.userType}`;
         }
-      });
-      this.fetchUsersData(true, "next");
-    },
-    users: [],
-    showSelected: null,
-    userType: 0,
-    total: 0,
-    limit: 10,
-    lastid: 0,
-    page: 1,
-    last: false,
-    loading: false,
-    fetchUsersData(reset, go) {
-      this.loading = true;
-      if (reset) {
-        this.lastid = 0;
-      }
-      if (go == "back") {
-        ffrom = `/api/v1/local/users/list/${this.limit}?lastid=${this.lastid}&direction=back&role=${this.userType}`;
-      } else {
-        ffrom = `/api/v1/local/users/list/${this.limit}?lastid=${this.lastid}&role=${this.userType}`;
-      }
-      fetch(ffrom, {
-        method: "GET",
-      })
-      .then((res) => res.json())
-      .then((json) => {
-        this.users = json.users
-        this.total = json.total
-        this.lastid = json.lastid
-        this.last = json.last
-        this.loading = false;
-      })
-      .catch((err) => {
-        console.log(err)
-      });
-    },
-    backW() {
-      if (this.page > 1) {
-        this.page = Number(this.page) - 1;
-        this.fetchUsersData(false, "back");
-      }
-    },
-    forW() {
-      this.page = Number(this.page) + 1;
-      this.fetchUsersData(false, "next");
-    },
-  };
-}
+        fetch(ffrom, {
+          method: "GET",
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            this.users = json.users;
+            this.total = json.total;
+            this.lastid = json.lastid;
+            this.last = json.last;
+            this.loading = false;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      backW() {
+        if (this.page > 1) {
+          this.page = Number(this.page) - 1;
+          this.fetchUsersData(false, "back");
+        }
+      },
+      forW() {
+        this.page = Number(this.page) + 1;
+        this.fetchUsersData(false, "next");
+      },
+    };
+  }
 </script>
 {{ end }}

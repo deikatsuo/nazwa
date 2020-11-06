@@ -3,198 +3,194 @@
   Data Produk Barang
 </h2>
 
-<div x-data="ProductData()" x-init="fetchInit($watch)">
-  <!-- Daftar Produk -->
-  <!-- With avatar -->
-  <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">
-    Table with avatars
-  </h4>
-  <div class="w-full mb-8 overflow-hidden rounded-lg shadow-xs">
-    <div class="w-full overflow-x-scroll sm:overflow-x-auto">
-      <table class="w-full whitespace-no-wrap">
-        <thead>
+<!-- Daftar Produk -->
+<div
+  x-data="ProductData()"
+  x-init="fetchInit($watch)"
+  class="w-full mb-8 overflow-hidden rounded-lg shadow-xs"
+>
+  <div class="w-full overflow-x-auto">
+    <table class="w-full whitespace-no-wrap">
+      <thead>
+        <tr
+          class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        >
+          <th class="px-3 py-3">No</th>
+          <th class="px-4 py-3">Nama Barang</th>
+          <th class="px-4 py-3">Harga Beli</th>
+          <th class="px-4 py-3">Harga Jual</th>
+          <th class="px-4 py-3">Tanggal Ditambahkan</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+        <template x-for="(product, index) in products" :key="index">
           <tr
-            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+            class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
+            @click="$dispatch('modal', { title: 'Tambahkan nomor HP', html: $refs.userDetail.innerHTML, callback: function() { alert($dispatch) } })"
           >
-            <th class="px-3 py-3">No</th>
-            <th class="px-4 py-3">Nama Barang</th>
-            <th class="px-4 py-3">Harga Beli</th>
-            <th class="px-4 py-3">Harga Jual</th>
-            <th class="px-4 py-3">Tanggal Ditambahkan</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-          <template x-for="(product, index) in products" :key="index">
-            <tr
-              class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
-              @click="$dispatch('modal', { title: 'Tambahkan nomor HP', html: $refs.userDetail.innerHTML, callback: function() { alert($dispatch) } })"
-            >
-              <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
-              <td class="px-1 py-3">
-                <div class="flex items-center text-sm">
-                  <!-- Tampilkan avatar -->
+            <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
+            <td class="px-1 py-3">
+              <div class="flex items-center text-sm">
+                <!-- Tampilkan avatar -->
+                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
+                  <img
+                    class="object-cover w-full h-full rounded-full"
+                    :src="'/file/product/no-photo.png'"
+                    alt=""
+                    loading="lazy"
+                  />
                   <div
-                    class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
-                  >
-                    <img
-                      class="object-cover w-full h-full rounded-full"
-                      :src="'/file/product/no-photo.png'"
-                      alt=""
-                      loading="lazy"
-                    />
-                    <div
-                      class="absolute inset-0 rounded-full shadow-inner"
-                      aria-hidden="true"
-                    ></div>
-                  </div>
-                  <div>
-                    <p class="font-semibold" x-text="product.Name"></p>
-                    <p
-                      class="text-xs text-gray-600 dark:text-gray-400"
-                      x-text="product.Code"
-                    ></p>
-                  </div>
+                    class="absolute inset-0 rounded-full shadow-inner"
+                    aria-hidden="true"
+                  ></div>
                 </div>
-              </td>
-              <td class="px-4 py-3 text-sm" x-text="product.BasePrice"></td>
-              <td class="px-4 py-3 text-sm" x-text="product.Price"></td>
-              <td class="px-4 py-3 text-sm" x-text="product.CreatedAt"></td>
-            </tr>
-          </template>
-          <template x-ref="userDetail">
-            <div id="showUserDetail" x-data="{ user: [] }">
-              <input
-                class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
-                x-model="user.Fullname"
-                type="text"
-                @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
-                placeholder="User..."
-              />
-            </div>
-          </template>
-        </tbody>
-      </table>
-    </div>
-    <div
-      class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
-    >
-      <span class="flex items-center col-span-1">
-        <div class="relative">
-          <select
-            class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-            x-model="limit"
-          >
-            <option value="">Jumlah per halaman</option>
-            <option value="10">10</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          <div
-            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-          >
-            {{ template "_svg_icon_arrow_bottom" }}
+                <div>
+                  <p class="font-semibold" x-text="product.Name"></p>
+                  <p
+                    class="text-xs text-gray-600 dark:text-gray-400"
+                    x-text="product.Code"
+                  ></p>
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-3 text-sm" x-text="product.BasePrice"></td>
+            <td class="px-4 py-3 text-sm" x-text="product.Price"></td>
+            <td class="px-4 py-3 text-sm" x-text="product.CreatedAt"></td>
+          </tr>
+        </template>
+        <template x-ref="userDetail">
+          <div id="showUserDetail" x-data="{ user: [] }">
+            <input
+              class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
+              x-model="user.Fullname"
+              type="text"
+              @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
+              placeholder="User..."
+            />
           </div>
-        </div>
-      </span>
-      <span class="flex items-center col-span-7 justify-center">
-        Menampilkan 00-00 dari 00
-      </span>
-      <!-- Pagination -->
-      <span class="flex col-span-1 mt-2 sm:mt-auto sm:justify-end">
-        <nav aria-label="Table navigation">
-          <ul class="inline-flex items-center">
-            <!-- Backwaard -->
-            <li>
-              <button
-                class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
-                aria-label="Previous"
-              >
-                <svg
-                  aria-hidden="true"
-                  class="w-4 h-4 fill-current"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                    clip-rule="evenodd"
-                    fill-rule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-            </li>
-            <!-- Forward -->
-            <li>
-              <button
-                class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
-                aria-label="Next"
-              >
-                <svg
-                  class="w-4 h-4 fill-current"
-                  aria-hidden="true"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clip-rule="evenodd"
-                    fill-rule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </span>
-    </div>
+        </template>
+      </tbody>
+    </table>
   </div>
-
-  <script>
-    function ProductData() {
-      return {
-        fetchInit($watch) {
-          // empty
-          this.fetchProductData(true, "next");
-        },
-        products: [],
-        loading: false,
-        lastid: 0,
-        limit: 10,
-        productType: "all",
-        loaded: 0,
-        fetchProductData(reset, go) {
-          this.loading = true;
-          if (reset) {
-            this.lastid = 0;
-          }
-          if (go == "back") {
-            ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&direction=back&role=${this.productType}`;
-          } else {
-            ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&role=${this.productType}`;
-          }
-          fetch(ffrom, {
-            method: "GET",
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              this.products = json.product;
-              this.lastid = json.lastid;
-              this.loading = false;
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        },
-        backW() {
-          if (this.page > 1) {
-            this.page = Number(this.page) - 1;
-            this.fetchUsersData(false, "back");
-          }
-        },
-        forW() {
-          this.page = Number(this.page) + 1;
-          this.fetchUsersData(false, "next");
-        },
-      };
-    }
-  </script>
-  {{ end }}
+  <div
+    class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
+  >
+    <span class="flex items-center col-span-1">
+      <div class="relative">
+        <select
+          class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+          x-model="limit"
+        >
+          <option value="">Jumlah per halaman</option>
+          <option value="10">10</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <div
+          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+        >
+          {{ template "_svg_icon_arrow_bottom" }}
+        </div>
+      </div>
+    </span>
+    <span class="flex items-center col-span-7 justify-center">
+      Menampilkan 00-00 dari 00
+    </span>
+    <!-- Pagination -->
+    <span class="flex col-span-1 mt-2 sm:mt-auto sm:justify-end">
+      <nav aria-label="Table navigation">
+        <ul class="inline-flex items-center">
+          <!-- Backwaard -->
+          <li>
+            <button
+              class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+              aria-label="Previous"
+            >
+              <svg
+                aria-hidden="true"
+                class="w-4 h-4 fill-current"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                  fill-rule="evenodd"
+                ></path>
+              </svg>
+            </button>
+          </li>
+          <!-- Forward -->
+          <li>
+            <button
+              class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+              aria-label="Next"
+            >
+              <svg
+                class="w-4 h-4 fill-current"
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"
+                  fill-rule="evenodd"
+                ></path>
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </span>
+  </div>
 </div>
+
+<script>
+  function ProductData() {
+    return {
+      fetchInit($watch) {
+        // empty
+        this.fetchProductData(true, "next");
+      },
+      products: [],
+      loading: false,
+      lastid: 0,
+      limit: 10,
+      productType: "all",
+      loaded: 0,
+      fetchProductData(reset, go) {
+        this.loading = true;
+        if (reset) {
+          this.lastid = 0;
+        }
+        if (go == "back") {
+          ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&direction=back&role=${this.productType}`;
+        } else {
+          ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&role=${this.productType}`;
+        }
+        fetch(ffrom, {
+          method: "GET",
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            this.products = json.product;
+            this.lastid = json.lastid;
+            this.loading = false;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      backW() {
+        if (this.page > 1) {
+          this.page = Number(this.page) - 1;
+          this.fetchUsersData(false, "back");
+        }
+      },
+      forW() {
+        this.page = Number(this.page) + 1;
+        this.fetchUsersData(false, "next");
+      },
+    };
+  }
+</script>
+{{ end }}
