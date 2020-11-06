@@ -40,13 +40,13 @@
     </template>
     
     <div
-      class="flex h-screen bg-gray-50 dark:bg-gray-900"
+      class="flex overflow-hidden h-screen bg-gray-50 dark:bg-gray-900"
       :class="{ 'overflow-hidden': isSideMenuOpen }"
     >
       {{ template "sidebar" .}}
       <div class="flex flex-col flex-1 w-full">
         {{ template "navbar" .}}
-        <main class="h-full overflow-y-auto">
+        <main class="h-full overflow-hidden">
           <div class="container px-6 mx-auto grid">
             <!-- contents -->
             {{ if eq .page "dashboard" }}
