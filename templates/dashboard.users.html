@@ -154,7 +154,7 @@
               <button
                 class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
                 aria-label="Previous"
-                @click="backW()"
+                @click="backW($dispatch)"
                 :class="{'cursor-not-allowed opacity-50': page <= 1 || loading == true}"
                 :disabled="page <= 1 || loading == true"
               >
@@ -176,7 +176,7 @@
               <button
                 class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
                 aria-label="Next"
-                @click="forW()"
+                @click="forW($dispatch)"
                 :class="{'cursor-not-allowed opacity-50': last == true || loading == true}"
                 :disabled="last == true || loading == true"
               >
@@ -217,7 +217,7 @@
             this.fetchUsersData(true, "next");
           }
         });
-        this.fetchUsersData(true, "next");
+        this.fetchUsersData(true, "init");
       },
       users: [],
       showSelected: null,
@@ -228,7 +228,7 @@
       page: 1,
       last: false,
       loading: false,
-      fetchUsersData(reset, go) {
+      fetchUsersData($dispatch, reset, go) {
         this.loading = true;
         if (reset) {
           this.lastid = 0;
@@ -243,25 +243,35 @@
         })
           .then((res) => res.json())
           .then((json) => {
-            this.users = json.users;
-            this.total = json.total;
-            this.lastid = json.lastid;
-            this.last = json.last;
             this.loading = false;
+            if (json.users != null) {
+              this.users = json.users;
+              this.total = json.total;
+              this.lastid = json.lastid;
+              this.last = json.last;
+
+              if (go == "back") {
+                this.page = Number(this.page) - 1;
+              } else if (go == "next") {
+                this.page = Number(this.page) + 1;
+              }
+            } else {
+              this.last = true;
+              $dispatch("notif", { type: "error", message: "Tidak ada data pengguna yang bisa ditampilkan" });
+            }
           })
           .catch((err) => {
             console.log(err);
+            this.loading = false;
           });
       },
-      backW() {
+      backW($dispatch) {
         if (this.page > 1) {
-          this.page = Number(this.page) - 1;
-          this.fetchUsersData(false, "back");
+          this.fetchUsersData($dispatch, false, "back");
         }
       },
-      forW() {
-        this.page = Number(this.page) + 1;
-        this.fetchUsersData(false, "next");
+      forW($dispatch) {
+        this.fetchUsersData($dispatch, false, "next");
       },
     };
   }
