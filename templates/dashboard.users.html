@@ -6,7 +6,7 @@
 <div
   class="overflow-hidden mb-8 p-1"
   x-data="usersPageData()"
-  x-init="fetchInit($watch)"
+  x-init="fetchInit($watch, $dispatch)"
 >
   <!-- Filter -->
   <!-- New Table -->
@@ -202,22 +202,22 @@
 <script>
   function usersPageData() {
     return {
-      fetchInit($watch) {
+      fetchInit($watch, $dispatch) {
         $watch("limit", (value) => {
           if (value != "") {
             this.users = [];
             this.page = 1;
-            this.fetchUsersData(true, "next");
+            this.fetchUsersData($dispatch, true, "init");
           }
         });
         $watch("userType", (value) => {
           if (value != "") {
             this.users = [];
             this.page = 1;
-            this.fetchUsersData(true, "next");
+            this.fetchUsersData($dispatch, true, "init");
           }
         });
-        this.fetchUsersData(true, "init");
+        this.fetchUsersData($dispatch, true, "init");
       },
       users: [],
       showSelected: null,
