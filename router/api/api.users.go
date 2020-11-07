@@ -24,7 +24,6 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		errMess := ""
-		next := true
 		httpStatus := http.StatusBadRequest
 
 		// Id terakhir
@@ -33,32 +32,33 @@ func UsersList(db *sqlx.DB) gin.HandlerFunc {
 		limit := 10
 		var direction string
 		userRole := 0
-		if next {
-			lim, err := strconv.Atoi(c.Param("limit"))
-			if err == nil {
-				limit = lim
-			}
 
-			// Ambil id terakhir
-			lst, err := strconv.Atoi(c.Query("lastid"))
-			if err == nil {
-				lastid = lst
-			}
-
-			// Filter berdasarkan tipe user
-			uty, err := strconv.Atoi(c.Query("role"))
-			if err == nil {
-				userRole = uty
-			}
-
-			// Forward/backward
-			direction = c.Query("direction")
+		lim, err := strconv.Atoi(c.Param("limit"))
+		if err == nil {
+			limit = lim
 		}
 
+		// Ambil id terakhir
+		lst, err := strconv.Atoi(c.Query("lastid"))
+		if err == nil {
+			lastid = lst
+		}
+
+		// Filter berdasarkan tipe user
+		uty, err := strconv.Atoi(c.Query("role"))
+		if err == nil {
+			userRole = uty
+		}
+
+		// Forward/backward
+		direction = c.Query("direction")
+
+		// Melihat total user di database
 		var total int
-		if t, err := dbquery.GetTotalRow(db); err == nil {
+		if t, err := dbquery.GetUserTotalRow(db); err == nil {
 			total = t
 		}
+
 		var users []wrapper.User
 		// Gunakan offset jika tersedia
 		if lastid != 0 {

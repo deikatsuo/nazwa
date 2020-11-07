@@ -402,8 +402,8 @@ func GetAllUser(db *sqlx.DB, forward bool, userRole int, params ...int) ([]wrapp
 	return parse, nil
 }
 
-// GetTotalRow menghitung jumlah row pada tabel user
-func GetTotalRow(db *sqlx.DB) (int, error) {
+// GetUserTotalRow menghitung jumlah row pada tabel user
+func GetUserTotalRow(db *sqlx.DB) (int, error) {
 	var total int
 	query := `SELECT COUNT(id) FROM "user"`
 	err := db.Get(&total, query)
