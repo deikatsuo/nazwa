@@ -46,16 +46,16 @@ WHERE user_id=1
 
 -- Buat peran
 INSERT INTO "product" ("name", "code","base_price","price","type","credit_twelve","credit_fifteen")
-VALUES  ('Spring bed merah jambu','SP001','1000000','1500000','spring bed','3500000','4000000'),
-        ('Liswar Jumbo','LW001','500000','1000000','liswar','2000000','2500000'),
-        ('Laptop AEX','LA001','1000000','1500000','laptop','3500000','4000000'),
-        ('Processor i3','PR001','1000000','1500000','processor','3500000','4000000'),
-        ('Motor honda x','MO001','12000000','15000000','motor','35000000','50000000'),
-        ('Mobil chevrolet s','MB001','1000000','1500000','mobil','3500000','4000000'),
-        ('Kapal ferry Z','KP001','1000000','1500000','kapal','3500000','4000000'),
-        ('Jet Pack Radio 2','JT001','1000000','1500000','pesawat','3500000','4000000'),
-        ('Pesawat jet hover','JT002','1000000','1500000','pesawat','3500000','4000000'),
-        ('Rumah box solo','RM001','1000000','1500000','rumah','3500000','4000000');
+VALUES  ('Spring bed biru jambu','SP002','1000000','1500000','spring bed','3500000','4000000'),
+        ('Liswar Jumbo2x','LW002','500000','1000000','liswar','2000000','2500000'),
+        ('Laptop Dell','LA002','1000000','1500000','laptop','3500000','4000000'),
+        ('Processor i5','PR002','1000000','1500000','processor','3500000','4000000'),
+        ('Motor yamaha','MO002','12000000','15000000','motor','35000000','50000000'),
+        ('Mobil ford','MB002','1000000','1500000','mobil','3500000','4000000'),
+        ('Kapal cargo','KP002','1000000','1500000','kapal','3500000','4000000'),
+        ('Jet Pack Laser','JT003','1000000','1500000','pesawat','3500000','4000000'),
+        ('Pesawat jet slam','JT004','1000000','1500000','pesawat','3500000','4000000'),
+        ('Rumah lipat','RM002','1000000','1500000','rumah','3500000','4000000');
 
 SELECT
 		u.id,
