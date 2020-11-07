@@ -244,6 +244,12 @@
           .then((res) => res.json())
           .then((json) => {
             this.loading = false;
+            if (json.error) {
+              $dispatch("notif", {
+                type: "error",
+                message: json.error,
+              });
+            }
             if (json.users != null) {
               this.users = json.users;
               this.total = json.total;
@@ -257,7 +263,10 @@
               }
             } else {
               this.last = true;
-              $dispatch("notif", { type: "error", message: "Tidak ada data pengguna yang bisa ditampilkan" });
+              $dispatch("notif", {
+                type: "error",
+                message: "Tidak ada data pengguna yang bisa ditampilkan",
+              });
             }
           })
           .catch((err) => {
