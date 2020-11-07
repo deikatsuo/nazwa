@@ -6,7 +6,7 @@
 <!-- Daftar Produk -->
 <div
   x-data="ProductData()"
-  x-init="fetchInit($watch)"
+  x-init="fetchInit($watch, $dispatch)"
   class="w-full mb-8 overflow-hidden rounded-lg shadow-xs"
 >
   <div class="w-full overflow-x-auto">
@@ -26,7 +26,7 @@
         <template x-for="(product, index) in products" :key="index">
           <tr
             class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
-            @click="$dispatch('modal', { title: 'Tambahkan nomor HP', html: $refs.userDetail.innerHTML, callback: function() { alert($dispatch) } })"
+            @click="$dispatch('modal', { tmp: fetchById($dispatch, product.ID), title: 'Detail data produk/barang', html: $refs.productDetail.innerHTML, callback: function() { alert('test') } });"
           >
             <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
             <td class="px-1 py-3">
@@ -58,14 +58,14 @@
             <td class="px-4 py-3 text-sm" x-text="product.CreatedAt"></td>
           </tr>
         </template>
-        <template x-ref="userDetail">
-          <div id="showUserDetail" x-data="{ user: [] }">
+        <template x-ref="productDetail">
+          <div id="productIdInfo" x-data="{ product: $parent.tmp, }">
             <input
               class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
-              x-model="user.Fullname"
+              x-model="product"
               type="text"
               @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
-              placeholder="User..."
+              placeholder="Nama produk..."
             />
           </div>
         </template>
@@ -94,7 +94,10 @@
       </div>
     </span>
     <span class="flex items-center col-span-7 justify-center">
-      Menampilkan 00-00 dari 00
+      Menampilkan 00-00 dari 00 -
+      <div class="px-1"></div>
+      Halaman
+      <div x-text="page" class="px-1"></div>
     </span>
     <!-- Pagination -->
     <span class="flex col-span-1 mt-2 sm:mt-auto sm:justify-end">
@@ -105,6 +108,9 @@
             <button
               class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
               aria-label="Previous"
+              @click="backW($dispatch)"
+              :class="{'cursor-not-allowed opacity-50': page <= 1 || loading == true}"
+              :disabled="page <= 1 || loading == true"
             >
               <svg
                 aria-hidden="true"
@@ -124,6 +130,9 @@
             <button
               class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
               aria-label="Next"
+              @click="forW($dispatch)"
+              :class="{'cursor-not-allowed opacity-50': last == true || loading == true}"
+              :disabled="last == true || loading == true"
             >
               <svg
                 class="w-4 h-4 fill-current"
@@ -147,9 +156,15 @@
 <script>
   function ProductData() {
     return {
-      fetchInit($watch) {
-        // empty
-        this.fetchProductData(true, "next");
+      fetchInit($watch, $dispatch) {
+        $watch("limit", (value) => {
+          if (value != "") {
+            this.products = [];
+            this.page = 1;
+            this.fetchProductsData($dispatch, true, "init");
+          }
+        });
+        this.fetchProductsData($dispatch, true, "init");
       },
       products: [],
       loading: false,
@@ -157,7 +172,9 @@
       limit: 10,
       productType: "all",
       loaded: 0,
-      fetchProductData(reset, go) {
+      last: false,
+      page: 1,
+      fetchProductsData($dispatch, reset, go) {
         this.loading = true;
         if (reset) {
           this.lastid = 0;
@@ -165,30 +182,58 @@
         if (go == "back") {
           ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&direction=back&role=${this.productType}`;
         } else {
-          ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&role=${this.productType}`;
+          ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&direction=next&role=${this.productType}`;
         }
         fetch(ffrom, {
           method: "GET",
         })
           .then((res) => res.json())
           .then((json) => {
-            this.products = json.product;
-            this.lastid = json.lastid;
             this.loading = false;
+            if (json.error) {
+              $dispatch("notif", {
+                type: "error",
+                message: json.error,
+              });
+            }
+
+            if (json.products != null) {
+              this.products = json.products;
+              this.lastid = json.lastid;
+              this.last = json.last;
+
+              if (go == "back") {
+                this.page = Number(this.page) - 1;
+                this.loaded -= 10;
+              } else if (go == "next") {
+                this.page = Number(this.page) + 1;
+                this.loaded += 10;
+              }
+            } else {
+              this.last = true;
+              $dispatch("notif", {
+                type: "error",
+                message: "Tidak ada data produk/barang yang bisa ditampilkan",
+              });
+            }
           })
           .catch((err) => {
             console.log(err);
+            this.loading = false;
           });
       },
-      backW() {
+      backW($dispatch) {
         if (this.page > 1) {
-          this.page = Number(this.page) - 1;
-          this.fetchUsersData(false, "back");
+          this.fetchProductsData($dispatch, false, "back");
         }
       },
-      forW() {
-        this.page = Number(this.page) + 1;
-        this.fetchUsersData(false, "next");
+      forW($dispatch) {
+        this.fetchProductsData($dispatch, false, "next");
+      },
+      fetchById($dispatch, id) {
+        //pid = document.getElementById("productIdInfo").__x.$data.pid;
+        alert(id);
+        return id;
       },
     };
   }
