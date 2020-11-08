@@ -12,8 +12,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// ProductList mengambil data/list produk
-func ProductList(db *sqlx.DB) gin.HandlerFunc {
+// ShowProductList mengambil data/list produk
+func ShowProductList(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
 		// User session saat ini
@@ -31,12 +31,17 @@ func ProductList(db *sqlx.DB) gin.HandlerFunc {
 		httpStatus := http.StatusOK
 		errMess := ""
 		pts := dbquery.GetProducts{}
+		next := true
 
 		// Mengambil parameter limit
 		lim, err := strconv.Atoi(c.Param("limit"))
 		if err == nil {
 			limit = lim
 			pts.Limit(limit)
+		} else {
+			errMess = "Limit tidak valid"
+			httpStatus = http.StatusBadRequest
+			next = false
 		}
 
 		// Ambil query id terakhir
@@ -47,10 +52,10 @@ func ProductList(db *sqlx.DB) gin.HandlerFunc {
 
 		// Forward/backward
 		direction = c.Query("direction")
-		if direction == "next" {
+		if direction == "back" {
 			pts.Direction(direction)
-		} else if direction == "back" {
-			pts.Direction(direction)
+		} else {
+			pts.Direction("next")
 		}
 
 		var total int
@@ -60,21 +65,23 @@ func ProductList(db *sqlx.DB) gin.HandlerFunc {
 
 		var products []wrapper.Product
 
-		if lastid != 0 {
-			pts.LastID(lastid)
-			p, err := pts.Show(db)
-			if err != nil {
-				errMess = err.Error()
+		if next {
+			if lastid != 0 {
+				pts.LastID(lastid)
+				p, err := pts.Show(db)
+				if err != nil {
+					errMess = err.Error()
+					httpStatus = http.StatusInternalServerError
+				}
+				products = p
+			} else {
+				p, err := pts.Show(db)
+				if err != nil {
+					errMess = err.Error()
+					httpStatus = http.StatusInternalServerError
+				}
+				products = p
 			}
-			products = p
-			httpStatus = http.StatusOK
-		} else {
-			p, err := pts.Show(db)
-			if err != nil {
-				errMess = err.Error()
-			}
-			products = p
-			httpStatus = http.StatusOK
 		}
 
 		// Cek id terakhir
@@ -98,8 +105,8 @@ func ProductList(db *sqlx.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// ProductByID mengambil data produk berdasarkan ID
-func ProductByID(db *sqlx.DB) gin.HandlerFunc {
+// ShowProductByID mengambil data produk berdasarkan ID
+func ShowProductByID(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
 		// User session saat ini
@@ -109,14 +116,31 @@ func ProductByID(db *sqlx.DB) gin.HandlerFunc {
 			router.Page404(c)
 			return
 		}
+		httpStatus := http.StatusOK
+		errMess := ""
 
 		// Mengambil parameter id produk
 		var pid int
 		id, err := strconv.Atoi(c.Param("id"))
 		if err == nil {
 			pid = id
+		} else {
+			httpStatus = http.StatusBadRequest
+			errMess = "Request tidak valid"
 		}
 
+		var product wrapper.Product
+		if p, err := dbquery.GetProductByID(db, pid); err == nil {
+			product = p
+		} else {
+			httpStatus = http.StatusInternalServerError
+			errMess = "Sepertinya telah terjadi kesalahan saat memuat data"
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"product": product,
+			"error":   errMess,
+		})
 	}
 	return fn
 }

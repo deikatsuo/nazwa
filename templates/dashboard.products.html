@@ -26,7 +26,7 @@
         <template x-for="(product, index) in products" :key="index">
           <tr
             class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
-            @click="$dispatch('modal', { tmp: fetchById($dispatch, product.ID), title: 'Detail data produk/barang', html: $refs.productDetail.innerHTML, callback: function() { alert('test') } });"
+            @click="$dispatch('modal', { tmp: product.ID, init: function() { fetchById($dispatch, product.ID) }, title: 'Detail data produk/barang', html: $refs.productDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
           >
             <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
             <td class="px-1 py-3">
@@ -59,16 +59,57 @@
           </tr>
         </template>
         <template x-ref="productDetail">
-          <div id="productIdInfo" x-data="{ product: $parent.tmp, }">
+          <div
+            id="productIdInfo"
+            x-init="fetchById($dispatch)"
+            x-data="fProDetail($parent)"
+          >
             <input
               class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
-              x-model="product"
+              x-model="product.Name"
               type="text"
               @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
               placeholder="Nama produk..."
             />
           </div>
         </template>
+        <script>
+          function fProDetail($parent) {
+            return {
+              init: $parent.modalInit,
+              id: $parent.modalTmp,
+              product: [],
+              fetchById($dispatch) {
+                var product = [];
+                fetch(`/api/v1/local/product/id/${this.id}`, {
+                  method: "GET",
+                })
+                  .then((res) => res.json())
+                  .then((json) => {
+                    if (json.error) {
+                      $dispatch("notif", {
+                        type: "error",
+                        message: json.error,
+                      });
+                    }
+
+                    if (json.product == null) {
+                      $dispatch("notif", {
+                        type: "error",
+                        message:
+                          "Sepertinya telah terjadi kesalahan saat memuat data produk",
+                      });
+                    } else {
+                      this.product = json.product;
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              },
+            };
+          }
+        </script>
       </tbody>
     </table>
   </div>
@@ -229,11 +270,6 @@
       },
       forW($dispatch) {
         this.fetchProductsData($dispatch, false, "next");
-      },
-      fetchById($dispatch, id) {
-        //pid = document.getElementById("productIdInfo").__x.$data.pid;
-        alert(id);
-        return id;
       },
     };
   }
