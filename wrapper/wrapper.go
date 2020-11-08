@@ -55,6 +55,7 @@ type NullableProduct struct {
 	CreditTwelve  []uint8        `db:"credit_twelve"`
 	CreditFifteen []uint8        `db:"credit_fifteen"`
 	Type          sql.NullString `db:"type"`
+	Brand         sql.NullString `db:"brand"`
 	CreatedAt     string         `db:"created_at"`
 }
 
@@ -71,6 +72,7 @@ type Product struct {
 	CreditTwelve  string
 	CreditFifteen string
 	Type          string
+	Brand         string
 	CreatedAt     string
 }
 
