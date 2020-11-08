@@ -131,3 +131,37 @@ func GetProductTotalRow(db *sqlx.DB) (int, error) {
 	}
 	return total, nil
 }
+
+// GetProductByID mengambil data produk berdasarkan ID produk
+func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
+	var product wrapper.Product
+	var p wrapper.NullableProduct
+	query := `SELECT
+		id,
+		name,
+		TO_CHAR(base_price,'Rp999G999G999G999G999') AS base_price,
+		TO_CHAR(price,'Rp999G999G999G999G999') AS price,
+		code,
+		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at
+		FROM "product"
+		WHERE id=$1
+		LIMIT 1`
+
+	err := db.Get(&p, query, pid)
+	if err != nil {
+		log.Println("product.go Select product berdasarkan ID")
+		log.Println(err)
+		return wrapper.Product{}, err
+	}
+
+	product = wrapper.Product{
+		ID:        p.ID,
+		Name:      strings.Title(p.Name),
+		CreatedAt: p.CreatedAt,
+		BasePrice: string(p.BasePrice),
+		Price:     string(p.Price),
+		Code:      string(p.Code.String),
+	}
+
+	return product, nil
+}
