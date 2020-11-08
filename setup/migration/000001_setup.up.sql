@@ -131,7 +131,7 @@ CREATE TABLE "address" (
 );
 
 -- Tabel barang/produk
-CREATE TABLE product (
+CREATE TABLE "product" (
     "id" INT GENERATED ALWAYS AS IDENTITY,
     "name" VARCHAR(100) NOT NULL,
     "code" VARCHAR(10) UNIQUE,
@@ -149,7 +149,7 @@ CREATE TABLE product (
 );
 
 -- Tabel Order/Penjualan
-CREATE TABLE order (
+CREATE TABLE "order" (
     "id" INT GENERATED ALWAYS AS IDENTITY,
     "customer_id" INT NOT NULL,
     "sales_id" INT,
