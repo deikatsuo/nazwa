@@ -15,8 +15,8 @@
     {{ template "head" .}} {{ block "extend_head" .}}{{ end }}
   </head>
   <body>
-    <div @modal.window="openModal(); if (typeof($event.detail.tmp) != 'undefined') { tmp = $event.detail.tmp }; modalTitle = $event.detail.title; modalContent = $event.detail.content; if (typeof($event.detail.html) != 'undefined') { showModalHTML = true }; $refs.modalHTML.innerHTML = $event.detail.html; if (typeof($event.detail.callback) != 'undefined') { modalCallback = $event.detail.callback };"></div>
     <div @notif.window="showAlert($event.detail.type); alertMessage = $event.detail.message"></div>
+    <div @modal.window="openModal(); if (typeof($event.detail.tmp) != 'undefined') { modalTmp = $event.detail.tmp }; modalTitle = $event.detail.title; modalContent = $event.detail.content; if (typeof($event.detail.html) != 'undefined') { showModalHTML = true }; $refs.modalHTML.innerHTML = $event.detail.html; if (typeof($event.detail.callback) != 'undefined') { modalCallback = $event.detail.callback };"></div>
 
     <template x-if="openAlertBox">
       <div
