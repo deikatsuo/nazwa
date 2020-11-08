@@ -142,7 +142,14 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 		TO_CHAR(base_price,'Rp999G999G999G999G999') AS base_price,
 		TO_CHAR(price,'Rp999G999G999G999G999') AS price,
 		code,
-		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at
+		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		type,
+		brand,
+		TO_CHAR(credit_six,'Rp999G999G999G999G999') AS credit_six,
+		TO_CHAR(credit_eight,'Rp999G999G999G999G999') AS credit_eight,
+		TO_CHAR(credit_ten,'Rp999G999G999G999G999') AS credit_ten,
+		TO_CHAR(credit_twelve,'Rp999G999G999G999G999') AS credit_twelve,
+		TO_CHAR(credit_fifteen,'Rp999G999G999G999G999') AS credit_fifteen
 		FROM "product"
 		WHERE id=$1
 		LIMIT 1`
@@ -155,12 +162,19 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 	}
 
 	product = wrapper.Product{
-		ID:        p.ID,
-		Name:      strings.Title(p.Name),
-		CreatedAt: p.CreatedAt,
-		BasePrice: string(p.BasePrice),
-		Price:     string(p.Price),
-		Code:      string(p.Code.String),
+		ID:            p.ID,
+		Name:          strings.Title(p.Name),
+		CreatedAt:     p.CreatedAt,
+		BasePrice:     string(p.BasePrice),
+		Price:         string(p.Price),
+		Code:          string(p.Code.String),
+		Type:          p.Type.String,
+		Brand:         p.Brand.String,
+		CreditSix:     string(p.CreditSix),
+		CreditEight:   string(p.CreditEight),
+		CreditTen:     string(p.CreditTen),
+		CreditTwelve:  string(p.CreditTwelve),
+		CreditFifteen: string(p.CreditFifteen),
 	}
 
 	return product, nil
