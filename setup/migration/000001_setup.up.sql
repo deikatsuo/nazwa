@@ -147,3 +147,24 @@ CREATE TABLE product (
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
+
+-- Tabel Order/Penjualan
+CREATE TABLE order (
+    "id" INT GENERATED ALWAYS AS IDENTITY,
+    "customer_id" INT NOT NULL,
+    "sales_id" INT,
+    "surveyor_id" INT,
+    "shipping_address_id" INT NOT NULL,
+    "billing_address_id" INT,
+    "status" VARCHAR(25) NOT NULL DEFAULT 'pending',
+    "credit" BOOLEAN,
+    "notes" VARCHAR(100),
+    "order_date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "shipping_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (customer_id) REFERENCES "user"("id"),
+    FOREIGN KEY (sales_id) REFERENCES "user"("id"),
+    FOREIGN KEY (surveyor_id) REFERENCES "user"("id"),
+    FOREIGN KEY (shipping_address_id) REFERENCES "address"("id"),
+    FOREIGN KEY (billing_address_id) REFERENCES "address"("id")
+);
