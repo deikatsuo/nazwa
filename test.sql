@@ -72,3 +72,6 @@ SELECT
 		LEFT JOIN "role" r ON r.id=ur.role_id
         WHERE u.id > 1 AND r.id = 1
         LIMIT 10;
+
+ALTER TABLE "product"
+ADD COLUMN "brand" VARCHAR(25);
