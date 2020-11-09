@@ -157,7 +157,7 @@ CREATE TABLE "product_photo" (
     FOREIGN KEY (product_id) REFERENCES "product"("id")
 );
 
--- Tabel order/enjualan
+-- Tabel order/penjualan
 CREATE TABLE "order" (
     "id" INT GENERATED ALWAYS AS IDENTITY,
     "customer_id" INT NOT NULL,
@@ -165,6 +165,7 @@ CREATE TABLE "order" (
     "surveyor_id" INT,
     "shipping_address_id" INT NOT NULL,
     "billing_address_id" INT,
+    "code" VARCHAR(10) NOT NULL UNIQUE,
     "status" VARCHAR(25) NOT NULL DEFAULT 'pending',
     "credit" BOOLEAN,
     "first_time" BOOLEAN DEFAULT "true" NOT NULL,
@@ -177,4 +178,16 @@ CREATE TABLE "order" (
     FOREIGN KEY (surveyor_id) REFERENCES "user"("id"),
     FOREIGN KEY (shipping_address_id) REFERENCES "address"("id"),
     FOREIGN KEY (billing_address_id) REFERENCES "address"("id")
+);
+
+-- Tabel order item
+CREATE TABLE "order_item" (
+    "id" GENERATED ALWAYS AS IDENTITY,
+    "order_id" INT,
+    "product_id" INT,
+    "quantity" INT NOT NULL DEFAULT '1',
+    "notes" VARCHAR(100),
+    PRIMARY KEY (id),
+    FOREIGN KEY (order_id) REFERENCES "order"("id"),
+    FOREIGN KEY (product_id) REFERENCES "product"("id")
 );
