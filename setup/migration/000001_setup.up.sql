@@ -148,7 +148,16 @@ CREATE TABLE "product" (
     PRIMARY KEY (id)
 );
 
--- Tabel Order/Penjualan
+-- Tabel photo produk
+CREATE TABLE "product_photo" (
+    "id" INT GENERATED ALWAYS AS IDENTITY,
+    "product_id" INT NOT NULL,
+    "photo" VARCHAR(25) NOT NULL UNIQUE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (product_id) REFERENCES "product"("id")
+);
+
+-- Tabel order/enjualan
 CREATE TABLE "order" (
     "id" INT GENERATED ALWAYS AS IDENTITY,
     "customer_id" INT NOT NULL,
@@ -158,6 +167,7 @@ CREATE TABLE "order" (
     "billing_address_id" INT,
     "status" VARCHAR(25) NOT NULL DEFAULT 'pending',
     "credit" BOOLEAN,
+    "first_time" BOOLEAN DEFAULT "true" NOT NULL,
     "notes" VARCHAR(100),
     "order_date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "shipping_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
