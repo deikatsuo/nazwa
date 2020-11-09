@@ -179,3 +179,16 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 
 	return product, nil
 }
+
+// GetProductPhoto mengambil data photo produk
+func GetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ProductPhoto, error) {
+	var photos []wrapper.ProductPhoto
+	query := `SELECT id, photo
+	FROM "product_photo"
+	WHERE product_id=$1`
+	err := db.Select(&photos, query, pid)
+	if err != nil {
+		return []wrapper.ProductPhoto{}, err
+	}
+	return photos, err
+}

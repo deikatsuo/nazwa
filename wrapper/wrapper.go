@@ -76,6 +76,12 @@ type Product struct {
 	CreatedAt     string
 }
 
+// ProductPhoto mengambil photo produk dari database
+type ProductPhoto struct {
+	ID    int    `db:"id"`
+	Photo string `db:"photo"`
+}
+
 // Fullname menampilkan nama lengkap
 func (u NullableUser) Fullname() string {
 	return u.Firstname + " " + u.Lastname.String
