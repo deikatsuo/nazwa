@@ -182,7 +182,7 @@ CREATE TABLE "order" (
 
 -- Tabel order item
 CREATE TABLE "order_item" (
-    "id" GENERATED ALWAYS AS IDENTITY,
+    "id" INT GENERATED ALWAYS AS IDENTITY,
     "order_id" INT,
     "product_id" INT,
     "quantity" INT NOT NULL DEFAULT '1',
