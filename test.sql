@@ -78,3 +78,5 @@ ADD COLUMN "brand" VARCHAR(25);
 
 ALTER TABLE "order"
 ADD COLUMN "first_time" BOOLEAN DEFAULT 'true' NOT NULL;
+
+INSERT INTO "product_photo" ("product_id", "photo") VALUES ('3', '01234567892.png');
