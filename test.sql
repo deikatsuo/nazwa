@@ -75,3 +75,6 @@ SELECT
 
 ALTER TABLE "product"
 ADD COLUMN "brand" VARCHAR(25);
+
+ALTER TABLE "order"
+ADD COLUMN "first_time" BOOLEAN DEFAULT 'true' NOT NULL;
