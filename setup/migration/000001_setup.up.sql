@@ -167,8 +167,8 @@ CREATE TABLE "order" (
     "billing_address_id" INT,
     "code" VARCHAR(10) NOT NULL UNIQUE,
     "status" VARCHAR(25) NOT NULL DEFAULT 'pending',
-    "credit" BOOLEAN,
-    "first_time" BOOLEAN DEFAULT "true" NOT NULL,
+    "credit" BOOLEAN DEFAULT 'false' NOT NULL,
+    "first_time" BOOLEAN DEFAULT 'true' NOT NULL,
     "notes" VARCHAR(100),
     "order_date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "shipping_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -183,8 +183,8 @@ CREATE TABLE "order" (
 -- Tabel order item
 CREATE TABLE "order_item" (
     "id" INT GENERATED ALWAYS AS IDENTITY,
-    "order_id" INT,
-    "product_id" INT,
+    "order_id" INT NOT NULL,
+    "product_id" INT NOT NULL,
     "quantity" INT NOT NULL DEFAULT '1',
     "notes" VARCHAR(100),
     PRIMARY KEY (id),
