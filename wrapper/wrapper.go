@@ -26,6 +26,11 @@ type NullableUser struct {
 	Addresses []UserAddress
 }
 
+// Fullname menampilkan nama lengkap
+func (u NullableUser) Fullname() string {
+	return u.Firstname + " " + u.Lastname.String
+}
+
 // User buat nge map data user
 type User struct {
 	ID        int
@@ -40,6 +45,39 @@ type User struct {
 	Emails    []UserEmail
 	Phones    []UserPhone
 	Addresses []UserAddress
+}
+
+// UserEmail menampung email user
+type UserEmail struct {
+	ID       int    `db:"id"`
+	Email    string `db:"email"`
+	Verified bool   `db:"verified"`
+}
+
+// UserPhone menampung email user
+type UserPhone struct {
+	ID       int    `db:"id"`
+	Phone    string `db:"phone"`
+	Verified bool   `db:"verified"`
+}
+
+// UserAddress menampung data alamat user
+type UserAddress struct {
+	ID           int    `db:"id"`
+	UserID       int    `db:"user_id"`
+	Name         string `db:"name" json:"name" binding:"required,min=5,max=50"`
+	Description  string `db:"description" json:"description" binding:"omitempty,max=80"`
+	One          string `db:"one" json:"one" binding:"required,min=5,max=80"`
+	Two          string `db:"two" json:"two" binding:"omitempty,max=80"`
+	Zip          string `db:"zip" json:"zip" binding:"required,numeric,min=5,max=5"`
+	Province     string `db:"province_id" json:"province" binding:"required,numeric"`
+	City         string `db:"city_id" json:"city" binding:"required,numeric"`
+	District     string `db:"district_id" json:"district" binding:"required,numeric"`
+	Village      string `db:"village_id" json:"village" binding:"required,numeric"`
+	ProvinceName string `db:"province_name"`
+	CityName     string `db:"city_name"`
+	DistrictName string `db:"district_name"`
+	VillageName  string `db:"village_name"`
 }
 
 // NullableProduct menampilkan list produk
@@ -83,40 +121,53 @@ type ProductPhoto struct {
 	Photo string `db:"photo"`
 }
 
-// Fullname menampilkan nama lengkap
-func (u NullableUser) Fullname() string {
-	return u.Firstname + " " + u.Lastname.String
+// NullableOrder menampilkan data order
+type NullableOrder struct {
+	ID                int            `db:"id"`
+	CustomerID        int            `db:"customer_id"`
+	SalesID           sql.NullInt64  `db:"sales_id"`
+	SurveyorID        sql.NullInt64  `db:"surveyor_id"`
+	ShippingAddressID int            `db:"shipping_address_id"`
+	BillingAddressID  sql.NullInt64  `db:"billing_address_id"`
+	Status            string         `db:"status"`
+	Code              string         `db:"code"`
+	Credit            bool           `db:"credit"`
+	FirstTime         bool           `db:"first_time"`
+	Notes             sql.NullString `db:"notes"`
+	OrderDate         string         `db:"order_date"`
+	ShippingDate      sql.NullString `db:"shipping_date"`
 }
 
-// UserEmail menampung email user
-type UserEmail struct {
-	ID       int    `db:"id"`
-	Email    string `db:"email"`
-	Verified bool   `db:"verified"`
+// Order mapping data order
+type Order struct {
+	ID                int
+	CustomerID        int
+	SalesID           int
+	SurveyorID        int
+	ShippingAddressID int
+	BillingAddressID  int
+	Status            string
+	Code              string
+	Credit            bool
+	FirstTime         bool
+	Notes             string
+	OrderDate         string
+	ShippingDate      string
+	Items             []OrderItem
 }
 
-// UserPhone menampung email user
-type UserPhone struct {
-	ID       int    `db:"id"`
-	Phone    string `db:"phone"`
-	Verified bool   `db:"verified"`
+// NullableOrderItem item/produk yang di order
+type NullableOrderItem struct {
+	ID        int    `db:"id"`
+	ProductID int    `db:"product_id"`
+	Quantity  int    `db:"quantity"`
+	Notes     string `db:"notes"`
 }
 
-// UserAddress menampung data alamat user
-type UserAddress struct {
-	ID           int    `db:"id"`
-	UserID       int    `db:"user_id"`
-	Name         string `db:"name" json:"name" binding:"required,min=5,max=50"`
-	Description  string `db:"description" json:"description" binding:"omitempty,max=80"`
-	One          string `db:"one" json:"one" binding:"required,min=5,max=80"`
-	Two          string `db:"two" json:"two" binding:"omitempty,max=80"`
-	Zip          string `db:"zip" json:"zip" binding:"required,numeric,min=5,max=5"`
-	Province     string `db:"province_id" json:"province" binding:"required,numeric"`
-	City         string `db:"city_id" json:"city" binding:"required,numeric"`
-	District     string `db:"district_id" json:"district" binding:"required,numeric"`
-	Village      string `db:"village_id" json:"village" binding:"required,numeric"`
-	ProvinceName string `db:"province_name"`
-	CityName     string `db:"city_name"`
-	DistrictName string `db:"district_name"`
-	VillageName  string `db:"village_name"`
+// OrderItem item/produk yang di order
+type OrderItem struct {
+	ID        int
+	ProductID int
+	Quantity  int
+	Notes     string
 }

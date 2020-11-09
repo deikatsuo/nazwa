@@ -92,13 +92,16 @@ func runServer(db *sqlx.DB) {
 	// Halaman Dashboard
 	// /dashboard
 	dashboard := server.Group("/dashboard")
+	// Gunakan permision
 	dashboard.Use(middleware.RoutePermission(db, e))
 	// Middleware untuk mengambil pengaturan default untuk dashboard
 	dashboard.Use(middleware.NewDashboardDefaultConfig(db))
+
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/account", router.PageDashboardAccount(db))
 	dashboard.GET("/users", router.PageDashboardUsers(db))
 	dashboard.GET("/products", router.PageDashboardProducts(db))
+	dashboard.GET("/orders", router.PageDashboardOrders(db))
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	// API
@@ -131,6 +134,10 @@ func runServer(db *sqlx.DB) {
 	product := v1local.Group("/product")
 	product.GET("/id/:id", api.ShowProductByID(db))
 	product.GET("/list/:limit", api.ShowProductList(db))
+
+	// /api/v1/local/order
+	order := v1local.Group("/order")
+	order.GET("/list/:limit", api.ShowOrderList(db))
 
 	// User API
 	// /api/v1/local/user
