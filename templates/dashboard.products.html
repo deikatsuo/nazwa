@@ -64,7 +64,50 @@
             x-init="fetchById($dispatch)"
             x-data="fProDetail($parent)"
           >
-            <!-- Todo: gambar produk -->
+            <!-- Photo produk -->
+            <div class="w-full h-48 flex flex-col justify-center items-center">
+              <div class="w-full relative">
+                <!-- Slide photo -->
+                <template x-for="(photo, index) in photos" :key="index">
+                  <div
+                    x-show="activeSlide === index + 1"
+                    class="h-48 w-full flex items-center rounded-lg"
+                  >
+                    <div class="relative w-full h-full">
+                      <img
+                        class="object-scale-down w-full h-full"
+                        :src="'/file/product/'+photo.Photo"
+                        alt=""
+                        loading="lazy"
+                      />
+                      <div
+                        class="absolute inset-0 shadow-inner"
+                        aria-hidden="true"
+                      ></div>
+                    </div>
+                  </div>
+                </template>
+                <!-- Prev/Next Arrows -->
+                <div class="absolute inset-0 flex">
+                  <div class="flex items-center justify-start w-1/2">
+                    <button
+                      class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow-lg rounded-full w-12 h-12 -ml-6"
+                      x-on:click="activeSlide = activeSlide === 1 ? photos.length : activeSlide - 1"
+                    >
+                      &#8592;
+                    </button>
+                  </div>
+                  <div class="flex items-center justify-end w-1/2">
+                    <button
+                      class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow rounded-full w-12 h-12 -mr-6"
+                      x-on:click="activeSlide = activeSlide === photos.length ? 1 : activeSlide + 1"
+                    >
+                      &#8594;
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div class="flex flex-wrap">
               <div class="w-full md:w-1/2 md:pr-3">
@@ -246,6 +289,13 @@
               init: $parent.modalInit,
               id: $parent.modalTmp,
               product: [],
+              activeSlide: 1,
+              photos: [
+                {
+                  ID: 0,
+                  Photo: "no-photo.png",
+                },
+              ],
               fetchById($dispatch) {
                 var product = [];
                 fetch(`/api/v1/local/product/id/${this.id}`, {
@@ -268,6 +318,16 @@
                       });
                     } else {
                       this.product = json.product;
+                      if (json.product.Photos != null) {
+                        this.photos = json.product.Photos;
+                      } else {
+                        this.photos = [
+                          {
+                            ID: 0,
+                            Photo: "no-photo.png",
+                          },
+                        ];
+                      }
                     }
                   })
                   .catch((err) => {
@@ -375,6 +435,7 @@
           if (value != "") {
             this.products = [];
             this.page = 1;
+            this.loaded = 0;
             this.fetchProductsData($dispatch, true, "init");
           }
         });

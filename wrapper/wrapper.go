@@ -74,6 +74,7 @@ type Product struct {
 	Type          string
 	Brand         string
 	CreatedAt     string
+	Photos        []ProductPhoto
 }
 
 // ProductPhoto mengambil photo produk dari database

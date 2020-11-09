@@ -161,6 +161,12 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 		return wrapper.Product{}, err
 	}
 
+	var photos []wrapper.ProductPhoto
+
+	if pp, err := GetProductPhoto(db, p.ID); err == nil {
+		photos = pp
+	}
+
 	product = wrapper.Product{
 		ID:            p.ID,
 		Name:          strings.Title(p.Name),
@@ -175,6 +181,7 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 		CreditTen:     string(p.CreditTen),
 		CreditTwelve:  string(p.CreditTwelve),
 		CreditFifteen: string(p.CreditFifteen),
+		Photos:        photos,
 	}
 
 	return product, nil
