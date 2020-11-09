@@ -56,6 +56,7 @@ function data() {
     showModalHTML: false,
     modalCallback: function(){},
     modalTmp: null,
+    modalFooter: false,
     openModal() {
       this.isModalOpen = true
       this.trapCleanup = focusTrap(document.querySelector('#modal'))

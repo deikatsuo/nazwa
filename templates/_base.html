@@ -16,7 +16,7 @@
   </head>
   <body>
     <div @notif.window="showAlert($event.detail.type); alertMessage = $event.detail.message"></div>
-    <div @modal.window="openModal(); if (typeof($event.detail.tmp) != 'undefined') { modalTmp = $event.detail.tmp }; modalTitle = $event.detail.title; modalContent = $event.detail.content; if (typeof($event.detail.html) != 'undefined') { showModalHTML = true }; $refs.modalHTML.innerHTML = $event.detail.html; if (typeof($event.detail.callback) != 'undefined') { modalCallback = $event.detail.callback };"></div>
+    <div @modal.window="openModal(); if (typeof($event.detail.tmp) != 'undefined') { modalTmp = $event.detail.tmp }; modalFooter = $event.detail.footer; modalTitle = $event.detail.title; modalContent = $event.detail.content; if (typeof($event.detail.html) != 'undefined') { showModalHTML = true }; $refs.modalHTML.innerHTML = $event.detail.html; if (typeof($event.detail.callback) != 'undefined') { modalCallback = $event.detail.callback };"></div>
 
     <template x-if="openAlertBox">
       <div
@@ -97,7 +97,7 @@
         x-transition:leave-end="opacity-0  transform translate-y-1/2"
         @click.away="closeModal"
         @keydown.escape="closeModal"
-        class="w-full px-6 py-4 bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
+        class="w-full px-6 py-4 bg-white rounded-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
         role="dialog"
         id="modal"
       >
@@ -123,7 +123,7 @@
             {{ .l_modal_header }}
           </p>
           <!-- Modal content -->
-          <div x-ref="modalHTML" x-show="showModalHTML" style="max-height: 16rem;" class="overflow-y-auto px-2"></div>
+          <div x-ref="modalHTML" x-show="showModalHTML" style="max-height: 16rem;" class="overflow-y-auto overflow-x-hidden px-2"></div>
           <p
             class="text-sm text-gray-700 dark:text-gray-400"
             x-text="modalContent"
@@ -134,9 +134,10 @@
         </div>
         <footer
           class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800"
+          x-show="modalFooter"
         >
           <button
-            @click="closeModal"
+            @click="closeModal()"
             class="w-full px-5 py-3 text-sm font-medium leading-5 text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray"
           >
             {{ .l_modal_btn_one }}

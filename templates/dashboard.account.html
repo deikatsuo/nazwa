@@ -115,7 +115,7 @@
                 </button>
                 <button
                   class="px-4 text-sm font-medium leading-5 text-red-500 transition-colors duration-150 hover:text-red-700 focus:text-red-600 focus:outline-none focus:shadow-outline-none"
-                  @click="$dispatch('modal', { title: 'Peringatan!', content:'Apakah yakin ingin menghapus nomor ini?', callback: function() { deletePhone($dispatch, phone.ID) } })"
+                  @click="$dispatch('modal', { footer: true, title: 'Peringatan!', content:'Apakah yakin ingin menghapus nomor ini?', callback: function() { deletePhone($dispatch, phone.ID) } })"
                   x-show="phones.length > 1"
                 >
                   {{ template "_svg_icon_close" }}
@@ -129,7 +129,7 @@
         <span class="text-blue-700 dark:text-blue-400">
           <a
             href="#"
-            @click="$dispatch('modal', { title: 'Tambahkan nomor HP', html: $refs.addPhoneForm.innerHTML, callback: function() { addPhone($dispatch) } })">
+            @click="$dispatch('modal', { footer: true, title: 'Tambahkan nomor HP', html: $refs.addPhoneForm.innerHTML, callback: function() { addPhone($dispatch) } })">
             {{ .l_u_account_add_phone }}
           </a></span
         >
@@ -174,7 +174,7 @@
                 </button>
                 <button
                   class="px-4 text-sm font-medium leading-5 text-red-500 transition-colors duration-150 hover:text-red-700 focus:text-red-600 focus:outline-none focus:shadow-outline-none"
-                  @click="$dispatch('modal', { title: 'Peringatan!', content:'Apakah yakin ingin menghapus email ini?', callback: function() { deleteEmail($dispatch, email.ID) } })"
+                  @click="$dispatch('modal', { footer: true, title: 'Peringatan!', content:'Apakah yakin ingin menghapus email ini?', callback: function() { deleteEmail($dispatch, email.ID) } })"
                   x-show="emails.length > 1"
                 >
                   {{ template "_svg_icon_close" }}
@@ -188,7 +188,7 @@
         <span class="text-blue-700 dark:text-blue-400">
           <a
             href="#"
-            @click="$dispatch('modal', { title: 'Tambahkan email', html: $refs.addEmailForm.innerHTML, callback: function() { addEmail($dispatch) } })">
+            @click="$dispatch('modal', { footer: true, title: 'Tambahkan email', html: $refs.addEmailForm.innerHTML, callback: function() { addEmail($dispatch) } })">
               {{ .l_u_account_add_email }}
           </a></span
         >
@@ -564,7 +564,7 @@
               <p
                 class="cursor-pointer text-blue-700"
                 x-show="addresses.length > 1"
-                @click="$dispatch('modal', { title: 'Peringatan!', content:'Apakah yakin ingin menghapus alamat ini?', callback: function() { deleteAddress($dispatch, address.ID) } })"
+                @click="$dispatch('modal', { footer: true, title: 'Peringatan!', content:'Apakah yakin ingin menghapus alamat ini?', callback: function() { deleteAddress($dispatch, address.ID) } })"
               >{{ .l_u_address_delete_btn }}</p>
             </div>
           </div>
