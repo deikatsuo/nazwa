@@ -475,9 +475,9 @@
           this.lastid = 0;
         }
         if (go == "back") {
-          ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&direction=back&role=${this.productType}`;
+          ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&direction=back&type=${this.productType}`;
         } else {
-          ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&direction=next&role=${this.productType}`;
+          ffrom = `/api/v1/local/product/list/${this.limit}?lastid=${this.lastid}&direction=next&type=${this.productType}`;
         }
         fetch(ffrom, {
           method: "GET",
