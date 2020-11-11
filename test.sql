@@ -82,7 +82,7 @@ ADD COLUMN "code" VARCHAR(10) NOT NULL UNIQUE;
 INSERT INTO "product_photo" ("product_id", "photo") VALUES ('3', '01234567892.png');
 
 INSERT INTO "order" ("customer_id", "sales_id", "surveyor_id", "shipping_address_id", "billing_address_id", "status", "credit", "notes", "first_time", "code")
-VALUES ('2', '12', '7', '4', '4', 'pending', 'false', 'ngetest doang', 'true', 'TRX8392266');
+VALUES ('12', '12', '7', '4', '4', 'completed', 'true', 'kredit mania', 'true', 'TRX2556555');
 
 INSERT INTO "order_item" ("order_id", "product_id", "quantity", "notes")
-VALUES ('2', '21', '100', 'Saya beli banyak kasih diskon lah');
+VALUES ('7', '5', '5', 'contoh kredit');
