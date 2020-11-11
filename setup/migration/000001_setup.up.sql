@@ -171,7 +171,7 @@ CREATE TABLE "order" (
     "first_time" BOOLEAN DEFAULT 'true' NOT NULL,
     "notes" VARCHAR(100),
     "order_date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "shipping_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "shipping_date" TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (customer_id) REFERENCES "user"("id"),
     FOREIGN KEY (sales_id) REFERENCES "user"("id"),
