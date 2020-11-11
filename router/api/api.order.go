@@ -30,14 +30,14 @@ func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
 		var direction string
 		httpStatus := http.StatusOK
 		errMess := ""
-		pts := dbquery.GetProducts{}
+		o := dbquery.GetOrders{}
 		next := true
 
 		// Mengambil parameter limit
 		lim, err := strconv.Atoi(c.Param("limit"))
 		if err == nil {
 			limit = lim
-			pts.Limit(limit)
+			o.Limit(limit)
 		} else {
 			errMess = "Limit tidak valid"
 			httpStatus = http.StatusBadRequest
@@ -53,9 +53,9 @@ func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
 		// Forward/backward
 		direction = c.Query("direction")
 		if direction == "back" {
-			pts.Direction(direction)
+			o.Direction(direction)
 		} else {
-			pts.Direction("next")
+			o.Direction("next")
 		}
 
 		var total int
@@ -63,43 +63,43 @@ func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
 			total = t
 		}
 
-		var products []wrapper.Order
+		var orders []wrapper.Order
 
 		if next {
 			if lastid != 0 {
-				pts.LastID(lastid)
-				p, err := pts.Show(db)
+				o.LastID(lastid)
+				or, err := o.Show(db)
 				if err != nil {
 					errMess = err.Error()
 					httpStatus = http.StatusInternalServerError
 				}
-				products = p
+				orders = or
 			} else {
-				p, err := pts.Show(db)
+				or, err := o.Show(db)
 				if err != nil {
 					errMess = err.Error()
 					httpStatus = http.StatusInternalServerError
 				}
-				products = p
+				orders = or
 			}
 		}
 
 		// Cek id terakhir
-		if len(products) > 0 {
-			lastid = products[len(products)-1].ID
-			if len(products) < limit {
-				lastid = (products[0].ID - 1) + limit
+		if len(orders) > 0 {
+			lastid = orders[len(orders)-1].ID
+			if len(orders) < limit {
+				lastid = (orders[0].ID - 1) + limit
 				// Periksa apakah ini data terakhir atau bukan
 				last = true
 			}
 		}
 
 		c.JSON(httpStatus, gin.H{
-			"products": products,
-			"error":    errMess,
-			"lastid":   lastid,
-			"total":    total,
-			"last":     last,
+			"orders": orders,
+			"error":  errMess,
+			"lastid": lastid,
+			"total":  total,
+			"last":   last,
 		})
 	}
 	return gin.HandlerFunc(fn)
