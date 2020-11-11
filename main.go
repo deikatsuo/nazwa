@@ -137,6 +137,7 @@ func runServer(db *sqlx.DB) {
 
 	// /api/v1/local/order
 	order := v1local.Group("/order")
+	order.GET("/id/:id", api.ShowOrderByID(db))
 	order.GET("/list/:limit", api.ShowOrderList(db))
 
 	// User API

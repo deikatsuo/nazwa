@@ -5,6 +5,7 @@ import (
 	"log"
 	"nazwa/wrapper"
 	"strconv"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -76,7 +77,7 @@ func (p *GetOrders) Show(db *sqlx.DB) ([]wrapper.Order, error) {
 			OrderDate: p.OrderDate,
 			Credit:    p.Credit,
 			Code:      p.Code,
-			Status:    p.Status,
+			Status:    strings.Title(p.Status),
 		})
 	}
 
@@ -92,4 +93,82 @@ func GetOrderTotalRow(db *sqlx.DB) (int, error) {
 		return 0, err
 	}
 	return total, nil
+}
+
+// GetOrderByID mengambil data order berdasarkan ID order
+func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
+	var order wrapper.Order
+	var o wrapper.NullableOrder
+	query := `SELECT
+		id,
+		customer_id,
+		sales_id,
+		surveyor_id,
+		shipping_address_id,
+		billing_address_id,
+		status,
+		credit,
+		notes,
+		TO_CHAR(order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
+		TO_CHAR(shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
+		first_time,
+		code
+		FROM "order"
+		WHERE id=$1
+		LIMIT 1`
+
+	err := db.Get(&o, query, oid)
+	if err != nil {
+		log.Println("order.go Select order berdasarkan ID")
+		log.Println(err)
+		return wrapper.Order{}, err
+	}
+
+	// Mengambil list item dari transaksi
+	var items []wrapper.OrderItem
+	if oi, err := GetOrderItem(db, o.ID); err == nil {
+		items = oi
+	}
+
+	order = wrapper.Order{
+		ID:                o.ID,
+		CustomerID:        o.CustomerID,
+		SalesID:           int(o.SalesID.Int64),
+		SurveyorID:        int(o.SurveyorID.Int64),
+		ShippingAddressID: o.ShippingAddressID,
+		BillingAddressID:  int(o.BillingAddressID.Int64),
+		Status:            o.Status,
+		Code:              o.Code,
+		Credit:            o.Credit,
+		FirstTime:         o.FirstTime,
+		Notes:             o.Notes.String,
+		OrderDate:         o.OrderDate,
+		ShippingDate:      string(o.ShippingDate.String),
+		Items:             items,
+	}
+
+	return order, nil
+}
+
+// GetOrderItem mengambil data barang transaksi berdasarkan id order
+func GetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
+	var items []wrapper.NullableOrderItem
+	var parse []wrapper.OrderItem
+	query := `SELECT id, product_id, quantity, notes
+	FROM "order_item"
+	WHERE order_id=$1`
+	err := db.Select(&items, query, oid)
+	if err != nil {
+		return []wrapper.OrderItem{}, err
+	}
+
+	for _, i := range items {
+		parse = append(parse, wrapper.OrderItem{
+			ID:        i.ID,
+			ProductID: i.ProductID,
+			Quantity:  i.Quantity,
+			Notes:     string(i.Notes.String),
+		})
+	}
+	return parse, err
 }

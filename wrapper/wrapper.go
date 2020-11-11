@@ -158,10 +158,10 @@ type Order struct {
 
 // NullableOrderItem item/produk yang di order
 type NullableOrderItem struct {
-	ID        int    `db:"id"`
-	ProductID int    `db:"product_id"`
-	Quantity  int    `db:"quantity"`
-	Notes     string `db:"notes"`
+	ID        int            `db:"id"`
+	ProductID int            `db:"product_id"`
+	Quantity  int            `db:"quantity"`
+	Notes     sql.NullString `db:"notes"`
 }
 
 // OrderItem item/produk yang di order

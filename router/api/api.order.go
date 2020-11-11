@@ -104,3 +104,49 @@ func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
 	}
 	return gin.HandlerFunc(fn)
 }
+
+// ShowOrderByID mengambil data order/penjualan berdasarkan ID
+func ShowOrderByID(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		// Tolak jika yang request bukan user terdaftar
+		uid := session.Get("userid")
+		if uid == nil {
+			router.Page404(c)
+			return
+		}
+		httpStatus := http.StatusOK
+		errMess := ""
+
+		// Mengambil parameter id order
+		var oid int
+		id, err := strconv.Atoi(c.Param("id"))
+		if err == nil {
+			oid = id
+		} else {
+			httpStatus = http.StatusBadRequest
+			errMess = "Request tidak valid"
+		}
+
+		var order wrapper.Order
+		if o, err := dbquery.GetOrderByID(db, oid); err == nil {
+			order = o
+		} else {
+			httpStatus = http.StatusInternalServerError
+			errMess = "Sepertinya telah terjadi kesalahan saat memuat data"
+		}
+
+		var total int
+		if t, err := dbquery.GetOrderTotalRow(db); err == nil {
+			total = t
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"order": order,
+			"error": errMess,
+			"total": total,
+		})
+	}
+	return fn
+}
