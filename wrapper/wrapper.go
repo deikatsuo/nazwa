@@ -123,37 +123,42 @@ type ProductPhoto struct {
 
 // NullableOrder menampilkan data order
 type NullableOrder struct {
-	ID                int            `db:"id"`
-	CustomerID        int            `db:"customer_id"`
-	SalesID           sql.NullInt64  `db:"sales_id"`
-	SurveyorID        sql.NullInt64  `db:"surveyor_id"`
-	ShippingAddressID int            `db:"shipping_address_id"`
-	BillingAddressID  sql.NullInt64  `db:"billing_address_id"`
-	Status            string         `db:"status"`
-	Code              string         `db:"code"`
-	Credit            bool           `db:"credit"`
-	FirstTime         bool           `db:"first_time"`
-	Notes             sql.NullString `db:"notes"`
-	OrderDate         string         `db:"order_date"`
-	ShippingDate      sql.NullString `db:"shipping_date"`
+	ID                  int            `db:"id"`
+	CustomerID          int            `db:"customer_id"`
+	CustomerName        string         `db:"customer_name"`
+	SalesID             sql.NullInt64  `db:"sales_id"`
+	SalesName           sql.NullString `db:"sales_name"`
+	SurveyorID          sql.NullInt64  `db:"surveyor_id"`
+	SurveyorName        sql.NullString `db:"surveyor_name"`
+	ShippingAddressID   int            `db:"shipping_address_id"`
+	ShippingAddressName string         `db:"shipping_address_name"`
+	BillingAddressID    sql.NullInt64  `db:"billing_address_id"`
+	BillingAddressName  sql.NullString `db:"billing_address_name"`
+	Status              string         `db:"status"`
+	Code                string         `db:"code"`
+	Credit              bool           `db:"credit"`
+	FirstTime           bool           `db:"first_time"`
+	Notes               sql.NullString `db:"notes"`
+	OrderDate           string         `db:"order_date"`
+	ShippingDate        sql.NullString `db:"shipping_date"`
 }
 
 // Order mapping data order
 type Order struct {
-	ID                int
-	CustomerID        int
-	SalesID           int
-	SurveyorID        int
-	ShippingAddressID int
-	BillingAddressID  int
-	Status            string
-	Code              string
-	Credit            bool
-	FirstTime         bool
-	Notes             string
-	OrderDate         string
-	ShippingDate      string
-	Items             []OrderItem
+	ID              int
+	Customer        NameID
+	Sales           NameID
+	Surveyor        NameID
+	ShippingAddress NameID
+	BillingAddress  NameID
+	Status          string
+	Code            string
+	Credit          bool
+	FirstTime       bool
+	Notes           string
+	OrderDate       string
+	ShippingDate    string
+	Items           []OrderItem
 }
 
 // NullableOrderItem item/produk yang di order
@@ -170,4 +175,10 @@ type OrderItem struct {
 	ProductID int
 	Quantity  int
 	Notes     string
+}
+
+// NameID menampilkan nama dan id
+type NameID struct {
+	ID   int    `db:"id"`
+	Name string `db:"name"`
 }

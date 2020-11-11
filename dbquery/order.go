@@ -100,21 +100,31 @@ func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 	var order wrapper.Order
 	var o wrapper.NullableOrder
 	query := `SELECT
-		id,
-		customer_id,
-		sales_id,
-		surveyor_id,
-		shipping_address_id,
-		billing_address_id,
-		status,
-		credit,
-		notes,
-		TO_CHAR(order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
-		TO_CHAR(shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
-		first_time,
-		code
-		FROM "order"
-		WHERE id=$1
+		o.id,
+		o.customer_id,
+		c.first_name || ' ' || c.last_name as customer_name,
+		o.sales_id,
+		sa.first_name || ' ' || sa.last_name as sales_name,
+		o.surveyor_id,
+		su.first_name || ' ' || su.last_name as surveyor_name,
+		o.shipping_address_id,
+		sad.one || ' ' || sad.two as shipping_address_name,
+		o.billing_address_id,
+		bad.one || ' ' || bad.two as billing_address_name,
+		o.status,
+		o.credit,
+		o.notes,
+		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
+		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
+		o.first_time,
+		o.code
+		FROM "order" o
+		LEFT JOIN "user" c ON c.id=o.customer_id
+		LEFT JOIN "user" sa ON sa.id=o.sales_id
+		LEFT JOIN "user" su ON su.id=o.surveyor_id
+		LEFT JOIN "address" sad ON sad.id=o.shipping_address_id
+		LEFT JOIN "address" bad ON bad.id=o.billing_address_id
+		WHERE o.id=$1
 		LIMIT 1`
 
 	err := db.Get(&o, query, oid)
@@ -131,20 +141,35 @@ func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 	}
 
 	order = wrapper.Order{
-		ID:                o.ID,
-		CustomerID:        o.CustomerID,
-		SalesID:           int(o.SalesID.Int64),
-		SurveyorID:        int(o.SurveyorID.Int64),
-		ShippingAddressID: o.ShippingAddressID,
-		BillingAddressID:  int(o.BillingAddressID.Int64),
-		Status:            o.Status,
-		Code:              o.Code,
-		Credit:            o.Credit,
-		FirstTime:         o.FirstTime,
-		Notes:             o.Notes.String,
-		OrderDate:         o.OrderDate,
-		ShippingDate:      string(o.ShippingDate.String),
-		Items:             items,
+		ID: o.ID,
+		Customer: wrapper.NameID{
+			ID:   o.CustomerID,
+			Name: o.CustomerName,
+		},
+		Sales: wrapper.NameID{
+			ID:   int(o.SalesID.Int64),
+			Name: o.SalesName.String,
+		},
+		Surveyor: wrapper.NameID{
+			ID:   int(o.SurveyorID.Int64),
+			Name: o.SurveyorName.String,
+		},
+		ShippingAddress: wrapper.NameID{
+			ID:   o.ShippingAddressID,
+			Name: o.ShippingAddressName,
+		},
+		BillingAddress: wrapper.NameID{
+			ID:   int(o.BillingAddressID.Int64),
+			Name: string(o.BillingAddressName.String),
+		},
+		Status:       o.Status,
+		Code:         o.Code,
+		Credit:       o.Credit,
+		FirstTime:    o.FirstTime,
+		Notes:        o.Notes.String,
+		OrderDate:    o.OrderDate,
+		ShippingDate: string(o.ShippingDate.String),
+		Items:        items,
 	}
 
 	return order, nil

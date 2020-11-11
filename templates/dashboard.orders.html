@@ -69,9 +69,8 @@
         </template>
         <template x-ref="orderDetail">
           <div
-            id="productIdInfo"
             x-init="fetchById($dispatch)"
-            x-data="fProDetail($parent)"
+            x-data="fOrdDetail($parent)"
           >
             <!-- Photo produk -->
             <div
@@ -312,7 +311,7 @@
           </div>
         </template>
         <script>
-          function fProDetail($parent) {
+          function fOrdDetail($parent) {
             return {
               init: $parent.modalInit,
               id: $parent.modalTmp,
