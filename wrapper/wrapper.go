@@ -163,22 +163,31 @@ type Order struct {
 
 // NullableOrderItem item/produk yang di order
 type NullableOrderItem struct {
-	ID        int            `db:"id"`
-	ProductID int            `db:"product_id"`
-	Quantity  int            `db:"quantity"`
-	Notes     sql.NullString `db:"notes"`
+	ID          int            `db:"id"`
+	ProductID   int            `db:"product_id"`
+	ProductName string         `db:"name"`
+	ProductCode string         `db:"code"`
+	Quantity    int            `db:"quantity"`
+	Notes       sql.NullString `db:"notes"`
 }
 
 // OrderItem item/produk yang di order
 type OrderItem struct {
-	ID        int
-	ProductID int
-	Quantity  int
-	Notes     string
+	ID       int
+	Product  NameIDCode
+	Quantity int
+	Notes    string
 }
 
 // NameID menampilkan nama dan id
 type NameID struct {
 	ID   int    `db:"id"`
 	Name string `db:"name"`
+}
+
+// NameIDCode menampilkan nama, id, dan kode
+type NameIDCode struct {
+	ID   int    `db:"id"`
+	Name string `db:"name"`
+	Code string `db:"code"`
 }
