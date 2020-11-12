@@ -101,7 +101,7 @@
         x-transition:leave-end="opacity-0  transform translate-y-1/2"
         @click.away="closeModal"
         @keydown.escape="closeModal"
-        class="w-full px-6 py-4 bg-white rounded-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
+        class="w-full relative px-6 py-4 bg-white rounded-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
         role="dialog"
         id="modal"
       >
@@ -116,13 +116,14 @@
           </button>
         </header>
         <!-- Modal body -->
-        <div 
+        <div
           class="mt-4 mb-6"          
         >
           <!-- Modal title -->
           <p
             class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
             x-text="modalTitle"
+            x-show="modalTitle != ''"
           >
             {{ .l_modal_header }}
           </p>
