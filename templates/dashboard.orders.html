@@ -26,7 +26,7 @@
         <template x-for="(order, index) in orders" :key="index">
           <tr
             class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
-            @click="$dispatch('modal', { tmp: order.ID, title: 'Detail data order/penjualan', html: $refs.orderDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
+            @click="$dispatch('modal', { tmp: order.ID, html: $refs.orderDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
           >
             <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
             <td class="px-4 py-3 text-sm" x-text="'#'+order.Code"></td>
@@ -68,23 +68,22 @@
           </tr>
         </template>
         <template x-ref="orderDetail">
-          <div
-            x-init="fetchById($dispatch)"
-            x-data="fOrdDetail($parent)"
-          >
+          <div x-init="fetchById($dispatch)" x-data="fOrdDetail($parent)">
+            <div
+              class="absolute top-0 mt-4 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+              x-text="'#'+order.Code"
+            ></div>
             <!-- Yang terlibat -->
             <table class="w-full whitespace-no-wrap">
               <thead>
                 <tr
                   class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
                 >
-                  <th class="px-3 py-3" x-text="'#'+order.Code"></th>
+                  <th class="px-3 py-3">Melibatkan</th>
                   <th class="px-4 py-3"></th>
                 </tr>
               </thead>
-              <tbody
-                class="bg-white dark:divide-gray-700 dark:bg-gray-800"
-              >
+              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <tr class="text-gray-700 dark:text-gray-400">
                   <td class="px-4 py-1 text-sm">Nama Pembeli</td>
                   <td class="px-4 py-1 text-sm" x-text="customer.Name"></td>
@@ -114,16 +113,20 @@
                   <th class="px-4 py-3"></th>
                 </tr>
               </thead>
-              <tbody
-                class="bg-white dark:divide-gray-700 dark:bg-gray-800"
-              >
+              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <tr class="text-gray-700 dark:text-gray-400">
                   <td class="px-4 py-1 text-sm">Pengiriman</td>
-                  <td class="px-4 py-1 text-sm" x-text="shippingAddress.Name"></td>
+                  <td
+                    class="px-4 py-1 text-sm"
+                    x-text="shippingAddress.Name"
+                  ></td>
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
                   <td class="px-4 py-1 text-sm">Penagihan</td>
-                  <td class="px-4 py-1 text-sm" x-text="billingAddress.Name"></td>
+                  <td
+                    class="px-4 py-1 text-sm"
+                    x-text="billingAddress.Name"
+                  ></td>
                 </tr>
               </tbody>
             </table>
@@ -138,16 +141,17 @@
                   <th class="px-4 py-3"></th>
                 </tr>
               </thead>
-              <tbody
-                class="bg-white dark:divide-gray-700 dark:bg-gray-800"
-              >
+              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <tr class="text-gray-700 dark:text-gray-400">
                   <td class="px-4 py-1 text-sm">Pemesanan</td>
                   <td class="px-4 py-1 text-sm" x-text="order.OrderDate"></td>
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
                   <td class="px-4 py-1 text-sm">Pengiriman</td>
-                  <td class="px-4 py-1 text-sm" x-text="order.ShippingDate"></td>
+                  <td
+                    class="px-4 py-1 text-sm"
+                    x-text="order.ShippingDate"
+                  ></td>
                 </tr>
               </tbody>
             </table>
@@ -162,9 +166,7 @@
                   <th class="px-4 py-3"></th>
                 </tr>
               </thead>
-              <tbody
-                class="bg-white dark:divide-gray-700 dark:bg-gray-800"
-              >
+              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <tr class="text-gray-700 dark:text-gray-400">
                   <td class="px-4 py-1 text-sm">Status</td>
                   <td class="px-4 py-1 text-sm" x-text="order.Status"></td>
@@ -179,6 +181,64 @@
                 </tr>
               </tbody>
             </table>
+
+            <div class="overflow-x-auto mt-4">
+              <!-- Items -->
+              <table class="w-full whitespace-no-wrap">
+                <thead>
+                  <tr
+                    class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                  >
+                    <th class="px-3 py-3">No</th>
+                    <th class="px-4 py-3">Nama</th>
+                    <th class="px-4 py-3">Jumlah</th>
+                    <th class="px-4 py-3">Catatan</th>
+                  </tr>
+                </thead>
+                <tbody
+                  class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
+                >
+                  <template x-for="(item, index) in items" :key="index">
+                    <tr
+                      class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
+                    >
+                      <td class="px-3 py-3 text-sm" x-text="index + 1"></td>
+                      <td class="px-1 py-3">
+                        <div class="flex items-center text-sm">
+                          <!-- Tampilkan avatar -->
+                          <div
+                            class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
+                          >
+                            <img
+                              class="object-cover w-full h-full rounded-full"
+                              :src="'/file/product/no-photo.png'"
+                              alt=""
+                              loading="lazy"
+                            />
+                            <div
+                              class="absolute inset-0 rounded-full shadow-inner"
+                              aria-hidden="true"
+                            ></div>
+                          </div>
+                          <div>
+                            <p
+                              class="font-semibold"
+                              x-text="item.ProductID"
+                            ></p>
+                            <p
+                              class="text-xs text-gray-600 dark:text-gray-400"
+                              x-text="item.ProductID"
+                            ></p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-4 py-3 text-sm" x-text="item.Quantity"></td>
+                      <td class="px-4 py-3 text-sm" x-text="item.Notes"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
           </div>
         </template>
         <script>
@@ -191,6 +251,7 @@
               surveyor: [],
               shippingAddress: [],
               billingAddress: [],
+              items: [],
               fetchById($dispatch) {
                 fetch(`/api/v1/local/order/id/${this.id}`, {
                   method: "GET",
@@ -217,6 +278,7 @@
                       this.surveyor = json.order.Surveyor;
                       this.shippingAddress = json.order.ShippingAddress;
                       this.billingAddress = json.order.BillingAddress;
+                      this.items = json.order.Items;
                     }
                   })
                   .catch((err) => {
