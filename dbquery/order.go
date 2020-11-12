@@ -162,7 +162,7 @@ func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 			ID:   int(o.BillingAddressID.Int64),
 			Name: string(o.BillingAddressName.String),
 		},
-		Status:       o.Status,
+		Status:       strings.Title(o.Status),
 		Code:         o.Code,
 		Credit:       o.Credit,
 		FirstTime:    o.FirstTime,
@@ -179,8 +179,9 @@ func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 func GetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
 	var items []wrapper.NullableOrderItem
 	var parse []wrapper.OrderItem
-	query := `SELECT id, product_id, quantity, notes
-	FROM "order_item"
+	query := `SELECT oi.id, oi.product_id, oi.quantity, oi.notes, p.name, p.code
+	FROM "order_item" oi
+	LEFT JOIN "product" p ON p.id=oi.product_id
 	WHERE order_id=$1`
 	err := db.Select(&items, query, oid)
 	if err != nil {
@@ -189,10 +190,14 @@ func GetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
 
 	for _, i := range items {
 		parse = append(parse, wrapper.OrderItem{
-			ID:        i.ID,
-			ProductID: i.ProductID,
-			Quantity:  i.Quantity,
-			Notes:     string(i.Notes.String),
+			ID: i.ID,
+			Product: wrapper.NameIDCode{
+				ID:   i.ProductID,
+				Name: i.ProductName,
+				Code: i.ProductCode,
+			},
+			Quantity: i.Quantity,
+			Notes:    string(i.Notes.String),
 		})
 	}
 	return parse, err
