@@ -78,7 +78,7 @@
       </div>
     </div>
 
-<!-- Modal backdrop. This what you want to place close to the closing body tag -->
+    <!-- Modal backdrop. This what you want to place close to the closing body tag -->
     <div
       x-cloak
       x-show="isModalOpen"
@@ -101,7 +101,7 @@
         x-transition:leave-end="opacity-0  transform translate-y-1/2"
         @click.away="closeModal"
         @keydown.escape="closeModal"
-        class="w-full relative px-6 py-4 bg-white rounded-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
+        class="w-full sm:w-2/4 relative px-6 py-4 bg-white rounded-lg dark:bg-gray-800 sm:rounded-lg sm:m-4"
         role="dialog"
         id="modal"
       >
