@@ -134,7 +134,7 @@ CREATE TABLE "address" (
 CREATE TABLE "product" (
     "id" INT GENERATED ALWAYS AS IDENTITY,
     "name" VARCHAR(100) NOT NULL,
-    "code" VARCHAR(10) UNIQUE,
+    "code" VARCHAR(10) UNIQUE NOT NULL,
     "base_price" DECIMAL(15,2) DEFAULT '0',
     "price" DECIMAL(15,2) DEFAULT '0',
     "credit_six" DECIMAL(15,2) DEFAULT '0',
