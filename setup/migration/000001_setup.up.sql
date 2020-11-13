@@ -27,15 +27,33 @@ CREATE TABLE "user" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "first_name" VARCHAR(25) NOT NULL,
     "last_name" VARCHAR(25),
+    "ric" VARCHAR(16) UNIQUE NOT NULL,
     "username" VARCHAR(25) UNIQUE,
     "avatar" VARCHAR(25) DEFAULT 'default.jpg' NOT NULL,
     "password" CHAR(60),
     "gender" GENDER NOT NULL,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "balance" DECIMAL(15,2) DEFAULT '0',
-    "refferer" INT,
+    "referral" INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (refferer) REFERENCES "user"("id")
+    FOREIGN KEY (referral) REFERENCES "user"("id")
+);
+
+-- Tabel KK
+CREATE TABLE "family_card" (
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "number" VARCHAR(16) UNIQUE NOT NULL,
+    PRIMARY KEY (id)
+);
+
+-- Tabel relasi keluarga
+CREATE TABLE "family" (
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "family_card_id" INT NOT NULL,
+    "user_id" INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (family_card_id) REFERENCES "family_card"("id"),
+    FOREIGN KEY (user_id) REFERENCES "user"("id")
 );
 
 -- Tabel peran user/pengguna
