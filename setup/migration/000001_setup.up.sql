@@ -34,9 +34,7 @@ CREATE TABLE "user" (
     "gender" GENDER NOT NULL,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "balance" DECIMAL(15,2) DEFAULT '0',
-    "referral" INT,
-    PRIMARY KEY (id),
-    FOREIGN KEY (referral) REFERENCES "user"("id")
+    PRIMARY KEY (id)
 );
 
 -- Tabel KK
@@ -150,25 +148,30 @@ CREATE TABLE "address" (
 
 -- Tabel barang/produk
 CREATE TABLE "product" (
-    "id" INT GENERATED ALWAYS AS IDENTITY,
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "name" VARCHAR(100) NOT NULL,
     "code" VARCHAR(10) UNIQUE NOT NULL,
     "base_price" DECIMAL(15,2) DEFAULT '0',
     "price" DECIMAL(15,2) DEFAULT '0',
-    "credit_six" DECIMAL(15,2) DEFAULT '0',
-    "credit_eight" DECIMAL(15,2) DEFAULT '0',
-    "credit_ten" DECIMAL(15,2) DEFAULT '0',
-    "credit_twelve" DECIMAL(15,2) DEFAULT '0',
-    "credit_fifteen" DECIMAL(15,2) DEFAULT '0',
     "type" VARCHAR(10),
     "brand" VARCHAR(25),
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
+-- Tabel harga kredit barang/produk
+CREATE TABLE "product_credit_price" (
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "product_id" INT NOT NULL,
+    "duration" SMALLINT NOT NULL,
+    "price" DECIMAL(15,2) DEFAULT '0',
+    PRIMARY KEY (id),
+    FOREIGN KEY (product_id) REFERENCES "product"("id")
+);
+
 -- Tabel photo produk
 CREATE TABLE "product_photo" (
-    "id" INT GENERATED ALWAYS AS IDENTITY,
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "product_id" INT NOT NULL,
     "photo" VARCHAR(25) NOT NULL UNIQUE,
     PRIMARY KEY (id),
@@ -177,10 +180,11 @@ CREATE TABLE "product_photo" (
 
 -- Tabel order/penjualan
 CREATE TABLE "order" (
-    "id" INT GENERATED ALWAYS AS IDENTITY,
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "customer_id" INT NOT NULL,
     "sales_id" INT,
     "surveyor_id" INT,
+    "collector_id" INT,
     "shipping_address_id" INT NOT NULL,
     "billing_address_id" INT,
     "code" VARCHAR(10) NOT NULL UNIQUE,
@@ -200,7 +204,7 @@ CREATE TABLE "order" (
 
 -- Tabel order item
 CREATE TABLE "order_item" (
-    "id" INT GENERATED ALWAYS AS IDENTITY,
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "order_id" INT NOT NULL,
     "product_id" INT NOT NULL,
     "quantity" INT NOT NULL DEFAULT '1',

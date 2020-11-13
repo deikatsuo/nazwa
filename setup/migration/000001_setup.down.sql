@@ -8,6 +8,7 @@
 DROP TABLE IF EXISTS "order_item";
 DROP TABLE IF EXISTS "order";
 DROP TABLE IF EXISTS "product_photo";
+DROP TABLE IF EXISTS "product_credit_price";
 DROP TABLE IF EXISTS "product";
 DROP TABLE IF EXISTS "address";
 DROP TABLE IF EXISTS "village";
