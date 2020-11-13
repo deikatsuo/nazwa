@@ -130,6 +130,8 @@ type NullableOrder struct {
 	SalesName           sql.NullString `db:"sales_name"`
 	SurveyorID          sql.NullInt64  `db:"surveyor_id"`
 	SurveyorName        sql.NullString `db:"surveyor_name"`
+	CollectorID         sql.NullInt64  `db:"collector_id"`
+	CollectorName       sql.NullString `db:"collector_name"`
 	ShippingAddressID   int            `db:"shipping_address_id"`
 	ShippingAddressName string         `db:"shipping_address_name"`
 	BillingAddressID    sql.NullInt64  `db:"billing_address_id"`
@@ -149,6 +151,7 @@ type Order struct {
 	Customer        NameID
 	Sales           NameID
 	Surveyor        NameID
+	Collector       NameID
 	ShippingAddress NameID
 	BillingAddress  NameID
 	Status          string

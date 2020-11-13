@@ -20,9 +20,8 @@ type User struct {
 	CreatedAt string  `db:"created_at"`
 	Balance   []uint8 `db:"balance"`
 	Password  string  `db:"password"`
-	Phone     string  `db:"phone"`
-	Email     string  `db:"email"`
 	Role      string  `db:"role"`
+	RIC       string  `db:"ric"`
 }
 
 // CreateUser struk buat user baru
@@ -36,6 +35,7 @@ type CreateUser struct {
 	role         int8
 	phone        string
 	email        string
+	familyCard   string
 }
 
 const (
@@ -78,6 +78,19 @@ func (u *CreateUser) SetLastName(p string) *CreateUser {
 		u.Lastname = strings.ToLower(p)
 		u.into["last_name"] = ":last_name"
 	}
+	return u
+}
+
+// SetRIC menambahkan nomor ktp
+func (u *CreateUser) SetRIC(p string) *CreateUser {
+	u.RIC = p
+	u.into["ric"] = ":ric"
+	return u
+}
+
+// SetFamilyCard menambahkan nomor KK
+func (u *CreateUser) SetFamilyCard(p string) *CreateUser {
+	u.familyCard = p
 	return u
 }
 
@@ -534,6 +547,21 @@ func AddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
 ///////////
 /* CHECK */
 ///////////
+
+// FamilyCardExists check nomor KK
+func FamilyCardExists(db *sqlx.DB, fc string) bool {
+	var p string
+	query := `SELECT id FROM "family_card" WHERE number=$1`
+	err := db.Get(&p, query, fc)
+	if err == nil {
+		if p != "" {
+			return true
+		}
+	} else {
+		log.Print(err)
+	}
+	return false
+}
 
 // PhoneExist check nomor telepon
 func PhoneExist(db *sqlx.DB, phone string) bool {
