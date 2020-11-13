@@ -107,6 +107,8 @@ func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		sa.first_name || ' ' || sa.last_name as sales_name,
 		o.surveyor_id,
 		su.first_name || ' ' || su.last_name as surveyor_name,
+		o.collector_id,
+		co.first_name || ' ' || co.last_name as collector_name,
 		o.shipping_address_id,
 		sad.one || ' ' || sad.two as shipping_address_name,
 		o.billing_address_id,
@@ -122,6 +124,7 @@ func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		LEFT JOIN "user" c ON c.id=o.customer_id
 		LEFT JOIN "user" sa ON sa.id=o.sales_id
 		LEFT JOIN "user" su ON su.id=o.surveyor_id
+		LEFT JOIN "user" co ON co.id=o.collector_id
 		LEFT JOIN "address" sad ON sad.id=o.shipping_address_id
 		LEFT JOIN "address" bad ON bad.id=o.billing_address_id
 		WHERE o.id=$1
@@ -152,6 +155,10 @@ func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		},
 		Surveyor: wrapper.NameID{
 			ID:   int(o.SurveyorID.Int64),
+			Name: o.SurveyorName.String,
+		},
+		Collector: wrapper.NameID{
+			ID:   int(o.CollectorID.Int64),
 			Name: o.SurveyorName.String,
 		},
 		ShippingAddress: wrapper.NameID{
