@@ -7,7 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// PageDashboardProductsAdd tampilkan halaman user
+// PageDashboardProductsAdd halaman tambah produk
 func PageDashboardProductsAdd(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		gh := gin.H{
