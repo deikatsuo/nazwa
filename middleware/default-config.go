@@ -72,7 +72,7 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 			"l_modal_btn_one": "Batal",
 			"l_modal_btn_two": "Oke",
 
-			"l_admin_create_customer": "Buat pelanggan",
+			"l_admin_create": "Buat pelanggan",
 		}
 
 		siteDefault := c.MustGet("config").(wrapper.DefaultConfig).Site
