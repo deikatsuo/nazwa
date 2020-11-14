@@ -7,7 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// PageDashboardOrders tampilkan halaman user
+// PageDashboardOrders tampilkan halaman order
 func PageDashboardOrders(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		gh := gin.H{
