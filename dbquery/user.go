@@ -112,7 +112,9 @@ func (u *CreateUser) SetAvatar(p string) *CreateUser {
 // SetPassword ...
 // Set password
 func (u *CreateUser) SetPassword(p string) *CreateUser {
-	u.tempPassword = p
+	if p != "" {
+		u.tempPassword = p
+	}
 	return u
 }
 
@@ -555,6 +557,21 @@ func FamilyCardExists(db *sqlx.DB, fc string) bool {
 	err := db.Get(&p, query, fc)
 	if err == nil {
 		if p != "" {
+			return true
+		}
+	} else {
+		log.Print(err)
+	}
+	return false
+}
+
+// RICExist check nomor KTP
+func RICExist(db *sqlx.DB, ric string) bool {
+	var r string
+	query := `SELECT id FROM "user" WHERE ric=$1`
+	err := db.Get(&r, query, ric)
+	if err == nil {
+		if r != "" {
 			return true
 		}
 	} else {

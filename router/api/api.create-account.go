@@ -13,11 +13,12 @@ import (
 
 // FormUser menyimpan input pendaftaran user
 type FormUser struct {
+	RIC        string `json:"ric" binding:"numeric,min=16,max=16"`
 	Phone      string `json:"phone" binding:"numeric,min=6,max=15"`
 	Firstname  string `json:"firstname" binding:"required,min=3,max=25"`
 	Lastname   string `json:"lastname" binding:"omitempty,min=1,max=25"`
 	Gender     string `json:"gender" binding:"required,oneof=m f"`
-	Password   string `json:"password" binding:"alphanumunicode,min=8,max=25"`
+	Password   string `json:"password" binding:"omitempty,alphanumunicode,min=8,max=25"`
 	Repassword string `json:"repassword" binding:"eqfield=Password"`
 	Policy     bool   `json:"policy" binding:"required"`
 }
@@ -31,21 +32,22 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		var httpStatus int
 		message := ""
 		var simpleErrMap = make(map[string]interface{})
-		var save bool
+		save := true
 
 		if err := c.ShouldBindJSON(&json); err != nil {
 			simpleErrMap = validation.SimpleValErrMap(err)
 			httpStatus = http.StatusBadRequest
 			status = "fail"
 			message = "Data tidak lengkap"
+			save = false
 		} else {
-			if !dbquery.PhoneExist(db, json.Phone) {
-				save = true
-			} else {
+			if dbquery.RICExist(db, json.RIC) {
+				simpleErrMap["ric"] = "Nomor KTP sudah terdaftar"
+				save = false
+			}
+			if dbquery.PhoneExist(db, json.Phone) {
 				simpleErrMap["phone"] = "Nomor ini sudah terdaftar"
-				httpStatus = http.StatusBadRequest
-				status = "error"
-				message = "Gagal mendaftar! anda atau seseorang selain anda telah mendaftar dengan nomor ini. \n Silahkan hubungi Administrator jika anda tidak pernah mendaftarkan nomor ini."
+				save = false
 			}
 		}
 
@@ -53,6 +55,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			user := dbquery.NewUser()
 			err := user.SetFirstName(json.Firstname).
 				SetLastName(json.Lastname).
+				SetRIC(json.RIC).
 				SetPhone(json.Phone).
 				SetPassword(json.Password).
 				SetGender(json.Gender).
@@ -64,6 +67,10 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			httpStatus = http.StatusOK
 			status = "success"
 			message = "Pendaftaran berhasil"
+		} else {
+			httpStatus = http.StatusBadRequest
+			status = "error"
+			message = "Gagal membuat pelanggan, silahkan perbaiki formulir"
 		}
 
 		m := gin.H{

@@ -1,6 +1,941 @@
-{{ template "base" .}}
-{{ define "dashboard_users_add_content" }}
+{{ template "base" .}} {{ define "dashboard_users_add_content" }}
 <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
   Tambah Pengguna
 </h2>
+
+<div class="grid gap-6 mb-8 md:grid-cols-2">
+  <!-- User info -->
+  <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+    <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
+      {{ .l_account_user_contact }}
+    </h4>
+
+    <div x-data="create()">
+      <label class="block text-sm">
+        <span class="text-gray-700 dark:text-gray-400">{{ .l_c_form_fc }}</span>
+        <input
+          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+          placeholder="Nomor Kartu Keluarga"
+          x-model="formData.fc"
+          @keydown.enter="submitData()"
+          :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFC }"
+        />
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmFC"
+          :class="{'invisible': errFC == false}"
+        >
+        </span>
+      </label>
+      <label class="block mt-4 text-sm">
+        <span class="text-gray-700 dark:text-gray-400"
+          >{{ .l_c_form_ric }}</span
+        >
+        <input
+          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+          placeholder="Nomor Induk Kependudukan"
+          x-model="formData.ric"
+          @keydown.enter="submitData()"
+          :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRIC }"
+        />
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmRIC"
+          :class="{'invisible': errRIC == false}"
+        >
+        </span>
+      </label>
+      <label class="block mt-4 text-sm">
+        <span class="text-gray-700 dark:text-gray-400"
+          >{{ .l_c_form_phone }}</span
+        >
+        <input
+          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+          placeholder="081xxx"
+          x-model="formData.phone"
+          @keydown.enter="submitData()"
+          :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPhone }"
+        />
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmPhone"
+          :class="{'invisible': errPhone == false}"
+        >
+        </span>
+      </label>
+
+      <div class="flex flex-wrap mb-6">
+        <div class="w-full md:w-1/2 md:pr-3">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400"
+              >{{ .l_c_form_firstname }}</span
+            >
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              placeholder="Rika"
+              x-model="formData.firstname"
+              @keydown.enter="submitData()"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFirstname }"
+            />
+          </label>
+        </div>
+        <div class="w-full md:w-1/2 md:pl-3">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400"
+              >{{ .l_c_form_lastname }}</span
+            >
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              placeholder="Artamevia"
+              x-model="formData.lastname"
+              @keydown.enter="submitData()"
+            />
+          </label>
+        </div>
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmFirstname"
+          :class="{'invisible': errFirstname == false}"
+        >
+        </span>
+      </div>
+
+      <div class="mt-4 text-sm">
+        <span class="text-gray-700 dark:text-gray-400">
+          {{ .l_c_form_gender }}
+        </span>
+        <div class="mt-2">
+          <label
+            class="inline-flex items-center text-gray-600 dark:text-gray-400"
+          >
+            <input
+              type="radio"
+              class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+              name="gender"
+              @click="formData.gender = 'm'"
+            />
+            <span class="ml-2">{{ .l_c_form_gender_m }}</span>
+          </label>
+          <label
+            class="inline-flex items-center ml-6 text-gray-600 dark:text-gray-400"
+          >
+            <input
+              type="radio"
+              class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+              name="gender"
+              @click="formData.gender = 'f'"
+            />
+            <span class="ml-2">{{ .l_c_form_gender_f }}</span>
+          </label>
+        </div>
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmGender"
+          :class="{'invisible': errGender == false}"
+        >
+        </span>
+      </div>
+      <label class="block mt-4 text-sm">
+        <span class="text-blue-700 dark:text-blue-400">
+          <a href="#" @click="addPassword = !addPassword"
+            >{{ .l_c_form_add_password }}</a
+          ></span
+        >
+      </label>
+      <div x-show="addPassword !== false">
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_c_form_password }}</span
+          >
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            placeholder="***************"
+            type="password"
+            x-model="formData.password"
+            @keydown.enter="submitData()"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPassword }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmPassword"
+            :class="{'invisible': errPassword == false}"
+          >
+          </span>
+        </label>
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">
+            {{ .l_c_form_repassword }}
+          </span>
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            placeholder="***************"
+            type="password"
+            x-model="formData.repassword"
+            @keydown.enter="submitData()"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRepassword }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmRepassword"
+            :class="{'invisible': errRepassword == false}"
+          >
+          </span>
+        </label>
+      </div>
+
+      <div class="flex mt-6 text-sm">
+        <label class="items-center dark:text-gray-400">
+          <input
+            type="checkbox"
+            class="text-purple-600 form-checkbox focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+            x-model="formData.policy"
+            :class="{'border-red-600': errPolicy }"
+          />
+          <span class="ml-2">
+            {{ .l_c_form_agree }}
+            <span class="underline">{{ .l_c_form_privacy_link }}</span> </span
+          ><br />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmPolicy"
+            :class="{'invisible': errPolicy == false}"
+          >
+          </span>
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+        @click="submitData()"
+        :disabled="loading == true"
+        x-text="loadingText"
+        :class="{'cursor-not-allowed opacity-50': loading == true }"
+      >
+        {{ .l_c_form_create }}
+      </button>
+
+      <div :class="{'hidden': showNotif == false}">
+        <hr class="my-8" />
+        <div
+          class="px-4 py-3 mb-8 rounded-lg shadow-md dark:bg-gray-800"
+          :class="{'bg-red-400': notifStatus == 'error', 'bg-orange-400': notifStatus == 'fail', 'bg-green-400': notifStatus == 'success'}"
+        >
+          <p
+            class="text-sm text-gray-600 dark:text-gray-400"
+            x-text="message"
+          ></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function create() {
+        return {
+          formData: {
+            fc: "",
+            ric: "",
+            phone: "",
+            firstname: "",
+            lastname: "",
+            gender: "",
+            password: "",
+            repassword: "",
+            policy: false,
+          },
+          loadingText: "{{ .l_c_form_create }}",
+          loading: false,
+          message: "",
+          errFC: false,
+          errmFC: "",
+          errRIC: false,
+          errmRIC: "",
+          errPhone: false,
+          errmPhone: "",
+          errFirstname: false,
+          errmFirstname: "",
+          errGender: false,
+          errmGender: "",
+          errPassword: false,
+          errmPassword: "",
+          errRepassword: false,
+          errmRepassword: "",
+          errPolicy: false,
+          errmPolicy: "",
+          showNotif: false,
+          notifStatus: "",
+          addPassword: false,
+
+          submitData() {
+            this.loadingText = "Loading . . .";
+            this.loading = true;
+
+            fetch("/api/v1/local/create-account", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.formData),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                this.loadingText = "{{ .l_c_form_create }}";
+                this.loading = false;
+                if (data.fc) {
+                  this.errFC = true;
+                  this.errmFC = data.ric;
+                } else {
+                  this.errFC = false;
+                  this.errmFC = "";
+                }
+                if (data.ric) {
+                  this.errRIC = true;
+                  this.errmRIC = data.ric;
+                } else {
+                  this.errRIC = false;
+                  this.errmRIC = "";
+                }
+                if (data.phone) {
+                  this.errPhone = true;
+                  this.errmPhone = data.phone;
+                } else {
+                  this.errPhone = false;
+                  this.errmPhone = "";
+                }
+                if (data.firstname) {
+                  this.errFirstname = true;
+                  this.errmFirstname = data.firstname;
+                } else {
+                  this.errFirstname = false;
+                  this.errmFirstname = "";
+                }
+                if (data.gender) {
+                  this.errGender = true;
+                  this.errmGender = data.gender;
+                } else {
+                  this.errGender = false;
+                  this.errmGender = "";
+                }
+                if (data.password) {
+                  this.errPassword = true;
+                  this.errmPassword = data.password;
+                } else {
+                  this.errPassword = false;
+                  this.errmPassword = "";
+                }
+                if (data.repassword) {
+                  this.errRepassword = true;
+                  this.errmRepassword = data.repassword;
+                } else {
+                  this.errRepassword = false;
+                  this.errmRepassword = "";
+                }
+                if (data.policy) {
+                  this.errPolicy = true;
+                  this.errmPolicy = data.policy;
+                } else {
+                  this.errPolicy = false;
+                  this.errmPolicy = "";
+                }
+
+                if (data.status == "error") {
+                  this.notifStatus = "error";
+                }
+                if (data.status == "fail") {
+                  this.notifStatus = "fail";
+                }
+                if (data.status == "success") {
+                  this.notifStatus = "success";
+                }
+
+                if (data.message) {
+                  this.message = data.message;
+                  this.showNotif = true;
+                } else {
+                  this.showNotif = false;
+                  this.message = "";
+                }
+              })
+              .catch(() => {
+                console.log("error");
+              });
+          },
+        };
+      }
+    </script>
+  </div>
+
+  <!-- User address -->
+  <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+    <h3 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
+      {{ .l_account_user_address }}
+    </h3>
+    <div x-data="addAddressDetail()" x-init="initPlaces($watch)">
+      <div x-show="addresses.length > 0">
+        <template x-for="(address, index) in addresses" :key="index">
+          <dl>
+            <div
+              class="cursor-pointer px-4 py-5 border-b border-gray-200 sm:px-6 hover:opacity-50"
+              @click="showSelected !== address.ID ? showSelected = address.ID : showSelected = null"
+            >
+              <h5
+                class="leading-6 font-medium text-gray-900"
+                x-text="address.name"
+              ></h5>
+              <p
+                class="mt-1 max-w-2xl text-sm leading-5 text-gray-500"
+                x-text="address.description"
+              ></p>
+            </div>
+            <div x-show="showSelected == address.ID">
+              <div
+                class="bg-gray-50 px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  {{ .l_u_address_show_one }}
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+                  x-text="address.one"
+                ></dd>
+              </div>
+              <div
+                class="bg-gray-50 px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+                x-show="address.two != ''"
+              >
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  {{ .l_u_address_show_two }}
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+                  x-text="address.two"
+                ></dd>
+              </div>
+              <div
+                class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  {{ .l_u_address_show_zip }}
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+                  x-text="address.zip"
+                ></dd>
+              </div>
+              <div
+                class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  {{ .l_u_address_show_village }}
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+                  x-text="address.VillageName"
+                ></dd>
+              </div>
+              <div
+                class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  {{ .l_u_address_show_district }}
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+                  x-text="address.DistrictName"
+                ></dd>
+              </div>
+              <div
+                class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  {{ .l_u_address_show_city }}
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+                  x-text="address.CityName"
+                ></dd>
+              </div>
+              <div
+                class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  {{ .l_u_address_show_province }}
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2"
+                  x-text="address.ProvinceName"
+                ></dd>
+              </div>
+              <div
+                class="bg-white px-4 py-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <p
+                  class="cursor-pointer text-blue-700"
+                  x-show="addresses.length > 1"
+                  @click="$dispatch('modal', { footer: true, title: 'Peringatan!', content:'Apakah yakin ingin menghapus alamat ini?', callback: function() { deleteAddress($dispatch, address.ID) } })"
+                >
+                  {{ .l_u_address_delete_btn }}
+                </p>
+              </div>
+            </div>
+          </dl>
+        </template>
+      </div>
+
+      <!-- Tambah address -->
+      <label class="block mt-4 text-sm">
+        <span class="text-blue-700 dark:text-blue-400">
+          <a href="#" @click="addAddressOpen = !addAddressOpen"
+            >{{ .l_u_address_add }}</a
+          ></span
+        >
+      </label>
+      <div x-show="addAddressOpen">
+        <!-- Nama panggilan alamat -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_name }}</span
+          >
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            type="text"
+            x-model="addAddressData.name"
+            @keydown.enter="addAddress($dispatch)"
+            placeholder="Misal 'Rumahku'"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errAddressName }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressName"
+            :class="{'invisible': errAddressName == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Deskripsi alamat -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_description }} (opsional)</span
+          >
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            type="text"
+            x-model="addAddressData.description"
+            @keydown.enter="addAddress($dispatch)"
+            placeholder="Misal 'Alamat rumah di jampang deket abah'"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errAddressDescription }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressDescription"
+            :class="{'invisible': errAddressDescription == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Alamat 1 -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_one }} (kolom ke-2 opsional)</span
+          >
+          <div class="rounded-md shadow-sm">
+            <div>
+              <input
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5"
+                placeholder="Alamat 1"
+                @keydown.enter="addAddress($dispatch)"
+                x-model="addAddressData.one"
+              />
+            </div>
+            <div class="-mt-px">
+              <input
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5"
+                placeholder="Alamat 2"
+                @keydown.enter="addAddress($dispatch)"
+                x-model="addAddressData.two"
+              />
+            </div>
+          </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressOne"
+            :class="{'invisible': errAddressOne == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Kode POS -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_zip }}</span
+          >
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            type="text"
+            x-model="addAddressData.zip"
+            @keydown.enter="addAddress($dispatch)"
+            placeholder="POS"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errAddressZip }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressZip"
+            :class="{'invisible': errAddressZip == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Provinsi -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_province }}</span
+          >
+          <div class="relative">
+            <select
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="addAddressData.province"
+            >
+              <option value="">Pilih provinsi</option>
+              <template x-for="(province, index) in provinces" :key="index">
+                <option :value="province.ID" x-text="province.Name"></option>
+              </template>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              {{ template "_svg_icon_arrow_bottom" }}
+            </div>
+          </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressProvince"
+            :class="{'invisible': errAddressProvince == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Kota/Kabupaten -->
+        <label class="block mt-4 text-sm" x-show="cities.length > 0">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_city }}</span
+          >
+          <div class="relative">
+            <select
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="addAddressData.city"
+            >
+              <option value="">Pilih kota/kabupaten</option>
+              <template x-for="(city, index) in cities" :key="index">
+                <option :value="city.ID" x-text="city.Name"></option>
+              </template>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              {{ template "_svg_icon_arrow_bottom" }}
+            </div>
+          </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressCity"
+            :class="{'invisible': errAddressCity == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Distrik/Kecamatan -->
+        <label class="block mt-4 text-sm" x-show="districts.length > 0">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_district }}</span
+          >
+          <div class="relative">
+            <select
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="addAddressData.district"
+            >
+              <option value="">Pilih distrik/kecamatan</option>
+              <template x-for="(district, index) in districts" :key="index">
+                <option :value="district.ID" x-text="district.Name"></option>
+              </template>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              {{ template "_svg_icon_arrow_bottom" }}
+            </div>
+          </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressDistrict"
+            :class="{'invisible': errAddressDistrict == false}"
+          >
+          </span>
+        </label>
+
+        <!-- Kelurahan/Desa -->
+        <label class="block mt-4 text-sm" x-show="villages.length > 0">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_u_address_village }}</span
+          >
+          <div class="relative">
+            <select
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              x-model="addAddressData.village"
+            >
+              <option value="">Pilih kelurahan/desa</option>
+              <template x-for="(village, index) in villages" :key="index">
+                <option :value="village.ID" x-text="village.Name"></option>
+              </template>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              {{ template "_svg_icon_arrow_bottom" }}
+            </div>
+          </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmAddressVillage"
+            :class="{'invisible': errAddressVillage == false}"
+          >
+          </span>
+        </label>
+
+        <button
+          type="submit"
+          class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+          @click="addAddress($dispatch)"
+          :disabled="addAddressDisable"
+          :class="{'cursor-not-allowed opacity-50': addAddressDisable }"
+          x-text="addAddressBtn"
+        >
+          {{ .l_u_address_add_btn }}
+        </button>
+      </div>
+    </div>
+    <script>
+      function addAddressDetail() {
+        return {
+          showSelected: null,
+          addAddressOpen: false,
+          errAddressName: false,
+          errAddressDescription: false,
+          errAddressOne: false,
+          errAddressTwo: false,
+          errAddressZip: false,
+          errAddressProvince: false,
+          errAddressCity: false,
+          errAddressDistrict: false,
+          errAddressVillage: false,
+          errmAddressName: '',
+          errmAddressDescription: '',
+          errmAddressOne: '',
+          errmAddressTwo: '',
+          errmAddressZip: '',
+          errmAddressProvince: '',
+          errmAddressCity: '',
+          errmAddressDistrict: '',
+          errmAddressVillage: '',
+          deleteAddressData: {
+            id: null,
+          },
+          deleteAddress($dispatch, pid) {
+            this.deleteAddressData.id = pid;
+            fetch("/api/v1/local/user/{{ .user.ID }}/delete/address", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.deleteAddressData),
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.addresses = json.addresses;
+              if (json.error) {
+                $dispatch('notif', {type: 'error', message: json.error});
+              } else if (json.success) {
+                $dispatch('notif', {type: 'success', message: json.success});
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          addAddressData: {
+            name: '',
+            description: '',
+            one: '',
+            two: '',
+            zip: '',
+            province: '',
+            city: '',
+            district: '',
+            village: '',
+          },
+          addAddressDisable: false,
+          addAddressBtn: {{ .l_u_address_add_btn }},
+          addresses: {{ if not .addresses }} [] {{ else }} {{ .addresses }} {{ end }},
+          addAddress($dispatch) {
+            this.addAddressBtn = "Loading. . .";
+            this.addAddressDisable = true;
+            fetch("/api/v1/local/user/{{ .user.ID }}/add/address", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.addAddressData),
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.addAddressBtn = {{ .l_u_address_add_btn }}
+              this.addAddressDisable = false
+              if (json.name) {
+                this.errAddressName = true;
+                this.errmAddressName = json.name;
+              } else {
+                this.errAddressName = false;
+                this.errmAddressName = '';
+              }
+              if (json.description) {
+                this.errAddressDescription = true;
+                this.errmAddressDescription = json.description;
+              } else {
+                this.errAddressDescription = false;
+                this.errmAddressDescription = '';
+              }
+              if (json.one) {
+                this.errAddressOne = true;
+                this.errmAddressOne = json.one;
+              } else {
+                this.errAddressOne = false;
+                this.errmAddressOne = '';
+              }
+              if (json.two) {
+                this.errAddressTwo = true;
+                this.errmAddressTwo = json.two;
+              } else {
+                this.errAddressTwo = false;
+                this.errmAddressTwo = '';
+              }
+              if (json.zip) {
+                this.errAddressZip = true;
+                this.errmAddressZip = json.zip;
+              } else {
+                this.errAddressZip = false;
+                this.errmAddressZip = '';
+              }
+              if (json.province) {
+                this.errAddressProvince = true;
+                this.errmAddressProvince = json.province;
+              } else {
+                this.errAddressProvince = false;
+                this.errmAddressProvince = '';
+              }
+              if (json.city) {
+                this.errAddressCity = true;
+                this.errmAddressCity = json.city;
+              } else {
+                this.errAddressCity = false;
+                this.errmAddressCity = '';
+              }
+              if (json.district) {
+                this.errAddressDistrict = true;
+                this.errmAddressDistrict = json.district;
+              } else {
+                this.errAddressDistrict = false;
+                this.errmAddressDistrict = '';
+              }
+              if (json.village) {
+                this.errAddressVillage = true;
+                this.errmAddressVillage = json.village;
+              } else {
+                this.errAddressVillage = false;
+                this.errmAddressVillage = '';
+              }
+              if (json.error) {
+                $dispatch('notif', {type: 'error', message: json.error});
+              } else if (json.success) {
+                $dispatch('notif', {type: 'success', message: json.success});
+                this.addresses = json.addresses
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          initPlaces($watch) {
+            $watch('addAddressData.province', (value) => {
+              this.addAddressData.city = '';
+              this.cities = [];
+              if (value != "") {
+                this.fetchCities();
+              }
+            });
+            $watch('addAddressData.city', (value) => {
+              this.addAddressData.district = '';
+              this.districts = [];
+              if (value != "") {
+                this.fetchDistricts();
+              }
+            });
+            $watch('addAddressData.district', (value) => {
+              this.addAddressData.village = '';
+              this.villages = [];
+              if (value != "") {
+                this.fetchVillages();
+              }
+            });
+            this.fetchProvinces();
+          },
+          provinces: [],
+          fetchProvinces() {
+            fetch("/api/v1/local/address/provinces", {
+              method: "GET",
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.provinces = json.province
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          cities: [],
+          fetchCities() {
+            fetch("/api/v1/local/address/cities/"+this.addAddressData.province, {
+              method: "GET",
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.cities = json.cities
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          districts: [],
+          fetchDistricts() {
+            fetch("/api/v1/local/address/districts/"+this.addAddressData.city, {
+              method: "GET",
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.districts = json.districts
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+          villages: [],
+          fetchVillages() {
+            fetch("/api/v1/local/address/villages/"+this.addAddressData.district, {
+              method: "GET",
+            })
+            .then((res) => res.json())
+            .then((json) => {
+              this.villages = json.villages
+            })
+            .catch((err) => {
+              console.log(err)
+            });
+          },
+        };
+      }
+    </script>
+  </div>
+</div>
 {{ end }}
