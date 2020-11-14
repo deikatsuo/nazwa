@@ -82,37 +82,34 @@ type UserAddress struct {
 
 // NullableProduct menampilkan list produk
 type NullableProduct struct {
-	ID            int            `db:"id"`
-	Name          string         `db:"name"`
-	Code          sql.NullString `db:"code"`
-	BasePrice     []uint8        `db:"base_price"`
-	Price         []uint8        `db:"price"`
-	CreditSix     []uint8        `db:"credit_six"`
-	CreditEight   []uint8        `db:"credit_eight"`
-	CreditTen     []uint8        `db:"credit_ten"`
-	CreditTwelve  []uint8        `db:"credit_twelve"`
-	CreditFifteen []uint8        `db:"credit_fifteen"`
-	Type          sql.NullString `db:"type"`
-	Brand         sql.NullString `db:"brand"`
-	CreatedAt     string         `db:"created_at"`
+	ID        int            `db:"id"`
+	Name      string         `db:"name"`
+	Code      sql.NullString `db:"code"`
+	BasePrice []uint8        `db:"base_price"`
+	Price     []uint8        `db:"price"`
+	Type      sql.NullString `db:"type"`
+	Brand     sql.NullString `db:"brand"`
+	CreatedAt string         `db:"created_at"`
 }
 
 // Product map data produk
 type Product struct {
-	ID            int
-	Name          string
-	Code          string
-	BasePrice     string
-	Price         string
-	CreditSix     string
-	CreditEight   string
-	CreditTen     string
-	CreditTwelve  string
-	CreditFifteen string
-	Type          string
-	Brand         string
-	CreatedAt     string
-	Photos        []ProductPhoto
+	ID        int
+	Name      string
+	Code      string
+	BasePrice string
+	Price     string
+	Type      string
+	Brand     string
+	CreatedAt string
+	Photos    []ProductPhoto
+}
+
+// ProductCreditPrice list harga kredit produk
+type ProductCreditPrice struct {
+	ID       int    `db:"id"`
+	Duration int    `db:"duration"`
+	Price    string `db:"price"`
 }
 
 // ProductPhoto mengambil photo produk dari database
