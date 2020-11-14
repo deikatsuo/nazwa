@@ -100,6 +100,7 @@ func runServer(db *sqlx.DB) {
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/account", router.PageDashboardAccount(db))
 	dashboard.GET("/users", router.PageDashboardUsers(db))
+	dashboard.GET("/users/add", router.PageDashboardUsersAdd(db))
 	dashboard.GET("/products", router.PageDashboardProducts(db))
 	dashboard.GET("/products/add", router.PageDashboardProductsAdd(db))
 	dashboard.GET("/orders", router.PageDashboardOrders(db))

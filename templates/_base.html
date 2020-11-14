@@ -61,6 +61,10 @@
               {{ block "dashboard_users_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "users_add" }}
+              {{ block "dashboard_users_add_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "products" }}
               {{ block "dashboard_products_content" .}}{{ end }}
             {{ end }}
