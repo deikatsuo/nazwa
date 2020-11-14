@@ -16,6 +16,10 @@ function data() {
     window.localStorage.setItem('dark', value)
   }
 
+  function getPageMenuDw() {
+    return window.localStorage.getItem('pageMenuDw')
+  }
+
   return {
     dark: getThemeFromLocalStorage(),
     toggleTheme() {
@@ -46,6 +50,16 @@ function data() {
     isPagesMenuOpen: false,
     togglePagesMenu() {
       this.isPagesMenuOpen = !this.isPagesMenuOpen
+    },
+    pageMenuDw: getPageMenuDw(),
+    togglePageMenu(page) {
+      if (window.localStorage.getItem('pageMenuDw') != page) {
+        window.localStorage.setItem('pageMenuDw', page);
+        this.pageMenuDw = page;
+      } else {
+        window.localStorage.setItem('pageMenuDw', '');
+        this.pageMenuDw = '';
+      }
     },
 
     // Modal

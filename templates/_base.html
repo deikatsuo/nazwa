@@ -65,6 +65,10 @@
               {{ block "dashboard_products_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "products_add" }}
+              {{ block "dashboard_products_add_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "orders" }}
               {{ block "dashboard_orders_content" .}}{{ end }}
             {{ end }}
