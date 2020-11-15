@@ -183,27 +183,6 @@
         </label>
       </div>
 
-      <div class="flex mt-6 text-sm">
-        <label class="items-center dark:text-gray-400">
-          <input
-            type="checkbox"
-            class="text-purple-600 form-checkbox focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-            x-model="formData.policy"
-            :class="{'border-red-600': errPolicy }"
-          />
-          <span class="ml-2">
-            {{ .l_c_form_agree }}
-            <span class="underline">{{ .l_c_form_privacy_link }}</span> </span
-          ><br />
-          <span
-            class="text-xs text-red-600 dark:text-red-400"
-            x-text="errmPolicy"
-            :class="{'invisible': errPolicy == false}"
-          >
-          </span>
-        </label>
-      </div>
-
       <button
         type="submit"
         class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
@@ -241,7 +220,6 @@
             gender: "",
             password: "",
             repassword: "",
-            policy: false,
           },
           loadingText: "{{ .l_c_form_create }}",
           loading: false,
@@ -260,8 +238,6 @@
           errmPassword: "",
           errRepassword: false,
           errmRepassword: "",
-          errPolicy: false,
-          errmPolicy: "",
           showNotif: false,
           notifStatus: "",
           addPassword: false,
@@ -281,7 +257,7 @@
                 this.loading = false;
                 if (data.fc) {
                   this.errFC = true;
-                  this.errmFC = data.ric;
+                  this.errmFC = data.fc;
                 } else {
                   this.errFC = false;
                   this.errmFC = "";
@@ -327,13 +303,6 @@
                 } else {
                   this.errRepassword = false;
                   this.errmRepassword = "";
-                }
-                if (data.policy) {
-                  this.errPolicy = true;
-                  this.errmPolicy = data.policy;
-                } else {
-                  this.errPolicy = false;
-                  this.errmPolicy = "";
                 }
 
                 if (data.status == "error") {

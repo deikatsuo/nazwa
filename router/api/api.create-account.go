@@ -13,6 +13,7 @@ import (
 
 // FormUser menyimpan input pendaftaran user
 type FormUser struct {
+	FC         string `json:"fc" binding:"numeric,min=16,max=16"`
 	RIC        string `json:"ric" binding:"numeric,min=16,max=16"`
 	Phone      string `json:"phone" binding:"numeric,min=6,max=15"`
 	Firstname  string `json:"firstname" binding:"required,min=3,max=25"`
@@ -20,7 +21,6 @@ type FormUser struct {
 	Gender     string `json:"gender" binding:"required,oneof=m f"`
 	Password   string `json:"password" binding:"omitempty,alphanumunicode,min=8,max=25"`
 	Repassword string `json:"repassword" binding:"eqfield=Password"`
-	Policy     bool   `json:"policy" binding:"required"`
 }
 
 // UserCreate API untuk membuat user baru
@@ -36,6 +36,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 
 		if err := c.ShouldBindJSON(&json); err != nil {
 			simpleErrMap = validation.SimpleValErrMap(err)
+			log.Print(err)
 			httpStatus = http.StatusBadRequest
 			status = "fail"
 			message = "Data tidak lengkap"
@@ -55,6 +56,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			user := dbquery.NewUser()
 			err := user.SetFirstName(json.Firstname).
 				SetLastName(json.Lastname).
+				SetFamilyCard(json.FC).
 				SetRIC(json.RIC).
 				SetPhone(json.Phone).
 				SetPassword(json.Password).
@@ -70,7 +72,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		} else {
 			httpStatus = http.StatusBadRequest
 			status = "error"
-			message = "Gagal membuat pelanggan, silahkan perbaiki formulir"
+			//message = "Gagal membuat pelanggan, silahkan perbaiki formulir"
 		}
 
 		m := gin.H{

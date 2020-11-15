@@ -172,47 +172,77 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 	tx := db.MustBegin()
 	var tempReturnID int
 	userInsertQuery := fmt.Sprintf(`INSERT INTO "user" %s`, u.generateInsertQuery())
-	rows, err := tx.NamedQuery(userInsertQuery, u)
-	if err != nil {
+	if rows, err := tx.NamedQuery(userInsertQuery, u); err == nil {
+		// Ambil id dari transaksi terakhir
+		if rows.Next() {
+			rows.Scan(&tempReturnID)
+		}
+
+		if u.returnID && tempReturnID != 0 {
+			*u.returnIDTO = tempReturnID
+		}
+
+		if err := rows.Close(); err != nil {
+			return err
+		}
+	} else {
 		tx.Rollback()
 		return err
 	}
-	// Ambil id dari transaksi terakhir
-	if rows.Next() {
-		rows.Scan(&tempReturnID)
+
+	// Lakukan pengecekan nomor kk/ insert jika belum ada
+	var fcid int
+	if len(u.familyCard) > 0 {
+		if fe, fv := FamilyCardExist(db, u.familyCard); fe {
+			fcid = fv
+		} else {
+			if rows, err := tx.Query(`INSERT INTO "family_card" (number) VALUES ($1) RETURNING id`, u.familyCard); err == nil {
+				// Ambil id dari transaksi terakhir
+				if rows.Next() {
+					rows.Scan(&fcid)
+				}
+				if err := rows.Close(); err != nil {
+					log.Println("ERROR: user.go Save() fcid closing rows")
+					return err
+				}
+			} else {
+				tx.Rollback()
+				log.Println("ERROR: user.go Save() Insert family card rollback")
+				return err
+			}
+		}
 	}
-	err = rows.Close()
-	if err != nil {
+
+	// Set family
+	if _, err := tx.Exec(`INSERT INTO "family" (family_card_id, user_id) VALUES ($1, $2)`, fcid, tempReturnID); err != nil {
+		log.Println("ERROR: user.go Save() Insert set family")
 		return err
-	}
-	if u.returnID && tempReturnID != 0 {
-		*u.returnIDTO = tempReturnID
 	}
 
 	// Set role user
-	_, err = tx.Exec(`INSERT INTO "user_role" (role_id, user_id) VALUES ($1, $2)`, u.role, tempReturnID)
-	if err != nil {
+	if _, err := tx.Exec(`INSERT INTO "user_role" (role_id, user_id) VALUES ($1, $2)`, u.role, tempReturnID); err != nil {
+		log.Println("ERROR: user.go Save() Insert user role")
 		return err
 	}
 
 	// Simpan nomor hp user jika tersedia
 	if len(u.phone) >= 6 && len(u.phone) <= 15 {
-		_, err = tx.Exec(`INSERT INTO "phone" (user_id, phone) VALUES ($1, $2)`, tempReturnID, u.phone)
-		if err != nil {
+		if _, err := tx.Exec(`INSERT INTO "phone" (user_id, phone) VALUES ($1, $2)`, tempReturnID, u.phone); err != nil {
+			log.Println("ERROR: user.go Save() Insert phone number")
 			return err
 		}
 	}
 
 	// Simpan email user jika ada
 	if u.email != "" {
-		_, err = tx.Exec(`INSERT INTO "email" (user_id, email) VALUES ($1, $2)`, tempReturnID, u.email)
-		if err != nil {
+		if _, err := tx.Exec(`INSERT INTO "email" (user_id, email) VALUES ($1, $2)`, tempReturnID, u.email); err != nil {
+			log.Println("ERROR: user.go Save() Insert email")
 			return err
 		}
 	}
 
 	// Komit
-	err = tx.Commit()
+	err := tx.Commit()
 	return err
 }
 
@@ -550,19 +580,19 @@ func AddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
 /* CHECK */
 ///////////
 
-// FamilyCardExists check nomor KK
-func FamilyCardExists(db *sqlx.DB, fc string) bool {
-	var p string
+// FamilyCardExist check nomor KK
+func FamilyCardExist(db *sqlx.DB, fc string) (bool, int) {
+	var f int
 	query := `SELECT id FROM "family_card" WHERE number=$1`
-	err := db.Get(&p, query, fc)
+	err := db.Get(&f, query, fc)
 	if err == nil {
-		if p != "" {
-			return true
+		if f != 0 {
+			return true, f
 		}
 	} else {
 		log.Print(err)
 	}
-	return false
+	return false, f
 }
 
 // RICExist check nomor KTP
