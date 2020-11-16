@@ -13,9 +13,9 @@ import (
 
 // FormUser menyimpan input pendaftaran user
 type FormUser struct {
-	FC         string `json:"fc" binding:"numeric,min=16,max=16"`
+	FC         string `json:"fc" binding:"omitempty,numeric,min=16,max=16"`
 	RIC        string `json:"ric" binding:"numeric,min=16,max=16"`
-	Phone      string `json:"phone" binding:"numeric,min=6,max=15"`
+	Phone      string `json:"phone" binding:"omitempty,numeric,min=6,max=15"`
 	Firstname  string `json:"firstname" binding:"required,min=3,max=25"`
 	Lastname   string `json:"lastname" binding:"omitempty,min=1,max=25"`
 	Gender     string `json:"gender" binding:"required,oneof=m f"`
@@ -35,11 +35,11 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		save := true
 
 		if err := c.ShouldBindJSON(&json); err != nil {
+			log.Println("ERROR: api.create-account.go UserCreate() bind json")
+			log.Println(err)
 			simpleErrMap = validation.SimpleValErrMap(err)
-			log.Print(err)
 			httpStatus = http.StatusBadRequest
 			status = "fail"
-			message = "Data tidak lengkap"
 			save = false
 		} else {
 			if dbquery.RICExist(db, json.RIC) {
@@ -64,15 +64,16 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetRole(dbquery.RoleCustomer).
 				Save(db)
 			if err != nil {
+				log.Println("ERROR: api.create-account.go UserCreate() Gagal membuat user baru")
 				log.Print(err)
 			}
 			httpStatus = http.StatusOK
 			status = "success"
-			message = "Pendaftaran berhasil"
+			message = "Berhasil membuat user baru"
 		} else {
 			httpStatus = http.StatusBadRequest
 			status = "error"
-			//message = "Gagal membuat pelanggan, silahkan perbaiki formulir"
+			message = "Gagal membuat pelanggan, silahkan perbaiki formulir"
 		}
 
 		m := gin.H{

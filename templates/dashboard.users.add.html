@@ -17,7 +17,7 @@
           class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
           placeholder="Nomor Kartu Keluarga"
           x-model="formData.fc"
-          @keydown.enter="submitData()"
+          @keydown.enter="submitData($dispatch)"
           :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFC }"
         />
         <span
@@ -35,7 +35,7 @@
           class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
           placeholder="Nomor Induk Kependudukan"
           x-model="formData.ric"
-          @keydown.enter="submitData()"
+          @keydown.enter="submitData($dispatch)"
           :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRIC }"
         />
         <span
@@ -53,7 +53,7 @@
           class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
           placeholder="081xxx"
           x-model="formData.phone"
-          @keydown.enter="submitData()"
+          @keydown.enter="submitData($dispatch)"
           :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPhone }"
         />
         <span
@@ -74,7 +74,7 @@
               class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
               placeholder="Rika"
               x-model="formData.firstname"
-              @keydown.enter="submitData()"
+              @keydown.enter="submitData($dispatch)"
               :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFirstname }"
             />
           </label>
@@ -88,7 +88,7 @@
               class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
               placeholder="Artamevia"
               x-model="formData.lastname"
-              @keydown.enter="submitData()"
+              @keydown.enter="submitData($dispatch)"
             />
           </label>
         </div>
@@ -152,7 +152,7 @@
             placeholder="***************"
             type="password"
             x-model="formData.password"
-            @keydown.enter="submitData()"
+            @keydown.enter="submitData($dispatch)"
             :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPassword }"
           />
           <span
@@ -171,7 +171,7 @@
             placeholder="***************"
             type="password"
             x-model="formData.repassword"
-            @keydown.enter="submitData()"
+            @keydown.enter="submitData($dispatch)"
             :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRepassword }"
           />
           <span
@@ -186,7 +186,7 @@
       <button
         type="submit"
         class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-        @click="submitData()"
+        @click="submitData($dispatch)"
         :disabled="loading == true"
         x-text="loadingText"
         :class="{'cursor-not-allowed opacity-50': loading == true }"
@@ -242,7 +242,7 @@
           notifStatus: "",
           addPassword: false,
 
-          submitData() {
+          submitData($dispatch) {
             this.loadingText = "Loading . . .";
             this.loading = true;
 
@@ -316,15 +316,14 @@
                 }
 
                 if (data.message) {
-                  this.message = data.message;
-                  this.showNotif = true;
-                } else {
-                  this.showNotif = false;
-                  this.message = "";
+                  $dispatch("notif", {
+                    type: this.notifStatus,
+                    message: data.message,
+                  });
                 }
               })
               .catch(() => {
-                console.log("error");
+                console.log("Telah terjadi kesalahan");
               });
           },
         };
