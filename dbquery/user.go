@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log"
 	"nazwa/wrapper"
+	"strconv"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/martinlindhe/base36"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -214,8 +216,22 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 	}
 
 	// Set family
-	if _, err := tx.Exec(`INSERT INTO "family" (family_card_id, user_id) VALUES ($1, $2)`, fcid, tempReturnID); err != nil {
-		log.Println("ERROR: user.go Save() Insert set family")
+	if fcid != 0 {
+		if _, err := tx.Exec(`INSERT INTO "family" (family_card_id, user_id) VALUES ($1, $2)`, fcid, tempReturnID); err != nil {
+			log.Println("ERROR: user.go Save() Insert set family")
+			return err
+		}
+	}
+
+	// Set username/kode pelanggan
+	if iui, err := strconv.ParseUint(fmt.Sprintf("9%011d", tempReturnID), 10, 64); err == nil {
+		username := "NZ-" + base36.Encode(iui)
+		if _, err := tx.Exec(`UPDATE "user"	SET username=$1	WHERE id=$2`, username, tempReturnID); err != nil {
+			log.Println("ERROR: user.go Save() Insert username/kode pelanggan")
+			return err
+		}
+	} else {
+		log.Println("ERROR: user.go Save() ParseUint username/kode pelanggan")
 		return err
 	}
 
@@ -496,7 +512,8 @@ func GetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
 	WHERE user_id=$1`
 	err := db.Select(&addresses, query, userid)
 	if err != nil {
-		log.Print(err)
+		log.Println("ERROR: user.go GetAddress() Tidak ada alamat ditemukan")
+		log.Println(err)
 		return []wrapper.UserAddress{}, err
 	}
 	return addresses, err
@@ -570,7 +587,8 @@ func AddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
 	VALUES (:user_id, :name, :description, :one, :two, :zip, :province_id, :city_id, :district_id, :village_id)`
 	_, err := db.NamedExec(query, address)
 	if err != nil {
-		log.Print(err)
+		log.Println("ERROR: user.go AddAddress() Gagal menambahkan alamat")
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -590,7 +608,8 @@ func FamilyCardExist(db *sqlx.DB, fc string) (bool, int) {
 			return true, f
 		}
 	} else {
-		log.Print(err)
+		log.Println("ERROR: user.go FamilyCardExist() KK tidak ditemukan")
+		log.Println(err)
 	}
 	return false, f
 }
@@ -605,7 +624,8 @@ func RICExist(db *sqlx.DB, ric string) bool {
 			return true
 		}
 	} else {
-		log.Print(err)
+		log.Println("ERROR: user.go RICExist() NIK KTP tidak ditemukan")
+		log.Println(err)
 	}
 	return false
 }
@@ -620,7 +640,8 @@ func PhoneExist(db *sqlx.DB, phone string) bool {
 			return true
 		}
 	} else {
-		log.Print(err)
+		log.Println("ERROR: user.go PhoneExist() Nomor hp tidak ditemukan")
+		log.Println(err)
 	}
 	return false
 }
@@ -635,7 +656,8 @@ func EmailExist(db *sqlx.DB, email string) bool {
 			return true
 		}
 	} else {
-		log.Print(err)
+		log.Println("ERROR: user.go EmailExist() email tidak ditemukan")
+		log.Println(err)
 	}
 	return false
 }
@@ -704,12 +726,12 @@ func MatchPassword(db *sqlx.DB, uid int, pwd string) bool {
 			next = true
 		}
 	} else {
-		log.Print(err)
+		log.Println("ERROR: user.go MatchPassword() password tidak cocok")
+		log.Println(err)
 	}
 	if next {
 		err = matchPassword(inpwd, pwd)
 		if err != nil {
-			log.Print(err)
 			next = false
 		}
 	}
