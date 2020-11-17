@@ -66,7 +66,7 @@ func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
 		var orders []wrapper.Order
 
 		if next {
-			if lastid != 0 {
+			if lastid > 0 {
 				o.LastID(lastid)
 				or, err := o.Show(db)
 				if err != nil {
@@ -84,14 +84,21 @@ func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
 			}
 		}
 
-		// Cek id terakhir
-		if len(orders) > 0 {
-			lastid = orders[len(orders)-1].ID
-			if len(orders) < limit {
-				lastid = (orders[0].ID - 1) + limit
-				// Periksa apakah ini data terakhir atau bukan
-				last = true
+		if len(orders) > 0 && direction == "back" {
+			// Reverse urutan array user
+			temp := make([]wrapper.Order, len(orders))
+			in := 0
+			for i := len(orders) - 1; i >= 0; i-- {
+				temp[in] = orders[i]
+				in++
 			}
+			orders = temp
+		}
+
+		// Cek id terakhir
+		if len(orders) > 0 && len(orders) < limit {
+			// Periksa apakah ini data terakhir atau bukan
+			last = true
 		}
 
 		c.JSON(httpStatus, gin.H{
