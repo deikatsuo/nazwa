@@ -66,7 +66,7 @@ func ShowProductList(db *sqlx.DB) gin.HandlerFunc {
 		var products []wrapper.Product
 
 		if next {
-			if lastid != 0 {
+			if lastid > 0 {
 				pts.LastID(lastid)
 				p, err := pts.Show(db)
 				if err != nil {
@@ -84,20 +84,26 @@ func ShowProductList(db *sqlx.DB) gin.HandlerFunc {
 			}
 		}
 
-		// Cek id terakhir
-		if len(products) > 0 {
-			lastid = products[len(products)-1].ID
-			if len(products) < limit {
-				lastid = (products[0].ID - 1) + limit
-				// Periksa apakah ini data terakhir atau bukan
-				last = true
+		if len(products) > 0 && direction == "back" {
+			// Reverse urutan array produk
+			temp := make([]wrapper.Product, len(products))
+			in := 0
+			for i := len(products) - 1; i >= 0; i-- {
+				temp[in] = products[i]
+				in++
 			}
+			products = temp
+		}
+
+		// Cek id terakhir
+		if len(products) > 0 && len(products) < limit {
+			// Periksa apakah ini data terakhir atau bukan
+			last = true
 		}
 
 		c.JSON(httpStatus, gin.H{
 			"products": products,
 			"error":    errMess,
-			"lastid":   lastid,
 			"total":    total,
 			"last":     last,
 		})
