@@ -616,13 +616,13 @@ func ShowUserList(db *sqlx.DB) gin.HandlerFunc {
 
 		if len(users) > 0 && direction == "back" {
 			// Reverse urutan array user
-			tempUsers := make([]wrapper.User, len(users))
+			temp := make([]wrapper.User, len(users))
 			in := 0
 			for i := len(users) - 1; i >= 0; i-- {
-				tempUsers[in] = users[i]
+				temp[in] = users[i]
 				in++
 			}
-			users = tempUsers
+			users = temp
 		}
 
 		// Cek id terakhir
