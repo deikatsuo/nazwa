@@ -6,6 +6,7 @@ import (
 	"nazwa/wrapper"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/martinlindhe/base36"
@@ -38,6 +39,92 @@ type CreateUser struct {
 	phone        string
 	email        string
 	familyCard   string
+}
+
+// GetUsers mengambil list user
+type GetUsers struct {
+	limit     int
+	lastid    int
+	direction string
+}
+
+// Limit set limit
+func (u *GetUsers) Limit(limit int) *GetUsers {
+	u.limit = limit
+	return u
+}
+
+// LastID set lastid
+func (u *GetUsers) LastID(lastid int) *GetUsers {
+	u.lastid = lastid
+	return u
+}
+
+// Direction untuk backward/forward
+// @direction "back","next"
+func (u *GetUsers) Direction(direction string) *GetUsers {
+	u.direction = direction
+	return u
+}
+
+// Show tampilkan data
+func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
+	var user []wrapper.NullableUser
+	var parse []wrapper.User
+	limit := 10
+	if u.limit > 0 {
+		limit = u.limit
+	}
+
+	// Where logic
+	where := ""
+	// Maju/Mundur
+	if u.direction == "next" && u.lastid > 0 {
+		where = "WHERE u.id > " + strconv.Itoa(u.lastid)
+	} else if u.direction == "back" {
+		where = "WHERE u.id < " + strconv.Itoa(u.lastid) + " ORDER BY u.id DESC"
+	}
+
+	// query pengambilan data produk
+	query := `SELECT
+		u.id,
+		u.first_name,
+		u.last_name,
+		u.username,
+		u.avatar,
+		u.gender,
+		TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		u.balance,
+		INITCAP(r.name) AS role
+		FROM "user" u
+		LEFT JOIN "user_role" ur ON ur.user_id=u.id
+		LEFT JOIN "role" r ON r.id=ur.role_id
+		%s
+		LIMIT $1`
+
+	query = fmt.Sprintf(query, where)
+
+	err := db.Select(&user, query, limit)
+	if err != nil {
+		log.Println("Error: user.go Select all product")
+		log.Println(err)
+		return []wrapper.User{}, err
+	}
+
+	// mapping data produk
+	for _, u := range user {
+		parse = append(parse, wrapper.User{
+			ID:        u.ID,
+			Firstname: strings.Title(u.Firstname),
+			Lastname:  strings.Title(u.Lastname.String),
+			CreatedAt: u.CreatedAt,
+			Username:  string(u.Username.String),
+			Balance:   string(u.Balance),
+			Avatar:    u.Avatar,
+		})
+	}
+
+	return parse, nil
 }
 
 const (
@@ -225,7 +312,13 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 
 	// Set username/kode pelanggan
 	if iui, err := strconv.ParseUint(fmt.Sprintf("9%011d", tempReturnID), 10, 64); err == nil {
-		username := "NZ-" + base36.Encode(iui)
+		var username string
+		nzne := time.Now().Hour()
+		if nzne >= 12 {
+			username = "NZ-" + base36.Encode(iui)
+		} else {
+			username = "NE-" + base36.Encode(iui)
+		}
 		if _, err := tx.Exec(`UPDATE "user"	SET username=$1	WHERE id=$2`, username, tempReturnID); err != nil {
 			log.Println("ERROR: user.go Save() Insert username/kode pelanggan")
 			return err
@@ -375,92 +468,6 @@ func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) 
 	}
 
 	return user, err
-}
-
-// GetAllUser - mengambil data semua user
-// @params [limit, start]
-func GetAllUser(db *sqlx.DB, forward bool, userRole int, params ...int) ([]wrapper.User, error) {
-	var user []wrapper.NullableUser
-	limit := 10
-	var lastid int
-
-	// Filter user berdasarkan tipe/role
-	FillUserType := ""
-	if userRole > 0 {
-		FillUserType = fmt.Sprintf("AND r.id = %d", userRole)
-	}
-
-	if params != nil {
-		if params[0] != 0 {
-			limit = params[0]
-		}
-		if len(params) > 1 {
-			if params[1] != 0 {
-				lastid = params[1]
-			}
-		}
-	}
-
-	query := `SELECT
-		u.id,
-		u.first_name,
-		u.last_name,
-		u.username,
-		u.avatar,
-		u.gender,
-		TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
-		u.balance,
-		INITCAP(r.name) AS role
-		FROM "user" u
-		LEFT JOIN "user_role" ur ON ur.user_id=u.id
-		LEFT JOIN "role" r ON r.id=ur.role_id`
-
-	if lastid > 0 {
-		if forward {
-			query = fmt.Sprintf(`%s WHERE u.id > $1 %s LIMIT $2`, query, FillUserType)
-		} else {
-			query = fmt.Sprintf(`%s WHERE u.id < $1 %s ORDER BY u.id DESC LIMIT $2`, query, FillUserType)
-		}
-		err := db.Select(&user, query, lastid, limit)
-		if err != nil {
-			return []wrapper.User{}, err
-		}
-	} else {
-		query = fmt.Sprintf(`%s WHERE u.id > 0 %s LIMIT $1`, query, FillUserType)
-		err := db.Select(&user, query, limit)
-		if err != nil {
-			return []wrapper.User{}, err
-		}
-	}
-
-	// Parse data hasil dari database
-	var parse []wrapper.User
-
-	for _, u := range user {
-		var emails []wrapper.UserEmail
-		var phones []wrapper.UserPhone
-		if ems, err := GetEmail(db, u.ID); err == nil {
-			emails = ems
-		}
-		if phs, err := GetPhone(db, u.ID); err == nil {
-			phones = phs
-		}
-		parse = append(parse, wrapper.User{
-			ID:        u.ID,
-			Firstname: strings.Title(u.Firstname),
-			Lastname:  strings.Title(u.Lastname.String),
-			Username:  u.Username.String,
-			Avatar:    u.Avatar,
-			Gender:    u.Gender,
-			CreatedAt: u.CreatedAt,
-			Balance:   string(u.Balance),
-			Role:      u.Role,
-			Emails:    emails,
-			Phones:    phones,
-		})
-	}
-
-	return parse, nil
 }
 
 // GetUserTotalRow menghitung jumlah row pada tabel user

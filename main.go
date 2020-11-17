@@ -121,10 +121,6 @@ func runServer(db *sqlx.DB) {
 	v1local.POST("/login", api.UserLogin(db))
 	v1local.POST("/create-account", api.UserCreate(db))
 
-	// /api/v1/local/users
-	customer := v1local.Group("/users")
-	customer.GET("/list/:limit", api.UsersList(db))
-
 	// /api/v1/local/address
 	address := v1local.Group("/address")
 	address.GET("/provinces", api.PlaceProvinces(db))
@@ -152,6 +148,7 @@ func runServer(db *sqlx.DB) {
 	v1user.POST("/:id/add/phone", api.UserAddPhone(db))
 	v1user.POST("/:id/add/address", api.UserAddAddress(db))
 	v1user.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
+	v1user.GET("/list/:limit", api.ShowUserList(db))
 
 	// Jalankan server
 	server.Run()
