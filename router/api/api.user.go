@@ -535,3 +535,108 @@ func UserAddAddress(db *sqlx.DB) gin.HandlerFunc {
 	}
 	return gin.HandlerFunc(fn)
 }
+
+///////////
+//  GET  //
+///////////
+
+// ShowUserList mengambil data/list pengguna
+func ShowUserList(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		// Tolak jika yang request bukan user terdaftar
+		uid := session.Get("userid")
+		if uid == nil {
+			router.Page404(c)
+			return
+		}
+
+		var lastid int
+		last := false
+		limit := 10
+		var direction string
+		httpStatus := http.StatusOK
+		errMess := ""
+		u := dbquery.GetUsers{}
+		next := true
+
+		// Mengambil parameter limit
+		lim, err := strconv.Atoi(c.Param("limit"))
+		if err == nil {
+			limit = lim
+			u.Limit(limit)
+		} else {
+			errMess = "Limit tidak valid"
+			httpStatus = http.StatusBadRequest
+			next = false
+		}
+
+		// Ambil query id terakhir
+		lst, err := strconv.Atoi(c.Query("lastid"))
+		if err == nil {
+			lastid = lst
+		}
+
+		// Forward/backward
+		direction = c.Query("direction")
+		if direction == "back" {
+			u.Direction(direction)
+		} else {
+			u.Direction("next")
+		}
+
+		var total int
+		if t, err := dbquery.GetUserTotalRow(db); err == nil {
+			total = t
+		}
+
+		var users []wrapper.User
+
+		if next {
+			if lastid > 0 {
+
+				u.LastID(lastid)
+
+				usr, err := u.Show(db)
+				if err != nil {
+					errMess = err.Error()
+					httpStatus = http.StatusInternalServerError
+				}
+				users = usr
+			} else {
+				usr, err := u.Show(db)
+				if err != nil {
+					errMess = err.Error()
+					httpStatus = http.StatusInternalServerError
+				}
+				users = usr
+			}
+		}
+
+		if len(users) > 0 && direction == "back" {
+			// Reverse urutan array user
+			tempUsers := make([]wrapper.User, len(users))
+			in := 0
+			for i := len(users) - 1; i >= 0; i-- {
+				tempUsers[in] = users[i]
+				in++
+			}
+			users = tempUsers
+		}
+
+		// Cek id terakhir
+		if len(users) > 0 && len(users) < limit {
+			// Periksa apakah ini data terakhir atau bukan
+			last = true
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"users": users,
+			"error": errMess,
+			"total": total,
+			"last":  last,
+		})
+	}
+	return gin.HandlerFunc(fn)
+}
