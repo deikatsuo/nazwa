@@ -143,15 +143,9 @@ func ShowProductByID(db *sqlx.DB) gin.HandlerFunc {
 			errMess = "Sepertinya telah terjadi kesalahan saat memuat data"
 		}
 
-		var total int
-		if t, err := dbquery.GetProductTotalRow(db); err == nil {
-			total = t
-		}
-
 		c.JSON(httpStatus, gin.H{
 			"product": product,
 			"error":   errMess,
-			"total":   total,
 		})
 	}
 	return fn
