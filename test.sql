@@ -78,6 +78,9 @@ ALTER TABLE "product"
 ADD COLUMN "brand" VARCHAR(25);
 
 ALTER TABLE "user"
+ADD COLUMN "occupation" VARCHAR(25);
+
+ALTER TABLE "user"
 ADD COLUMN "ric" VARCHAR(16) NOT NULL UNIQUE;
 
 INSERT INTO "product_photo" ("product_id", "photo") VALUES ('3', '01234567892.png');
