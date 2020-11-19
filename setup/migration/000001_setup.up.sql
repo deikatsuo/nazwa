@@ -13,7 +13,8 @@ CREATE TABLE "role" (
 
 -- Buat peran
 INSERT INTO "role" ("id", "name")
-VALUES  (1, 'admin'),
+VALUES  (0, 'dev'),
+        (1, 'admin'),
         (2, 'surveyor'),
         (3, 'collector'),
         (4, 'sales'),
