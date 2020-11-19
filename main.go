@@ -149,6 +149,7 @@ func runServer(db *sqlx.DB) {
 	v1user.POST("/:id/add/address", api.UserAddAddress(db))
 	v1user.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
 	v1user.GET("/list/:limit", api.ShowUserList(db))
+	v1user.GET("/id/:id", api.ShowUserByID(db))
 
 	// Jalankan server
 	server.Run()

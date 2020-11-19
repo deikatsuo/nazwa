@@ -32,6 +32,7 @@ CREATE TABLE "user" (
     "avatar" VARCHAR(25) DEFAULT 'default.jpg' NOT NULL,
     "password" CHAR(60),
     "gender" GENDER NOT NULL,
+    "occupation" VARCHAR(25),
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "balance" DECIMAL(15,2) DEFAULT '0',
     PRIMARY KEY (id)

@@ -26,7 +26,7 @@
         <template x-for="(user, index) in users" :key="index">
           <tr
             class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
-            @click="$dispatch('modal', { tmp: user.ID, title: 'Detail data produk/barang', html: $refs.userDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
+            @click="$dispatch('modal', { tmp: user.ID, html: $refs.userDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
           >
             <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
             <td class="px-1 py-3">
@@ -63,12 +63,17 @@
         </template>
         <template x-ref="userDetail">
           <div x-init="fetchById($dispatch)" x-data="fUseDetail($parent)">
+            <div
+              class="absolute top-0 mt-4 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+              x-text="'Kode #'+user.Username"
+            ></div>
             <!-- Photo pengguna -->
-            <div class="w-full h-48 flex flex-col justify-center items-center">
+            <div
+              class="w-full h-48 flex flex-col justify-center items-center"
+              x-show="typeof user.Avatar !== 'undefined'"
+            >
               <div class="w-full relative">
-                <div
-                  class="h-48 w-full flex items-center rounded-lg"
-                >
+                <div class="h-48 w-full flex items-center rounded-lg">
                   <div class="relative w-full h-full">
                     <img
                       class="object-scale-down w-full h-full"
@@ -85,9 +90,176 @@
               </div>
             </div>
 
-            
+            <table class="w-full whitespace-no-wrap">
+              <thead>
+                <tr
+                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                >
+                  <th class="px-3 py-3">ID Unik</th>
+                  <th class="px-4 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm align-top">
+                    Nomor Kartu Keluarga
+                  </td>
+                  <td
+                    class="px-4 py-1 text-sm"
+                    x-show="user.FamilyCard != ''"
+                    x-text="user.FamilyCard"
+                  ></td>
+                  <td class="px-4 py-1 text-sm" x-show="user.FamilyCard == ''">
+                    -
+                  </td>
+                </tr>
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm align-top">Nomor Induk Kependudukan</td>
+                  <td class="px-4 py-1 text-sm" x-show="user.RIC != ''" x-text="user.RIC"></td>
+                  <td
+                    class="px-4 py-1 text-sm align-top"
+                    x-show="user.RIC == ''"
+                  >
+                    -
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table class="w-full whitespace-no-wrap">
+              <thead>
+                <tr
+                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                >
+                  <th class="px-3 py-3">Informasi Pengguna</th>
+                  <th class="px-4 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm">Nama Lengkap</td>
+                  <td
+                    class="px-4 py-1 text-sm"
+                    x-text="user.Firstname + ' ' + user.Lastname"
+                  ></td>
+                </tr>
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm">Jenis Kelamin</td>
+                  <td class="px-4 py-1 text-sm" x-show="user.Gender == 'm'">
+                    Laki-Laki
+                  </td>
+                  <td class="px-4 py-1 text-sm" x-show="user.Gender == 'f'">
+                    Perempuan
+                  </td>
+                </tr>
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm">Pekerjaan</td>
+                  <td
+                    class="px-4 py-1 text-sm"
+                    x-show="user.Occupation != ''"
+                    x-text="user.Occupation"
+                  ></td>
+                  <td class="px-4 py-1 text-sm" x-show="user.Occupation == ''">
+                    -
+                  </td>
+                </tr>
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm">Saldo</td>
+                  <td class="px-4 py-1 text-sm" x-text="user.Balance"></td>
+                </tr>
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm">Peran</td>
+                  <td class="px-4 py-1 text-sm" x-text="user.Role"></td>
+                </tr>
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm">Tanggal Daftar</td>
+                  <td class="px-4 py-1 text-sm" x-text="user.CreatedAt"></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table class="w-full whitespace-no-wrap">
+              <thead>
+                <tr
+                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                >
+                  <th class="px-3 py-3">Informasi Kontak</th>
+                  <th class="px-4 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm align-top">Email</td>
+                  <td class="px-4 py-1 text-sm" x-show="emails.length > 0">
+                    <template x-for="(email, index) in emails" :key="index">
+                      <p x-text="email.Email"></p>
+                    </template>
+                  </td>
+                  <td class="px-4 py-1 text-sm" x-show="emails.length == 0">
+                    -
+                  </td>
+                </tr>
+                <tr class="text-gray-700 dark:text-gray-400">
+                  <td class="px-4 py-1 text-sm align-top">Nomor HP</td>
+                  <td class="px-4 py-1 text-sm" x-show="phones.length > 0">
+                    <template x-for="(phone, index) in phones" :key="index">
+                      <p x-text="phone.Phone"></p>
+                    </template>
+                  </td>
+                  <td
+                    class="px-4 py-1 text-sm align-top"
+                    x-show="phones.length == 0"
+                  >
+                    -
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </template>
+        <script>
+          function fUseDetail($parent) {
+            return {
+              id: $parent.modalTmp,
+              user: [],
+              emails: [],
+              phones: [],
+              fetchById($dispatch) {
+                fetch(`/api/v1/local/user/id/${this.id}`, {
+                  method: "GET",
+                })
+                  .then((res) => res.json())
+                  .then((json) => {
+                    if (json.error) {
+                      $dispatch("notif", {
+                        type: "error",
+                        message: json.error,
+                      });
+                    }
+
+                    if (json.user == null) {
+                      $dispatch("notif", {
+                        type: "error",
+                        message:
+                          "Sepertinya telah terjadi kesalahan saat memuat data pengguna",
+                      });
+                    } else {
+                      this.user = json.user;
+                      if (json.user.Emails) {
+                        this.emails = json.user.Emails;
+                      }
+                      if (json.user.Phones) {
+                        this.phones = json.user.Phones;
+                      }
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              },
+            };
+          }
+        </script>
       </tbody>
     </table>
   </div>

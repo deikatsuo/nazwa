@@ -15,16 +15,17 @@ import (
 
 // User base struk
 type User struct {
-	Firstname string  `db:"first_name"`
-	Lastname  string  `db:"last_name"`
-	Username  string  `db:"username"`
-	Avatar    string  `db:"avatar"`
-	Gender    string  `db:"gender"`
-	CreatedAt string  `db:"created_at"`
-	Balance   []uint8 `db:"balance"`
-	Password  string  `db:"password"`
-	Role      string  `db:"role"`
-	RIC       string  `db:"ric"`
+	Firstname  string  `db:"first_name"`
+	Lastname   string  `db:"last_name"`
+	Username   string  `db:"username"`
+	Avatar     string  `db:"avatar"`
+	Gender     string  `db:"gender"`
+	Occupation string  `db:"occupation"`
+	CreatedAt  string  `db:"created_at"`
+	Balance    []uint8 `db:"balance"`
+	Password   string  `db:"password"`
+	Role       string  `db:"role"`
+	RIC        string  `db:"ric"`
 }
 
 // CreateUser struk buat user baru
@@ -212,6 +213,15 @@ func (u *CreateUser) SetPassword(p string) *CreateUser {
 func (u *CreateUser) SetGender(p string) *CreateUser {
 	u.Gender = strings.ToLower(p)
 	u.into["gender"] = ":gender"
+	return u
+}
+
+// SetOccupation fungsi untuk menambahkan pekerjaan user
+func (u *CreateUser) SetOccupation(p string) *CreateUser {
+	if p != "" {
+		u.Occupation = strings.ToLower(p)
+		u.into["occupation"] = ":occupation"
+	}
 	return u
 }
 
@@ -468,6 +478,71 @@ func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) 
 	}
 
 	return user, err
+}
+
+// GetUserByID mengambil data pengguna berdasarkan ID produk
+func GetUserByID(db *sqlx.DB, uid int) (wrapper.User, error) {
+	var user wrapper.User
+	var u wrapper.NullableUser
+	query := `SELECT
+		u.id,
+		u.first_name,
+		u.last_name,
+		u.ric,
+		u.username,
+		u.avatar,
+		u.gender,
+		u.occupation,
+		u.balance,
+		fc.number as family_card_number,
+		TO_CHAR(u.balance,'Rp999G999G999G999G999') AS balance,
+		TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		r.name AS role
+		FROM "user" u
+		LEFT JOIN "user_role" ur ON ur.user_id=u.id
+		LEFT JOIN "role" r ON r.id=ur.role_id
+		LEFT JOIN "family" f ON f.user_id=u.id
+		LEFT JOIN "family_card" fc ON fc.id=f.family_card_id
+		WHERE u.id=$1
+		LIMIT 1`
+
+	err := db.Get(&u, query, uid)
+	if err != nil {
+		log.Println("user.go GetUserByID() Select user berdasarkan ID")
+		log.Println(err)
+		return wrapper.User{}, err
+	}
+
+	var emails []wrapper.UserEmail
+	if em, err := GetEmail(db, uid); err == nil {
+		emails = em
+	}
+
+	var phones []wrapper.UserPhone
+	if ph, err := GetPhone(db, uid); err == nil {
+		phones = ph
+	} else {
+		log.Println(err)
+	}
+
+	user = wrapper.User{
+		ID:               u.ID,
+		Firstname:        strings.Title(u.Firstname),
+		Lastname:         strings.Title(string(u.Lastname.String)),
+		RIC:              u.RIC,
+		FamilyCardNumber: string(u.FamilyCardNumber.String),
+		Username:         string(u.Username.String),
+		Avatar:           u.Avatar,
+		Gender:           u.Gender,
+		Occupation:       strings.Title(string(u.Occupation.String)),
+		Role:             strings.Title(u.Role),
+		CreatedAt:        u.CreatedAt,
+		Balance:          string(u.Balance),
+		Emails:           emails,
+		Phones:           phones,
+	}
+
+	return user, nil
 }
 
 // GetUserTotalRow menghitung jumlah row pada tabel user

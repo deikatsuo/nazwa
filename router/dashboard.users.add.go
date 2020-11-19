@@ -27,6 +27,7 @@ func PageDashboardUsersAdd(db *sqlx.DB) gin.HandlerFunc {
 			"l_c_form_gender":       "Jenis kelamin",
 			"l_c_form_gender_m":     "Laki-laki",
 			"l_c_form_gender_f":     "Perempuan",
+			"l_c_form_occupation":   "Pekerjaan",
 			"l_c_form_add_password": "Tambahkan kata sandi",
 			"l_c_form_password":     "Kata sandi",
 			"l_c_form_repassword":   "Ulangi kata sandi",

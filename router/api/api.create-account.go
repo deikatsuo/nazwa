@@ -19,6 +19,7 @@ type FormUser struct {
 	Firstname  string `json:"firstname" binding:"required,min=3,max=25"`
 	Lastname   string `json:"lastname" binding:"omitempty,min=1,max=25"`
 	Gender     string `json:"gender" binding:"required,oneof=m f"`
+	Occupation string `json:"occupation" binding:"omitempty,min=4,max=25"`
 	Password   string `json:"password" binding:"omitempty,alphanumunicode,min=8,max=25"`
 	Repassword string `json:"repassword" binding:"eqfield=Password"`
 }
@@ -61,6 +62,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetPhone(json.Phone).
 				SetPassword(json.Password).
 				SetGender(json.Gender).
+				SetOccupation(json.Occupation).
 				SetRole(dbquery.RoleCustomer).
 				Save(db)
 			if err != nil {

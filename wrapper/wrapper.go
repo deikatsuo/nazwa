@@ -9,21 +9,24 @@ type DefaultConfig struct {
 
 // NullableUser struk user dari database
 type NullableUser struct {
-	ID        int            `db:"id"`
-	Firstname string         `db:"first_name"`
-	Lastname  sql.NullString `db:"last_name"`
-	Username  sql.NullString `db:"username"`
-	Avatar    string         `db:"avatar"`
-	Gender    string         `db:"gender"`
-	CreatedAt string         `db:"created_at"`
-	Balance   []uint8        `db:"balance"`
-	Password  sql.NullString `db:"password"`
-	Phone     sql.NullString `db:"phone"`
-	Email     sql.NullString `db:"email"`
-	Role      string         `db:"role"`
-	Emails    []UserEmail
-	Phones    []UserPhone
-	Addresses []UserAddress
+	ID               int            `db:"id"`
+	Firstname        string         `db:"first_name"`
+	Lastname         sql.NullString `db:"last_name"`
+	Username         sql.NullString `db:"username"`
+	RIC              string         `db:"ric"`
+	Occupation       sql.NullString `db:"occupation"`
+	Avatar           string         `db:"avatar"`
+	Gender           string         `db:"gender"`
+	CreatedAt        string         `db:"created_at"`
+	Balance          []uint8        `db:"balance"`
+	Password         sql.NullString `db:"password"`
+	Phone            sql.NullString `db:"phone"`
+	Email            sql.NullString `db:"email"`
+	Role             string         `db:"role"`
+	FamilyCardNumber sql.NullString `db:"family_card_number"`
+	Emails           []UserEmail
+	Phones           []UserPhone
+	Addresses        []UserAddress
 }
 
 // Fullname menampilkan nama lengkap
@@ -33,18 +36,21 @@ func (u NullableUser) Fullname() string {
 
 // User buat nge map data user
 type User struct {
-	ID        int
-	Firstname string
-	Lastname  string
-	Username  string
-	Avatar    string
-	Gender    string
-	CreatedAt string
-	Balance   string
-	Role      string
-	Emails    []UserEmail
-	Phones    []UserPhone
-	Addresses []UserAddress
+	ID               int
+	Firstname        string
+	Lastname         string
+	RIC              string
+	Username         string
+	Occupation       string
+	Avatar           string
+	Gender           string
+	CreatedAt        string
+	Balance          string
+	Role             string
+	FamilyCardNumber string
+	Emails           []UserEmail
+	Phones           []UserPhone
+	Addresses        []UserAddress
 }
 
 // UserEmail menampung email user

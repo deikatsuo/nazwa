@@ -640,3 +640,43 @@ func ShowUserList(db *sqlx.DB) gin.HandlerFunc {
 	}
 	return gin.HandlerFunc(fn)
 }
+
+// ShowUserByID mengambil data pengguna berdasarkan ID
+func ShowUserByID(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		// Tolak jika yang request bukan user terdaftar
+		uid := session.Get("userid")
+		if uid == nil {
+			router.Page404(c)
+			return
+		}
+		httpStatus := http.StatusOK
+		errMess := ""
+
+		// Mengambil parameter id user
+		var uid2 int
+		id, err := strconv.Atoi(c.Param("id"))
+		if err == nil {
+			uid2 = id
+		} else {
+			httpStatus = http.StatusBadRequest
+			errMess = "Request tidak valid"
+		}
+
+		var user wrapper.User
+		if u, err := dbquery.GetUserByID(db, uid2); err == nil {
+			user = u
+		} else {
+			httpStatus = http.StatusInternalServerError
+			errMess = "Sepertinya telah terjadi kesalahan saat memuat data"
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"user":  user,
+			"error": errMess,
+		})
+	}
+	return fn
+}
