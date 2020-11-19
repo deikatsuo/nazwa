@@ -119,7 +119,7 @@ func runServer(db *sqlx.DB) {
 	// /api/v1/local
 	v1local := v1.Group("/local")
 	v1local.POST("/login", api.UserLogin(db))
-	v1local.POST("/create-account", api.UserCreate(db))
+	//v1local.POST("/create-account", api.UserCreate(db))
 
 	// /api/v1/local/address
 	address := v1local.Group("/address")
@@ -141,15 +141,19 @@ func runServer(db *sqlx.DB) {
 	// User API
 	// /api/v1/local/user
 	v1user := v1local.Group("/user")
-	v1user.PATCH("/:id/update/contact", api.UserUpdateContact(db))
-	v1user.DELETE("/:id/delete/email", api.UserDeleteEmail(db))
-	v1user.POST("/:id/add/email", api.UserAddEmail(db))
-	v1user.DELETE("/:id/delete/phone", api.UserDeletePhone(db))
-	v1user.POST("/:id/add/phone", api.UserAddPhone(db))
-	v1user.POST("/:id/add/address", api.UserAddAddress(db))
-	v1user.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
+	v1user.POST("/create", api.UserCreate(db))
 	v1user.GET("/list/:limit", api.ShowUserList(db))
 	v1user.GET("/id/:id", api.ShowUserByID(db))
+
+	// User API edit
+	v1ue := v1user.Group("/edit")
+	v1ue.PATCH("/:id/update/contact", api.UserUpdateContact(db))
+	v1ue.DELETE("/:id/delete/email", api.UserDeleteEmail(db))
+	v1ue.POST("/:id/add/email", api.UserAddEmail(db))
+	v1ue.DELETE("/:id/delete/phone", api.UserDeletePhone(db))
+	v1ue.POST("/:id/add/phone", api.UserAddPhone(db))
+	v1ue.POST("/:id/add/address", api.UserAddAddress(db))
+	v1ue.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
 
 	// Jalankan server
 	server.Run()

@@ -525,6 +525,12 @@ func GetUserByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 		log.Println(err)
 	}
 
+	var addresses []wrapper.UserAddress
+	if addrs, err := GetAddress(db, uid); err == nil {
+		addresses = addrs
+
+	}
+
 	user = wrapper.User{
 		ID:               u.ID,
 		Firstname:        strings.Title(u.Firstname),
@@ -540,6 +546,7 @@ func GetUserByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 		Balance:          string(u.Balance),
 		Emails:           emails,
 		Phones:           phones,
+		Addresses:        addresses,
 	}
 
 	return user, nil

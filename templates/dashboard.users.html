@@ -106,16 +106,25 @@
                   </td>
                   <td
                     class="px-4 py-1 text-sm"
-                    x-show="user.FamilyCard != ''"
-                    x-text="user.FamilyCard"
+                    x-show="user.FamilyCardNumber != ''"
+                    x-text="user.FamilyCardNumber"
                   ></td>
-                  <td class="px-4 py-1 text-sm" x-show="user.FamilyCard == ''">
+                  <td
+                    class="px-4 py-1 text-sm"
+                    x-show="user.FamilyCardNumber == ''"
+                  >
                     -
                   </td>
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm align-top">Nomor Induk Kependudukan</td>
-                  <td class="px-4 py-1 text-sm" x-show="user.RIC != ''" x-text="user.RIC"></td>
+                  <td class="px-4 py-1 text-sm align-top">
+                    Nomor Induk Kependudukan
+                  </td>
+                  <td
+                    class="px-4 py-1 text-sm"
+                    x-show="user.RIC != ''"
+                    x-text="user.RIC"
+                  ></td>
                   <td
                     class="px-4 py-1 text-sm align-top"
                     x-show="user.RIC == ''"
@@ -215,6 +224,38 @@
                 </tr>
               </tbody>
             </table>
+
+            <table class="w-full whitespace-no-wrap table-auto">
+              <thead>
+                <tr
+                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                >
+                  <th class="px-3 py-3">Informasi Alamat</th>
+                  <th class="px-4 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
+                <template x-for="(address, index) in addresses" :key="index">
+                  <tr class="text-gray-700 dark:text-gray-400">
+                    <td class="px-4 py-1 align-top">
+                      <div class="flex items-center text-sm">
+                        <div>
+                          <p class="font-semibold" x-text="address.name"></p>
+                          <p
+                            class="text-xs text-gray-600 dark:text-gray-400"
+                            x-text="address.description"
+                          ></p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-4 py-1 text-sm whitespace-normal break-words align-top" x-text="address.one + address.two + ', ' + address.VillageName + ', ' + address.DistrictName + ', ' + address.CityName + ', ' + address.ProvinceName + ', ' +address.zip"></td></tr
+                ></template>
+                <tr class="text-gray-700 dark:text-gray-400" x-show="addresses.length == 0">
+                  <td class="px-4 py-1 text-sm align-top">-</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </template>
         <script>
@@ -224,6 +265,7 @@
               user: [],
               emails: [],
               phones: [],
+              addresses: [],
               fetchById($dispatch) {
                 fetch(`/api/v1/local/user/id/${this.id}`, {
                   method: "GET",
@@ -250,6 +292,9 @@
                       }
                       if (json.user.Phones) {
                         this.phones = json.user.Phones;
+                      }
+                      if (json.user.Addresses) {
+                        this.addresses = json.user.Addresses;
                       }
                     }
                   })

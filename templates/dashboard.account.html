@@ -317,7 +317,7 @@
           updateContact($dispatch) {
             this.updateSubmit = "Loading. . .";
             this.updateSubmitDisable = true;
-            fetch("/api/v1/local/user/{{ .user.ID }}/update/contact", {
+            fetch("/api/v1/local/user/edit/{{ .user.ID }}/update/contact", {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.updateData),
@@ -369,7 +369,7 @@
           },
           deleteEmail($dispatch, eid) {
             this.deleteEmailData.id = eid;
-            fetch("/api/v1/local/user/{{ .user.ID }}/delete/email", {
+            fetch("/api/v1/local/user/edit/{{ .user.ID }}/delete/email", {
               method: "DELETE",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.deleteEmailData),
@@ -393,7 +393,7 @@
           addEmail($dispatch) {
             email = document.getElementById("newEmDat").__x.$data.newEmail;
             this.addEmailData.email = email;
-            fetch("/api/v1/local/user/{{ .user.ID }}/add/email", {
+            fetch("/api/v1/local/user/edit/{{ .user.ID }}/add/email", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.addEmailData),
@@ -416,7 +416,7 @@
           },
           deletePhone($dispatch, pid) {
             this.deletePhoneData.id = pid;
-            fetch("/api/v1/local/user/{{ .user.ID }}/delete/phone", {
+            fetch("/api/v1/local/user/edit/{{ .user.ID }}/delete/phone", {
               method: "DELETE",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.deletePhoneData),
@@ -440,7 +440,7 @@
           addPhone($dispatch) {
             phone = document.getElementById("newPhDat").__x.$data.newPhone;
             this.addPhoneData.phone = phone;
-            fetch("/api/v1/local/user/{{ .user.ID }}/add/phone", {
+            fetch("/api/v1/local/user/edit/{{ .user.ID }}/add/phone", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.addPhoneData),
@@ -832,7 +832,7 @@
           },
           deleteAddress($dispatch, pid) {
             this.deleteAddressData.id = pid;
-            fetch("/api/v1/local/user/{{ .user.ID }}/delete/address", {
+            fetch("/api/v1/local/user/edit/{{ .user.ID }}/delete/address", {
               method: "DELETE",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.deleteAddressData),
@@ -867,7 +867,7 @@
           addAddress($dispatch) {
             this.addAddressBtn = "Loading. . .";
             this.addAddressDisable = true;
-            fetch("/api/v1/local/user/{{ .user.ID }}/add/address", {
+            fetch("/api/v1/local/user/edit/{{ .user.ID }}/add/address", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.addAddressData),
