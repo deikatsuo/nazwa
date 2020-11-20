@@ -66,22 +66,13 @@ func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
 		var orders []wrapper.Order
 
 		if next {
-			if lastid > 0 {
-				o.LastID(lastid)
-				or, err := o.Show(db)
-				if err != nil {
-					errMess = err.Error()
-					httpStatus = http.StatusInternalServerError
-				}
-				orders = or
-			} else {
-				or, err := o.Show(db)
-				if err != nil {
-					errMess = err.Error()
-					httpStatus = http.StatusInternalServerError
-				}
-				orders = or
+			o.LastID(lastid)
+			or, err := o.Show(db)
+			if err != nil {
+				errMess = err.Error()
+				httpStatus = http.StatusInternalServerError
 			}
+			orders = or
 		}
 
 		if len(orders) > 0 && direction == "back" {

@@ -46,8 +46,8 @@ func (p *GetOrders) Show(db *sqlx.DB) ([]wrapper.Order, error) {
 	}
 
 	where := ""
-	if p.direction == "next" && p.lastid > 0 {
-		where = "WHERE id > " + strconv.Itoa(p.lastid)
+	if p.direction == "next" {
+		where = "WHERE id > " + strconv.Itoa(p.lastid) + "ORDER BY id ASC"
 	} else if p.direction == "back" {
 		where = "WHERE id < " + strconv.Itoa(p.lastid) + " ORDER BY id DESC"
 	}
