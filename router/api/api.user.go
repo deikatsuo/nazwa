@@ -552,7 +552,7 @@ func ShowUserList(db *sqlx.DB) gin.HandlerFunc {
 			return
 		}
 
-		var lastid int
+		lastid := 1
 		last := false
 		limit := 10
 		var direction string
@@ -594,24 +594,14 @@ func ShowUserList(db *sqlx.DB) gin.HandlerFunc {
 		var users []wrapper.User
 
 		if next {
-			if lastid > 0 {
+			u.LastID(lastid)
 
-				u.LastID(lastid)
-
-				usr, err := u.Show(db)
-				if err != nil {
-					errMess = err.Error()
-					httpStatus = http.StatusInternalServerError
-				}
-				users = usr
-			} else {
-				usr, err := u.Show(db)
-				if err != nil {
-					errMess = err.Error()
-					httpStatus = http.StatusInternalServerError
-				}
-				users = usr
+			usr, err := u.Show(db)
+			if err != nil {
+				errMess = err.Error()
+				httpStatus = http.StatusInternalServerError
 			}
+			users = usr
 		}
 
 		if len(users) > 0 && direction == "back" {

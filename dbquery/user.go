@@ -80,8 +80,8 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 	// Where logic
 	where := ""
 	// Maju/Mundur
-	if u.direction == "next" && u.lastid > 0 {
-		where = "WHERE u.id > " + strconv.Itoa(u.lastid)
+	if u.direction == "next" {
+		where = "WHERE u.id > " + strconv.Itoa(u.lastid) + " ORDER BY u.id ASC"
 	} else if u.direction == "back" {
 		where = "WHERE u.id < " + strconv.Itoa(u.lastid) + " ORDER BY u.id DESC"
 	}
@@ -129,6 +129,8 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 }
 
 const (
+	// RoleDev Tingkatan teratas
+	RoleDev int8 = 0
 	// RoleAdmin memiliki akses penuh
 	// sebagai admin
 	RoleAdmin int8 = 1

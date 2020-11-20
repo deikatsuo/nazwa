@@ -90,50 +90,46 @@
               </div>
             </div>
 
-            <table class="w-full whitespace-no-wrap">
-              <thead>
-                <tr
-                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+            <dl class="w-full whitespace-no-wrap">
+              <div
+                class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+              >
+                <dt class="px-3 py-3">ID Unik</dt>
+                <dd class="px-4 sm:px-0"></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Nomor Kartu Keluarga
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="user.FamilyCardNumber != ''"
+                  x-text="user.FamilyCardNumber"
+                ></dd>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="user.FamilyCardNumber == ''"
                 >
-                  <th class="px-3 py-3">ID Unik</th>
-                  <th class="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm align-top">
-                    Nomor Kartu Keluarga
-                  </td>
-                  <td
-                    class="px-4 py-1 text-sm"
-                    x-show="user.FamilyCardNumber != ''"
-                    x-text="user.FamilyCardNumber"
-                  ></td>
-                  <td
-                    class="px-4 py-1 text-sm"
-                    x-show="user.FamilyCardNumber == ''"
-                  >
-                    -
-                  </td>
-                </tr>
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm align-top">
-                    Nomor Induk Kependudukan
-                  </td>
-                  <td
-                    class="px-4 py-1 text-sm"
-                    x-show="user.RIC != ''"
-                    x-text="user.RIC"
-                  ></td>
-                  <td
-                    class="px-4 py-1 text-sm align-top"
-                    x-show="user.RIC == ''"
-                  >
-                    -
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  -
+                </dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Nomor Induk Kependudukan
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="user.RIC != ''"
+                  x-text="user.RIC"
+                ></dd>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="user.RIC == ''"
+                >
+                  -
+                </dd>
+              </div>
+            </dl>
 
             <table class="w-full whitespace-no-wrap">
               <thead>
@@ -146,14 +142,14 @@
               </thead>
               <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm">Nama Lengkap</td>
+                  <td class="px-4 py-1 text-sm align-top leading-5 font-medium text-gray-500">Nama Lengkap</td>
                   <td
-                    class="px-4 py-1 text-sm"
+                    class="px-4 py-1 text-sm break-words"
                     x-text="user.Firstname + ' ' + user.Lastname"
                   ></td>
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm">Jenis Kelamin</td>
+                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Jenis Kelamin</td>
                   <td class="px-4 py-1 text-sm" x-show="user.Gender == 'm'">
                     Laki-Laki
                   </td>
@@ -162,7 +158,7 @@
                   </td>
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm">Pekerjaan</td>
+                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Pekerjaan</td>
                   <td
                     class="px-4 py-1 text-sm"
                     x-show="user.Occupation != ''"
@@ -173,16 +169,16 @@
                   </td>
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm">Saldo</td>
+                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Saldo</td>
                   <td class="px-4 py-1 text-sm" x-text="user.Balance"></td>
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm">Peran</td>
+                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Peran</td>
                   <td class="px-4 py-1 text-sm" x-text="user.Role"></td>
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm">Tanggal Daftar</td>
-                  <td class="px-4 py-1 text-sm" x-text="user.CreatedAt"></td>
+                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Tanggal Daftar</td>
+                  <td class="px-4 py-1 text-sm break-words" x-text="user.CreatedAt"></td>
                 </tr>
               </tbody>
             </table>
@@ -198,7 +194,7 @@
               </thead>
               <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm align-top">Email</td>
+                  <td class="px-4 py-1 text-sm align-top leading-5 font-medium text-gray-500">Email</td>
                   <td class="px-4 py-1 text-sm" x-show="emails.length > 0">
                     <template x-for="(email, index) in emails" :key="index">
                       <p x-text="email.Email"></p>
@@ -209,7 +205,7 @@
                   </td>
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm align-top">Nomor HP</td>
+                  <td class="px-4 py-1 text-sm align-top leading-5 font-medium text-gray-500">Nomor HP</td>
                   <td class="px-4 py-1 text-sm" x-show="phones.length > 0">
                     <template x-for="(phone, index) in phones" :key="index">
                       <p x-text="phone.Phone"></p>
@@ -248,9 +244,15 @@
                         </div>
                       </div>
                     </td>
-                    <td class="px-4 py-1 text-sm whitespace-normal break-words align-top" x-text="address.one + address.two + ', ' + address.VillageName + ', ' + address.DistrictName + ', ' + address.CityName + ', ' + address.ProvinceName + ', ' +address.zip"></td></tr
+                    <td
+                      class="px-4 py-1 text-sm whitespace-normal break-words align-top"
+                      x-text="address.one + address.two + ', ' + address.VillageName + ', ' + address.DistrictName + ', ' + address.CityName + ', ' + address.ProvinceName + ', ' +address.zip"
+                    ></td></tr
                 ></template>
-                <tr class="text-gray-700 dark:text-gray-400" x-show="addresses.length == 0">
+                <tr
+                  class="text-gray-700 dark:text-gray-400"
+                  x-show="addresses.length == 0"
+                >
                   <td class="px-4 py-1 text-sm align-top">-</td>
                   <td></td>
                 </tr>
