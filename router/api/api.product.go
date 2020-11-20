@@ -66,22 +66,14 @@ func ShowProductList(db *sqlx.DB) gin.HandlerFunc {
 		var products []wrapper.Product
 
 		if next {
-			if lastid > 0 {
-				pts.LastID(lastid)
-				p, err := pts.Show(db)
-				if err != nil {
-					errMess = err.Error()
-					httpStatus = http.StatusInternalServerError
-				}
-				products = p
-			} else {
-				p, err := pts.Show(db)
-				if err != nil {
-					errMess = err.Error()
-					httpStatus = http.StatusInternalServerError
-				}
-				products = p
+			pts.LastID(lastid)
+			p, err := pts.Show(db)
+			if err != nil {
+				errMess = err.Error()
+				httpStatus = http.StatusInternalServerError
 			}
+			products = p
+
 		}
 
 		if len(products) > 0 && direction == "back" {
