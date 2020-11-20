@@ -95,7 +95,6 @@ func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
 		c.JSON(httpStatus, gin.H{
 			"orders": orders,
 			"error":  errMess,
-			"lastid": lastid,
 			"total":  total,
 			"last":   last,
 		})
