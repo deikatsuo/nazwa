@@ -49,7 +49,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 	where := ""
 	// Maju/Mundur
 	if p.direction == "next" {
-		where = "WHERE id > " + strconv.Itoa(p.lastid) + "ORDER BY id DESC"
+		where = "WHERE id > " + strconv.Itoa(p.lastid) + " ORDER BY id ASC"
 	} else if p.direction == "back" {
 		where = "WHERE id < " + strconv.Itoa(p.lastid) + " ORDER BY id DESC"
 	}
