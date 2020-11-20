@@ -92,7 +92,7 @@
 
             <dl class="w-full whitespace-no-wrap">
               <div
-                class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
               >
                 <dt class="px-3 py-3">ID Unik</dt>
                 <dd class="px-4 sm:px-0"></dd>
@@ -131,100 +131,136 @@
               </div>
             </dl>
 
-            <table class="w-full whitespace-no-wrap">
-              <thead>
-                <tr
-                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+            <dl class="w-full whitespace-no-wrap">
+              <div
+                class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+              >
+                <dt class="px-3 py-3">Informasi Pengguna</dt>
+                <dd class="px-4 sm:px-0"></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Nama Lengkap
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="user.Firstname + ' ' + user.Lastname"
+                ></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Nomor Induk Kependudukan
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="user.Gender == 'm'"
                 >
-                  <th class="px-3 py-3">Informasi Pengguna</th>
-                  <th class="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm align-top leading-5 font-medium text-gray-500">Nama Lengkap</td>
-                  <td
-                    class="px-4 py-1 text-sm break-words"
-                    x-text="user.Firstname + ' ' + user.Lastname"
-                  ></td>
-                </tr>
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Jenis Kelamin</td>
-                  <td class="px-4 py-1 text-sm" x-show="user.Gender == 'm'">
-                    Laki-Laki
-                  </td>
-                  <td class="px-4 py-1 text-sm" x-show="user.Gender == 'f'">
-                    Perempuan
-                  </td>
-                </tr>
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Pekerjaan</td>
-                  <td
-                    class="px-4 py-1 text-sm"
-                    x-show="user.Occupation != ''"
-                    x-text="user.Occupation"
-                  ></td>
-                  <td class="px-4 py-1 text-sm" x-show="user.Occupation == ''">
-                    -
-                  </td>
-                </tr>
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Saldo</td>
-                  <td class="px-4 py-1 text-sm" x-text="user.Balance"></td>
-                </tr>
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Peran</td>
-                  <td class="px-4 py-1 text-sm" x-text="user.Role"></td>
-                </tr>
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Tanggal Daftar</td>
-                  <td class="px-4 py-1 text-sm break-words" x-text="user.CreatedAt"></td>
-                </tr>
-              </tbody>
-            </table>
+                  Laki-Laki
+                </dd>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="user.Gender == 'f'"
+                >
+                  Perempuan
+                </dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Pekerjaan
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="user.Occupation != ''"
+                  x-text="user.Occupation"
+                ></dd>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="user.Occupation == ''"
+                >
+                  -
+                </dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Saldo
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="user.Balance"
+                ></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Peran
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="user.Role"
+                ></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Terdaftar Pada
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="user.CreatedAt"
+                ></dd>
+              </div>
+            </dl>
 
-            <table class="w-full whitespace-no-wrap">
-              <thead>
-                <tr
-                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+            <dl class="w-full whitespace-no-wrap">
+              <div
+                class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+              >
+                <dt class="px-3 py-3">Informasi Kontak</dt>
+                <dd class="px-4 sm:px-0"></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Email
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="emails.length > 0"
                 >
-                  <th class="px-3 py-3">Informasi Kontak</th>
-                  <th class="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm align-top leading-5 font-medium text-gray-500">Email</td>
-                  <td class="px-4 py-1 text-sm" x-show="emails.length > 0">
-                    <template x-for="(email, index) in emails" :key="index">
-                      <p x-text="email.Email"></p>
-                    </template>
-                  </td>
-                  <td class="px-4 py-1 text-sm" x-show="emails.length == 0">
-                    -
-                  </td>
-                </tr>
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-4 py-1 text-sm align-top leading-5 font-medium text-gray-500">Nomor HP</td>
-                  <td class="px-4 py-1 text-sm" x-show="phones.length > 0">
-                    <template x-for="(phone, index) in phones" :key="index">
-                      <p x-text="phone.Phone"></p>
-                    </template>
-                  </td>
-                  <td
-                    class="px-4 py-1 text-sm align-top"
-                    x-show="phones.length == 0"
-                  >
-                    -
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  <template x-for="(email, index) in emails" :key="index">
+                    <p x-text="email.Email"></p>
+                  </template>
+                </dd>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="emails.length == 0"
+                >
+                  -
+                </dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Nomor Telepon
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="phones.length > 0"
+                >
+                  <template x-for="(phone, index) in phones" :key="index">
+                    <p x-text="phone.Phone"></p>
+                  </template>
+                </dd>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="phones.length == 0"
+                >
+                  -
+                </dd>
+              </div>
+            </dl>
+
 
             <table class="w-full whitespace-no-wrap table-auto">
               <thead>
                 <tr
-                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                  class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
                 >
                   <th class="px-3 py-3">Informasi Alamat</th>
                   <th class="px-4 py-3"></th>
@@ -232,13 +268,13 @@
               </thead>
               <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <template x-for="(address, index) in addresses" :key="index">
-                  <tr class="text-gray-700 dark:text-gray-400">
+                  <tr class="text-gray-600 dark:text-gray-400">
                     <td class="px-4 py-1 align-top">
                       <div class="flex items-center text-sm">
                         <div>
                           <p class="font-semibold" x-text="address.name"></p>
                           <p
-                            class="text-xs text-gray-600 dark:text-gray-400"
+                            class="text-xs text-gray-500 dark:text-gray-400"
                             x-text="address.description"
                           ></p>
                         </div>
