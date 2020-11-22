@@ -51,7 +51,9 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		if err := c.ShouldBindJSON(&json); err != nil {
 			log.Println("ERROR: api.create-account.go UserCreate() bind json")
 			log.Println(err)
-			simpleErrMap = validation.SimpleValErrMap(err)
+			if fmt.Sprintf("%T", err) == "validator.ValidationErrors" {
+				simpleErrMap = validation.SimpleValErrMap(err)
+			}
 			httpStatus = http.StatusBadRequest
 			status = "fail"
 			save = false

@@ -220,7 +220,10 @@
                 class="relative h-48 border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center"
               >
                 <input
-                  @change="formData.photo = $event.target.files[0]"
+                  @change="if ($event.target.files[0].type.match('image.*')) { formData.photo = $event.target.files[0] } else { $dispatch('notif', {
+                    type: 'error',
+                    message: 'Harus berupa gambar .jpg, .png, etc.',
+                  }); }"
                   type="file"
                   class="hidden"
                 />
@@ -334,6 +337,10 @@
           submitData($dispatch) {
             this.loadingText = "Loading . . .";
             this.loading = true;
+            if (!addPassword) {
+              this.formData.password = "";
+              this.formData.repassword = "";
+            }
 
             fetch("/api/v1/local/user/create", {
               method: "POST",
