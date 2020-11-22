@@ -37,7 +37,7 @@
     <!-- Menu Pengguna -->
     <ul>
       <li class="relative px-6 py-3">
-        {{ if eq .page "products" "products_add" }}
+        {{ if eq .page "users" "users_add" }}
           <span
             class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
             aria-hidden="true"
@@ -49,7 +49,7 @@
           aria-haspopup="true"
         >
           <span class="inline-flex items-center">
-            {{ template "_svg_icon_table" }}
+            {{ template "_svg_icon_identification" }}
             <span class='ml-4 {{ if eq .page "users" "users_add" }}text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100{{ end }}'>Pengguna</span>
           </span>
           {{ template "_svg_icon_arrow_bottom" }}
