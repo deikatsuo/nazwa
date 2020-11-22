@@ -157,10 +157,13 @@
 
       <label class="block mt-4 text-sm">
         <span class="text-blue-700 dark:text-blue-400">
-          <a href="#" @click="addPassword = !addPassword" x-text="addPassword ? '{{ .l_c_form_remove_password }}' : '{{ .l_c_form_add_password }}'"
-            ></a
-          ></span
-        >
+          <a
+            href="#"
+            @click="addPassword = !addPassword"
+            x-text="addPassword ? '{{ .l_c_form_remove_password }}' : '{{ .l_c_form_add_password }}'"
+            :class="{ 'text-red-500': addPassword }"
+          ></a
+        ></span>
       </label>
       <div x-show="addPassword !== false">
         <label class="block mt-4 text-sm">

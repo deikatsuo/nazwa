@@ -1,8 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"
@@ -23,15 +25,16 @@ import (
 
 // FormUser menyimpan input pendaftaran user
 type FormUser struct {
-	FC         string `json:"fc" binding:"omitempty,numeric,min=16,max=16"`
-	RIC        string `json:"ric" binding:"numeric,min=16,max=16"`
-	Phone      string `json:"phone" binding:"omitempty,numeric,min=6,max=15"`
-	Firstname  string `json:"firstname" binding:"required,min=3,max=25"`
-	Lastname   string `json:"lastname" binding:"omitempty,min=1,max=25"`
-	Gender     string `json:"gender" binding:"required,oneof=m f"`
-	Occupation string `json:"occupation" binding:"omitempty,min=4,max=25"`
-	Password   string `json:"password" binding:"omitempty,alphanumunicode,min=8,max=25"`
-	Repassword string `json:"repassword" binding:"eqfield=Password"`
+	FC         string         `json:"fc" binding:"omitempty,numeric,min=16,max=16"`
+	RIC        string         `json:"ric" binding:"numeric,min=16,max=16"`
+	Phone      string         `json:"phone" binding:"omitempty,numeric,min=6,max=15"`
+	Firstname  string         `json:"firstname" binding:"required,min=3,max=25"`
+	Lastname   string         `json:"lastname" binding:"omitempty,min=1,max=25"`
+	Gender     string         `json:"gender" binding:"required,oneof=m f"`
+	Occupation string         `json:"occupation" binding:"omitempty,min=4,max=25"`
+	Password   string         `json:"password" binding:"omitempty,alphanumunicode,min=8,max=25"`
+	Repassword string         `json:"repassword" binding:"eqfield=Password"`
+	Photo      multipart.File `json:"photo"`
 }
 
 // UserCreate API untuk membuat user baru
@@ -39,7 +42,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		var json FormUser
 
-		var status string
+		status := "success"
 		var httpStatus int
 		message := ""
 		var simpleErrMap = make(map[string]interface{})
@@ -53,12 +56,15 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			status = "fail"
 			save = false
 		} else {
+			fmt.Println(json.Photo)
 			if dbquery.RICExist(db, json.RIC) {
 				simpleErrMap["ric"] = "Nomor KTP sudah terdaftar"
+				status = "fail"
 				save = false
 			}
 			if dbquery.PhoneExist(db, json.Phone) {
 				simpleErrMap["phone"] = "Nomor ini sudah terdaftar"
+				status = "fail"
 				save = false
 			}
 		}
