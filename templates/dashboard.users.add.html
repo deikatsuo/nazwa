@@ -10,7 +10,7 @@
       {{ .l_account_user_contact }}
     </h4>
 
-    <div x-data="create()">
+    <div x-data="create()" id="create">
       <label class="block text-sm">
         <span class="text-gray-700 dark:text-gray-400">{{ .l_c_form_fc }}</span>
         <input
@@ -220,12 +220,18 @@
                 class="relative h-48 border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center"
               >
                 <input
-                  @change="if ($event.target.files[0].type.match('image.*')) { formData.photo = $event.target.files[0] } else { $dispatch('notif', {
+                  @change="if ($event.target.files[0].type.match('image.*')) { base64($event.target.files[0]); } else { $dispatch('notif', {
                     type: 'error',
                     message: 'Harus berupa gambar .jpg, .png, etc.',
-                  }); }"
+                  }); formData.photo = null; }"
                   type="file"
                   class="hidden"
+                />
+                <input
+                  class="hidden w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  type="text"
+                  x-model="formData.photo"
+                  @keydown.enter="submitData($dispatch)"
                 />
                 <!-- overlay -->
                 <div
@@ -255,7 +261,7 @@
                   <div class="relative w-full h-full">
                     <img
                       class="object-scale-down w-full h-full"
-                      :src="formData.photo ? URL.createObjectURL(formData.photo) : ''"
+                      :src="formData.photo ? formData.photo_type + ',' + formData.photo : ''"
                       alt="Photo"
                       loading="lazy"
                     />
@@ -309,7 +315,8 @@
             occupation: "",
             password: "",
             repassword: "",
-            photo: null,
+            photo: "",
+            photo_type: "",
           },
           loadingText: "{{ .l_c_form_create }}",
           loading: false,
@@ -337,11 +344,12 @@
           submitData($dispatch) {
             this.loadingText = "Loading . . .";
             this.loading = true;
-            if (!addPassword) {
+            if (!this.addPassword) {
               this.formData.password = "";
               this.formData.repassword = "";
             }
-
+            if (this.formData.photo !== "") {
+            }
             fetch("/api/v1/local/user/create", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -419,8 +427,20 @@
                 }
               })
               .catch(() => {
+                this.loading = false;
                 console.log("Telah terjadi kesalahan");
               });
+          },
+          base64(file) {
+            var reader = new FileReader();
+            reader.onloadend = function () {
+              var bsplit = reader.result.split(",");
+              document.getElementById("create").__x.$data.formData.photo_type =
+                bsplit[0];
+              document.getElementById("create").__x.$data.formData.photo =
+                bsplit[1];
+            };
+            reader.readAsDataURL(file);
           },
         };
       }
