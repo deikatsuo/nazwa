@@ -83,7 +83,6 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				log.Println("ERROR: api.user.go UserCreate() Konversi base64 ke file gambar")
 				message = err.Error()
 			}
-			fmt.Println(file)
 		}
 
 		if save {
