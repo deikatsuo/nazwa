@@ -3,6 +3,7 @@ package dbquery
 import (
 	"fmt"
 	"log"
+	"nazwa/misc"
 	"nazwa/wrapper"
 	"strconv"
 	"strings"
@@ -323,7 +324,18 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 	}
 
 	// Set username/kode pelanggan
-	if iui, err := strconv.ParseUint(fmt.Sprintf("9%011d", tempReturnID), 10, 64); err == nil {
+	num := fmt.Sprintf("% 10d", tempReturnID)
+
+	if misc.CountDigits(tempReturnID) < 10 {
+		// Generate angka acak
+		if fill, err := misc.GenerateNumberFixedLength(strings.Count(num, " ")); err == nil {
+			num = fmt.Sprintf("%s%s", fill, num)
+		}
+	}
+
+	// Hapus semua spasi
+	num = strings.ReplaceAll(num, " ", "")
+	if iui, err := strconv.ParseUint(num, 10, 64); err == nil {
 		var username string
 		nzne := time.Now().Hour()
 		if nzne >= 12 {
