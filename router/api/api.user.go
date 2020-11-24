@@ -10,6 +10,7 @@ import (
 	"nazwa/router"
 	"nazwa/wrapper"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/buger/jsonparser"
@@ -47,6 +48,9 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		message := ""
 		var simpleErrMap = make(map[string]interface{})
 		save := true
+		var avatarExt string
+		var avatar string
+		var file string
 
 		if err := c.ShouldBindJSON(&json); err != nil {
 			log.Println("ERROR: api.create-account.go UserCreate() bind json")
@@ -58,7 +62,6 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			status = "fail"
 			save = false
 		} else {
-			fmt.Println(json.Photo)
 			if dbquery.RICExist(db, json.RIC) {
 				simpleErrMap["ric"] = "Nomor KTP sudah terdaftar"
 				status = "fail"
@@ -71,6 +74,18 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			}
 		}
 
+		if json.PhotoType != "" && json.Photo != "" {
+			avatarExt = json.PhotoType
+			avatar = json.Photo
+			if f, err := misc.Base64ToImageFileWithData(avatar, avatarExt); err == nil {
+				file = f
+			} else {
+				log.Println("ERROR: api.user.go UserCreate() Konversi base64 ke file gambar")
+				message = err.Error()
+			}
+			fmt.Println(file)
+		}
+
 		if save {
 			user := dbquery.NewUser()
 			err := user.SetFirstName(json.Firstname).
@@ -78,6 +93,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetFamilyCard(json.FC).
 				SetRIC(json.RIC).
 				SetPhone(json.Phone).
+				SetAvatar(file).
 				SetPassword(json.Password).
 				SetGender(json.Gender).
 				SetOccupation(json.Occupation).
@@ -86,6 +102,10 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			if err != nil {
 				log.Println("ERROR: api.create-account.go UserCreate() Gagal membuat user baru")
 				log.Print(err)
+				if err := os.Remove("./upload/profile/" + file); err != nil {
+					log.Println("ERROR: api.create-account.go UserCreate() Gagal menghapus file")
+					log.Println(err)
+				}
 			}
 			httpStatus = http.StatusOK
 			status = "success"
