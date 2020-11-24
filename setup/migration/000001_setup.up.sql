@@ -30,7 +30,7 @@ CREATE TABLE "user" (
     "last_name" VARCHAR(25),
     "ric" VARCHAR(16) UNIQUE NOT NULL,
     "username" VARCHAR(25) UNIQUE,
-    "avatar" VARCHAR(25) DEFAULT 'default.jpg' NOT NULL,
+    "avatar" VARCHAR(50) DEFAULT 'default.jpg' NOT NULL,
     "password" CHAR(60),
     "gender" GENDER NOT NULL,
     "occupation" VARCHAR(25),

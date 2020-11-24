@@ -12,6 +12,7 @@ require (
 	github.com/go-playground/validator/v10 v10.4.0
 	github.com/gocarina/gocsv v0.0.0-20200925213129-04be9ee2e1a2
 	github.com/golang-migrate/migrate/v4 v4.13.0
+	github.com/google/uuid v1.1.1
 	github.com/gorilla/sessions v1.2.1 // indirect
 	github.com/imdario/mergo v0.3.11
 	github.com/jmoiron/sqlx v1.2.1-0.20200615141059-0794cb1f47ee

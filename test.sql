@@ -74,8 +74,8 @@ SELECT
         WHERE u.id > 1 AND r.id = 1
         LIMIT 10;
 
-ALTER TABLE "product"
-ADD COLUMN "brand" VARCHAR(25);
+ALTER TABLE "user"
+ALTER COLUMN "avatar" TYPE VARCHAR(50);
 
 ALTER TABLE "user"
 ADD COLUMN "occupation" VARCHAR(25);
