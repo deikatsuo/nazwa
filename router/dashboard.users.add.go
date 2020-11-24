@@ -34,7 +34,7 @@ func PageDashboardUsersAdd(db *sqlx.DB) gin.HandlerFunc {
 			"l_c_form_repassword":      "Ulangi kata sandi",
 			"l_c_form_agree":           "Saya setuju dengan",
 			"l_c_form_privacy_link":    "kebijakan privasi",
-			"l_c_form_create":          "Buat akun",
+			"l_c_form_create":          "Buat user",
 
 			// Detail alamat
 			"l_u_address_delete_btn":    "Hapus",
