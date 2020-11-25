@@ -476,43 +476,6 @@
           </div>
         </dl>
 
-        <table class="w-full whitespace-no-wrap table-auto">
-          <thead>
-            <tr
-              class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-            >
-              <th class="px-3 py-3">Informasi Alamat</th>
-              <th class="px-4 py-3"></th>
-            </tr>
-          </thead>
-          <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-            <template x-for="(address, index) in addresses" :key="index">
-              <tr class="text-gray-600 dark:text-gray-400">
-                <td class="px-4 py-1 align-top">
-                  <div class="flex items-center text-sm">
-                    <div>
-                      <p class="font-semibold" x-text="address.name"></p>
-                      <p
-                        class="text-xs text-gray-500 dark:text-gray-400"
-                        x-text="address.description"
-                      ></p>
-                    </div>
-                  </div>
-                </td>
-                <td
-                  class="px-4 py-1 text-sm whitespace-normal break-words align-top"
-                  x-text="address.one + address.two + ', ' + address.VillageName + ', ' + address.DistrictName + ', ' + address.CityName + ', ' + address.ProvinceName + ', ' +address.zip"
-                ></td></tr
-            ></template>
-            <tr
-              class="text-gray-700 dark:text-gray-400"
-              x-show="addresses.length == 0"
-            >
-              <td class="px-4 py-1 text-sm align-top">-</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
         <label class="block mt-4 text-sm">
           <span class="text-blue-700 dark:text-blue-400">
             <a href="#" @click="resetUserForm()" class="text-red-500"
@@ -547,7 +510,6 @@
           user: [],
           emails: [],
           phones: [],
-          addresses: [],
           errFC: false,
           errmFC: "",
           errRIC: false,
@@ -649,9 +611,6 @@
                   if (data.user.Phones) {
                     this.phones = data.user.Phones;
                   }
-                  if (data.user.Addresses) {
-                    this.addresses = data.user.Addresses;
-                  }
                   document.getElementById("address").__x.$data.uid =
                     data.user.ID;
                   document.getElementById(
@@ -687,19 +646,18 @@
             this.user = [];
             this.emails = [];
             this.phones = [];
-            this.addresses = [];
             this.formData = {
-              fc: "",
-              ric: "",
-              phone: "",
-              firstname: "",
-              lastname: "",
-              gender: "",
-              occupation: "",
-              password: "",
-              repassword: "",
-              photo: "",
-              photo_type: "",
+              fc: '',
+              ric: '',
+              phone: '',
+              firstname: '',
+              lastname: '',
+              gender: '',
+              occupation: '',
+              password: '',
+              repassword: '',
+              photo: '',
+              photo_type: '',
             };
             document.getElementById("address").__x.$data.uid = null;
             document.getElementById(
@@ -707,15 +665,15 @@
             ).__x.$data.addAddressDisable = true;
             document.getElementById("address").__x.$data.addresses = [];
             document.getElementById("address").__x.$data.addAddressData = {
-              name: "",
-              description: "",
-              one: "",
-              two: "",
-              zip: "",
-              province: "",
-              city: "",
-              district: "",
-              village: "",
+              name: '',
+              description: '',
+              one: '',
+              two: '',
+              zip: '',
+              province: '',
+              city: '',
+              district: '',
+              village: '',
             };
             document.getElementById("address").__x.$data.addAddressOpen = false;
           },
