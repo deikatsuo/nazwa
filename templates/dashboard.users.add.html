@@ -515,12 +515,10 @@
         </table>
         <label class="block mt-4 text-sm">
           <span class="text-blue-700 dark:text-blue-400">
-            <a
-              href="#"
-              @click="resetUserForm()"
-              class="text-red-500"
-            >Reset</a
-          ></span>
+            <a href="#" @click="resetUserForm()" class="text-red-500"
+              >Reset</a
+            ></span
+          >
         </label>
       </div>
     </div>
@@ -690,10 +688,36 @@
             this.emails = [];
             this.phones = [];
             this.addresses = [];
+            this.formData = {
+              fc: "",
+              ric: "",
+              phone: "",
+              firstname: "",
+              lastname: "",
+              gender: "",
+              occupation: "",
+              password: "",
+              repassword: "",
+              photo: "",
+              photo_type: "",
+            };
             document.getElementById("address").__x.$data.uid = null;
             document.getElementById(
               "address"
             ).__x.$data.addAddressDisable = true;
+            document.getElementById("address").__x.$data.addresses = [];
+            document.getElementById("address").__x.$data.addAddressData = {
+              name: "",
+              description: "",
+              one: "",
+              two: "",
+              zip: "",
+              province: "",
+              city: "",
+              district: "",
+              village: "",
+            };
+            document.getElementById("address").__x.$data.addAddressOpen = false;
           },
         };
       }
