@@ -26,7 +26,7 @@
         <template x-for="(product, index) in products" :key="index">
           <tr
             class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
-            @click="$dispatch('modal', { tmp: product.ID, title: 'Detail data produk/barang', html: $refs.productDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
+            @click="$dispatch('modal', { tmp: product.ID, html: $refs.productDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
           >
             <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
             <td class="px-1 py-3">
@@ -60,6 +60,11 @@
         </template>
         <template x-ref="productDetail">
           <div x-init="fetchById($dispatch)" x-data="fProDetail($parent)">
+            <!-- Title -->
+            <div
+              class="absolute top-0 mt-4 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+              x-text="'Kode #'+product.Code"
+            ></div>
             <!-- Photo produk -->
             <div
               class="w-full h-48 flex flex-col justify-center items-center"
@@ -124,178 +129,114 @@
               </div>
             </div>
 
-            <div class="flex flex-wrap">
-              <div class="w-full md:w-1/2 md:pr-3">
-                <label class="block mt-4 text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400">Nama</span>
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.Name"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.Name"
-                  />
-                </label>
-              </div>
-              <div class="w-full md:w-1/2 md:pl-3">
-                <label class="block sm:mt-4 text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400">Kode</span>
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.Code"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.Code"
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div class="flex flex-wrap">
-              <div class="w-full md:w-1/2 md:pr-3">
-                <label class="block text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400">Tipe</span>
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.Type"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.Type"
-                  />
-                </label>
-              </div>
-              <div class="w-full md:w-1/2 md:pl-3">
-                <label class="block text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400">Brand</span>
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.Brand"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.Brand"
-                  />
-                </label>
-              </div>
-            </div>
-
-            <label class="block text-sm mb-2">
-              <span class="text-gray-700 dark:text-gray-400"
-                >Ditambahkan pada</span
+            <!-- Informasi Produk -->
+            <dl class="w-full whitespace-no-wrap">
+              <div
+                class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
               >
-              <input
-                class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                x-model="product.CreatedAt"
-                @keydown.enter="$parent.modalCallback();"
-                disabled
-                :title="product.CreatedAt"
-              />
-            </label>
+                <dt class="px-3 py-3">Informasi Produk</dt>
+                <dd class="px-4 sm:px-0"></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Nama Barang
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="product.Name"
+                ></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Brand
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="product.Brand != ''"
+                  x-text="product.Brand"
+                ></dd>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="product.Brand == ''"
+                >
+                  -
+                </dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Tipe
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="product.Type != ''"
+                  x-text="product.Type"
+                ></dd>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-show="product.Type == ''"
+                >
+                  -
+                </dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Tanggal Ditambahkan
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="product.CreatedAt"
+                ></dd>
+              </div>
+            </dl>
 
-            <div class="flex flex-wrap">
-              <div class="w-full md:w-1/2 md:pr-3">
-                <label class="block text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400"
-                    >Harga Beli</span
-                  >
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.BasePrice"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.BasePrice"
-                  />
-                </label>
-              </div>
-              <div class="w-full md:w-1/2 md:pl-3">
-                <label class="block text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400"
-                    >Harga Jual</span
-                  >
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.Price"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.Price"
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div class="flex flex-wrap">
-              <div class="w-full md:w-1/2 md:pr-3">
-                <label class="block text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400"
-                    >Harga Kredit 6x</span
-                  >
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.CreditSix"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.CreditSix"
-                  />
-                </label>
-              </div>
-              <div class="w-full md:w-1/2 md:pl-3">
-                <label class="block text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400"
-                    >Harga Kredit 8x</span
-                  >
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.CreditEight"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.CreditEight"
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div class="flex flex-wrap">
-              <div class="w-full md:w-1/2 md:pr-3">
-                <label class="block text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400"
-                    >Harga Kredit 10x</span
-                  >
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.CreditTen"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.CreditTen"
-                  />
-                </label>
-              </div>
-              <div class="w-full md:w-1/2 md:pl-3">
-                <label class="block text-sm mb-2">
-                  <span class="text-gray-700 dark:text-gray-400"
-                    >Harga Kredit 12x</span
-                  >
-                  <input
-                    class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model="product.CreditTwelve"
-                    @keydown.enter="$parent.modalCallback();"
-                    disabled
-                    :title="product.CreditTwelve"
-                  />
-                </label>
-              </div>
-            </div>
-
-            <label class="block text-sm mb-2">
-              <span class="text-gray-700 dark:text-gray-400"
-                >Harga Kredit 15x</span
+            <!-- Harga produk -->
+            <dl class="w-full whitespace-no-wrap">
+              <div
+                class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
               >
-              <input
-                class="cursor-not-allowed opacity-50 block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                x-model="product.CreditFifteen"
-                @keydown.enter="$parent.modalCallback();"
-                disabled
-                :title="product.CreditFifteen"
-              />
-            </label>
+                <dt class="px-3 py-3">Harga Produk</dt>
+                <dd class="px-4 sm:px-0"></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Beli
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="product.BasePrice"
+                ></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  Jual
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="product.Price"
+                ></dd>
+              </div>
+            </dl>
+
+            <!-- Harga Kredit -->
+            <dl class="w-full whitespace-no-wrap">
+              <div
+                class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+              >
+                <dt class="px-3 py-3">Harga Kredit</dt>
+                <dd class="px-4 sm:px-0"></dd>
+              </div>
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt class="text-sm leading-5 font-medium text-gray-500">
+                  6 Bulan
+                </dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="product.Price"
+                ></dd>
+              </div>
+            </dl>
+
+
           </div>
         </template>
         <script>
