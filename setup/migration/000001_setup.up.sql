@@ -135,7 +135,7 @@ CREATE TABLE "address" (
     "description" VARCHAR(100),
     "one" VARCHAR(80) NOT NULL,
     "two" VARCHAR(80),
-    "zip" VARCHAR(5) NOT NULL,
+    "zip" VARCHAR(5),
     "province_id" INT NOT NULL,
     "city_id" INT NOT NULL,
     "district_id" INT NOT NULL,
