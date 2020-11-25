@@ -1,6 +1,582 @@
-{{ template "base" .}}
-{{ define "dashboard_products_add_content" }}
+{{ template "base" .}} {{ define "dashboard_products_add_content" }}
 <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
   Tambah Produk
 </h2>
+
+<div class="grid gap-6 mb-8">
+  <!-- Produk baru -->
+  <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+    <div x-data="create()" id="create">
+      <div x-show="!productCreated">
+        <div class="flex flex-wrap mb-6">
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Nama Produk</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Misal: Laptop Dell AMD Ryzen 5, Springbed Uniland"
+                x-model="formData.name"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errName }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmName"
+              :class="{'invisible': errName == false}"
+            >
+            </span>
+          </div>
+
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Brand</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Misal: LG, Samsung"
+                x-model="formData.brand"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errBrand }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmBrand"
+              :class="{'invisible': errBrand == false}"
+            >
+            </span>
+          </div>
+
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Tipe</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Misal: 3 pintu, Cinimax, 3 tumpang"
+                x-model="formData.type"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errType }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmType"
+              :class="{'invisible': errType == false}"
+            >
+            </span>
+          </div>
+
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Harga Beli</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Harga dari Pabrik"
+                x-model="formData.base_price"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errBasePrice }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmBasePrice"
+              :class="{'invisible': errBasePrice == false}"
+            >
+            </span>
+          </div>
+
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Harga Jual</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Harga Jual ke Konsumen"
+                x-model="formData.price"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPrice }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmPrice"
+              :class="{'invisible': errPrice == false}"
+            >
+            </span>
+          </div>
+        </div>
+        <div>
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">Foto</span>
+            <!-- file upload modal -->
+            <article
+              aria-label="File Upload Modal"
+              class="relative h-full flex flex-col"
+            >
+              <!-- scroll area -->
+              <section class="h-full overflow-auto p-8 w-full flex flex-col">
+                <header
+                  class="relative h-48 border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center"
+                >
+                  <input
+                    @change="if ($event.target.files[0].type.match('image.*')) { base64($event.target.files[0]); } else { $dispatch('notif', {
+                    type: 'error',
+                    message: 'Harus berupa gambar .jpg, .png, etc.',
+                  }); formData.photo = null; }"
+                    type="file"
+                    class="hidden"
+                  />
+                  <input
+                    class="hidden w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    type="text"
+                    x-model="formData.photo"
+                    @keydown.enter="submitData($dispatch)"
+                  />
+                  <!-- overlay -->
+                  <div
+                    x-show="!formData.photo"
+                    class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center"
+                  >
+                    <i>
+                      <svg
+                        class="fill-current w-12 h-12 mb-3 text-blue-700"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479-1.092l4 4h-3v4h-2v-4h-3l4-4z"
+                        />
+                      </svg>
+                    </i>
+                    <p class="text-lg text-blue-700">Upload Foto Produk</p>
+                  </div>
+                  <!-- Tampilkan preview -->
+                  <div
+                    x-show="formData.photo"
+                    class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center"
+                  >
+                    <div class="relative w-full h-full">
+                      <img
+                        class="object-scale-down w-full h-full"
+                        :src="formData.photo ? formData.photo_type + ',' + formData.photo : ''"
+                        alt="Photo"
+                        loading="lazy"
+                      />
+                      <div
+                        class="absolute inset-0 shadow-inner"
+                        aria-hidden="true"
+                      ></div>
+                    </div>
+                  </div>
+                </header>
+              </section>
+            </article>
+          </label>
+        </div>
+        <button
+          type="submit"
+          class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+          @click="submitData($dispatch)"
+          :disabled="loading == true"
+          x-text="loadingText"
+          :class="{'cursor-not-allowed opacity-50': loading == true }"
+        >
+          Tambahkan Produk
+        </button>
+      </div>
+      </div>
+
+      <div x-show="userCreated">
+        <!-- Photo pengguna -->
+        <div
+          class="w-full h-48 flex flex-col justify-center items-center"
+          x-show="typeof user.Avatar !== 'undefined'"
+        >
+          <div class="w-full relative">
+            <div class="h-48 w-full flex items-center rounded-lg">
+              <div class="relative w-full h-full">
+                <img
+                  class="object-scale-down w-full h-full"
+                  :src="'/file/profile/'+user.Avatar"
+                  alt=""
+                  loading="lazy"
+                />
+                <div
+                  class="absolute inset-0 shadow-inner"
+                  aria-hidden="true"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">ID Unik</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nomor Kartu Keluarga
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.FamilyCardNumber != ''"
+              x-text="user.FamilyCardNumber"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.FamilyCardNumber == ''"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nomor Induk Kependudukan
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.RIC != ''"
+              x-text="user.RIC"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.RIC == ''"
+            >
+              -
+            </dd>
+          </div>
+        </dl>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Informasi Pengguna</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nama Lengkap
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.Firstname + ' ' + user.Lastname"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Jenis Kelamin
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Gender == 'm'"
+            >
+              Laki-Laki
+            </dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Gender == 'f'"
+            >
+              Perempuan
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Pekerjaan
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Occupation != ''"
+              x-text="user.Occupation"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Occupation == ''"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Saldo</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.Balance"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Peran</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.Role"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Terdaftar Pada
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.CreatedAt"
+            ></dd>
+          </div>
+        </dl>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Informasi Kontak</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Email</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="emails.length > 0"
+            >
+              <template x-for="(email, index) in emails" :key="index">
+                <p x-text="email.Email"></p>
+              </template>
+            </dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="emails.length == 0"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nomor Telepon
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="phones.length > 0"
+            >
+              <template x-for="(phone, index) in phones" :key="index">
+                <p x-text="phone.Phone"></p>
+              </template>
+            </dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="phones.length == 0"
+            >
+              -
+            </dd>
+          </div>
+        </dl>
+
+        <label class="block mt-4 text-sm">
+          <span class="text-blue-700 dark:text-blue-400">
+            <a href="#" @click="resetUserForm()" class="text-red-500"
+              >Reset</a
+            ></span
+          >
+        </label>
+      </div>
+    </div>
+
+    <script>
+      function create() {
+        return {
+          formData: {
+            fc: "",
+            ric: "",
+            phone: "",
+            firstname: "",
+            lastname: "",
+            gender: "",
+            occupation: "",
+            password: "",
+            repassword: "",
+            photo: "",
+            photo_type: "",
+          },
+          productCreated: false,
+
+          loadingText: "{{ .l_c_form_create }}",
+          loading: false,
+          userCreated: false,
+          addPassword: false,
+          notifStatus: "",
+          user: [],
+          emails: [],
+          phones: [],
+          errFC: false,
+          errmFC: "",
+          errRIC: false,
+          errmRIC: "",
+          errPhone: false,
+          errmPhone: "",
+          errFirstname: false,
+          errmFirstname: "",
+          errGender: false,
+          errmGender: "",
+          errOccupation: false,
+          errmOccupation: "",
+          errPassword: false,
+          errmPassword: "",
+          errRepassword: false,
+          errmRepassword: "",
+
+          submitData($dispatch) {
+            this.loadingText = "Loading . . .";
+            this.loading = true;
+            if (!this.addPassword) {
+              this.formData.password = "";
+              this.formData.repassword = "";
+            }
+            if (this.formData.photo !== "") {
+            }
+            fetch("/api/v1/local/user/create", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.formData),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                this.loadingText = "{{ .l_c_form_create }}";
+                this.loading = false;
+                if (data.fc) {
+                  this.errFC = true;
+                  this.errmFC = data.fc;
+                } else {
+                  this.errFC = false;
+                  this.errmFC = "";
+                }
+                if (data.ric) {
+                  this.errRIC = true;
+                  this.errmRIC = data.ric;
+                } else {
+                  this.errRIC = false;
+                  this.errmRIC = "";
+                }
+                if (data.phone) {
+                  this.errPhone = true;
+                  this.errmPhone = data.phone;
+                } else {
+                  this.errPhone = false;
+                  this.errmPhone = "";
+                }
+                if (data.firstname) {
+                  this.errFirstname = true;
+                  this.errmFirstname = data.firstname;
+                } else {
+                  this.errFirstname = false;
+                  this.errmFirstname = "";
+                }
+                if (data.gender) {
+                  this.errGender = true;
+                  this.errmGender = data.gender;
+                } else {
+                  this.errGender = false;
+                  this.errmGender = "";
+                }
+                if (data.password) {
+                  this.errPassword = true;
+                  this.errmPassword = data.password;
+                } else {
+                  this.errPassword = false;
+                  this.errmPassword = "";
+                }
+                if (data.repassword) {
+                  this.errRepassword = true;
+                  this.errmRepassword = data.repassword;
+                } else {
+                  this.errRepassword = false;
+                  this.errmRepassword = "";
+                }
+
+                if (data.status == "error") {
+                  this.notifStatus = "error";
+                }
+                if (data.status == "fail") {
+                  this.notifStatus = "fail";
+                }
+                if (data.status == "success") {
+                  this.notifStatus = "success";
+                  this.userCreated = true;
+                  this.user = data.user;
+                  if (data.user.Emails) {
+                    this.emails = data.user.Emails;
+                  }
+                  if (data.user.Phones) {
+                    this.phones = data.user.Phones;
+                  }
+                  document.getElementById("address").__x.$data.uid =
+                    data.user.ID;
+                  document.getElementById(
+                    "address"
+                  ).__x.$data.addAddressDisable = false;
+                }
+
+                if (data.message) {
+                  $dispatch("notif", {
+                    type: this.notifStatus,
+                    message: data.message,
+                  });
+                }
+              })
+              .catch(() => {
+                this.loading = false;
+                console.log("Telah terjadi kesalahan");
+              });
+          },
+          base64(file) {
+            var reader = new FileReader();
+            reader.onloadend = function () {
+              var bsplit = reader.result.split(",");
+              document.getElementById("create").__x.$data.formData.photo_type =
+                bsplit[0];
+              document.getElementById("create").__x.$data.formData.photo =
+                bsplit[1];
+            };
+            reader.readAsDataURL(file);
+          },
+          resetUserForm() {
+            this.userCreated = false;
+            this.user = [];
+            this.emails = [];
+            this.phones = [];
+            this.formData = {
+              fc: "",
+              ric: "",
+              phone: "",
+              firstname: "",
+              lastname: "",
+              gender: "",
+              occupation: "",
+              password: "",
+              repassword: "",
+              photo: "",
+              photo_type: "",
+            };
+            document.getElementById("address").__x.$data.uid = null;
+            document.getElementById(
+              "address"
+            ).__x.$data.addAddressDisable = true;
+            document.getElementById("address").__x.$data.addresses = [];
+            document.getElementById("address").__x.$data.addAddressData = {
+              name: "",
+              description: "",
+              one: "",
+              two: "",
+              zip: "",
+              province: "",
+              city: "",
+              district: "",
+              village: "",
+            };
+            document.getElementById("address").__x.$data.addAddressOpen = false;
+          },
+        };
+      }
+    </script>
+  </div>
+</div>
 {{ end }}
