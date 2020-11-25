@@ -30,6 +30,7 @@ func UserLogin(db *sqlx.DB) gin.HandlerFunc {
 		var httpStatus int
 		var simpleErrMap map[string]interface{}
 		var userid int
+		var role string
 		var userExist bool
 		// Variabel untuk di bind ke Login
 		var json Login
@@ -45,14 +46,24 @@ func UserLogin(db *sqlx.DB) gin.HandlerFunc {
 			}
 		}
 
+		// Check role
+		if ur, err := dbquery.GetRole(db, userid); err == nil {
+			role = ur
+		} else {
+			httpStatus = http.StatusInternalServerError
+			statusMessage = "Gagal mengambil user role"
+			status = "error"
+		}
+
 		// Check apakah user ditemukan
 		// Atau tidak
-		if userExist == false {
+		if userExist == false || role == "" {
 			statusMessage = "User tidak ditemukan"
 			status = "fail"
 		} else {
-			// Simpan userid ke session
+			// Simpan userid dan role ke session
 			session.Set("userid", userid)
+			session.Set("role", role)
 			if err := session.Save(); err != nil {
 				httpStatus = http.StatusInternalServerError
 				statusMessage = "Gagal membuat session"

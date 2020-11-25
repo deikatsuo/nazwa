@@ -67,7 +67,7 @@ func runServer(db *sqlx.DB) {
 	server.SetFuncMap(middleware.RegTmplFunc())
 
 	// Buat session
-	server.Use(sessions.Sessions("NAZWA_SESSION", sessions.NewCookieStore([]byte("secret"))))
+	server.Use(sessions.Sessions("NAZWA_SESSION", sessions.NewCookieStore([]byte("deri and rika"))))
 	server.Use(middleware.NewDefaultConfig())
 
 	// Daftarkan aset statik

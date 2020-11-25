@@ -10,6 +10,7 @@ import (
 // PageDashboardUsersAdd tampilkan halaman tambah user
 func PageDashboardUsersAdd(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+
 		gh := gin.H{
 			"site_title": "Tambah Users",
 			"page":       "users_add",
@@ -48,6 +49,7 @@ func PageDashboardUsersAdd(db *sqlx.DB) gin.HandlerFunc {
 
 			// Detail tambah alamat
 			"l_u_address_add":         "Buat alamat baru",
+			"l_u_address_remove":      "Batal membuat alamat baru",
 			"l_u_address_name":        "Panggilan",
 			"l_u_address_description": "Deskripsi",
 			"l_u_address_one":         "Alamat",

@@ -85,6 +85,8 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			}
 		}
 
+		var uid int
+		var retUser wrapper.User
 		if save {
 			user := dbquery.NewUser()
 			err := user.SetFirstName(json.Firstname).
@@ -97,6 +99,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetGender(json.Gender).
 				SetOccupation(json.Occupation).
 				SetRole(dbquery.RoleCustomer).
+				ReturnID(&uid).
 				Save(db)
 			if err != nil {
 				log.Println("ERROR: api.create-account.go UserCreate() Gagal membuat user baru")
@@ -105,10 +108,18 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 					log.Println("ERROR: api.create-account.go UserCreate() Gagal menghapus file")
 					log.Println(err)
 				}
+			} else {
+				httpStatus = http.StatusOK
+				status = "success"
+				message = "Berhasil membuat user baru"
+
+				if u, err := dbquery.GetUserByID(db, uid); err == nil {
+					retUser = u
+				} else {
+					httpStatus = http.StatusInternalServerError
+					message = "Sepertinya telah terjadi kesalahan saat memuat data"
+				}
 			}
-			httpStatus = http.StatusOK
-			status = "success"
-			message = "Berhasil membuat user baru"
 		} else {
 			httpStatus = http.StatusBadRequest
 			status = "error"
@@ -118,6 +129,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		m := gin.H{
 			"message": message,
 			"status":  status,
+			"user":    retUser,
 		}
 		c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
 	}

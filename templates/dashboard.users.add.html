@@ -11,284 +11,518 @@
     </h4>
 
     <div x-data="create()" id="create">
-      <label class="block text-sm">
-        <span class="text-gray-700 dark:text-gray-400">{{ .l_c_form_fc }}</span>
-        <input
-          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-          placeholder="Nomor Kartu Keluarga"
-          x-model="formData.fc"
-          @keydown.enter="submitData($dispatch)"
-          :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFC }"
-        />
-        <span
-          class="text-xs text-red-600 dark:text-red-400"
-          x-text="errmFC"
-          :class="{'invisible': errFC == false}"
-        >
-        </span>
-      </label>
-      <label class="block mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400"
-          >{{ .l_c_form_ric }}</span
-        >
-        <input
-          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-          placeholder="Nomor Induk Kependudukan"
-          x-model="formData.ric"
-          @keydown.enter="submitData($dispatch)"
-          :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRIC }"
-        />
-        <span
-          class="text-xs text-red-600 dark:text-red-400"
-          x-text="errmRIC"
-          :class="{'invisible': errRIC == false}"
-        >
-        </span>
-      </label>
-      <label class="block mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400"
-          >{{ .l_c_form_phone }}</span
-        >
-        <input
-          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-          placeholder="081xxx"
-          x-model="formData.phone"
-          @keydown.enter="submitData($dispatch)"
-          :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPhone }"
-        />
-        <span
-          class="text-xs text-red-600 dark:text-red-400"
-          x-text="errmPhone"
-          :class="{'invisible': errPhone == false}"
-        >
-        </span>
-      </label>
-
-      <div class="flex flex-wrap mb-6">
-        <div class="w-full md:w-1/2 md:pr-3">
-          <label class="block mt-4 text-sm">
-            <span class="text-gray-700 dark:text-gray-400"
-              >{{ .l_c_form_firstname }}</span
-            >
-            <input
-              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-              placeholder="Rika"
-              x-model="formData.firstname"
-              @keydown.enter="submitData($dispatch)"
-              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFirstname }"
-            />
-          </label>
-        </div>
-        <div class="w-full md:w-1/2 md:pl-3">
-          <label class="block mt-4 text-sm">
-            <span class="text-gray-700 dark:text-gray-400"
-              >{{ .l_c_form_lastname }}</span
-            >
-            <input
-              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-              placeholder="Artamevia"
-              x-model="formData.lastname"
-              @keydown.enter="submitData($dispatch)"
-            />
-          </label>
-        </div>
-        <span
-          class="text-xs text-red-600 dark:text-red-400"
-          x-text="errmFirstname"
-          :class="{'invisible': errFirstname == false}"
-        >
-        </span>
-      </div>
-
-      <div class="mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400">
-          {{ .l_c_form_gender }}
-        </span>
-        <div class="mt-2">
-          <label
-            class="inline-flex items-center text-gray-600 dark:text-gray-400"
+      <div x-show="!userCreated">
+        <label class="block text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_c_form_fc }}</span
           >
-            <input
-              type="radio"
-              class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-              name="gender"
-              @click="formData.gender = 'm'"
-            />
-            <span class="ml-2">{{ .l_c_form_gender_m }}</span>
-          </label>
-          <label
-            class="inline-flex items-center ml-6 text-gray-600 dark:text-gray-400"
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            placeholder="Nomor Kartu Keluarga"
+            x-model="formData.fc"
+            @keydown.enter="submitData($dispatch)"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFC }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmFC"
+            :class="{'invisible': errFC == false}"
           >
-            <input
-              type="radio"
-              class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-              name="gender"
-              @click="formData.gender = 'f'"
-            />
-            <span class="ml-2">{{ .l_c_form_gender_f }}</span>
-          </label>
-        </div>
-        <span
-          class="text-xs text-red-600 dark:text-red-400"
-          x-text="errmGender"
-          :class="{'invisible': errGender == false}"
-        >
-        </span>
-      </div>
-
-      <label class="block mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400"
-          >{{ .l_c_form_occupation }}</span
-        >
-        <input
-          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-          placeholder="Pekerjaan yang menjadi sumber penghasilan utama"
-          x-model="formData.occupation"
-          @keydown.enter="submitData($dispatch)"
-          :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errOccupation }"
-        />
-        <span
-          class="text-xs text-red-600 dark:text-red-400"
-          x-text="errmOccupation"
-          :class="{'invisible': errOccupation == false}"
-        >
-        </span>
-      </label>
-
-      <label class="block mt-4 text-sm">
-        <span class="text-blue-700 dark:text-blue-400">
-          <a
-            href="#"
-            @click="addPassword = !addPassword"
-            x-text="addPassword ? '{{ .l_c_form_remove_password }}' : '{{ .l_c_form_add_password }}'"
-            :class="{ 'text-red-500': addPassword }"
-          ></a
-        ></span>
-      </label>
-      <div x-show="addPassword !== false">
+          </span>
+        </label>
         <label class="block mt-4 text-sm">
           <span class="text-gray-700 dark:text-gray-400"
-            >{{ .l_c_form_password }}</span
+            >{{ .l_c_form_ric }}</span
           >
           <input
             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-            placeholder="***************"
-            type="password"
-            x-model="formData.password"
+            placeholder="Nomor Induk Kependudukan"
+            x-model="formData.ric"
             @keydown.enter="submitData($dispatch)"
-            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPassword }"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRIC }"
           />
           <span
             class="text-xs text-red-600 dark:text-red-400"
-            x-text="errmPassword"
-            :class="{'invisible': errPassword == false}"
+            x-text="errmRIC"
+            :class="{'invisible': errRIC == false}"
           >
           </span>
         </label>
         <label class="block mt-4 text-sm">
-          <span class="text-gray-700 dark:text-gray-400">
-            {{ .l_c_form_repassword }}
-          </span>
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_c_form_phone }}</span
+          >
           <input
             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-            placeholder="***************"
-            type="password"
-            x-model="formData.repassword"
+            placeholder="081xxx"
+            x-model="formData.phone"
             @keydown.enter="submitData($dispatch)"
-            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRepassword }"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPhone }"
           />
           <span
             class="text-xs text-red-600 dark:text-red-400"
-            x-text="errmRepassword"
-            :class="{'invisible': errRepassword == false}"
+            x-text="errmPhone"
+            :class="{'invisible': errPhone == false}"
           >
           </span>
         </label>
-      </div>
 
-      <div>
-        <label class="block mt-4 text-sm">
-          <span class="text-gray-700 dark:text-gray-400">Foto</span>
-          <!-- file upload modal -->
-          <article
-            aria-label="File Upload Modal"
-            class="relative h-full flex flex-col"
-          >
-            <!-- scroll area -->
-            <section class="h-full overflow-auto p-8 w-full flex flex-col">
-              <header
-                class="relative h-48 border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center"
+        <div class="flex flex-wrap mb-6">
+          <div class="w-full md:w-1/2 md:pr-3">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400"
+                >{{ .l_c_form_firstname }}</span
               >
-                <input
-                  @change="if ($event.target.files[0].type.match('image.*')) { base64($event.target.files[0]); } else { $dispatch('notif', {
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Rika"
+                x-model="formData.firstname"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFirstname }"
+              />
+            </label>
+          </div>
+          <div class="w-full md:w-1/2 md:pl-3">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400"
+                >{{ .l_c_form_lastname }}</span
+              >
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Artamevia"
+                x-model="formData.lastname"
+                @keydown.enter="submitData($dispatch)"
+              />
+            </label>
+          </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmFirstname"
+            :class="{'invisible': errFirstname == false}"
+          >
+          </span>
+        </div>
+
+        <div class="mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">
+            {{ .l_c_form_gender }}
+          </span>
+          <div class="mt-2">
+            <label
+              class="inline-flex items-center text-gray-600 dark:text-gray-400"
+            >
+              <input
+                type="radio"
+                class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                name="gender"
+                @click="formData.gender = 'm'"
+              />
+              <span class="ml-2">{{ .l_c_form_gender_m }}</span>
+            </label>
+            <label
+              class="inline-flex items-center ml-6 text-gray-600 dark:text-gray-400"
+            >
+              <input
+                type="radio"
+                class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                name="gender"
+                @click="formData.gender = 'f'"
+              />
+              <span class="ml-2">{{ .l_c_form_gender_f }}</span>
+            </label>
+          </div>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmGender"
+            :class="{'invisible': errGender == false}"
+          >
+          </span>
+        </div>
+
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400"
+            >{{ .l_c_form_occupation }}</span
+          >
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            placeholder="Pekerjaan yang menjadi sumber penghasilan utama"
+            x-model="formData.occupation"
+            @keydown.enter="submitData($dispatch)"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errOccupation }"
+          />
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmOccupation"
+            :class="{'invisible': errOccupation == false}"
+          >
+          </span>
+        </label>
+
+        <label class="block mt-4 text-sm">
+          <span class="text-blue-700 dark:text-blue-400">
+            <a
+              href="#"
+              @click="addPassword = !addPassword"
+              x-text="addPassword ? '{{ .l_c_form_remove_password }}' : '{{ .l_c_form_add_password }}'"
+              :class="{ 'text-red-500': addPassword }"
+            ></a
+          ></span>
+        </label>
+        <div x-show="addPassword !== false">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400"
+              >{{ .l_c_form_password }}</span
+            >
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              placeholder="***************"
+              type="password"
+              x-model="formData.password"
+              @keydown.enter="submitData($dispatch)"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPassword }"
+            />
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmPassword"
+              :class="{'invisible': errPassword == false}"
+            >
+            </span>
+          </label>
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">
+              {{ .l_c_form_repassword }}
+            </span>
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              placeholder="***************"
+              type="password"
+              x-model="formData.repassword"
+              @keydown.enter="submitData($dispatch)"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRepassword }"
+            />
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmRepassword"
+              :class="{'invisible': errRepassword == false}"
+            >
+            </span>
+          </label>
+        </div>
+
+        <div>
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">Foto</span>
+            <!-- file upload modal -->
+            <article
+              aria-label="File Upload Modal"
+              class="relative h-full flex flex-col"
+            >
+              <!-- scroll area -->
+              <section class="h-full overflow-auto p-8 w-full flex flex-col">
+                <header
+                  class="relative h-48 border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center"
+                >
+                  <input
+                    @change="if ($event.target.files[0].type.match('image.*')) { base64($event.target.files[0]); } else { $dispatch('notif', {
                     type: 'error',
                     message: 'Harus berupa gambar .jpg, .png, etc.',
                   }); formData.photo = null; }"
-                  type="file"
-                  class="hidden"
-                />
-                <input
-                  class="hidden w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  type="text"
-                  x-model="formData.photo"
-                  @keydown.enter="submitData($dispatch)"
-                />
-                <!-- overlay -->
-                <div
-                  x-show="!formData.photo"
-                  class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center"
-                >
-                  <i>
-                    <svg
-                      class="fill-current w-12 h-12 mb-3 text-blue-700"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479-1.092l4 4h-3v4h-2v-4h-3l4-4z"
-                      />
-                    </svg>
-                  </i>
-                  <p class="text-lg text-blue-700">Upload Foto Pengguna</p>
-                </div>
-                <!-- Tampilkan preview -->
-                <div
-                  x-show="formData.photo"
-                  class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center"
-                >
-                  <div class="relative w-full h-full">
-                    <img
-                      class="object-scale-down w-full h-full"
-                      :src="formData.photo ? formData.photo_type + ',' + formData.photo : ''"
-                      alt="Photo"
-                      loading="lazy"
-                    />
-                    <div
-                      class="absolute inset-0 shadow-inner"
-                      aria-hidden="true"
-                    ></div>
+                    type="file"
+                    class="hidden"
+                  />
+                  <input
+                    class="hidden w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    type="text"
+                    x-model="formData.photo"
+                    @keydown.enter="submitData($dispatch)"
+                  />
+                  <!-- overlay -->
+                  <div
+                    x-show="!formData.photo"
+                    class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center"
+                  >
+                    <i>
+                      <svg
+                        class="fill-current w-12 h-12 mb-3 text-blue-700"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479-1.092l4 4h-3v4h-2v-4h-3l4-4z"
+                        />
+                      </svg>
+                    </i>
+                    <p class="text-lg text-blue-700">Upload Foto Pengguna</p>
                   </div>
-                </div>
-              </header>
-            </section>
-          </article>
-        </label>
+                  <!-- Tampilkan preview -->
+                  <div
+                    x-show="formData.photo"
+                    class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center"
+                  >
+                    <div class="relative w-full h-full">
+                      <img
+                        class="object-scale-down w-full h-full"
+                        :src="formData.photo ? formData.photo_type + ',' + formData.photo : ''"
+                        alt="Photo"
+                        loading="lazy"
+                      />
+                      <div
+                        class="absolute inset-0 shadow-inner"
+                        aria-hidden="true"
+                      ></div>
+                    </div>
+                  </div>
+                </header>
+              </section>
+            </article>
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+          @click="submitData($dispatch)"
+          :disabled="loading == true"
+          x-text="loadingText"
+          :class="{'cursor-not-allowed opacity-50': loading == true }"
+        >
+          {{ .l_c_form_create }}
+        </button>
       </div>
 
-      <button
-        type="submit"
-        class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-        @click="submitData($dispatch)"
-        :disabled="loading == true"
-        x-text="loadingText"
-        :class="{'cursor-not-allowed opacity-50': loading == true }"
-      >
-        {{ .l_c_form_create }}
-      </button>
+      <div x-show="userCreated">
+        <!-- Photo pengguna -->
+        <div
+          class="w-full h-48 flex flex-col justify-center items-center"
+          x-show="typeof user.Avatar !== 'undefined'"
+        >
+          <div class="w-full relative">
+            <div class="h-48 w-full flex items-center rounded-lg">
+              <div class="relative w-full h-full">
+                <img
+                  class="object-scale-down w-full h-full"
+                  :src="'/file/profile/'+user.Avatar"
+                  alt=""
+                  loading="lazy"
+                />
+                <div
+                  class="absolute inset-0 shadow-inner"
+                  aria-hidden="true"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">ID Unik</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nomor Kartu Keluarga
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.FamilyCardNumber != ''"
+              x-text="user.FamilyCardNumber"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.FamilyCardNumber == ''"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nomor Induk Kependudukan
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.RIC != ''"
+              x-text="user.RIC"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.RIC == ''"
+            >
+              -
+            </dd>
+          </div>
+        </dl>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Informasi Pengguna</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nama Lengkap
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.Firstname + ' ' + user.Lastname"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Jenis Kelamin
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Gender == 'm'"
+            >
+              Laki-Laki
+            </dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Gender == 'f'"
+            >
+              Perempuan
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Pekerjaan
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Occupation != ''"
+              x-text="user.Occupation"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Occupation == ''"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Saldo</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.Balance"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Peran</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.Role"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Terdaftar Pada
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.CreatedAt"
+            ></dd>
+          </div>
+        </dl>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Informasi Kontak</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Email</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="emails.length > 0"
+            >
+              <template x-for="(email, index) in emails" :key="index">
+                <p x-text="email.Email"></p>
+              </template>
+            </dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="emails.length == 0"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nomor Telepon
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="phones.length > 0"
+            >
+              <template x-for="(phone, index) in phones" :key="index">
+                <p x-text="phone.Phone"></p>
+              </template>
+            </dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="phones.length == 0"
+            >
+              -
+            </dd>
+          </div>
+        </dl>
+
+        <table class="w-full whitespace-no-wrap table-auto">
+          <thead>
+            <tr
+              class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+            >
+              <th class="px-3 py-3">Informasi Alamat</th>
+              <th class="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
+            <template x-for="(address, index) in addresses" :key="index">
+              <tr class="text-gray-600 dark:text-gray-400">
+                <td class="px-4 py-1 align-top">
+                  <div class="flex items-center text-sm">
+                    <div>
+                      <p class="font-semibold" x-text="address.name"></p>
+                      <p
+                        class="text-xs text-gray-500 dark:text-gray-400"
+                        x-text="address.description"
+                      ></p>
+                    </div>
+                  </div>
+                </td>
+                <td
+                  class="px-4 py-1 text-sm whitespace-normal break-words align-top"
+                  x-text="address.one + address.two + ', ' + address.VillageName + ', ' + address.DistrictName + ', ' + address.CityName + ', ' + address.ProvinceName + ', ' +address.zip"
+                ></td></tr
+            ></template>
+            <tr
+              class="text-gray-700 dark:text-gray-400"
+              x-show="addresses.length == 0"
+            >
+              <td class="px-4 py-1 text-sm align-top">-</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <label class="block mt-4 text-sm">
+          <span class="text-blue-700 dark:text-blue-400">
+            <a
+              href="#"
+              @click="resetUserForm()"
+              class="text-red-500"
+            >Reset</a
+          ></span>
+        </label>
+      </div>
     </div>
 
     <script>
@@ -309,6 +543,13 @@
           },
           loadingText: "{{ .l_c_form_create }}",
           loading: false,
+          userCreated: false,
+          addPassword: false,
+          notifStatus: "",
+          user: [],
+          emails: [],
+          phones: [],
+          addresses: [],
           errFC: false,
           errmFC: "",
           errRIC: false,
@@ -325,8 +566,6 @@
           errmPassword: "",
           errRepassword: false,
           errmRepassword: "",
-          notifStatus: "",
-          addPassword: false,
 
           submitData($dispatch) {
             this.loadingText = "Loading . . .";
@@ -404,6 +643,22 @@
                 }
                 if (data.status == "success") {
                   this.notifStatus = "success";
+                  this.userCreated = true;
+                  this.user = data.user;
+                  if (data.user.Emails) {
+                    this.emails = data.user.Emails;
+                  }
+                  if (data.user.Phones) {
+                    this.phones = data.user.Phones;
+                  }
+                  if (data.user.Addresses) {
+                    this.addresses = data.user.Addresses;
+                  }
+                  document.getElementById("address").__x.$data.uid =
+                    data.user.ID;
+                  document.getElementById(
+                    "address"
+                  ).__x.$data.addAddressDisable = false;
                 }
 
                 if (data.message) {
@@ -429,6 +684,17 @@
             };
             reader.readAsDataURL(file);
           },
+          resetUserForm() {
+            this.userCreated = false;
+            this.user = [];
+            this.emails = [];
+            this.phones = [];
+            this.addresses = [];
+            document.getElementById("address").__x.$data.uid = null;
+            document.getElementById(
+              "address"
+            ).__x.$data.addAddressDisable = true;
+          },
         };
       }
     </script>
@@ -439,7 +705,7 @@
     <h3 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
       {{ .l_account_user_address }}
     </h3>
-    <div x-data="addAddressDetail()" x-init="initPlaces($watch)">
+    <div x-data="addAddressDetail()" x-init="initPlaces($watch)" id="address">
       <div x-show="addresses.length > 0">
         <template x-for="(address, index) in addresses" :key="index">
           <dl>
@@ -554,10 +820,13 @@
       <!-- Tambah address -->
       <label class="block mt-4 text-sm">
         <span class="text-blue-700 dark:text-blue-400">
-          <a href="#" @click="addAddressOpen = !addAddressOpen"
-            >{{ .l_u_address_add }}</a
-          ></span
-        >
+          <a
+            href="#"
+            @click="addAddressOpen = !addAddressOpen"
+            x-text="addAddressOpen ? '{{ .l_u_address_remove }}' : '{{ .l_u_address_add }}'"
+            :class="{ 'text-red-500': addAddressOpen }"
+          ></a
+        ></span>
       </label>
       <div x-show="addAddressOpen">
         <!-- Nama panggilan alamat -->
@@ -785,6 +1054,7 @@
     <script>
       function addAddressDetail() {
         return {
+          uid: null,
           showSelected: null,
           addAddressOpen: false,
           errAddressName: false,
@@ -810,7 +1080,7 @@
           },
           deleteAddress($dispatch, pid) {
             this.deleteAddressData.id = pid;
-            fetch("/api/v1/local/user/edit/{{ .user.ID }}/delete/address", {
+            fetch(`/api/v1/local/user/edit/${this.uid}/delete/address`, {
               method: "DELETE",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.deleteAddressData),
@@ -839,13 +1109,17 @@
             district: '',
             village: '',
           },
-          addAddressDisable: false,
+          addAddressDisable: true,
           addAddressBtn: {{ .l_u_address_add_btn }},
-          addresses: {{ if not .addresses }} [] {{ else }} {{ .addresses }} {{ end }},
+          addresses: [],
           addAddress($dispatch) {
+            if (this.addAddressDisable) {
+              $dispatch('notif', {type: 'error', message: "Silahkan buat user terlebih dahulu"});
+              return;
+            }
             this.addAddressBtn = "Loading. . .";
             this.addAddressDisable = true;
-            fetch("/api/v1/local/user/edit/{{ .user.ID }}/add/address", {
+            fetch(`/api/v1/local/user/edit/${this.uid}/add/address`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(this.addAddressData),

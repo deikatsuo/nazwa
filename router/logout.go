@@ -21,6 +21,7 @@ func PageLogout(c *gin.Context) {
 
 	// Menghapus session
 	session.Delete("userid")
+	session.Delete("role")
 	if err := session.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Gagal menghapus session",
