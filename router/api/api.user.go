@@ -172,14 +172,16 @@ func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 			next = false
 		}
 
-		// Periksa jika id peng request tidak sama dengan
-		// id yang tersimpan di session
-		if next {
-			if nowID != uid {
-				errMess = "User tidak memiliki ijin untuk mengubah data akun ini"
-				next = false
+		/*
+			// Periksa jika id peng request tidak sama dengan
+			// id yang tersimpan di session
+			if next {
+				if nowID != uid {
+					errMess = "User tidak memiliki ijin untuk mengubah data akun ini"
+					next = false
+				}
 			}
-		}
+		*/
 
 		// Check ketersediaan username
 		if next {
@@ -191,7 +193,7 @@ func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 
 		// Update username
 		if next {
-			if err := dbquery.UpdateUsername(db, nowID.(int), update.Username); err != nil {
+			if err := dbquery.UpdateUsername(db, uid, update.Username); err != nil {
 				errMess = "Gagal mengubah username"
 				next = false
 			}
@@ -200,7 +202,7 @@ func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 		// Cocokan password lama
 		if next {
 			if update.Password != "" {
-				if !dbquery.MatchPassword(db, nowID.(int), update.Oldpassword) {
+				if !dbquery.MatchPassword(db, uid, update.Oldpassword) {
 					errMess = "Kata sandi lama salah"
 					next = false
 				}
@@ -210,7 +212,7 @@ func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 		// Update password
 		if next {
 			if update.Password != "" {
-				if err := dbquery.UpdatePassword(db, nowID.(int), update.Password); err != nil {
+				if err := dbquery.UpdatePassword(db, uid, update.Password); err != nil {
 					errMess = "Gagal merubah kata sandi"
 					next = false
 				}
@@ -265,27 +267,18 @@ func UserDeletePhone(db *sqlx.DB) gin.HandlerFunc {
 			errMess = "Request tidak valid"
 		}
 
-		// Periksa jika id peng request tidak sama dengan
-		// id yang tersimpan di session
-		if next {
-			if nowID.(int) != uid {
-				errMess = "User tidak memiliki ijin untuk menghapus nomor ini"
-				next = false
-			}
-		}
-
 		// Delete nomor HP
 		if next {
-			if err := dbquery.DeletePhone(db, id, nowID.(int)); err != nil {
+			if err := dbquery.DeletePhone(db, id, uid); err != nil {
 				errMess = "Gagal menghapus nomor HP"
 				next = false
 			}
 		}
 
-		// Ambil email sisa jika masih ada
+		// Ambil nomor sisa jika masih ada
 		var phones []wrapper.UserPhone
 		if next {
-			ph, err := dbquery.GetPhone(db, nowID.(int))
+			ph, err := dbquery.GetPhone(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat nomor HP/semua nomor sudah dihapus"
 			} else {
@@ -332,18 +325,9 @@ func UserDeleteEmail(db *sqlx.DB) gin.HandlerFunc {
 			errMess = "Request tidak valid"
 		}
 
-		// Periksa jika id peng request tidak sama dengan
-		// id yang tersimpan di session
-		if next {
-			if nowID.(int) != uid {
-				errMess = "User tidak memiliki ijin untuk menghapus email ini"
-				next = false
-			}
-		}
-
 		// Delete email
 		if next {
-			if err := dbquery.DeleteEmail(db, id, nowID.(int)); err != nil {
+			if err := dbquery.DeleteEmail(db, id, uid); err != nil {
 				errMess = "Gagal menghapus email"
 				next = false
 			}
@@ -352,7 +336,7 @@ func UserDeleteEmail(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil email sisa jika masih ada
 		var emails []wrapper.UserEmail
 		if next {
-			em, err := dbquery.GetEmail(db, nowID.(int))
+			em, err := dbquery.GetEmail(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat email/semua email sudah dihapus"
 			} else {
@@ -399,18 +383,9 @@ func UserDeleteAddress(db *sqlx.DB) gin.HandlerFunc {
 			errMess = "Request tidak valid"
 		}
 
-		// Periksa jika id peng request tidak sama dengan
-		// id yang tersimpan di session
-		if next {
-			if nowID.(int) != uid {
-				errMess = "User tidak memiliki ijin untuk menghapus alamat ini"
-				next = false
-			}
-		}
-
 		// Hapus alamat
 		if next {
-			if err := dbquery.DeleteAddress(db, id, nowID.(int)); err != nil {
+			if err := dbquery.DeleteAddress(db, id, uid); err != nil {
 				errMess = "Gagal menghapus alamat"
 				next = false
 			}
@@ -419,7 +394,7 @@ func UserDeleteAddress(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil alamat sisa jika masih ada
 		var addresses []wrapper.UserAddress
 		if next {
-			em, err := dbquery.GetAddress(db, nowID.(int))
+			em, err := dbquery.GetAddress(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat alamat/semua alamat sudah dihapus"
 			} else {
@@ -470,15 +445,6 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 			next = false
 		}
 
-		// Periksa jika id peng request tidak sama dengan
-		// id yang tersimpan di session
-		if next {
-			if nowID.(int) != uid {
-				errMess = "User tidak memiliki ijin untuk menambahkan email ke akun ini"
-				next = false
-			}
-		}
-
 		// Periksa jika email sudah digunakan
 		if next {
 			if dbquery.EmailExist(db, newEmail.Email) {
@@ -489,7 +455,7 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 
 		// Tambah email
 		if next {
-			if err := dbquery.AddEmail(db, newEmail.Email, nowID.(int)); err != nil {
+			if err := dbquery.AddEmail(db, newEmail.Email, uid); err != nil {
 				errMess = "Gagal menambahkan email"
 				next = false
 			}
@@ -498,7 +464,7 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil email sisa jika masih ada
 		var emails []wrapper.UserEmail
 		if next {
-			em, err := dbquery.GetEmail(db, nowID.(int))
+			em, err := dbquery.GetEmail(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat email/semua email sudah dihapus"
 			} else {
@@ -545,15 +511,6 @@ func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 			next = false
 		}
 
-		// Periksa jika id peng request tidak sama dengan
-		// id yang tersimpan di session
-		if next {
-			if nowID.(int) != uid {
-				errMess = "User tidak memiliki ijin untuk menambahkan nomor HP ke akun ini"
-				next = false
-			}
-		}
-
 		// Periksa jika nomor sudah digunakan
 		if next {
 			if dbquery.PhoneExist(db, newPhone.Phone) {
@@ -564,7 +521,7 @@ func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 
 		// Tambahkan nomor HP
 		if next {
-			if err := dbquery.AddPhone(db, newPhone.Phone, nowID.(int)); err != nil {
+			if err := dbquery.AddPhone(db, newPhone.Phone, uid); err != nil {
 				errMess = "Gagal menambahkan nomor HP"
 				next = false
 			}
@@ -573,7 +530,7 @@ func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil nomor HP dari database
 		var phones []wrapper.UserPhone
 		if next {
-			ph, err := dbquery.GetPhone(db, nowID.(int))
+			ph, err := dbquery.GetPhone(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat nomor HP"
 			} else {
@@ -616,17 +573,8 @@ func UserAddAddress(db *sqlx.DB) gin.HandlerFunc {
 			next = false
 		}
 
-		// Periksa jika id peng request tidak sama dengan
-		// id yang tersimpan di session
-		if next {
-			if nowID.(int) != uid {
-				errMess = "User tidak memiliki ijin untuk menambahkan alamat ke akun ini"
-				next = false
-			}
-		}
-
 		// Tambahkan alamat
-		newAddress.UserID = nowID.(int)
+		newAddress.UserID = uid
 		if next {
 			if err := dbquery.AddAddress(db, newAddress); err != nil {
 				errMess = "Gagal menambahkan alamat"
@@ -637,7 +585,7 @@ func UserAddAddress(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil data alamat dari database
 		var addresses []wrapper.UserAddress
 		if next {
-			ph, err := dbquery.GetAddress(db, nowID.(int))
+			ph, err := dbquery.GetAddress(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat alamat"
 			} else {
