@@ -90,7 +90,7 @@ type UserAddress struct {
 type NullableProduct struct {
 	ID        int            `db:"id"`
 	Name      string         `db:"name"`
-	Code      sql.NullString `db:"code"`
+	Code      string         `db:"code"`
 	BasePrice []uint8        `db:"base_price"`
 	Price     []uint8        `db:"price"`
 	Type      sql.NullString `db:"type"`

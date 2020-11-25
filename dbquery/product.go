@@ -83,7 +83,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 			CreatedAt: p.CreatedAt,
 			BasePrice: string(p.BasePrice),
 			Price:     string(p.Price),
-			Code:      string(p.Code.String),
+			Code:      p.Code,
 		})
 	}
 
@@ -137,9 +137,9 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 		CreatedAt: p.CreatedAt,
 		BasePrice: string(p.BasePrice),
 		Price:     string(p.Price),
-		Code:      string(p.Code.String),
-		Type:      p.Type.String,
-		Brand:     p.Brand.String,
+		Code:      p.Code,
+		Type:      strings.Title(p.Type.String),
+		Brand:     strings.Title(p.Brand.String),
 		Photos:    photos,
 	}
 
