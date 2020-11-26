@@ -118,12 +118,20 @@
                   class="relative h-48 border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center"
                 >
                   <input
-                    @change="if ($event.target.files[0].type.match('image.*')) { base64($event.target.files[0]); } else { $dispatch('notif', {
-                    type: 'error',
-                    message: 'Harus berupa gambar .jpg, .png, etc.',
-                  }); formData.photo = null; }"
+                    @change="
+                    for (const file of $event.target.files) {
+                      if ($event.target.files[0].type.match('image.*')) {
+                        base64(file);
+                      } else {
+                        $dispatch('notif', {
+                          type: 'error',
+                          message: 'Harus berupa gambar .jpg, .png, etc.',
+                        });
+                      }
+                    }"
                     type="file"
                     class="hidden"
+                    multiple
                   />
                   <input
                     class="hidden w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
@@ -133,7 +141,6 @@
                   />
                   <!-- overlay -->
                   <div
-                    x-show="!formData.photo"
                     class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center"
                   >
                     <i>
@@ -169,6 +176,68 @@
                     </div>
                   </div>
                 </header>
+
+                <!-- Preview foto -->
+                <ul id="gallery" class="flex flex-1 flex-wrap -m-1">
+                  <template x-for="(photo, index) in formData.photos" :key="index">
+                    <li
+                      class="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24"
+                    >
+                      <article
+                        tabindex="0"
+                        class="group hasImage w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative text-transparent hover:text-white shadow-sm"
+                      >
+                        <img
+                          alt="upload preview"
+                          class="img-preview w-full h-full sticky object-cover rounded-md bg-fixed"
+                          :src="photo.photo_type + ',' + photo.photo"
+                        />
+
+                        <section
+                          class="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3"
+                        >
+                          <h1 class="flex-1"></h1>
+                          <div class="flex">
+                            <span class="p-1">
+                              <i>
+                                <svg
+                                  class="fill-current w-4 h-4 ml-auto pt-"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    d="M5 8.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5zm9 .5l-2.519 4-2.481-1.96-4 5.96h14l-5-8zm8-4v14h-20v-14h20zm2-2h-24v18h24v-18z"
+                                  />
+                                </svg>
+                              </i>
+                            </span>
+
+                            <p class="p-1 size text-xs"></p>
+                            <button
+                              class="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md"
+                              @click="delPhoto(index)"
+                            >
+                              <svg
+                                class="pointer-events-none fill-current w-4 h-4 ml-auto"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  class="pointer-events-none"
+                                  d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </section>
+                      </article>
+                    </li>
+                  </template>
+                </ul>
               </section>
             </article>
           </label>
@@ -180,200 +249,202 @@
           :disabled="loading == true"
           x-text="loadingText"
           :class="{'cursor-not-allowed opacity-50': loading == true }"
-        >
-        </button>
+        ></button>
       </div>
-    </div>
 
-    <div x-show="userCreated">
-      <!-- Photo pengguna -->
-      <div
-        class="w-full h-48 flex flex-col justify-center items-center"
-        x-show="typeof user.Avatar !== 'undefined'"
-      >
-        <div class="w-full relative">
-          <div class="h-48 w-full flex items-center rounded-lg">
-            <div class="relative w-full h-full">
-              <img
-                class="object-scale-down w-full h-full"
-                :src="'/file/profile/'+user.Avatar"
-                alt=""
-                loading="lazy"
-              />
-              <div
-                class="absolute inset-0 shadow-inner"
-                aria-hidden="true"
-              ></div>
+      <!--
+      <div x-show="!productCreated">
+        <div
+          class="w-full h-48 flex flex-col justify-center items-center"
+          x-show="typeof user.Avatar !== 'undefined'"
+        >
+          <div class="w-full relative">
+            <div class="h-48 w-full flex items-center rounded-lg">
+              <div class="relative w-full h-full">
+                <img
+                  class="object-scale-down w-full h-full"
+                  :src="'/file/profile/'+user.Avatar"
+                  alt=""
+                  loading="lazy"
+                />
+                <div
+                  class="absolute inset-0 shadow-inner"
+                  aria-hidden="true"
+                ></div>
+              </div>
             </div>
           </div>
         </div>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">ID Unik</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nomor Kartu Keluarga
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.FamilyCardNumber != ''"
+              x-text="user.FamilyCardNumber"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.FamilyCardNumber == ''"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nomor Induk Kependudukan
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.RIC != ''"
+              x-text="user.RIC"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.RIC == ''"
+            >
+              -
+            </dd>
+          </div>
+        </dl>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Informasi Pengguna</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nama Lengkap
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.Firstname + ' ' + user.Lastname"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Jenis Kelamin
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Gender == 'm'"
+            >
+              Laki-Laki
+            </dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Gender == 'f'"
+            >
+              Perempuan
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Pekerjaan
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Occupation != ''"
+              x-text="user.Occupation"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="user.Occupation == ''"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Saldo</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.Balance"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Peran</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.Role"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Terdaftar Pada
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="user.CreatedAt"
+            ></dd>
+          </div>
+        </dl>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Informasi Kontak</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Email</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="emails.length > 0"
+            >
+              <template x-for="(email, index) in emails" :key="index">
+                <p x-text="email.Email"></p>
+              </template>
+            </dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="emails.length == 0"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nomor Telepon
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="phones.length > 0"
+            >
+              <template x-for="(phone, index) in phones" :key="index">
+                <p x-text="phone.Phone"></p>
+              </template>
+            </dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="phones.length == 0"
+            >
+              -
+            </dd>
+          </div>
+        </dl>
+
+        <label class="block mt-4 text-sm">
+          <span class="text-blue-700 dark:text-blue-400">
+            <a href="#" @click="resetUserForm()" class="text-red-500"
+              >Reset</a
+            ></span
+          >
+        </label>
       </div>
-
-      <dl class="w-full whitespace-no-wrap">
-        <div
-          class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-        >
-          <dt class="px-3 py-3">ID Unik</dt>
-          <dd class="px-4 sm:px-0"></dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">
-            Nomor Kartu Keluarga
-          </dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="user.FamilyCardNumber != ''"
-            x-text="user.FamilyCardNumber"
-          ></dd>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="user.FamilyCardNumber == ''"
-          >
-            -
-          </dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">
-            Nomor Induk Kependudukan
-          </dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="user.RIC != ''"
-            x-text="user.RIC"
-          ></dd>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="user.RIC == ''"
-          >
-            -
-          </dd>
-        </div>
-      </dl>
-
-      <dl class="w-full whitespace-no-wrap">
-        <div
-          class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-        >
-          <dt class="px-3 py-3">Informasi Pengguna</dt>
-          <dd class="px-4 sm:px-0"></dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">
-            Nama Lengkap
-          </dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-text="user.Firstname + ' ' + user.Lastname"
-          ></dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">
-            Jenis Kelamin
-          </dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="user.Gender == 'm'"
-          >
-            Laki-Laki
-          </dd>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="user.Gender == 'f'"
-          >
-            Perempuan
-          </dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">Pekerjaan</dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="user.Occupation != ''"
-            x-text="user.Occupation"
-          ></dd>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="user.Occupation == ''"
-          >
-            -
-          </dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">Saldo</dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-text="user.Balance"
-          ></dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">Peran</dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-text="user.Role"
-          ></dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">
-            Terdaftar Pada
-          </dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-text="user.CreatedAt"
-          ></dd>
-        </div>
-      </dl>
-
-      <dl class="w-full whitespace-no-wrap">
-        <div
-          class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-        >
-          <dt class="px-3 py-3">Informasi Kontak</dt>
-          <dd class="px-4 sm:px-0"></dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">Email</dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="emails.length > 0"
-          >
-            <template x-for="(email, index) in emails" :key="index">
-              <p x-text="email.Email"></p>
-            </template>
-          </dd>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="emails.length == 0"
-          >
-            -
-          </dd>
-        </div>
-        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-          <dt class="text-sm leading-5 font-medium text-gray-500">
-            Nomor Telepon
-          </dt>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="phones.length > 0"
-          >
-            <template x-for="(phone, index) in phones" :key="index">
-              <p x-text="phone.Phone"></p>
-            </template>
-          </dd>
-          <dd
-            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-            x-show="phones.length == 0"
-          >
-            -
-          </dd>
-        </div>
-      </dl>
-
-      <label class="block mt-4 text-sm">
-        <span class="text-blue-700 dark:text-blue-400">
-          <a href="#" @click="resetUserForm()" class="text-red-500"
-            >Reset</a
-          ></span
-        >
-      </label>
+      -->
     </div>
   </div>
 
@@ -386,11 +457,9 @@
           type: "",
           base_price: "",
           price: "",
-          photo: "",
-          photo_type: "",
+          photos: [],
         },
         productCreated: false,
-
         loadingText: "Tambahkan Produk",
         loading: false,
         notifStatus: "",
@@ -462,18 +531,8 @@
               }
               if (data.status == "success") {
                 this.notifStatus = "success";
-                this.userCreated = true;
-                this.user = data.user;
-                if (data.user.Emails) {
-                  this.emails = data.user.Emails;
-                }
-                if (data.user.Phones) {
-                  this.phones = data.user.Phones;
-                }
-                document.getElementById("address").__x.$data.uid = data.user.ID;
-                document.getElementById(
-                  "address"
-                ).__x.$data.addAddressDisable = false;
+                this.productCreated = true;
+                this.product = data.product;
               }
 
               if (data.message) {
@@ -492,46 +551,28 @@
           var reader = new FileReader();
           reader.onloadend = function () {
             var bsplit = reader.result.split(",");
-            document.getElementById("create").__x.$data.formData.photo_type =
-              bsplit[0];
-            document.getElementById("create").__x.$data.formData.photo =
-              bsplit[1];
+            document.getElementById("create").__x.$data.formData.photos.push({
+              photo_type: bsplit[0],
+              photo: bsplit[1],
+            });
           };
           reader.readAsDataURL(file);
         },
+        delPhoto(id) {
+          this.formData.photos.splice(id, 1);
+        },
         resetUserForm() {
           this.userCreated = false;
-          this.user = [];
-          this.emails = [];
-          this.phones = [];
+          this.product = [];
           this.formData = {
-            fc: "",
-            ric: "",
-            phone: "",
-            firstname: "",
-            lastname: "",
-            gender: "",
-            occupation: "",
-            password: "",
-            repassword: "",
+            name: "",
+            brand: "",
+            type: "",
+            base_price: "",
+            price: "",
             photo: "",
             photo_type: "",
           };
-          document.getElementById("address").__x.$data.uid = null;
-          document.getElementById("address").__x.$data.addAddressDisable = true;
-          document.getElementById("address").__x.$data.addresses = [];
-          document.getElementById("address").__x.$data.addAddressData = {
-            name: "",
-            description: "",
-            one: "",
-            two: "",
-            zip: "",
-            province: "",
-            city: "",
-            district: "",
-            village: "",
-          };
-          document.getElementById("address").__x.$data.addAddressOpen = false;
         },
       };
     }
