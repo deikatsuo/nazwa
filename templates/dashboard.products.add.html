@@ -160,7 +160,6 @@
                       <img
                         class="object-scale-down w-full h-full"
                         :src="formData.photo ? formData.photo_type + ',' + formData.photo : ''"
-                        alt="Photo"
                         loading="lazy"
                       />
                       <div
@@ -182,209 +181,330 @@
           x-text="loadingText"
           :class="{'cursor-not-allowed opacity-50': loading == true }"
         >
-          Tambahkan Produk
         </button>
-      </div>
-      </div>
-
-      <div x-show="userCreated">
-        <!-- Photo pengguna -->
-        <div
-          class="w-full h-48 flex flex-col justify-center items-center"
-          x-show="typeof user.Avatar !== 'undefined'"
-        >
-          <div class="w-full relative">
-            <div class="h-48 w-full flex items-center rounded-lg">
-              <div class="relative w-full h-full">
-                <img
-                  class="object-scale-down w-full h-full"
-                  :src="'/file/profile/'+user.Avatar"
-                  alt=""
-                  loading="lazy"
-                />
-                <div
-                  class="absolute inset-0 shadow-inner"
-                  aria-hidden="true"
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <dl class="w-full whitespace-no-wrap">
-          <div
-            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-          >
-            <dt class="px-3 py-3">ID Unik</dt>
-            <dd class="px-4 sm:px-0"></dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Nomor Kartu Keluarga
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.FamilyCardNumber != ''"
-              x-text="user.FamilyCardNumber"
-            ></dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.FamilyCardNumber == ''"
-            >
-              -
-            </dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Nomor Induk Kependudukan
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.RIC != ''"
-              x-text="user.RIC"
-            ></dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.RIC == ''"
-            >
-              -
-            </dd>
-          </div>
-        </dl>
-
-        <dl class="w-full whitespace-no-wrap">
-          <div
-            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-          >
-            <dt class="px-3 py-3">Informasi Pengguna</dt>
-            <dd class="px-4 sm:px-0"></dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Nama Lengkap
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-text="user.Firstname + ' ' + user.Lastname"
-            ></dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Jenis Kelamin
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.Gender == 'm'"
-            >
-              Laki-Laki
-            </dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.Gender == 'f'"
-            >
-              Perempuan
-            </dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Pekerjaan
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.Occupation != ''"
-              x-text="user.Occupation"
-            ></dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.Occupation == ''"
-            >
-              -
-            </dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">Saldo</dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-text="user.Balance"
-            ></dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">Peran</dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-text="user.Role"
-            ></dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Terdaftar Pada
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-text="user.CreatedAt"
-            ></dd>
-          </div>
-        </dl>
-
-        <dl class="w-full whitespace-no-wrap">
-          <div
-            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-          >
-            <dt class="px-3 py-3">Informasi Kontak</dt>
-            <dd class="px-4 sm:px-0"></dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">Email</dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="emails.length > 0"
-            >
-              <template x-for="(email, index) in emails" :key="index">
-                <p x-text="email.Email"></p>
-              </template>
-            </dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="emails.length == 0"
-            >
-              -
-            </dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Nomor Telepon
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="phones.length > 0"
-            >
-              <template x-for="(phone, index) in phones" :key="index">
-                <p x-text="phone.Phone"></p>
-              </template>
-            </dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="phones.length == 0"
-            >
-              -
-            </dd>
-          </div>
-        </dl>
-
-        <label class="block mt-4 text-sm">
-          <span class="text-blue-700 dark:text-blue-400">
-            <a href="#" @click="resetUserForm()" class="text-red-500"
-              >Reset</a
-            ></span
-          >
-        </label>
       </div>
     </div>
 
-    <script>
-      function create() {
-        return {
-          formData: {
+    <div x-show="userCreated">
+      <!-- Photo pengguna -->
+      <div
+        class="w-full h-48 flex flex-col justify-center items-center"
+        x-show="typeof user.Avatar !== 'undefined'"
+      >
+        <div class="w-full relative">
+          <div class="h-48 w-full flex items-center rounded-lg">
+            <div class="relative w-full h-full">
+              <img
+                class="object-scale-down w-full h-full"
+                :src="'/file/profile/'+user.Avatar"
+                alt=""
+                loading="lazy"
+              />
+              <div
+                class="absolute inset-0 shadow-inner"
+                aria-hidden="true"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <dl class="w-full whitespace-no-wrap">
+        <div
+          class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        >
+          <dt class="px-3 py-3">ID Unik</dt>
+          <dd class="px-4 sm:px-0"></dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">
+            Nomor Kartu Keluarga
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="user.FamilyCardNumber != ''"
+            x-text="user.FamilyCardNumber"
+          ></dd>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="user.FamilyCardNumber == ''"
+          >
+            -
+          </dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">
+            Nomor Induk Kependudukan
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="user.RIC != ''"
+            x-text="user.RIC"
+          ></dd>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="user.RIC == ''"
+          >
+            -
+          </dd>
+        </div>
+      </dl>
+
+      <dl class="w-full whitespace-no-wrap">
+        <div
+          class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        >
+          <dt class="px-3 py-3">Informasi Pengguna</dt>
+          <dd class="px-4 sm:px-0"></dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">
+            Nama Lengkap
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-text="user.Firstname + ' ' + user.Lastname"
+          ></dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">
+            Jenis Kelamin
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="user.Gender == 'm'"
+          >
+            Laki-Laki
+          </dd>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="user.Gender == 'f'"
+          >
+            Perempuan
+          </dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">Pekerjaan</dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="user.Occupation != ''"
+            x-text="user.Occupation"
+          ></dd>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="user.Occupation == ''"
+          >
+            -
+          </dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">Saldo</dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-text="user.Balance"
+          ></dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">Peran</dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-text="user.Role"
+          ></dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">
+            Terdaftar Pada
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-text="user.CreatedAt"
+          ></dd>
+        </div>
+      </dl>
+
+      <dl class="w-full whitespace-no-wrap">
+        <div
+          class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        >
+          <dt class="px-3 py-3">Informasi Kontak</dt>
+          <dd class="px-4 sm:px-0"></dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">Email</dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="emails.length > 0"
+          >
+            <template x-for="(email, index) in emails" :key="index">
+              <p x-text="email.Email"></p>
+            </template>
+          </dd>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="emails.length == 0"
+          >
+            -
+          </dd>
+        </div>
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500">
+            Nomor Telepon
+          </dt>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="phones.length > 0"
+          >
+            <template x-for="(phone, index) in phones" :key="index">
+              <p x-text="phone.Phone"></p>
+            </template>
+          </dd>
+          <dd
+            class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+            x-show="phones.length == 0"
+          >
+            -
+          </dd>
+        </div>
+      </dl>
+
+      <label class="block mt-4 text-sm">
+        <span class="text-blue-700 dark:text-blue-400">
+          <a href="#" @click="resetUserForm()" class="text-red-500"
+            >Reset</a
+          ></span
+        >
+      </label>
+    </div>
+  </div>
+
+  <script>
+    function create() {
+      return {
+        formData: {
+          name: "",
+          brand: "",
+          type: "",
+          base_price: "",
+          price: "",
+          photo: "",
+          photo_type: "",
+        },
+        productCreated: false,
+
+        loadingText: "Tambahkan Produk",
+        loading: false,
+        notifStatus: "",
+        errName: false,
+        errmName: "",
+        errBrand: false,
+        errmBrand: "",
+        errType: false,
+        errmType: "",
+        errBasePrice: false,
+        errmBasePrice: "",
+        errPrice: false,
+        errmPrice: "",
+
+        submitData($dispatch) {
+          this.loadingText = "Loading...";
+          this.loading = true;
+
+          fetch("/api/v1/local/user/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(this.formData),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              this.loadingText = "Tambahkan Produk";
+              this.loading = false;
+              if (data.name) {
+                this.errName = true;
+                this.errmName = data.name;
+              } else {
+                this.errName = false;
+                this.errmName = "";
+              }
+              if (data.brand) {
+                this.errBrand = true;
+                this.errmBrand = data.brand;
+              } else {
+                this.errBrand = false;
+                this.errmBrand = "";
+              }
+              if (data.type) {
+                this.errType = true;
+                this.errmType = data.Type;
+              } else {
+                this.errType = false;
+                this.errmType = "";
+              }
+              if (data.base_price) {
+                this.errBasePrice = true;
+                this.errmBasePrice = data.base_price;
+              } else {
+                this.errBasePrice = false;
+                this.errmBasePrice = "";
+              }
+              if (data.price) {
+                this.errPrice = true;
+                this.errmPrice = data.price;
+              } else {
+                this.errPrice = false;
+                this.errmPrice = "";
+              }
+
+              if (data.status == "error") {
+                this.notifStatus = "error";
+              }
+              if (data.status == "fail") {
+                this.notifStatus = "fail";
+              }
+              if (data.status == "success") {
+                this.notifStatus = "success";
+                this.userCreated = true;
+                this.user = data.user;
+                if (data.user.Emails) {
+                  this.emails = data.user.Emails;
+                }
+                if (data.user.Phones) {
+                  this.phones = data.user.Phones;
+                }
+                document.getElementById("address").__x.$data.uid = data.user.ID;
+                document.getElementById(
+                  "address"
+                ).__x.$data.addAddressDisable = false;
+              }
+
+              if (data.message) {
+                $dispatch("notif", {
+                  type: this.notifStatus,
+                  message: data.message,
+                });
+              }
+            })
+            .catch(() => {
+              this.loading = false;
+              console.log("Telah terjadi kesalahan");
+            });
+        },
+        base64(file) {
+          var reader = new FileReader();
+          reader.onloadend = function () {
+            var bsplit = reader.result.split(",");
+            document.getElementById("create").__x.$data.formData.photo_type =
+              bsplit[0];
+            document.getElementById("create").__x.$data.formData.photo =
+              bsplit[1];
+          };
+          reader.readAsDataURL(file);
+        },
+        resetUserForm() {
+          this.userCreated = false;
+          this.user = [];
+          this.emails = [];
+          this.phones = [];
+          this.formData = {
             fc: "",
             ric: "",
             phone: "",
@@ -396,187 +516,25 @@
             repassword: "",
             photo: "",
             photo_type: "",
-          },
-          productCreated: false,
-
-          loadingText: "{{ .l_c_form_create }}",
-          loading: false,
-          userCreated: false,
-          addPassword: false,
-          notifStatus: "",
-          user: [],
-          emails: [],
-          phones: [],
-          errFC: false,
-          errmFC: "",
-          errRIC: false,
-          errmRIC: "",
-          errPhone: false,
-          errmPhone: "",
-          errFirstname: false,
-          errmFirstname: "",
-          errGender: false,
-          errmGender: "",
-          errOccupation: false,
-          errmOccupation: "",
-          errPassword: false,
-          errmPassword: "",
-          errRepassword: false,
-          errmRepassword: "",
-
-          submitData($dispatch) {
-            this.loadingText = "Loading . . .";
-            this.loading = true;
-            if (!this.addPassword) {
-              this.formData.password = "";
-              this.formData.repassword = "";
-            }
-            if (this.formData.photo !== "") {
-            }
-            fetch("/api/v1/local/user/create", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(this.formData),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                this.loadingText = "{{ .l_c_form_create }}";
-                this.loading = false;
-                if (data.fc) {
-                  this.errFC = true;
-                  this.errmFC = data.fc;
-                } else {
-                  this.errFC = false;
-                  this.errmFC = "";
-                }
-                if (data.ric) {
-                  this.errRIC = true;
-                  this.errmRIC = data.ric;
-                } else {
-                  this.errRIC = false;
-                  this.errmRIC = "";
-                }
-                if (data.phone) {
-                  this.errPhone = true;
-                  this.errmPhone = data.phone;
-                } else {
-                  this.errPhone = false;
-                  this.errmPhone = "";
-                }
-                if (data.firstname) {
-                  this.errFirstname = true;
-                  this.errmFirstname = data.firstname;
-                } else {
-                  this.errFirstname = false;
-                  this.errmFirstname = "";
-                }
-                if (data.gender) {
-                  this.errGender = true;
-                  this.errmGender = data.gender;
-                } else {
-                  this.errGender = false;
-                  this.errmGender = "";
-                }
-                if (data.password) {
-                  this.errPassword = true;
-                  this.errmPassword = data.password;
-                } else {
-                  this.errPassword = false;
-                  this.errmPassword = "";
-                }
-                if (data.repassword) {
-                  this.errRepassword = true;
-                  this.errmRepassword = data.repassword;
-                } else {
-                  this.errRepassword = false;
-                  this.errmRepassword = "";
-                }
-
-                if (data.status == "error") {
-                  this.notifStatus = "error";
-                }
-                if (data.status == "fail") {
-                  this.notifStatus = "fail";
-                }
-                if (data.status == "success") {
-                  this.notifStatus = "success";
-                  this.userCreated = true;
-                  this.user = data.user;
-                  if (data.user.Emails) {
-                    this.emails = data.user.Emails;
-                  }
-                  if (data.user.Phones) {
-                    this.phones = data.user.Phones;
-                  }
-                  document.getElementById("address").__x.$data.uid =
-                    data.user.ID;
-                  document.getElementById(
-                    "address"
-                  ).__x.$data.addAddressDisable = false;
-                }
-
-                if (data.message) {
-                  $dispatch("notif", {
-                    type: this.notifStatus,
-                    message: data.message,
-                  });
-                }
-              })
-              .catch(() => {
-                this.loading = false;
-                console.log("Telah terjadi kesalahan");
-              });
-          },
-          base64(file) {
-            var reader = new FileReader();
-            reader.onloadend = function () {
-              var bsplit = reader.result.split(",");
-              document.getElementById("create").__x.$data.formData.photo_type =
-                bsplit[0];
-              document.getElementById("create").__x.$data.formData.photo =
-                bsplit[1];
-            };
-            reader.readAsDataURL(file);
-          },
-          resetUserForm() {
-            this.userCreated = false;
-            this.user = [];
-            this.emails = [];
-            this.phones = [];
-            this.formData = {
-              fc: "",
-              ric: "",
-              phone: "",
-              firstname: "",
-              lastname: "",
-              gender: "",
-              occupation: "",
-              password: "",
-              repassword: "",
-              photo: "",
-              photo_type: "",
-            };
-            document.getElementById("address").__x.$data.uid = null;
-            document.getElementById(
-              "address"
-            ).__x.$data.addAddressDisable = true;
-            document.getElementById("address").__x.$data.addresses = [];
-            document.getElementById("address").__x.$data.addAddressData = {
-              name: "",
-              description: "",
-              one: "",
-              two: "",
-              zip: "",
-              province: "",
-              city: "",
-              district: "",
-              village: "",
-            };
-            document.getElementById("address").__x.$data.addAddressOpen = false;
-          },
-        };
-      }
-    </script>
-  </div>
+          };
+          document.getElementById("address").__x.$data.uid = null;
+          document.getElementById("address").__x.$data.addAddressDisable = true;
+          document.getElementById("address").__x.$data.addresses = [];
+          document.getElementById("address").__x.$data.addAddressData = {
+            name: "",
+            description: "",
+            one: "",
+            two: "",
+            zip: "",
+            province: "",
+            city: "",
+            district: "",
+            village: "",
+          };
+          document.getElementById("address").__x.$data.addAddressOpen = false;
+        },
+      };
+    }
+  </script>
 </div>
 {{ end }}

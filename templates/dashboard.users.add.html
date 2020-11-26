@@ -534,8 +534,6 @@
               this.formData.password = "";
               this.formData.repassword = "";
             }
-            if (this.formData.photo !== "") {
-            }
             fetch("/api/v1/local/user/create", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
