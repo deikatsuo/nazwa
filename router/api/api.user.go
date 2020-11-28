@@ -53,7 +53,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		var file string
 
 		if err := c.ShouldBindJSON(&json); err != nil {
-			log.Println("ERROR: api.create-account.go UserCreate() bind json")
+			log.Println("ERROR: api.user.go UserCreate() bind json")
 			log.Println(err)
 			if fmt.Sprintf("%T", err) == "validator.ValidationErrors" {
 				simpleErrMap = validation.SimpleValErrMap(err)
@@ -102,10 +102,10 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				ReturnID(&uid).
 				Save(db)
 			if err != nil {
-				log.Println("ERROR: api.create-account.go UserCreate() Gagal membuat user baru")
+				log.Println("ERROR: api.user.go UserCreate() Gagal membuat user baru")
 				log.Print(err)
 				if err := os.Remove("./upload/profile/" + file); err != nil {
-					log.Println("ERROR: api.create-account.go UserCreate() Gagal menghapus file")
+					log.Println("ERROR: api.user.go UserCreate() Gagal menghapus file")
 					log.Println(err)
 				}
 			} else {
