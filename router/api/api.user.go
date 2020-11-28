@@ -23,7 +23,7 @@ import (
 // CREATE //
 ////////////
 
-// FormUser menyimpan input pendaftaran user
+// FormUser user baru
 type FormUser struct {
 	FC         string `json:"fc" binding:"omitempty,numeric,min=16,max=16"`
 	RIC        string `json:"ric" binding:"numeric,min=16,max=16"`
