@@ -151,14 +151,16 @@ CREATE TABLE "address" (
 -- Tabel barang/produk
 CREATE TABLE "product" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "created_by" INT,
     "name" VARCHAR(100) NOT NULL,
     "code" VARCHAR(10) UNIQUE NOT NULL,
     "base_price" DECIMAL(15,2) DEFAULT '0',
     "price" DECIMAL(15,2) DEFAULT '0',
-    "type" VARCHAR(10),
+    "type" VARCHAR(25),
     "brand" VARCHAR(25),
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (created_by) REFERENCES "user"("id")
 );
 
 -- Tabel harga kredit barang/produk
