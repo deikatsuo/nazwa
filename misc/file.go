@@ -10,8 +10,11 @@ import (
 )
 
 // Base64ToFileWithData mengembalikan kembali string base64 kedalam bentuk file
-func Base64ToFileWithData(b64 string, data string) (string, error) {
-	ext := Base64GetExtensionFromData(data)
+// dir: lokasi file
+// b64: string base64
+// info: informasi file
+func Base64ToFileWithData(dir string, b64 string, info string) (string, error) {
+	ext := Base64GetExtensionFromData(info)
 	fileName := uuid.New().String() + "." + ext
 	decode, err := base64.StdEncoding.DecodeString(b64)
 	if err != nil {
@@ -19,7 +22,7 @@ func Base64ToFileWithData(b64 string, data string) (string, error) {
 		return "", err
 	}
 
-	fs, err := os.Create("./upload/profile/" + fileName)
+	fs, err := os.Create(dir + fileName)
 	if err != nil {
 		log.Println("ERROR: image.go Base64ToFileWithData() Membuat file")
 		return "", err
