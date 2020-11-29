@@ -151,7 +151,7 @@ CREATE TABLE "address" (
 -- Tabel barang/produk
 CREATE TABLE "product" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
-    "created_by" INT,
+    "created_by" INT NOT NULL,
     "name" VARCHAR(100) NOT NULL,
     "code" VARCHAR(10) UNIQUE NOT NULL,
     "base_price" DECIMAL(15,2) DEFAULT '0',

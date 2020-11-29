@@ -86,44 +86,6 @@ type UserAddress struct {
 	VillageName  string `db:"village_name"`
 }
 
-// NullableProduct menampilkan list produk
-type NullableProduct struct {
-	ID        int            `db:"id"`
-	Name      string         `db:"name"`
-	Code      string         `db:"code"`
-	BasePrice []uint8        `db:"base_price"`
-	Price     []uint8        `db:"price"`
-	Type      sql.NullString `db:"type"`
-	Brand     sql.NullString `db:"brand"`
-	CreatedAt string         `db:"created_at"`
-}
-
-// Product map data produk
-type Product struct {
-	ID        int
-	Name      string
-	Code      string
-	BasePrice string
-	Price     string
-	Type      string
-	Brand     string
-	CreatedAt string
-	Photos    []ProductPhoto
-}
-
-// ProductCreditPrice list harga kredit produk
-type ProductCreditPrice struct {
-	ID       int    `db:"id"`
-	Duration int    `db:"duration"`
-	Price    string `db:"price"`
-}
-
-// ProductPhoto mengambil photo produk dari database
-type ProductPhoto struct {
-	ID    int    `db:"id"`
-	Photo string `db:"photo"`
-}
-
 // NullableOrder menampilkan data order
 type NullableOrder struct {
 	ID                  int            `db:"id"`

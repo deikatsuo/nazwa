@@ -166,15 +166,14 @@
                 >
                   <li
                     class="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24"
-                    @click="window.open(photo.photo_type + ',' + photo.photo, '_blank')"
                   >
                     <article
                       tabindex="0"
-                      class="group hasImage w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative text-transparent hover:text-white shadow-sm"
+                      class="w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 relative text-transparent hover:text-red-500 shadow-sm"
                     >
                       <img
                         alt="upload preview"
-                        class="img-preview w-full h-full sticky object-cover rounded-md bg-fixed"
+                        class="w-full h-full sticky object-cover rounded-md bg-fixed"
                         :src="photo.photo_type + ',' + photo.photo"
                       />
 
@@ -183,10 +182,13 @@
                       >
                         <h1 class="flex-1"></h1>
                         <div class="flex">
-                          <span class="p-1">
+                          <span
+                            class="p-1 cursor-pointer"
+                            @click="window.open(photo.photo_type + ',' + photo.photo, '_blank')"
+                          >
                             <i>
                               <svg
-                                class="fill-current w-4 h-4 ml-auto pt-"
+                                class="text-gray-100 fill-current w-4 h-4 ml-auto pt-"
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
                                 height="24"
@@ -199,9 +201,9 @@
                             </i>
                           </span>
 
-                          <p class="p-1 size text-xs"></p>
+                          <p class="cursor-pointer p-1 size text-xs"></p>
                           <button
-                            class="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md"
+                            class="ml-auto focus:outline-none hover:bg-red-300 p-1 rounded-md"
                             @click="delPhoto(index)"
                           >
                             <svg

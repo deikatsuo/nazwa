@@ -10,6 +10,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+//////////
+// GET ///
+//////////
+
 // GetProducts mengambil list produk
 type GetProducts struct {
 	limit     int
@@ -125,7 +129,7 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 		return wrapper.Product{}, err
 	}
 
-	var photos []wrapper.ProductPhoto
+	var photos []wrapper.ListProductPhoto
 
 	if pp, err := GetProductPhoto(db, p.ID); err == nil {
 		photos = pp
@@ -147,14 +151,35 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 }
 
 // GetProductPhoto mengambil data photo produk
-func GetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ProductPhoto, error) {
-	var photos []wrapper.ProductPhoto
+func GetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ListProductPhoto, error) {
+	var photos []wrapper.ListProductPhoto
 	query := `SELECT id, photo
 	FROM "product_photo"
 	WHERE product_id=$1`
 	err := db.Select(&photos, query, pid)
 	if err != nil {
-		return []wrapper.ProductPhoto{}, err
+		return []wrapper.ListProductPhoto{}, err
 	}
 	return photos, err
+}
+
+//////////
+// POST //
+//////////
+
+// Product base struk
+type Product struct {
+	Name      string `db:"name"`
+	Code      string `db:"code"`
+	BasePrice string `db:"base_price"`
+	Price     string `db:"price"`
+	Type      string `db:"type"`
+	Brand     string `db:"brand"`
+	CreatedAt string `db:"created_at"`
+	CreatedBy int    `db:"created_by"`
+}
+
+// CreateProduct membuat produk baru
+type CreateProduct struct {
+	Product
 }
