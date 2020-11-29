@@ -14,35 +14,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// User base struk
-type User struct {
-	Firstname  string  `db:"first_name"`
-	Lastname   string  `db:"last_name"`
-	Username   string  `db:"username"`
-	Avatar     string  `db:"avatar"`
-	Gender     string  `db:"gender"`
-	Occupation string  `db:"occupation"`
-	CreatedAt  string  `db:"created_at"`
-	Balance    []uint8 `db:"balance"`
-	Password   string  `db:"password"`
-	Role       string  `db:"role"`
-	RIC        string  `db:"ric"`
-}
-
-// CreateUser struk buat user baru
-// Struct data user
-type CreateUser struct {
-	User
-	tempPassword string
-	into         map[string]string
-	returnID     bool
-	returnIDTO   *int
-	role         int8
-	phone        string
-	email        string
-	familyCard   string
-}
-
 // GetUsers mengambil list user
 type GetUsers struct {
 	limit     int
@@ -144,6 +115,35 @@ const (
 	// RoleCustomer pelanggan
 	RoleCustomer int8 = 5
 )
+
+// User base struk
+type User struct {
+	Firstname  string  `db:"first_name"`
+	Lastname   string  `db:"last_name"`
+	Username   string  `db:"username"`
+	Avatar     string  `db:"avatar"`
+	Gender     string  `db:"gender"`
+	Occupation string  `db:"occupation"`
+	CreatedAt  string  `db:"created_at"`
+	Balance    []uint8 `db:"balance"`
+	Password   string  `db:"password"`
+	Role       string  `db:"role"`
+	RIC        string  `db:"ric"`
+}
+
+// CreateUser struk buat user baru
+// Struct data user
+type CreateUser struct {
+	User
+	tempPassword string
+	into         map[string]string
+	returnID     bool
+	returnIDTO   *int
+	role         int8
+	phone        string
+	email        string
+	familyCard   string
+}
 
 // NewUser membuat user baru
 // mengembalikan struct User {}
