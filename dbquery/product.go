@@ -167,19 +167,79 @@ func GetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ListProductPhoto, error) {
 // POST //
 //////////
 
-// Product base struk
-type Product struct {
-	Name      string `db:"name"`
-	Code      string `db:"code"`
-	BasePrice string `db:"base_price"`
-	Price     string `db:"price"`
-	Type      string `db:"type"`
-	Brand     string `db:"brand"`
-	CreatedAt string `db:"created_at"`
-	CreatedBy int    `db:"created_by"`
-}
-
 // CreateProduct membuat produk baru
 type CreateProduct struct {
-	Product
+	wrapper.ProductInsert
+	into       map[string]string
+	returnID   bool
+	returnIDTO *int
+}
+
+// NewProduct membuat user baru
+// mengembalikan struct User {}
+func NewProduct() *CreateProduct {
+	return &CreateProduct{
+		into: make(map[string]string),
+	}
+}
+
+// SetName Nama produk
+func (u *CreateProduct) SetName(p string) *CreateProduct {
+	u.Name = strings.ToLower(p)
+	u.into["name"] = ":name"
+	return u
+}
+
+// SetCode Kode produk
+func (u *CreateProduct) SetCode(p string) *CreateProduct {
+	u.Code = strings.ToLower(p)
+	u.into["code"] = ":code"
+	return u
+}
+
+// SetBasePrice Harga beli produk
+func (u *CreateProduct) SetBasePrice(p string) *CreateProduct {
+	u.BasePrice = p
+	u.into["base_price"] = ":base_price"
+	return u
+}
+
+// SetPrice Harga jual produk (kontan/cash)
+func (u *CreateProduct) SetPrice(p string) *CreateProduct {
+	u.Price = p
+	u.into["price"] = ":price"
+	return u
+}
+
+// SetType Tipe atau model produk
+func (u *CreateProduct) SetType(p string) *CreateProduct {
+	u.Type = p
+	u.into["type"] = ":type"
+	return u
+}
+
+// SetBrand Brand produk
+func (u *CreateProduct) SetBrand(p string) *CreateProduct {
+	u.Brand = strings.ToLower(p)
+	u.into["brand"] = ":brand"
+	return u
+}
+
+// SetCreatedBy user yang menambahkan produk
+func (u *CreateProduct) SetCreatedBy(p int) *CreateProduct {
+	u.CreatedBy = p
+	u.into["created_by"] = ":created_by"
+	return u
+}
+
+// ReturnID Mengembalikan ID produk terakhir
+func (u *CreateProduct) ReturnID(id *int) *CreateProduct {
+	u.returnID = true
+	u.returnIDTO = id
+	return u
+}
+
+// Save Simpan produk
+func (u *CreateProduct) Save(db *sqlx.DB) error {
+	return nil
 }

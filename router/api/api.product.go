@@ -9,7 +9,6 @@ import (
 	"nazwa/router"
 	"nazwa/wrapper"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/gin-gonic/contrib/sessions"
@@ -29,7 +28,7 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 			return
 		}
 
-		var json wrapper.FormProduct
+		var json wrapper.ProductForm
 
 		status := "success"
 		var httpStatus int
@@ -39,7 +38,7 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 		var files []string
 
 		if err := c.ShouldBindJSON(&json); err != nil {
-			log.Println("ERROR: api.create-account.go UserCreate() bind json")
+			log.Println("ERROR: api.product.go ProductCreate() bind json")
 			log.Println(err)
 			if fmt.Sprintf("%T", err) == "validator.ValidationErrors" {
 				simpleErrMap = validation.SimpleValErrMap(err)
@@ -61,36 +60,34 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				}
 			}
 		}
-
+		fmt.Println("PH: ", json.Photo)
+		fmt.Println("Files: ", files)
 		var retProduct wrapper.Product
 		var pid int
 		if save {
-			user := dbquery.NewUser()
-			err := user.SetFirstName(json.Firstname).
-				SetLastName(json.Lastname).
-				SetFamilyCard(json.FC).
-				SetRIC(json.RIC).
-				SetPhone(json.Phone).
-				SetAvatar(file).
-				SetPassword(json.Password).
-				SetGender(json.Gender).
-				SetOccupation(json.Occupation).
-				SetRole(dbquery.RoleCustomer).
+			user := dbquery.NewProduct()
+			err := user.SetName(json.Name).
+				SetCode(json.Code).
+				SetType(json.Type).
+				SetBrand(json.Brand).
+				SetBasePrice(json.BasePrice).
+				SetPrice(json.Price).
+				SetCreatedBy(uid.(int)).
 				ReturnID(&pid).
 				Save(db)
 			if err != nil {
 				log.Println("ERROR: api.product.go ProductCreate() Gagal menambahkan produk baru")
 				log.Print(err)
-				if err := os.Remove("./upload/product/" + file); err != nil {
+				/*if err := os.Remove("./upload/product/" + file); err != nil {
 					log.Println("ERROR: api.product.go ProductCreate() Gagal menghapus file")
 					log.Println(err)
-				}
+				}*/
 			} else {
 				httpStatus = http.StatusOK
 				status = "success"
 				message = "Berhasil menambahkan produk"
 
-				if p, err := dbquery.GetUserByID(db, pid); err == nil {
+				if p, err := dbquery.GetProductByID(db, pid); err == nil {
 					retProduct = p
 				} else {
 					httpStatus = http.StatusInternalServerError
