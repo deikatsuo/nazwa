@@ -84,4 +84,5 @@ var ValidationErrorsMask = map[string]string{
 	"email":           "Format email salah",
 	"eqfield":         "Kolom ini harus sama",
 	"required_with":   "Kolom ini perlu diisi",
+	"base64":          "Harus string base64",
 }
