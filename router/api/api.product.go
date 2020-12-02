@@ -60,8 +60,6 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				}
 			}
 		}
-		fmt.Println("PH: ", json.Photo)
-		fmt.Println("Files: ", files)
 		var retProduct wrapper.Product
 		var pid int
 		if save {
@@ -73,6 +71,7 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetBasePrice(json.BasePrice).
 				SetPrice(json.Price).
 				SetCreatedBy(uid.(int)).
+				SetPhotos(files).
 				ReturnID(&pid).
 				Save(db)
 			if err != nil {

@@ -173,6 +173,7 @@ type CreateProduct struct {
 	into       map[string]string
 	returnID   bool
 	returnIDTO *int
+	photos     []string
 }
 
 // NewProduct membuat user baru
@@ -184,62 +185,116 @@ func NewProduct() *CreateProduct {
 }
 
 // SetName Nama produk
-func (u *CreateProduct) SetName(p string) *CreateProduct {
-	u.Name = strings.ToLower(p)
-	u.into["name"] = ":name"
-	return u
+func (c *CreateProduct) SetName(p string) *CreateProduct {
+	c.Name = strings.ToLower(p)
+	c.into["name"] = ":name"
+	return c
 }
 
 // SetCode Kode produk
-func (u *CreateProduct) SetCode(p string) *CreateProduct {
-	u.Code = strings.ToLower(p)
-	u.into["code"] = ":code"
-	return u
+func (c *CreateProduct) SetCode(p string) *CreateProduct {
+	c.Code = strings.ToLower(p)
+	c.into["code"] = ":code"
+	return c
 }
 
 // SetBasePrice Harga beli produk
-func (u *CreateProduct) SetBasePrice(p string) *CreateProduct {
-	u.BasePrice = p
-	u.into["base_price"] = ":base_price"
-	return u
+func (c *CreateProduct) SetBasePrice(p string) *CreateProduct {
+	c.BasePrice = p
+	c.into["base_price"] = ":base_price"
+	return c
 }
 
 // SetPrice Harga jual produk (kontan/cash)
-func (u *CreateProduct) SetPrice(p string) *CreateProduct {
-	u.Price = p
-	u.into["price"] = ":price"
-	return u
+func (c *CreateProduct) SetPrice(p string) *CreateProduct {
+	c.Price = p
+	c.into["price"] = ":price"
+	return c
 }
 
 // SetType Tipe atau model produk
-func (u *CreateProduct) SetType(p string) *CreateProduct {
-	u.Type = p
-	u.into["type"] = ":type"
-	return u
+func (c *CreateProduct) SetType(p string) *CreateProduct {
+	c.Type = p
+	c.into["type"] = ":type"
+	return c
 }
 
 // SetBrand Brand produk
-func (u *CreateProduct) SetBrand(p string) *CreateProduct {
-	u.Brand = strings.ToLower(p)
-	u.into["brand"] = ":brand"
-	return u
+func (c *CreateProduct) SetBrand(p string) *CreateProduct {
+	c.Brand = strings.ToLower(p)
+	c.into["brand"] = ":brand"
+	return c
+}
+
+// SetPhotos Brand produk
+func (c *CreateProduct) SetPhotos(p []string) *CreateProduct {
+	c.photos = p
+	return c
 }
 
 // SetCreatedBy user yang menambahkan produk
-func (u *CreateProduct) SetCreatedBy(p int) *CreateProduct {
-	u.CreatedBy = p
-	u.into["created_by"] = ":created_by"
-	return u
+func (c *CreateProduct) SetCreatedBy(p int) *CreateProduct {
+	c.CreatedBy = p
+	c.into["created_by"] = ":created_by"
+	return c
 }
 
 // ReturnID Mengembalikan ID produk terakhir
-func (u *CreateProduct) ReturnID(id *int) *CreateProduct {
-	u.returnID = true
-	u.returnIDTO = id
-	return u
+func (c *CreateProduct) ReturnID(id *int) *CreateProduct {
+	c.returnID = true
+	c.returnIDTO = id
+	return c
+}
+
+// Insert query berdasarka data yang diisi
+func (c CreateProduct) generateInsertQuery() string {
+	iq := c.into
+	var kk []string
+	var kv []string
+	for k, v := range iq {
+		kk = append(kk, k)
+		kv = append(kv, v)
+	}
+	result := fmt.Sprintf("(%s) VALUES (%s) RETURNING id", strings.Join(kk, ","), strings.Join(kv, ","))
+
+	return result
 }
 
 // Save Simpan produk
-func (u *CreateProduct) Save(db *sqlx.DB) error {
-	return nil
+func (c *CreateProduct) Save(db *sqlx.DB) error {
+	// Mulai transaksi
+	tx := db.MustBegin()
+	var tempReturnID int
+	productInsertQuery := fmt.Sprintf(`INSERT INTO "product" %s`, c.generateInsertQuery())
+	if rows, err := tx.NamedQuery(productInsertQuery, c); err == nil {
+		// Ambil id dari transaksi terakhir
+		if rows.Next() {
+			rows.Scan(&tempReturnID)
+		}
+
+		if c.returnID && tempReturnID != 0 {
+			*c.returnIDTO = tempReturnID
+		}
+
+		if err := rows.Close(); err != nil {
+			return err
+		}
+	} else {
+		tx.Rollback()
+		return err
+	}
+
+	if len(c.photos) > 0 {
+		for id, s := range c.photos {
+			// Set role user
+			if _, err := tx.Exec(`INSERT INTO "product_photo" (product_id, photo) VALUES ($1, $2)`, tempReturnID, s); err != nil {
+				log.Println("ERROR: product.go Save() Insert photo ID: ", id)
+				return err
+			}
+		}
+	}
+
+	// Komit
+	err := tx.Commit()
+	return err
 }

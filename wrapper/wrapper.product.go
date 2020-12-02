@@ -52,17 +52,17 @@ type ProductCreditPrice struct {
 // ProductForm menyimpan input produk
 type ProductForm struct {
 	Name      string             `json:"name" binding:"required,min=4,max=100"`
-	Code      string             `json:"code" binding:"omitempty,alphanum,min=5,max=10"`
-	Brand     string             `json:"brand" binding:"omitempty,alphanum,min=2,max=25"`
-	Type      string             `json:"type" binding:"omitempty,alphanum,min=2,max=25"`
+	Code      string             `json:"code" binding:"omitempty,min=5,max=10"`
+	Brand     string             `json:"brand" binding:"omitempty,min=2,max=25"`
+	Type      string             `json:"type" binding:"omitempty,min=2,max=25"`
 	BasePrice string             `json:"base_price" binding:"required,numeric,min=1,max=15"`
 	Price     string             `json:"price" binding:"required,numeric,min=1,max=15"`
-	Photo     []ProductPhotoForm `json:"photo" binding:"omitempty"`
+	Photo     []ProductPhotoForm `json:"photos" binding:"omitempty"`
 }
 
 // ProductPhotoForm list photo produk
 type ProductPhotoForm struct {
-	PhotoType string `json:"photo_type" binding:"omitempty,base64"`
+	PhotoType string `json:"photo_type" binding:"base64"`
 	Photo     string `json:"photo"`
 }
 
