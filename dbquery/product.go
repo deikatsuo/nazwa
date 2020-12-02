@@ -301,6 +301,16 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 		}
 	}
 
+	if len(c.creditPrice) > 0 {
+		for _, cp := range c.creditPrice {
+			// Set role user
+			if _, err := tx.Exec(`INSERT INTO "product_credit_price" (product_id, duration, price) VALUES ($1, $2, $3)`, tempReturnID, cp.Duration, cp.Price); err != nil {
+				log.Println("ERROR: product.go Save() Menambahkan harga produk")
+				return err
+			}
+		}
+	}
+
 	// Komit
 	err := tx.Commit()
 	return err

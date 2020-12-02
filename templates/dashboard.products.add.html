@@ -256,13 +256,13 @@
               <input
                 class="block rounded-none rounded-l-sm w-2/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                 placeholder="Tenor"
-                x-model="tenor"
+                x-model="duration"
                 @keydown.enter="addKP($dispatch)"
               />
               <input
                 class="block rounded-none w-10/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                 placeholder="Cicilan per bulan"
-                x-model="pmo"
+                x-model="price"
                 @keydown.enter="addKP($dispatch)"
               />
               <button
@@ -687,8 +687,8 @@
             return;
           }
           this.formData.credit_price.push({
-            duration: this.duration,
-            price: this.price,
+            duration: Number(this.duration),
+            price: Number(this.price),
           });
           this.duration = null;
           this.price = null;
