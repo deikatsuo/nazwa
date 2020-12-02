@@ -19,6 +19,14 @@ func GetEnv(k string, df interface{}) interface{} {
 	return getEnv(k, df)
 }
 
+// GetEnvND Ambil nilai dari konfigurasi dari .env tanpa default
+func GetEnvND(k string) string {
+	if v, e := os.LookupEnv(k); e {
+		return v
+	}
+	return ""
+}
+
 // Ambil nilai dari konfigurasi dari .env tanpa default
 func getEnvND(k string) string {
 	if v, e := os.LookupEnv(k); e {
