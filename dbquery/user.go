@@ -230,7 +230,7 @@ func (u *CreateUser) SetOccupation(p string) *CreateUser {
 
 // SetRole tentukan peran/role
 func (u *CreateUser) SetRole(p int8) *CreateUser {
-	if p >= 1 && p <= 5 {
+	if p >= 0 && p <= 5 {
 		u.role = p
 	}
 	return u
@@ -323,32 +323,36 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 		}
 	}
 
-	// Set username/kode pelanggan
-	num := fmt.Sprintf("% 10d", tempReturnID)
+	var username string
+	if u.Username != "" {
+		username = u.Username
+	} else {
+		// Set username/kode pelanggan
+		num := fmt.Sprintf("% 10d", tempReturnID)
 
-	if misc.CountDigits(tempReturnID) < 10 {
-		// Generate angka acak
-		if fill, err := misc.GenerateNumberFixedLength(strings.Count(num, " ")); err == nil {
-			num = fmt.Sprintf("%s%s", fill, num)
+		if misc.CountDigits(tempReturnID) < 10 {
+			// Generate angka acak
+			if fill, err := misc.GenerateNumberFixedLength(strings.Count(num, " ")); err == nil {
+				num = fmt.Sprintf("%s%s", fill, num)
+			}
 		}
-	}
 
-	// Hapus semua spasi
-	num = strings.ReplaceAll(num, " ", "")
-	if iui, err := strconv.ParseUint(num, 10, 64); err == nil {
-		var username string
-		nzne := time.Now().Hour()
-		if nzne >= 12 {
-			username = "NZ-" + base36.Encode(iui)
+		// Hapus semua spasi
+		num = strings.ReplaceAll(num, " ", "")
+		if iui, err := strconv.ParseUint(num, 10, 64); err == nil {
+			nzne := time.Now().Hour()
+			if nzne >= 12 {
+				username = "NZ-" + base36.Encode(iui)
+			} else {
+				username = "NE-" + base36.Encode(iui)
+			}
 		} else {
-			username = "NE-" + base36.Encode(iui)
-		}
-		if _, err := tx.Exec(`UPDATE "user"	SET username=$1	WHERE id=$2`, username, tempReturnID); err != nil {
-			log.Println("ERROR: user.go Save() Insert username/kode pelanggan")
+			log.Println("ERROR: user.go Save() ParseUint username/kode pelanggan")
 			return err
 		}
-	} else {
-		log.Println("ERROR: user.go Save() ParseUint username/kode pelanggan")
+	}
+	if _, err := tx.Exec(`UPDATE "user"	SET username=$1	WHERE id=$2`, username, tempReturnID); err != nil {
+		log.Println("ERROR: user.go Save() Insert username/kode pelanggan")
 		return err
 	}
 
