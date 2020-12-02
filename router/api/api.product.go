@@ -72,6 +72,7 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetPrice(json.Price).
 				SetCreatedBy(uid.(int)).
 				SetPhotos(files).
+				SetCreditPrice(json.CreditPrice).
 				ReturnID(&pid).
 				Save(db)
 			if err != nil {

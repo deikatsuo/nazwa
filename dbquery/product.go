@@ -170,10 +170,11 @@ func GetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ListProductPhoto, error) {
 // CreateProduct membuat produk baru
 type CreateProduct struct {
 	wrapper.ProductInsert
-	into       map[string]string
-	returnID   bool
-	returnIDTO *int
-	photos     []string
+	into        map[string]string
+	returnID    bool
+	returnIDTO  *int
+	creditPrice []wrapper.ProductCreditPriceForm
+	photos      []string
 }
 
 // NewProduct membuat user baru
@@ -223,6 +224,12 @@ func (c *CreateProduct) SetType(p string) *CreateProduct {
 func (c *CreateProduct) SetBrand(p string) *CreateProduct {
 	c.Brand = strings.ToLower(p)
 	c.into["brand"] = ":brand"
+	return c
+}
+
+// SetCreditPrice harga kredit barang
+func (c *CreateProduct) SetCreditPrice(p []wrapper.ProductCreditPriceForm) *CreateProduct {
+	c.creditPrice = p
 	return c
 }
 

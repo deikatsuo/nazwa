@@ -219,10 +219,7 @@
                             </i>
                           </span>
 
-                          <p
-                            x-text="photo.size"
-                            class="p-1 size text-xs"
-                          ></p>
+                          <p x-text="photo.size" class="p-1 size text-xs"></p>
                           <button
                             class="ml-auto focus:outline-none hover:bg-grey-300 p-1 rounded-md"
                             @click="delPhoto(index)"
@@ -249,6 +246,69 @@
             </section>
           </article>
         </div>
+
+        <div class="w-full md:px-1">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">Harga Kredit </span>
+            <div
+              class="flex flex-wrap mt-1 relative text-gray-500 focus-within:text-purple-600"
+            >
+              <input
+                class="block rounded-none rounded-l-sm w-2/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Tenor"
+                x-model="tenor"
+                @keydown.enter="addKP($dispatch)"
+              />
+              <input
+                class="block rounded-none w-10/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Cicilan per bulan"
+                x-model="pmo"
+                @keydown.enter="addKP($dispatch)"
+              />
+              <button
+                class="absolute h-full bottom-0 right-0 px-4 text-sm text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-sm active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                @click="addKP($dispatch)"
+              >
+                tambah
+              </button>
+            </div>
+          </label>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmPrice"
+            :class="{'invisible': errPrice == false}"
+          >
+          </span>
+        </div>
+
+        <!-- Harga Kredit -->
+        <dl
+          class="w-full whitespace-no-wrap"
+          x-show="formData.credit_price.length > 0"
+        >
+          <div
+            class="sm:grid sm:grid-cols-2 text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Tenor</dt>
+            <dd class="px-3 py-3">Angsuran</dd>
+          </div>
+          <template
+            x-for="(credit, index) in formData.credit_price"
+            :key="index"
+          >
+            <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+              <dt
+                class="text-sm leading-5 font-medium text-gray-500"
+                x-text="credit.duration + ' Bulan'"
+              ></dt>
+              <dd
+                class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                x-text="'Rp.' + Number(credit.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,').slice(0, -3); + ' / bulan'"
+              ></dd>
+            </div>
+          </template>
+        </dl>
+
         <button
           type="submit"
           class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
@@ -466,10 +526,13 @@
           base_price: "",
           price: "",
           photos: [],
+          credit_price: [],
         },
         productCreated: false,
         loadingText: "Tambahkan Produk",
         loading: false,
+        duration: null,
+        price: null,
         notifStatus: "",
         errName: false,
         errmName: "",
@@ -597,9 +660,38 @@
             type: "",
             base_price: "",
             price: "",
-            photo: "",
-            photo_type: "",
+            credit_price: [],
+            photos: [],
           };
+        },
+        addKP($dispatch) {
+          if (this.duration === null || this.price === null) {
+            $dispatch("notif", {
+              type: "error",
+              message: "Tenor atau Tagiahan perbulan tidak boleh kosong",
+            });
+            return;
+          }
+          if (isNaN(this.duration) || isNaN(this.price)) {
+            $dispatch("notif", {
+              type: "error",
+              message: "Tenor atau Tagiahan perbulan harus berupa angka",
+            });
+            return;
+          }
+          if (Number(this.duration) < 1 || Number(this.price) < 1) {
+            $dispatch("notif", {
+              type: "error",
+              message: "Tenor atau Tagiahan perbulan harus berupa angka",
+            });
+            return;
+          }
+          this.formData.credit_price.push({
+            duration: this.duration,
+            price: this.price,
+          });
+          this.duration = null;
+          this.price = null;
         },
       };
     }
