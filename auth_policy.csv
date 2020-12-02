@@ -13,5 +13,4 @@ g, role::collector, role::surveyor
 p, role::admin, /*, *
 g, role::admin, role::collector
 
-p, role::dev, /*, *
 g, role::dev, role::admin
