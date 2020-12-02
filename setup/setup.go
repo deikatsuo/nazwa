@@ -37,9 +37,17 @@ func RunSetup(db *sqlx.DB) {
 		fmt.Println("Lanjutkan? [y/N]")
 		fmt.Scanf("%s", &lanjut)
 		if lanjut == "y" || lanjut == "Y" {
-			fmt.Println("Sedang mencoba menghapus semua tabel...")
-			if misc.Migration("down") {
-				fmt.Println("Tabel berhasil dihapus ('-')")
+			var pwd string
+			fmt.Println("Silahkan masukan kata sandi")
+			fmt.Scanf("%s", &pwd)
+			if pwd == misc.GetEnvND("DEV_PWD") {
+				fmt.Println("Sedang mencoba menghapus semua tabel...")
+				if misc.Migration("down") {
+					fmt.Println("Tabel berhasil dihapus ('-')")
+				}
+			} else {
+				fmt.Println("Kata sandi tidak sesuai")
+				os.Exit(1)
 			}
 		}
 	}
