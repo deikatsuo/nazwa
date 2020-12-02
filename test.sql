@@ -74,14 +74,14 @@ SELECT
         WHERE u.id > 1 AND r.id = 1
         LIMIT 10;
 
-ALTER TABLE "user"
-ALTER COLUMN "avatar" TYPE VARCHAR(50);
+ALTER TABLE "product_photo"
+ALTER COLUMN "photo" TYPE VARCHAR(50);
 
 ALTER TABLE "user"
 ADD COLUMN "occupation" VARCHAR(25);
 
-ALTER TABLE "user"
-ADD COLUMN "ric" VARCHAR(16) NOT NULL UNIQUE;
+ALTER TABLE "product_photo"
+ADD COLUMN "photo" VARCHAR(50) NOT NULL UNIQUE;
 
 INSERT INTO "product_photo" ("product_id", "photo") VALUES ('3', '01234567892.png');
 
