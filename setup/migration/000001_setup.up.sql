@@ -177,7 +177,7 @@ CREATE TABLE "product_credit_price" (
 CREATE TABLE "product_photo" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "product_id" INT NOT NULL,
-    "photo" VARCHAR(25) NOT NULL UNIQUE,
+    "photo" VARCHAR(50) NOT NULL UNIQUE,
     PRIMARY KEY (id),
     FOREIGN KEY (product_id) REFERENCES "product"("id")
 );
