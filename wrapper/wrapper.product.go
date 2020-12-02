@@ -20,8 +20,8 @@ type ProductInsert struct {
 /* ----------------------------------------------------- */
 /* SELECT */
 
-// ListProductPhoto mengambil photo produk dari database
-type ListProductPhoto struct {
+// ProductPhotoListSelect mengambil photo produk dari database
+type ProductPhotoListSelect struct {
 	ID    int    `db:"id"`
 	Photo string `db:"photo"`
 }
@@ -39,8 +39,8 @@ type NullableProduct struct {
 	CreatedBy int            `db:"created_by"`
 }
 
-// ProductCreditPrice list harga kredit produk
-type ProductCreditPrice struct {
+// ProductCreditPriceSelect list harga kredit produk
+type ProductCreditPriceSelect struct {
 	ID       int    `db:"id"`
 	Duration int    `db:"duration"`
 	Price    string `db:"price"`
@@ -78,14 +78,15 @@ type ProductPhotoForm struct {
 
 // Product map data produk
 type Product struct {
-	ID        int
-	Name      string
-	Code      string
-	BasePrice string
-	Price     string
-	Type      string
-	Brand     string
-	CreatedAt string
-	CreatedBy int
-	Photos    []ListProductPhoto
+	ID          int
+	Name        string
+	Code        string
+	BasePrice   string
+	Price       string
+	Type        string
+	Brand       string
+	CreatedAt   string
+	CreatedBy   int
+	CreditPrice []ProductCreditPriceSelect
+	Photos      []ProductPhotoListSelect
 }

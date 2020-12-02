@@ -129,36 +129,55 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 		return wrapper.Product{}, err
 	}
 
-	var photos []wrapper.ListProductPhoto
+	var photos []wrapper.ProductPhotoListSelect
 
 	if pp, err := GetProductPhoto(db, p.ID); err == nil {
 		photos = pp
 	}
 
+	var creditPrice []wrapper.ProductCreditPriceSelect
+	if pr, err := GetProductCreditPrice(db, p.ID); err == nil {
+		creditPrice = pr
+	}
+
 	product = wrapper.Product{
-		ID:        p.ID,
-		Name:      strings.Title(p.Name),
-		CreatedAt: p.CreatedAt,
-		BasePrice: string(p.BasePrice),
-		Price:     string(p.Price),
-		Code:      p.Code,
-		Type:      strings.Title(p.Type.String),
-		Brand:     strings.Title(p.Brand.String),
-		Photos:    photos,
+		ID:          p.ID,
+		Name:        strings.Title(p.Name),
+		CreatedAt:   p.CreatedAt,
+		BasePrice:   string(p.BasePrice),
+		Price:       string(p.Price),
+		Code:        p.Code,
+		Type:        strings.Title(p.Type.String),
+		Brand:       strings.Title(p.Brand.String),
+		Photos:      photos,
+		CreditPrice: creditPrice,
 	}
 
 	return product, nil
 }
 
+// GetProductCreditPrice mengambil data harga kredit
+func GetProductCreditPrice(db *sqlx.DB, pid int) ([]wrapper.ProductCreditPriceSelect, error) {
+	var prices []wrapper.ProductCreditPriceSelect
+	query := `SELECT id, duration, TO_CHAR(price,'Rp999G999G999G999G999') AS price
+	FROM "product_credit_price"
+	WHERE product_id=$1`
+	err := db.Select(&prices, query, pid)
+	if err != nil {
+		return []wrapper.ProductCreditPriceSelect{}, err
+	}
+	return prices, err
+}
+
 // GetProductPhoto mengambil data photo produk
-func GetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ListProductPhoto, error) {
-	var photos []wrapper.ListProductPhoto
+func GetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ProductPhotoListSelect, error) {
+	var photos []wrapper.ProductPhotoListSelect
 	query := `SELECT id, photo
 	FROM "product_photo"
 	WHERE product_id=$1`
 	err := db.Select(&photos, query, pid)
 	if err != nil {
-		return []wrapper.ListProductPhoto{}, err
+		return []wrapper.ProductPhotoListSelect{}, err
 	}
 	return photos, err
 }
