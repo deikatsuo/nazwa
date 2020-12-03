@@ -77,6 +77,10 @@
               {{ block "dashboard_orders_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "orders_add" }}
+              {{ block "dashboard_orders_add_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "blank" }}
               {{ block "dashboard_blank_content" .}}{{ end }}
             {{ end }}

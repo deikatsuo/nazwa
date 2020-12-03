@@ -147,3 +147,23 @@ func ShowOrderByID(db *sqlx.DB) gin.HandlerFunc {
 	}
 	return fn
 }
+
+// OrderCreate API untuk menambahkan produk baru
+func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		// Tolak jika yang request bukan user terdaftar
+		uid := session.Get("userid")
+		if uid == nil {
+			router.Page404(c)
+			return
+		}
+
+		m := gin.H{
+			"message": "ok",
+		}
+		c.JSON(http.StatusAccepted, m)
+	}
+	return gin.HandlerFunc(fn)
+}

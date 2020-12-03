@@ -104,6 +104,7 @@ func runServer(db *sqlx.DB) {
 	dashboard.GET("/products", router.PageDashboardProducts(db))
 	dashboard.GET("/products/add", router.PageDashboardProductsAdd(db))
 	dashboard.GET("/orders", router.PageDashboardOrders(db))
+	dashboard.GET("/orders/add", router.PageDashboardOrdersAdd(db))
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	// API
@@ -138,6 +139,7 @@ func runServer(db *sqlx.DB) {
 	order := v1local.Group("/order")
 	order.GET("/id/:id", api.ShowOrderByID(db))
 	order.GET("/list/:limit", api.ShowOrderList(db))
+	order.POST("/add", api.OrderCreate(db))
 
 	// User API
 	// /api/v1/local/user
