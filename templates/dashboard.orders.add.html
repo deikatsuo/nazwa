@@ -7,15 +7,105 @@
   <!-- Produk baru -->
   <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
     <div x-data="create()" id="create">
-      <div x-show="!productCreated">
+      <div x-show="!orderCreated">
+        <div class="w-full relative md:w-2/3 md:px-1">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">Konsumen</span>
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 shadow focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              placeholder="Nomor Induk Kependudukan (NIK)"
+              x-model="formData.customer"
+              @keydown.enter="submitData($dispatch)"
+              @keyup="searchNIK()"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errName }"
+            />
+          </label>
+          <ul
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click.away="closeProfileMenu"
+            @keydown.escape="closeProfileMenu"
+            class="absolute left-0 right-0 -mt-1 md:mr-1 md:ml-1 text-gray-600 bg-white border-none border-r border-l border-b border-gray-100 rounded-br-md rounded-bl-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
+            aria-label="submenu"
+          >
+            <li class="flex">
+              <a
+                class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                href="#"
+              >
+                <svg
+                  class="w-4 h-4 mr-3"
+                  aria-hidden="true"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  ></path>
+                </svg>
+                <span>{{ .user.Firstname | title }}</span>
+              </a>
+            </li>
+            <li class="flex">
+              <a
+                class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                href="/dashboard/account"
+              >
+                <svg
+                  class="w-4 h-4 mr-3"
+                  aria-hidden="true"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  ></path>
+                  <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span>Pengaturan</span>
+              </a>
+            </li>
+            <li class="flex">
+              <a
+                class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                href="/logout"
+              >
+                <svg
+                  class="w-4 h-4 mr-3"
+                  aria-hidden="true"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                  ></path>
+                </svg>
+                <span>Keluar</span>
+              </a>
+            </li>
+          </ul>
+        </div>
         <div class="flex flex-wrap mb-6">
           <div class="w-full md:w-1/3 md:px-1">
             <label class="block mt-4 text-sm">
-              <span class="text-gray-700 dark:text-gray-400">Nama Produk</span>
+              <span class="text-gray-700 dark:text-gray-400">Sales</span>
               <input
                 class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder="Misal: Laptop Dell AMD Ryzen 5, Springbed Uniland"
-                x-model="formData.name"
+                placeholder=""
+                x-model="formData.sales"
                 @keydown.enter="submitData($dispatch)"
                 :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errName }"
               />
@@ -30,11 +120,11 @@
 
           <div class="w-full md:w-1/3 md:px-1">
             <label class="block mt-4 text-sm">
-              <span class="text-gray-700 dark:text-gray-400">Brand</span>
+              <span class="text-gray-700 dark:text-gray-400">Surveyor</span>
               <input
                 class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder="Misal: LG, Samsung"
-                x-model="formData.brand"
+                placeholder=""
+                x-model="formData.surveyor"
                 @keydown.enter="submitData($dispatch)"
                 :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errBrand }"
               />
@@ -49,11 +139,11 @@
 
           <div class="w-full md:w-1/3 md:px-1">
             <label class="block mt-4 text-sm">
-              <span class="text-gray-700 dark:text-gray-400">Tipe</span>
+              <span class="text-gray-700 dark:text-gray-400">Kolektor</span>
               <input
                 class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder="Misal: 3 pintu, Cinimax, 3 tumpang"
-                x-model="formData.type"
+                placeholder=""
+                x-model="formData.collector"
                 @keydown.enter="submitData($dispatch)"
                 :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errType }"
               />
@@ -247,61 +337,66 @@
           </article>
         </div>
 
-        <div class="w-full md:px-1">
-          <label class="block mt-4 text-sm">
-            <span class="text-gray-700 dark:text-gray-400">Harga Kredit </span>
-            <div
-              class="flex flex-wrap mt-1 relative text-gray-500 focus-within:text-purple-600"
-            >
-              <input
-                class="block rounded-none rounded-l-sm w-2/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder="Tenor"
-                x-model="duration"
-                @keydown.enter="addKP($dispatch)"
-              />
-              <input
-                class="block rounded-none w-10/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder="Cicilan per bulan"
-                x-model="price"
-                @keydown.enter="addKP($dispatch)"
-              />
-              <button
-                class="absolute h-full bottom-0 right-0 px-4 text-sm text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-sm active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-                @click="addKP($dispatch)"
+        <!--
+        <div>
+          <div class="w-full md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400"
+                >Harga Kredit
+              </span>
+              <div
+                class="flex flex-wrap mt-1 relative text-gray-500 focus-within:text-purple-600"
               >
-                tambah
-              </button>
-            </div>
-          </label>
-        </div>
-
-        <!-- Harga Kredit -->
-        <dl
-          class="w-full whitespace-no-wrap"
-          x-show="formData.credit_price.length > 0"
-        >
-          <div
-            class="sm:grid sm:grid-cols-2 text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-          >
-            <dt class="px-3 py-3">Tenor</dt>
-            <dd class="px-3 py-3">Angsuran</dd>
+                <input
+                  class="block rounded-none rounded-l-sm w-2/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Tenor"
+                  x-model="duration"
+                  @keydown.enter="addKP($dispatch)"
+                />
+                <input
+                  class="block rounded-none w-10/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Cicilan per bulan"
+                  x-model="price"
+                  @keydown.enter="addKP($dispatch)"
+                />
+                <button
+                  class="absolute h-full bottom-0 right-0 px-4 text-sm text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-sm active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                  @click="addKP($dispatch)"
+                >
+                  tambah
+                </button>
+              </div>
+            </label>
           </div>
-          <template
-            x-for="(credit, index) in formData.credit_price"
-            :key="index"
+
+          <dl
+            class="w-full whitespace-no-wrap"
+            x-show="formData.credit_price.length > 0"
           >
-            <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-              <dt
-                class="text-sm leading-5 font-medium text-gray-500"
-                x-text="credit.duration + ' Bulan'"
-              ></dt>
-              <dd
-                class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                x-text="'Rp.' + Number(credit.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,').slice(0, -3); + ' / bulan'"
-              ></dd>
+            <div
+              class="sm:grid sm:grid-cols-2 text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+            >
+              <dt class="px-3 py-3">Tenor</dt>
+              <dd class="px-3 py-3">Angsuran</dd>
             </div>
-          </template>
-        </dl>
+            <template
+              x-for="(credit, index) in formData.credit_price"
+              :key="index"
+            >
+              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                <dt
+                  class="text-sm leading-5 font-medium text-gray-500"
+                  x-text="credit.duration + ' Bulan'"
+                ></dt>
+                <dd
+                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                  x-text="'Rp.' + Number(credit.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,').slice(0, -3); + ' / bulan'"
+                ></dd>
+              </div>
+            </template>
+          </dl>
+        </div>
+        -->
 
         <button
           type="submit"
@@ -312,7 +407,7 @@
           :class="{'cursor-not-allowed opacity-50': loading == true }"
         ></button>
       </div>
-      
+
       <!--
       <div x-show="orderCreated">
         <div
@@ -485,7 +580,6 @@
         </label>
       </div>
       -->
-      
     </div>
   </div>
 
