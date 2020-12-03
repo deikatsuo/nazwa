@@ -1,6 +1,707 @@
 {{ template "base" .}} {{ define "dashboard_orders_add_content" }}
 <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-  Buat Produk
+  Buat Order
 </h2>
+
+<div class="grid gap-6 mb-8">
+  <!-- Produk baru -->
+  <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+    <div x-data="create()" id="create">
+      <div x-show="!productCreated">
+        <div class="flex flex-wrap mb-6">
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Nama Produk</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Misal: Laptop Dell AMD Ryzen 5, Springbed Uniland"
+                x-model="formData.name"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errName }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmName"
+              :class="{'invisible': errName == false}"
+            >
+            </span>
+          </div>
+
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Brand</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Misal: LG, Samsung"
+                x-model="formData.brand"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errBrand }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmBrand"
+              :class="{'invisible': errBrand == false}"
+            >
+            </span>
+          </div>
+
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Tipe</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Misal: 3 pintu, Cinimax, 3 tumpang"
+                x-model="formData.type"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errType }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmType"
+              :class="{'invisible': errType == false}"
+            >
+            </span>
+          </div>
+
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Kode Produk</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="SKU"
+                x-model="formData.code"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errCode }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmCode"
+              :class="{'invisible': errCode == false}"
+            >
+            </span>
+          </div>
+
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Harga Beli</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Harga dari Pabrik"
+                x-model="formData.base_price"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errBasePrice }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmBasePrice"
+              :class="{'invisible': errBasePrice == false}"
+            >
+            </span>
+          </div>
+
+          <div class="w-full md:w-1/3 md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Harga Jual</span>
+              <input
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Harga Jual ke Konsumen"
+                x-model="formData.price"
+                @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPrice }"
+              />
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmPrice"
+              :class="{'invisible': errPrice == false}"
+            >
+            </span>
+          </div>
+        </div>
+        <div class="px-1">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">Foto</span></label
+          >
+          <!-- file upload modal -->
+          <article
+            aria-label="Photo Upload Modal"
+            class="relative h-full flex flex-col"
+          >
+            <!-- scroll area -->
+            <section class="h-full overflow-auto p-8 w-full flex flex-col">
+              <label class="mb-2">
+                <header
+                  class="cursor-pointer relative h-48 border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center"
+                >
+                  <input
+                    @change="
+                    for (const file of $event.target.files) {
+                      if (file.type.match('image.*') && file.size > 0) {
+                        base64(file);
+                      } else {
+                        $dispatch('notif', {
+                          type: 'error',
+                          message: 'File harus dalam format gambar .jpg, .png, etc. dan tidak rusak',
+                        });
+                      }
+                    }"
+                    type="file"
+                    class="hidden"
+                    multiple
+                  />
+
+                  <!-- overlay -->
+                  <div
+                    class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center"
+                  >
+                    <i>
+                      <svg
+                        class="fill-current w-12 h-12 mb-3 text-blue-700"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479-1.092l4 4h-3v4h-2v-4h-3l4-4z"
+                        />
+                      </svg>
+                    </i>
+                    <p class="text-lg text-blue-700">Upload Foto Produk</p>
+                  </div>
+                </header>
+              </label>
+
+              <!-- Preview foto -->
+              <ul class="flex flex-1 flex-wrap -m-1">
+                <template
+                  x-for="(photo, index) in formData.photos"
+                  :key="index"
+                >
+                  <li class="block p-1 w-1/2 sm:w-1/3 md:w-1/4 h-24">
+                    <article
+                      tabindex="0"
+                      class="w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 relative text-transparent hover:text-white shadow-sm"
+                    >
+                      <img
+                        alt="upload preview"
+                        class="w-full h-full sticky object-cover rounded-md bg-fixed"
+                        :src="photo.photo_type + ',' + photo.photo"
+                      />
+
+                      <section
+                        class="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3 hover:bg-gray-400 hover:bg-opacity-75"
+                      >
+                        <h1
+                          x-text="photo.name"
+                          class="flex-1 cursor-pointer"
+                          @click="window.open(photo.photo_type + ',' + photo.photo, '_blank')"
+                        ></h1>
+                        <div class="flex">
+                          <span class="p-1">
+                            <i>
+                              <svg
+                                class="fill-current w-4 h-4 ml-auto pt-"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  d="M5 8.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5zm9 .5l-2.519 4-2.481-1.96-4 5.96h14l-5-8zm8-4v14h-20v-14h20zm2-2h-24v18h24v-18z"
+                                />
+                              </svg>
+                            </i>
+                          </span>
+
+                          <p x-text="photo.size" class="p-1 size text-xs"></p>
+                          <button
+                            class="ml-auto focus:outline-none hover:bg-grey-300 p-1 rounded-md"
+                            @click="delPhoto(index)"
+                          >
+                            <svg
+                              class="pointer-events-none fill-current w-4 h-4 ml-auto"
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                class="pointer-events-none"
+                                d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </section>
+                    </article>
+                  </li>
+                </template>
+              </ul>
+            </section>
+          </article>
+        </div>
+
+        <div class="w-full md:px-1">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">Harga Kredit </span>
+            <div
+              class="flex flex-wrap mt-1 relative text-gray-500 focus-within:text-purple-600"
+            >
+              <input
+                class="block rounded-none rounded-l-sm w-2/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Tenor"
+                x-model="duration"
+                @keydown.enter="addKP($dispatch)"
+              />
+              <input
+                class="block rounded-none w-10/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Cicilan per bulan"
+                x-model="price"
+                @keydown.enter="addKP($dispatch)"
+              />
+              <button
+                class="absolute h-full bottom-0 right-0 px-4 text-sm text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-sm active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                @click="addKP($dispatch)"
+              >
+                tambah
+              </button>
+            </div>
+          </label>
+        </div>
+
+        <!-- Harga Kredit -->
+        <dl
+          class="w-full whitespace-no-wrap"
+          x-show="formData.credit_price.length > 0"
+        >
+          <div
+            class="sm:grid sm:grid-cols-2 text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Tenor</dt>
+            <dd class="px-3 py-3">Angsuran</dd>
+          </div>
+          <template
+            x-for="(credit, index) in formData.credit_price"
+            :key="index"
+          >
+            <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+              <dt
+                class="text-sm leading-5 font-medium text-gray-500"
+                x-text="credit.duration + ' Bulan'"
+              ></dt>
+              <dd
+                class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                x-text="'Rp.' + Number(credit.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,').slice(0, -3); + ' / bulan'"
+              ></dd>
+            </div>
+          </template>
+        </dl>
+
+        <button
+          type="submit"
+          class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+          @click="submitData($dispatch)"
+          :disabled="loading == true"
+          x-text="loadingText"
+          :class="{'cursor-not-allowed opacity-50': loading == true }"
+        ></button>
+      </div>
+      
+      <!--
+      <div x-show="orderCreated">
+        <div
+          class="absolute top-0 mt-4 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+          x-text="'Kode #'+product.Code"
+        ></div>
+        <div
+          class="w-full h-48 flex flex-col justify-center items-center"
+          :class="{ 'mb-4': photos.length > 1 }"
+        >
+          <div class="w-full relative">
+            <template x-for="(photo, index) in photos" :key="index">
+              <div
+                x-show="activeSlide === index + 1"
+                class="h-48 w-full flex items-center rounded-lg"
+              >
+                <div class="relative w-full h-full">
+                  <img
+                    class="object-scale-down w-full h-full"
+                    :src="'/file/product/'+photo.Photo"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <div
+                    class="absolute inset-0 shadow-inner"
+                    aria-hidden="true"
+                  ></div>
+                </div>
+              </div>
+            </template>
+            <div class="absolute inset-0 flex" x-show="photos.length > 1">
+              <div class="flex items-center justify-start w-1/2">
+                <button
+                  class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow-lg rounded-full w-12 h-12 -ml-6"
+                  x-on:click="activeSlide = activeSlide === 1 ? photos.length : activeSlide - 1"
+                >
+                  &#8592;
+                </button>
+              </div>
+              <div class="flex items-center justify-end w-1/2">
+                <button
+                  class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow rounded-full w-12 h-12 -mr-6"
+                  x-on:click="activeSlide = activeSlide === photos.length ? 1 : activeSlide + 1"
+                >
+                  &#8594;
+                </button>
+              </div>
+            </div>
+            <div
+              class="absolute w-full flex items-center justify-center px-4 mb-4"
+              x-show="photos.length > 1"
+            >
+              <template x-for="(_,index) in photos" :key="index">
+                <button
+                  class="flex-1 w-4 h-2 mt-4 mx-2 rounded-full overflow-hidden transition-colors duration-200 ease-out hover:bg-teal-600 hover:shadow-lg"
+                  :class="{ 
+                        'bg-orange-600': activeSlide === index + 1,
+                        'bg-teal-300': activeSlide !== index + 1 
+                      }"
+                  x-on:click="activeSlide = index + 1"
+                ></button>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Informasi Produk</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Nama Barang
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="product.Name"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Brand</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="product.Brand != ''"
+              x-text="product.Brand"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="product.Brand == ''"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Tipe</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="product.Type != ''"
+              x-text="product.Type"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="product.Type == ''"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">
+              Tanggal Ditambahkan
+            </dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="product.CreatedAt"
+            ></dd>
+          </div>
+        </dl>
+
+        <dl class="w-full whitespace-no-wrap">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Harga Produk</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Beli</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="product.BasePrice"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Jual</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-text="product.Price"
+            ></dd>
+          </div>
+        </dl>
+
+        <dl class="w-full whitespace-no-wrap" x-show="creditPrice.length > 0">
+          <div
+            class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <dt class="px-3 py-3">Harga Kredit</dt>
+            <dd class="px-4 sm:px-0"></dd>
+          </div>
+          <template x-for="(credit, index) in creditPrice" :key="index">
+            <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+              <dt
+                class="text-sm leading-5 font-medium text-gray-500"
+                x-text="credit.Duration + ' bulan'"
+              ></dt>
+              <dd
+                class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                x-text="credit.Price + ' / Bulan'"
+              ></dd></div
+          ></template>
+        </dl>
+        <label class="block mt-4 text-sm">
+          <span class="text-blue-700 dark:text-blue-400">
+            <a href="#" @click="resetProductForm()" class="text-red-500"
+              >Reset</a
+            ></span
+          >
+        </label>
+      </div>
+      -->
+      
+    </div>
+  </div>
+
+  <script>
+    function create() {
+      return {
+        formData: {
+          name: "",
+          code: "",
+          brand: "",
+          type: "",
+          base_price: "",
+          price: "",
+          photos: [],
+          credit_price: [],
+        },
+        productCreated: false,
+        loadingText: "Tambahkan Produk",
+        loading: false,
+        duration: null,
+        price: null,
+        product: [],
+        photos: [
+          {
+            ID: 0,
+            Photo: "no-photo.png",
+          },
+        ],
+        activeSlide: 1,
+        creditPrice: [],
+        notifStatus: "",
+        errName: false,
+        errmName: "",
+        errCode: false,
+        errmCode: "",
+        errBrand: false,
+        errmBrand: "",
+        errType: false,
+        errmType: "",
+        errBasePrice: false,
+        errmBasePrice: "",
+        errPrice: false,
+        errmPrice: "",
+
+        submitData($dispatch) {
+          this.loadingText = "Loading...";
+          this.loading = true;
+
+          fetch("/api/v1/local/product/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(this.formData),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              this.loadingText = "Tambahkan Produk";
+              this.loading = false;
+              if (data.name) {
+                this.errName = true;
+                this.errmName = data.name;
+              } else {
+                this.errName = false;
+                this.errmName = "";
+              }
+              if (data.code) {
+                this.errCode = true;
+                this.errmCode = data.code;
+              } else {
+                this.errCode = false;
+                this.errmCode = "";
+              }
+              if (data.brand) {
+                this.errBrand = true;
+                this.errmBrand = data.brand;
+              } else {
+                this.errBrand = false;
+                this.errmBrand = "";
+              }
+              if (data.type) {
+                this.errType = true;
+                this.errmType = data.Type;
+              } else {
+                this.errType = false;
+                this.errmType = "";
+              }
+              if (data.baseprice) {
+                this.errBasePrice = true;
+                this.errmBasePrice = data.baseprice;
+              } else {
+                this.errBasePrice = false;
+                this.errmBasePrice = "";
+              }
+              if (data.price) {
+                this.errPrice = true;
+                this.errmPrice = data.price;
+              } else {
+                this.errPrice = false;
+                this.errmPrice = "";
+              }
+
+              if (data.status == "error") {
+                this.notifStatus = "error";
+              }
+              if (data.status == "fail") {
+                this.notifStatus = "fail";
+              }
+              if (data.status == "success") {
+                this.notifStatus = "success";
+                this.productCreated = true;
+                this.product = data.product;
+                if (data.product.CreditPrice != null) {
+                  this.creditPrice = data.product.CreditPrice;
+                } else {
+                  this.creditPrice = [];
+                }
+                if (data.product.Photos != null) {
+                  this.photos = data.product.Photos;
+                } else {
+                  this.photos = [
+                    {
+                      ID: 0,
+                      Photo: "no-photo.png",
+                    },
+                  ];
+                }
+              }
+
+              if (data.message) {
+                $dispatch("notif", {
+                  type: this.notifStatus,
+                  message: data.message,
+                });
+              }
+            })
+            .catch(() => {
+              this.loading = false;
+              console.log("Telah terjadi kesalahan");
+            });
+        },
+        base64(file) {
+          // Get file size
+          var size =
+            file.size > 1024
+              ? file.size > 1048576
+                ? Math.round(file.size / 1048576) + "mb"
+                : Math.round(file.size / 1024) + "kb"
+              : file.size + "b";
+          var reader = new FileReader();
+          reader.onloadend = function () {
+            var bsplit = reader.result.split(",");
+            document.getElementById("create").__x.$data.formData.photos.push({
+              photo_type: bsplit[0],
+              photo: bsplit[1],
+              name: file.name,
+              size: size,
+            });
+          };
+          reader.readAsDataURL(file);
+        },
+        delPhoto(id) {
+          this.formData.photos.splice(id, 1);
+        },
+        resetProductForm() {
+          this.productCreated = false;
+          this.product = [];
+          this.formData = {
+            name: "",
+            code: "",
+            brand: "",
+            type: "",
+            base_price: "",
+            price: "",
+            credit_price: [],
+            photos: [],
+          };
+          this.photos = [
+            {
+              ID: 0,
+              Photo: "no-photo.png",
+            },
+          ];
+          this.creditPrice = [];
+          this.activeSlide = 1;
+        },
+        addKP($dispatch) {
+          if (this.duration === null || this.price === null) {
+            $dispatch("notif", {
+              type: "error",
+              message: "Tenor atau Tagiahan perbulan tidak boleh kosong",
+            });
+            return;
+          }
+          if (isNaN(this.duration) || isNaN(this.price)) {
+            $dispatch("notif", {
+              type: "error",
+              message: "Tenor atau Tagiahan perbulan harus berupa angka",
+            });
+            return;
+          }
+          if (Number(this.duration) < 1 || Number(this.price) < 1) {
+            $dispatch("notif", {
+              type: "error",
+              message: "Tenor atau Tagiahan perbulan harus berupa angka",
+            });
+            return;
+          }
+          this.formData.credit_price.push({
+            duration: Number(this.duration),
+            price: Number(this.price),
+          });
+          this.duration = null;
+          this.price = null;
+        },
+      };
+    }
+  </script>
+</div>
 
 {{ end }}
