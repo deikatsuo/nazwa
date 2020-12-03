@@ -218,25 +218,28 @@
             </dl>
 
             <!-- Harga Kredit -->
-            <dl class="w-full whitespace-no-wrap">
+            <dl
+              class="w-full whitespace-no-wrap"
+              x-show="creditPrice.length > 0"
+            >
               <div
                 class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
               >
                 <dt class="px-3 py-3">Harga Kredit</dt>
                 <dd class="px-4 sm:px-0"></dd>
               </div>
-              <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-                <dt class="text-sm leading-5 font-medium text-gray-500">
-                  6 Bulan
-                </dt>
-                <dd
-                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                  x-text="product.Price"
-                ></dd>
-              </div>
+              <template x-for="(credit, index) in creditPrice" :key="index">
+                <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                  <dt
+                    class="text-sm leading-5 font-medium text-gray-500"
+                    x-text="credit.Duration + ' bulan'"
+                  ></dt>
+                  <dd
+                    class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                    x-text="credit.Price + ' / Bulan'"
+                  ></dd></div
+              ></template>
             </dl>
-
-
           </div>
         </template>
         <script>
@@ -251,6 +254,7 @@
                   Photo: "no-photo.png",
                 },
               ],
+              creditPrice: [],
               fetchById($dispatch) {
                 fetch(`/api/v1/local/product/id/${this.id}`, {
                   method: "GET",
@@ -272,6 +276,11 @@
                       });
                     } else {
                       this.product = json.product;
+                      if (json.product.CreditPrice != null) {
+                        this.creditPrice = json.product.CreditPrice;
+                      } else {
+                        this.creditPrice = [];
+                      }
                       if (json.product.Photos != null) {
                         this.photos = json.product.Photos;
                       } else {

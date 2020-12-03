@@ -213,8 +213,10 @@ func (c *CreateProduct) SetName(p string) *CreateProduct {
 
 // SetCode Kode produk
 func (c *CreateProduct) SetCode(p string) *CreateProduct {
-	c.Code = strings.ToLower(p)
-	c.into["code"] = ":code"
+	if p != "" {
+		c.Code = strings.ToLower(p)
+		c.into["code"] = ":code"
+	}
 	return c
 }
 
@@ -333,4 +335,23 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 	// Komit
 	err := tx.Commit()
 	return err
+}
+
+///////////
+// CHECK //
+///////////
+
+// ProductSkuExist kode produk sudah digunakan
+func ProductSkuExist(db *sqlx.DB, sku string) bool {
+	// Check bila sku sudah ada di database
+	var indb string
+	query := `SELECT code FROM "product" WHERE code=$1`
+	err := db.Get(&indb, query, sku)
+	if err == nil {
+		if indb != "" {
+			return true
+		}
+	}
+
+	return false
 }

@@ -273,12 +273,6 @@
               </button>
             </div>
           </label>
-          <span
-            class="text-xs text-red-600 dark:text-red-400"
-            x-text="errmPrice"
-            :class="{'invisible': errPrice == false}"
-          >
-          </span>
         </div>
 
         <!-- Harga Kredit -->
@@ -319,199 +313,184 @@
         ></button>
       </div>
 
-      <!--
-      <div x-show="!productCreated">
+      <div x-show="productCreated">
+        <!-- Title -->
+        <div
+          class="absolute top-0 mt-4 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+          x-text="'Kode #'+product.Code"
+        ></div>
+        <!-- Photo produk -->
         <div
           class="w-full h-48 flex flex-col justify-center items-center"
-          x-show="typeof user.Avatar !== 'undefined'"
+          :class="{ 'mb-4': photos.length > 1 }"
         >
           <div class="w-full relative">
-            <div class="h-48 w-full flex items-center rounded-lg">
-              <div class="relative w-full h-full">
-                <img
-                  class="object-scale-down w-full h-full"
-                  :src="'/file/profile/'+user.Avatar"
-                  alt=""
-                  loading="lazy"
-                />
-                <div
-                  class="absolute inset-0 shadow-inner"
-                  aria-hidden="true"
-                ></div>
+            <!-- Slide photo -->
+            <template x-for="(photo, index) in photos" :key="index">
+              <div
+                x-show="activeSlide === index + 1"
+                class="h-48 w-full flex items-center rounded-lg"
+              >
+                <div class="relative w-full h-full">
+                  <img
+                    class="object-scale-down w-full h-full"
+                    :src="'/file/product/'+photo.Photo"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <div
+                    class="absolute inset-0 shadow-inner"
+                    aria-hidden="true"
+                  ></div>
+                </div>
               </div>
+            </template>
+            <!-- Prev/Next Arrows -->
+            <div class="absolute inset-0 flex" x-show="photos.length > 1">
+              <div class="flex items-center justify-start w-1/2">
+                <button
+                  class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow-lg rounded-full w-12 h-12 -ml-6"
+                  x-on:click="activeSlide = activeSlide === 1 ? photos.length : activeSlide - 1"
+                >
+                  &#8592;
+                </button>
+              </div>
+              <div class="flex items-center justify-end w-1/2">
+                <button
+                  class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow rounded-full w-12 h-12 -mr-6"
+                  x-on:click="activeSlide = activeSlide === photos.length ? 1 : activeSlide + 1"
+                >
+                  &#8594;
+                </button>
+              </div>
+            </div>
+            <!-- Buttons -->
+            <div
+              class="absolute w-full flex items-center justify-center px-4 mb-4"
+              x-show="photos.length > 1"
+            >
+              <template x-for="(_,index) in photos" :key="index">
+                <button
+                  class="flex-1 w-4 h-2 mt-4 mx-2 rounded-full overflow-hidden transition-colors duration-200 ease-out hover:bg-teal-600 hover:shadow-lg"
+                  :class="{ 
+                        'bg-orange-600': activeSlide === index + 1,
+                        'bg-teal-300': activeSlide !== index + 1 
+                      }"
+                  x-on:click="activeSlide = index + 1"
+                ></button>
+              </template>
             </div>
           </div>
         </div>
 
+        <!-- Informasi Produk -->
         <dl class="w-full whitespace-no-wrap">
           <div
             class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
           >
-            <dt class="px-3 py-3">ID Unik</dt>
+            <dt class="px-3 py-3">Informasi Produk</dt>
             <dd class="px-4 sm:px-0"></dd>
           </div>
           <div class="px-4 py-1 sm:grid sm:grid-cols-2">
             <dt class="text-sm leading-5 font-medium text-gray-500">
-              Nomor Kartu Keluarga
+              Nama Barang
             </dt>
             <dd
               class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.FamilyCardNumber != ''"
-              x-text="user.FamilyCardNumber"
+              x-text="product.Name"
+            ></dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Brand</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="product.Brand != ''"
+              x-text="product.Brand"
             ></dd>
             <dd
               class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.FamilyCardNumber == ''"
+              x-show="product.Brand == ''"
+            >
+              -
+            </dd>
+          </div>
+          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <dt class="text-sm leading-5 font-medium text-gray-500">Tipe</dt>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="product.Type != ''"
+              x-text="product.Type"
+            ></dd>
+            <dd
+              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+              x-show="product.Type == ''"
             >
               -
             </dd>
           </div>
           <div class="px-4 py-1 sm:grid sm:grid-cols-2">
             <dt class="text-sm leading-5 font-medium text-gray-500">
-              Nomor Induk Kependudukan
+              Tanggal Ditambahkan
             </dt>
             <dd
               class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.RIC != ''"
-              x-text="user.RIC"
+              x-text="product.CreatedAt"
             ></dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.RIC == ''"
-            >
-              -
-            </dd>
           </div>
         </dl>
 
+        <!-- Harga produk -->
         <dl class="w-full whitespace-no-wrap">
           <div
             class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
           >
-            <dt class="px-3 py-3">Informasi Pengguna</dt>
+            <dt class="px-3 py-3">Harga Produk</dt>
             <dd class="px-4 sm:px-0"></dd>
           </div>
           <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Nama Lengkap
-            </dt>
+            <dt class="text-sm leading-5 font-medium text-gray-500">Beli</dt>
             <dd
               class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-text="user.Firstname + ' ' + user.Lastname"
+              x-text="product.BasePrice"
             ></dd>
           </div>
           <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Jenis Kelamin
-            </dt>
+            <dt class="text-sm leading-5 font-medium text-gray-500">Jual</dt>
             <dd
               class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.Gender == 'm'"
-            >
-              Laki-Laki
-            </dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.Gender == 'f'"
-            >
-              Perempuan
-            </dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Pekerjaan
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.Occupation != ''"
-              x-text="user.Occupation"
-            ></dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="user.Occupation == ''"
-            >
-              -
-            </dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">Saldo</dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-text="user.Balance"
-            ></dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">Peran</dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-text="user.Role"
-            ></dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Terdaftar Pada
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-text="user.CreatedAt"
+              x-text="product.Price"
             ></dd>
           </div>
         </dl>
 
-        <dl class="w-full whitespace-no-wrap">
+        <!-- Harga Kredit -->
+        <dl class="w-full whitespace-no-wrap" x-show="creditPrice.length > 0">
           <div
             class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
           >
-            <dt class="px-3 py-3">Informasi Kontak</dt>
+            <dt class="px-3 py-3">Harga Kredit</dt>
             <dd class="px-4 sm:px-0"></dd>
           </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">Email</dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="emails.length > 0"
-            >
-              <template x-for="(email, index) in emails" :key="index">
-                <p x-text="email.Email"></p>
-              </template>
-            </dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="emails.length == 0"
-            >
-              -
-            </dd>
-          </div>
-          <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-            <dt class="text-sm leading-5 font-medium text-gray-500">
-              Nomor Telepon
-            </dt>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="phones.length > 0"
-            >
-              <template x-for="(phone, index) in phones" :key="index">
-                <p x-text="phone.Phone"></p>
-              </template>
-            </dd>
-            <dd
-              class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-              x-show="phones.length == 0"
-            >
-              -
-            </dd>
-          </div>
+          <template x-for="(credit, index) in creditPrice" :key="index">
+            <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+              <dt
+                class="text-sm leading-5 font-medium text-gray-500"
+                x-text="credit.Duration + ' bulan'"
+              ></dt>
+              <dd
+                class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                x-text="credit.Price + ' / Bulan'"
+              ></dd></div
+          ></template>
         </dl>
-
         <label class="block mt-4 text-sm">
           <span class="text-blue-700 dark:text-blue-400">
-            <a href="#" @click="resetUserForm()" class="text-red-500"
+            <a href="#" @click="resetProductForm()" class="text-red-500"
               >Reset</a
             ></span
           >
         </label>
       </div>
-      -->
     </div>
   </div>
 
@@ -533,6 +512,15 @@
         loading: false,
         duration: null,
         price: null,
+        product: [],
+        photos: [
+          {
+            ID: 0,
+            Photo: "no-photo.png",
+          },
+        ],
+        activeSlide: 1,
+        creditPrice: [],
         notifStatus: "",
         errName: false,
         errmName: "",
@@ -613,6 +601,21 @@
                 this.notifStatus = "success";
                 this.productCreated = true;
                 this.product = data.product;
+                if (data.product.CreditPrice != null) {
+                  this.creditPrice = data.product.CreditPrice;
+                } else {
+                  this.creditPrice = [];
+                }
+                if (data.product.Photos != null) {
+                  this.photos = data.product.Photos;
+                } else {
+                  this.photos = [
+                    {
+                      ID: 0,
+                      Photo: "no-photo.png",
+                    },
+                  ];
+                }
               }
 
               if (data.message) {
@@ -650,8 +653,8 @@
         delPhoto(id) {
           this.formData.photos.splice(id, 1);
         },
-        resetUserForm() {
-          this.userCreated = false;
+        resetProductForm() {
+          this.productCreated = false;
           this.product = [];
           this.formData = {
             name: "",
@@ -663,6 +666,14 @@
             credit_price: [],
             photos: [],
           };
+          this.photos = [
+            {
+              ID: 0,
+              Photo: "no-photo.png",
+            },
+          ];
+          this.creditPrice = [];
+          this.activeSlide = 1;
         },
         addKP($dispatch) {
           if (this.duration === null || this.price === null) {

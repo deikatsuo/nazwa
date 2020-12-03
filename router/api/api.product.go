@@ -9,6 +9,7 @@ import (
 	"nazwa/router"
 	"nazwa/wrapper"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/contrib/sessions"
@@ -48,6 +49,12 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 			save = false
 		}
 
+		if dbquery.ProductSkuExist(db, json.Code) {
+			simpleErrMap["code"] = "SKU atau Kode produk sudah terdaftar"
+			status = "fail"
+			save = false
+		}
+
 		if len(json.Photo) > 0 {
 			for _, p := range json.Photo {
 				if p.PhotoType != "" && p.Photo != "" {
@@ -78,10 +85,17 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 			if err != nil {
 				log.Println("ERROR: api.product.go ProductCreate() Gagal menambahkan produk baru")
 				log.Print(err)
-				/*if err := os.Remove("./upload/product/" + file); err != nil {
-					log.Println("ERROR: api.product.go ProductCreate() Gagal menghapus file")
-					log.Println(err)
-				}*/
+				status = "error"
+				message = "Gagal menambahkan produk baru"
+
+				if len(files) > 0 {
+					for _, s := range files {
+						if err := os.Remove("./upload/product/" + s); err != nil {
+							log.Println("ERROR: api.product.go ProductCreate() Gagal menghapus file")
+							log.Println(err)
+						}
+					}
+				}
 			} else {
 				httpStatus = http.StatusOK
 				status = "success"
