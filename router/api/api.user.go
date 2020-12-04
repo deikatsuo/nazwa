@@ -608,8 +608,8 @@ func UserAddAddress(db *sqlx.DB) gin.HandlerFunc {
 //  GET  //
 ///////////
 
-// ShowUserList mengambil data/list pengguna
-func ShowUserList(db *sqlx.DB) gin.HandlerFunc {
+// UserShowList mengambil data/list pengguna
+func UserShowList(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
 		// User session saat ini
@@ -699,8 +699,8 @@ func ShowUserList(db *sqlx.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// ShowUserByID mengambil data pengguna berdasarkan ID
-func ShowUserByID(db *sqlx.DB) gin.HandlerFunc {
+// UserShowByID mengambil data pengguna berdasarkan ID
+func UserShowByID(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
 		// User session saat ini

@@ -137,16 +137,16 @@ func runServer(db *sqlx.DB) {
 
 	// /api/v1/local/order
 	order := v1local.Group("/order")
-	order.GET("/id/:id", api.ShowOrderByID(db))
-	order.GET("/list/:limit", api.ShowOrderList(db))
+	order.GET("/id/:id", api.OrderShowByID(db))
+	order.GET("/list/:limit", api.OrderShowList(db))
 	order.POST("/add", api.OrderCreate(db))
 
 	// User API
 	// /api/v1/local/user
 	v1user := v1local.Group("/user")
 	v1user.POST("/create", api.UserCreate(db))
-	v1user.GET("/list/:limit", api.ShowUserList(db))
-	v1user.GET("/id/:id", api.ShowUserByID(db))
+	v1user.GET("/list/:limit", api.UserShowList(db))
+	v1user.GET("/id/:id", api.UserShowByID(db))
 
 	// User API edit
 	v1ue := v1user.Group("/edit")
