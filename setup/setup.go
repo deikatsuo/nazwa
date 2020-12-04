@@ -99,7 +99,7 @@ func RunSetup(db *sqlx.DB) {
 
 // Membuat user admin baru
 func setupUserAdmin(db *sqlx.DB) error {
-	user := dbquery.NewUser()
+	user := dbquery.UserNew()
 
 	// Variabel untuk menyimpan hasil input
 	var input createAdminInput

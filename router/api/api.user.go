@@ -88,7 +88,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		var uid int
 		var retUser wrapper.User
 		if save {
-			user := dbquery.NewUser()
+			user := dbquery.UserNew()
 			err := user.SetFirstName(json.Firstname).
 				SetLastName(json.Lastname).
 				SetFamilyCard(json.FC).

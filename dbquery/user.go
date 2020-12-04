@@ -145,9 +145,9 @@ type CreateUser struct {
 	familyCard   string
 }
 
-// NewUser membuat user baru
+// UserNew membuat user baru
 // mengembalikan struct User {}
-func NewUser() *CreateUser {
+func UserNew() *CreateUser {
 	return &CreateUser{
 		into: make(map[string]string),
 		role: RoleCustomer,
