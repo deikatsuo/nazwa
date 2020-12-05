@@ -19,6 +19,7 @@ type GetUsers struct {
 	limit     int
 	lastid    int
 	direction string
+	where     string
 }
 
 // Limit set limit
@@ -40,6 +41,12 @@ func (u *GetUsers) Direction(direction string) *GetUsers {
 	return u
 }
 
+// Where kondisi
+func (u *GetUsers) Where(where string) *GetUsers {
+	u.where = where
+	return u
+}
+
 // Show tampilkan data
 func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 	var user []wrapper.NullableUser
@@ -50,15 +57,9 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 	}
 
 	// Where logic
-	where := ""
-	// Maju/Mundur
-	if u.direction == "next" {
-		where = "WHERE u.id > " + strconv.Itoa(u.lastid) + " ORDER BY u.id ASC"
-	} else if u.direction == "back" {
-		where = "WHERE u.id < " + strconv.Itoa(u.lastid) + " ORDER BY u.id DESC"
-	}
+	where := u.where
 
-	// query pengambilan data produk
+	// query pengambilan data user
 	query := `SELECT
 		u.id,
 		u.first_name,
@@ -66,6 +67,7 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 		u.username,
 		u.avatar,
 		u.gender,
+		u.ric,
 		TO_CHAR(u.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
 		u.balance,
 		INITCAP(r.name) AS role
@@ -79,12 +81,12 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 
 	err := db.Select(&user, query, limit)
 	if err != nil {
-		log.Println("Error: user.go Select all product")
+		log.Println("Error: user.go Select all user")
 		log.Println(err)
 		return []wrapper.User{}, err
 	}
 
-	// mapping data produk
+	// mapping data user
 	for _, u := range user {
 		parse = append(parse, wrapper.User{
 			ID:        u.ID,
@@ -94,6 +96,7 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 			Username:  string(u.Username.String),
 			Balance:   string(u.Balance),
 			Avatar:    u.Avatar,
+			RIC:       u.RIC,
 		})
 	}
 
