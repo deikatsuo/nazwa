@@ -573,6 +573,13 @@
                   this.errGender = false;
                   this.errmGender = "";
                 }
+                if (data.occupation) {
+                  this.errOccupation = true;
+                  this.errmOccupation = data.occupation;
+                } else {
+                  this.errOccupation = false;
+                  this.errmOccupation = "";
+                }
                 if (data.password) {
                   this.errPassword = true;
                   this.errmPassword = data.password;
