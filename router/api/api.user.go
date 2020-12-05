@@ -806,7 +806,7 @@ func UserSearchByNIK(db *sqlx.DB) gin.HandlerFunc {
 		var users []wrapper.User
 
 		if next {
-			u.Where("WHERE u.ric LIKE '%" + search + "%' ORDER BY u.id ASC")
+			u.Where("WHERE u.ric LIKE '" + search + "%' ORDER BY u.id ASC")
 			fmt.Println(search)
 			u.LastID(lastid)
 
