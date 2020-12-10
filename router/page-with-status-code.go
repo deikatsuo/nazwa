@@ -4,12 +4,9 @@ import (
 	"nazwa/misc"
 	"nazwa/wrapper"
 	"net/http"
-	"sync"
 
 	"github.com/gin-gonic/gin"
 )
-
-var mut = sync.RWMutex{}
 
 // Page404 halaman tidak ditemukan
 // Jika route gak ada yang cocok
@@ -22,13 +19,9 @@ func Page404(c *gin.Context) {
 		"l_description": "Mohon maaf, halaman yang anda tuju tidak tersedia. Mungkin salah mengetikan alamat, atau halaman tersebut sudah dipindahkan/dihapus",
 	}
 
-	mut.RLock()
 	df := c.MustGet("config").(wrapper.DefaultConfig).Site
-	mut.RUnlock()
 
-	mut.Lock()
 	met := misc.Mete(df, gh)
-	mut.Unlock()
 
 	c.HTML(http.StatusNotFound, "error.html", met)
 
@@ -45,13 +38,9 @@ func Page403(c *gin.Context) {
 		"l_description": "Mohon maaf, anda tidak memiliki ijin untuk mengakses halaman ini",
 	}
 
-	mut.RLock()
 	df := c.MustGet("config").(wrapper.DefaultConfig).Site
-	mut.RUnlock()
 
-	mut.Lock()
 	met := misc.Mete(df, gh)
-	mut.Unlock()
 
 	c.HTML(http.StatusForbidden, "error.html", met)
 }
@@ -66,12 +55,10 @@ func Page500(c *gin.Context) {
 		"l_reason":      "Oops! Error pada server",
 		"l_description": "Kami mohon maaf, sepertinya telah terjadi kesalahan pada server kami. Mungkin data ",
 	}
-	mut.RLock()
-	df := c.MustGet("config").(wrapper.DefaultConfig).Site
-	mut.RUnlock()
 
-	mut.Lock()
+	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+
 	met := misc.Mete(df, gh)
-	mut.Unlock()
+
 	c.HTML(http.StatusInternalServerError, "error.html", met)
 }

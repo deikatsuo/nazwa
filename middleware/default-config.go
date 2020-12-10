@@ -24,9 +24,8 @@ func NewDefaultConfig() gin.HandlerFunc {
 	}
 
 	return func(c *gin.Context) {
-		mut.Lock()
+
 		c.Set("config", wrapper.DefaultConfig{Site: config})
-		mut.Unlock()
 
 		c.Next()
 	}
@@ -80,14 +79,12 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 			"l_admin_create": "Buat pelanggan",
 		}
 
-		mut.RLock()
 		siteDefault := c.MustGet("config").(wrapper.DefaultConfig).Site
-		mut.RUnlock()
 
-		mut.Lock()
 		met := misc.Mete(dashboard, siteDefault)
-		mut.Unlock()
+
 		c.Set("dashboard", met)
+
 		c.Next()
 	}
 }

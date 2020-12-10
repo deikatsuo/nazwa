@@ -10,22 +10,24 @@ func Mete2(m1, m2 map[string]interface{}) map[string]interface{} {
 }
 */
 
-// Mete mete v2
+// Mete menggabungkan dua map secara concurrent
 func Mete(m1, m2 map[string]interface{}) map[string]interface{} {
+	nm := map[string]interface{}{}
+
+	Mut.RLock()
+	defer Mut.RUnlock()
+
+	for i, v := range m1 {
+		nm[i] = v
+	}
 
 	for i, v := range m2 {
-		/*
-			nm := map[string]interface{}{
-				i: v,
-			}
-			fmt.Println("NEW: ", nm)
-		*/
 		for range m1 {
 
-			m1[i] = v
+			nm[i] = v
 
 		}
 	}
-	// fmt.Println("ALL: ", mret)
-	return m1
+
+	return nm
 }

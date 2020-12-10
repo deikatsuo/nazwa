@@ -11,7 +11,9 @@ import (
 // Halaman homepage
 func PageHome(c *gin.Context) {
 	// Ambil konfigurasi default
+	misc.Mut.Lock()
 	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+	misc.Mut.Unlock()
 
 	gh := gin.H{
 		"site_title": "Homepage",
@@ -51,5 +53,11 @@ func PageHome(c *gin.Context) {
 		"l_link_help":    "Bantuan",
 		"l_link_support": "Dukungan",
 	}
-	c.HTML(200, "index.html", misc.Mete(df, gh))
+	//misc.Mutex.Lock()
+
+	//mergo.Map(&df, gh)
+	met := misc.Mete(df, gh)
+	//misc.Mutex.Unlock()
+
+	c.HTML(200, "index.html", met)
 }
