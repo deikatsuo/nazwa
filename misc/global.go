@@ -6,4 +6,4 @@ import "sync"
 var Mut = &sync.RWMutex{}
 
 // Mutex global
-var Mutex = &sync.Mutex{}
+//var Mutex = &sync.Mutex{}

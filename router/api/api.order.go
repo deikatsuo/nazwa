@@ -76,7 +76,7 @@ func OrderShowList(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		if len(orders) > 0 && direction == "back" {
-			// Reverse urutan array user
+			// Reverse urutan array order
 			temp := make([]wrapper.Order, len(orders))
 			in := 0
 			for i := len(orders) - 1; i >= 0; i-- {
