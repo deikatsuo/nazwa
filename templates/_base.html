@@ -15,9 +15,30 @@
     {{ template "head" .}} {{ block "extend_head" .}}{{ end }}
   </head>
   <body>
+    <div @preview.window="openPreview($event.detail.html);"></div>
     <div @notif.window="showAlert($event.detail.type); alertMessage = $event.detail.message"></div>
     <div @modal.window="openModal(); if (typeof($event.detail.tmp) != 'undefined') { modalTmp = $event.detail.tmp }; modalFooter = $event.detail.footer; modalTitle = $event.detail.title; modalContent = $event.detail.content; if (typeof($event.detail.html) != 'undefined') { showModalHTML = true }; $refs.modalHTML.innerHTML = $event.detail.html; if (typeof($event.detail.callback) != 'undefined') { modalCallback = $event.detail.callback };"></div>
 
+    <template x-if="isPreviewOpen">
+      <div
+        class="fixed inset-0 z-40 flex items-end bg-black bg-opacity-100 sm:items-center sm:justify-center"
+      >
+          <button
+            class="absolute top-0 z-50 right-0 inline-flex items-center justify-center w-16 h-16 text-gray-400 transition-colors duration-150 rounded dark:hover:text-gray-200 hover: hover:text-red-700"
+            aria-label="close"
+            @click="closePreview()"
+          >
+            {{ template "_svg_icon_close" }}
+          </button>
+        <span
+          x-html="previewContent"
+          @click.away="closePreview()"
+          class="w-full h-full relative px-6 py-4 sm:m-4"
+        ></span>
+      </div>
+    </template>
+
+    <!-- Alert -->
     <template x-if="openAlertBox">
       <div
         class="fixed bottom-0 right-0 z-50"
@@ -39,6 +60,7 @@
       </div>
     </template>
     
+    <!-- Sidebar -->
     <div
       class="flex h-screen bg-gray-50 dark:bg-gray-900"
       :class="{ 'overflow-hidden': isSideMenuOpen }"
@@ -110,8 +132,8 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0  transform translate-y-1/2"
-        @click.away="closeModal"
-        @keydown.escape="closeModal"
+        @click.away="if (!isPreviewOpen && previewContent == '') { closeModal(); } else { previewContent = ''; }"
+        @keydown.escape="if (!isPreviewOpen) { closeModal(); }"
         class="w-full md:w-2/4 relative px-6 py-4 bg-white rounded-lg dark:bg-gray-800 sm:rounded-lg sm:m-4"
         role="dialog"
         id="modal"

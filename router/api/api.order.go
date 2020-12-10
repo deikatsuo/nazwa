@@ -12,8 +12,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// ShowOrderList mengambil data/list order/penjualan
-func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
+// OrderShowList mengambil data/list order/penjualan
+func OrderShowList(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
 		// User session saat ini
@@ -102,8 +102,8 @@ func ShowOrderList(db *sqlx.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// ShowOrderByID mengambil data order/penjualan berdasarkan ID
-func ShowOrderByID(db *sqlx.DB) gin.HandlerFunc {
+// OrderShowByID mengambil data order/penjualan berdasarkan ID
+func OrderShowByID(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
 		// User session saat ini

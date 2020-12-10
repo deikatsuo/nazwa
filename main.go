@@ -148,6 +148,10 @@ func runServer(db *sqlx.DB) {
 	v1user.GET("/list/:limit", api.UserShowList(db))
 	v1user.GET("/id/:id", api.UserShowByID(db))
 
+	// User API search/pencarian
+	v1use := v1user.Group("/search")
+	v1use.GET("/ric/:limit", api.UserSearchByNIK(db))
+
 	// User API edit
 	v1ue := v1user.Group("/edit")
 	v1ue.PATCH("/:id/update/contact", api.UserUpdateContact(db))

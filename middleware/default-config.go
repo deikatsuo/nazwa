@@ -6,12 +6,14 @@ import (
 	"nazwa/misc"
 	"nazwa/router"
 	"nazwa/wrapper"
+	"sync"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/imdario/mergo"
 	"github.com/jmoiron/sqlx"
 )
+
+var mut = sync.RWMutex{}
 
 // NewDefaultConfig - mengambil konfigurasi default dari .env
 func NewDefaultConfig() gin.HandlerFunc {
@@ -22,7 +24,10 @@ func NewDefaultConfig() gin.HandlerFunc {
 	}
 
 	return func(c *gin.Context) {
+		mut.Lock()
 		c.Set("config", wrapper.DefaultConfig{Site: config})
+		mut.Unlock()
+
 		c.Next()
 	}
 }
@@ -75,9 +80,14 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 			"l_admin_create": "Buat pelanggan",
 		}
 
+		mut.RLock()
 		siteDefault := c.MustGet("config").(wrapper.DefaultConfig).Site
-		mergo.Map(&dashboard, siteDefault, mergo.WithOverride)
-		c.Set("dashboard", dashboard)
+		mut.RUnlock()
+
+		mut.Lock()
+		met := misc.Mete(dashboard, siteDefault)
+		mut.Unlock()
+		c.Set("dashboard", met)
 		c.Next()
 	}
 }

@@ -67,6 +67,15 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				}
 			}
 		}
+
+		// Buat thumbnail
+		if len(files) > 0 {
+			err := misc.FileGenerateThumb(files[0], "./upload/product/")
+			if err != nil {
+				message = err.Error()
+			}
+		}
+
 		var retProduct wrapper.Product
 		var pid int
 		if save {
@@ -94,6 +103,11 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 							log.Println("ERROR: api.product.go ProductCreate() Gagal menghapus file")
 							log.Println(err)
 						}
+					}
+					// Hapus thumbnail
+					if err := os.Remove("./upload/product/thumbnail/" + files[0]); err != nil {
+						log.Println("ERROR: api.product.go ProductCreate() Gagal menghapus file thumbnail")
+						log.Println(err)
 					}
 				}
 			} else {

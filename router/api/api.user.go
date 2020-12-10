@@ -85,6 +85,13 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			}
 		}
 
+		if file != "" {
+			err := misc.FileGenerateThumb(file, "./upload/profile/")
+			if err != nil {
+				message = err.Error()
+			}
+		}
+
 		var uid int
 		var retUser wrapper.User
 		if save {
@@ -105,7 +112,12 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				log.Println("ERROR: api.user.go UserCreate() Gagal membuat user baru")
 				log.Print(err)
 				if err := os.Remove("./upload/profile/" + file); err != nil {
-					log.Println("ERROR: api.user.go UserCreate() Gagal menghapus file")
+					log.Println("ERROR: api.user.go UserCreate() Gagal menghapus photo")
+					log.Println(err)
+				}
+
+				if err := os.Remove("./upload/profile/thumbnail/" + file); err != nil {
+					log.Println("ERROR: api.user.go UserCreate() Gagal menghapus thumbnail")
 					log.Println(err)
 				}
 			} else {

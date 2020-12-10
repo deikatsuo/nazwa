@@ -74,11 +74,11 @@ SELECT
         WHERE u.id > 1 AND r.id = 1
         LIMIT 10;
 
-ALTER TABLE "product_photo"
-ALTER COLUMN "photo" TYPE VARCHAR(50);
+ALTER TABLE "product"
+ALTER COLUMN "thumbnail" TYPE VARCHAR(50);
 
-ALTER TABLE "user"
-ADD COLUMN "occupation" VARCHAR(25);
+ALTER TABLE "product"
+ADD COLUMN "thumbnail" VARCHAR(50);
 
 ALTER TABLE "product_photo"
 ADD COLUMN "photo" VARCHAR(50) NOT NULL UNIQUE;

@@ -158,6 +158,7 @@ CREATE TABLE "product" (
     "price" DECIMAL(15,2) DEFAULT '0',
     "type" VARCHAR(25),
     "brand" VARCHAR(25),
+    "thumbnail" VARCHAR(50),
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (created_by) REFERENCES "user"("id")

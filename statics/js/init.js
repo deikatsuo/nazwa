@@ -62,6 +62,17 @@ function data() {
       }
     },
 
+    // Preview
+    isPreviewOpen: false,
+    previewContent: '',
+    openPreview(content) {
+      this.previewContent = content;
+      this.isPreviewOpen = true;
+    },
+    closePreview() {
+      this.isPreviewOpen = false;
+    },
+
     // Modal
     isModalOpen: false,
     trapCleanup: null,

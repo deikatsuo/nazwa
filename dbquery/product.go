@@ -65,6 +65,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 		TO_CHAR(base_price,'Rp999G999G999G999G999') AS base_price,
 		TO_CHAR(price,'Rp999G999G999G999G999') AS price,
 		code,
+		thumbnail,
 		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at
 		FROM "product"
 		%s
@@ -88,6 +89,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 			BasePrice: string(p.BasePrice),
 			Price:     string(p.Price),
 			Code:      p.Code,
+			Thumbnail: p.Thumbnail.String,
 		})
 	}
 
@@ -319,6 +321,11 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 				log.Println("ERROR: product.go Save() Insert photo ID: ", id)
 				return err
 			}
+		}
+
+		if _, err := tx.Exec(`UPDATE "product" SET thumbnail=$1	WHERE id=$2`, c.photos[0], tempReturnID); err != nil {
+			log.Println("ERROR: product.go Save() Update thumbnail")
+			return err
 		}
 	}
 
