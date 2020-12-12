@@ -163,5 +163,5 @@ func runServer(db *sqlx.DB) {
 	v1ue.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
 
 	// Jalankan server
-	server.Run()
+	server.Run(":8080")
 }
