@@ -20,6 +20,8 @@ function data() {
     return window.localStorage.getItem('pageMenuDw')
   }
 
+
+
   return {
     dark: getThemeFromLocalStorage(),
     toggleTheme() {
@@ -61,6 +63,13 @@ function data() {
         this.pageMenuDw = '';
       }
     },
+    isObjEmpty(obj) {
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key))
+          return false;
+      }
+      return true;
+    },
 
     // Preview
     isPreviewOpen: false,
@@ -79,7 +88,7 @@ function data() {
     modalTitle: '',
     modalContent: '',
     showModalHTML: false,
-    modalCallback: function(){},
+    modalCallback: function () { },
     modalTmp: null,
     modalFooter: false,
     openModal() {
@@ -91,7 +100,7 @@ function data() {
       this.modalTitle = ''
       this.modalContent = ''
       this.showModalHTML = false
-      this.modalCallback = function() {}
+      this.modalCallback = function () { }
       this.trapCleanup()
     },
 
