@@ -14,12 +14,33 @@
             <input
               class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
               placeholder="Nomor Induk Kependudukan (NIK)"
-              x-model="formData.customer"
+              x-model="instantData.customer"
               @keydown.enter="submitData($dispatch)"
-              @keyup="if (formData.customer.length > 5) { closeCustomerIS = false; searchNIK(); } else { closeCustomerIS = true; }"
+              @keyup="if (instantData.customer.length > 5 && instantData.customer.length <= 16) { closeCustomerIS = false; searchNIK(); } else { closeCustomerIS = true; }"
+              @click="if (instantData.customer.length > 5 && instantData.customer.length <= 16) { closeCustomerIS = false; } else { closeCustomerIS = true; }"
               @click.away="closeCustomerIS = true;"
+              @keydown.tab="closeCustomerIS = true;"
+              x-show="$parent.isObjEmpty(tempDataCustomer)"
               :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errName }"
             />
+            <div class="w-full">
+              <div
+                class="relative bg-blue-400 bg-opacity-50 mt-1 text-sm inline-block py-1 pl-4 pr-8 rounded-full"
+                x-show="!$parent.isObjEmpty(tempDataCustomer)"
+              >
+                <i
+                  x-text="tempDataCustomer.Firstname +' '+ tempDataCustomer.Lastname"
+                ></i>
+                (<b x-text="tempDataCustomer.RIC"></b>)
+                <p
+                  style="margin-top: 0.42rem"
+                  class="cursor-pointer absolute right-0 top-0 mr-2"
+                  @click="tempDataCustomer = {};"
+                >
+                  {{ template "_svg_icon_close" }}
+                </p>
+              </div>
+            </div>
           </label>
           <ul
             x-transition:leave="transition ease-in duration-150"
@@ -29,12 +50,20 @@
             class="absolute left-0 right-0 -mt-1 md:mr-1 md:ml-1 text-gray-600 bg-white border-none border-r border-l border-b border-gray-100 rounded-br-md rounded-bl-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
             aria-label="submenu"
           >
-            <div x-show="customerIS.length > 0">
+            <div x-show="customerIS.length > 0 && closeCustomerIS == false && $parent.isObjEmpty(tempDataCustomer)">
               <template x-for="(customer, index) in customerIS" :key="index">
                 <li class="flex">
                   <a
                     class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                     href="#"
+                    tabindex="-1"
+                    @click="tempDataCustomer = 
+                      {
+                        ID: customer.ID,
+                        Firstname: customer.Firstname,
+                        Lastname: customer.Lastname,
+                        RIC: customer.RIC,
+                      };"
                   >
                     <svg
                       class="w-4 h-4 mr-3"
@@ -50,7 +79,9 @@
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                       ></path>
                     </svg>
-                    <span x-text="customer.Firstname +' '+ customer.Lastname"></span>
+                    <span
+                      x-text="customer.Firstname +' '+ customer.Lastname"
+                    ></span>
                   </a>
                 </li>
               </template>
@@ -430,19 +461,15 @@
       return {
         formData: {
           customer: "",
-          name: "",
-          code: "",
-          brand: "",
-          type: "",
-          base_price: "",
-          price: "",
-          photos: [],
-          credit_price: [],
         },
+        instantData: {
+          customer: "",
+        },
+        tempDataCustomer: {},
         orderCreated: false,
         closeCustomerIS: true,
         customerIS: [],
-        loadingText: "Tambahkan Produk",
+        loadingText: "Buat Order",
         loading: false,
         duration: null,
         price: null,
@@ -473,7 +500,7 @@
           })
             .then((res) => res.json())
             .then((data) => {
-              this.loadingText = "Tambahkan Produk";
+              this.loadingText = "Buat Order";
               this.loading = false;
               if (data.name) {
                 this.errName = true;
@@ -549,7 +576,7 @@
         },
         searchNIK() {
           fetch(
-            `/api/v1/local/user/search/ric/10?search=${this.formData.customer}`,
+            `/api/v1/local/user/search/ric/10?search=${this.instantData.customer}`,
             {
               method: "GET",
               headers: { "Content-Type": "application/json" },
@@ -557,7 +584,7 @@
           )
             .then((res) => res.json())
             .then((data) => {
-              if (data.message) {
+              if (data.error) {
                 $dispatch("notif", {
                   type: "error",
                   message: data.error,
