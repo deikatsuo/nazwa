@@ -8,6 +8,7 @@
   <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
     <div x-data="create()" id="create">
       <div x-show="!orderCreated">
+        <!-- Konsumen -->
         <div class="w-full relative md:w-2/3 md:px-1">
           <label class="block mt-4 text-sm">
             <span class="text-gray-700 dark:text-gray-400">Konsumen</span>
@@ -21,7 +22,7 @@
               @click.away="closeCustomerIS = true;"
               @keydown.tab="closeCustomerIS = true;"
               x-show="$parent.isObjEmpty(tempDataCustomer)"
-              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errName }"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errCustomer }"
             />
             <div class="w-full">
               <div
@@ -35,7 +36,8 @@
                 <p
                   style="margin-top: 0.42rem"
                   class="cursor-pointer absolute right-0 top-0 mr-2"
-                  @click="tempDataCustomer = {};"
+                  @click="tempDataCustomer = {};
+                  formData.customer = 0;"
                 >
                   {{ template "_svg_icon_close" }}
                 </p>
@@ -50,7 +52,9 @@
             class="absolute left-0 right-0 -mt-1 md:mr-1 md:ml-1 text-gray-600 bg-white border-none border-r border-l border-b border-gray-100 rounded-br-md rounded-bl-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
             aria-label="submenu"
           >
-            <div x-show="customerIS.length > 0 && closeCustomerIS == false && $parent.isObjEmpty(tempDataCustomer)">
+            <div
+              x-show="customerIS.length > 0 && closeCustomerIS == false && $parent.isObjEmpty(tempDataCustomer)"
+            >
               <template x-for="(customer, index) in customerIS" :key="index">
                 <li class="flex">
                   <a
@@ -63,7 +67,8 @@
                         Firstname: customer.Firstname,
                         Lastname: customer.Lastname,
                         RIC: customer.RIC,
-                      };"
+                      };
+                      formData.customer = customer.ID;"
                   >
                     <svg
                       class="w-4 h-4 mr-3"
@@ -94,81 +99,133 @@
             </div>
           </ul>
         </div>
+
         <div class="flex flex-wrap mb-6">
+          <!-- Sales -->
           <div class="w-full md:w-1/3 md:px-1">
             <label class="block mt-4 text-sm">
               <span class="text-gray-700 dark:text-gray-400">Sales</span>
               <input
                 class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder=""
+                placeholder="Nama Sales"
                 x-model="formData.sales"
                 @keydown.enter="submitData($dispatch)"
-                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errName }"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errSales }"
               />
             </label>
             <span
               class="text-xs text-red-600 dark:text-red-400"
-              x-text="errmName"
-              :class="{'invisible': errName == false}"
+              x-text="errmSales"
+              :class="{'invisible': errSales == false}"
             >
             </span>
           </div>
 
+          <!-- Surveyor -->
           <div class="w-full md:w-1/3 md:px-1">
             <label class="block mt-4 text-sm">
               <span class="text-gray-700 dark:text-gray-400">Surveyor</span>
               <input
                 class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder=""
+                placeholder="Nama Surveyor"
                 x-model="formData.surveyor"
                 @keydown.enter="submitData($dispatch)"
-                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errBrand }"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errSurveyor }"
               />
             </label>
             <span
               class="text-xs text-red-600 dark:text-red-400"
-              x-text="errmBrand"
-              :class="{'invisible': errBrand == false}"
+              x-text="errmSurveyor"
+              :class="{'invisible': errSurveyor == false}"
             >
             </span>
           </div>
 
+          <!-- Kolektor -->
           <div class="w-full md:w-1/3 md:px-1">
             <label class="block mt-4 text-sm">
               <span class="text-gray-700 dark:text-gray-400">Kolektor</span>
               <input
                 class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder=""
+                placeholder="Nama Kolektor"
                 x-model="formData.collector"
                 @keydown.enter="submitData($dispatch)"
-                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errType }"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errCollector }"
               />
             </label>
             <span
               class="text-xs text-red-600 dark:text-red-400"
-              x-text="errmType"
-              :class="{'invisible': errType == false}"
+              x-text="errmCollector"
+              :class="{'invisible': errCollector == false}"
             >
             </span>
           </div>
 
-          <div class="w-full md:w-1/3 md:px-1">
+          <!-- Pembayaran kredit -->
+          <div class="w-full md:px-1">
             <label class="block mt-4 text-sm">
-              <span class="text-gray-700 dark:text-gray-400">Kode Produk</span>
-              <input
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder="SKU"
-                x-model="formData.code"
-                @keydown.enter="submitData($dispatch)"
-                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errCode }"
-              />
+              <span class="text-gray-700 dark:text-gray-400"
+                >Metode Pembayaran</span
+              >
+              <div class="block text-xs">
+                <span class="pr-3 text-green-500 dark:text-green-400"
+                  >Cash</span
+                >
+                <div
+                  class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    type="checkbox"
+                    x-model="formData.credit"
+                    class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                  />
+                  <span
+                    class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+                  ></span>
+                </div>
+                <span class="pr-3 text-orange-500 dark:text-orange-400"
+                  >Kredit</span
+                >
+              </div>
             </label>
-            <span
-              class="text-xs text-red-600 dark:text-red-400"
-              x-text="errmCode"
-              :class="{'invisible': errCode == false}"
-            >
-            </span>
+          </div>
+
+          <div class="w-full md:px-1" x-show="formData.credit == true">
+            <div class="md:w-1/3">
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400"
+                  >Lama Angsuran</span
+                >
+                <input
+                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Misal: 6, untuk 6 bulan"
+                  x-model="formData.duration"
+                  @keydown.enter="submitData($dispatch)"
+                  :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDuration }"
+                />
+              </label>
+              <span
+                class="text-xs text-red-600 dark:text-red-400"
+                x-text="errmDuration"
+                :class="{'invisible': errDuration == false}"
+              >
+              </span>
+            </div>
+          </div>
+
+          <!-- Catatan -->
+          <div class="w-full md:px-1">
+            <div class="md:w-2/3">
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">Catatan</span>
+                <textarea
+                  class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                  rows="3"
+                  placeholder="Catatan mengenai order!"
+                  x-model="formData.notes"
+                ></textarea>
+              </label>
+            </div>
           </div>
 
           <div class="w-full md:w-1/3 md:px-1">
@@ -460,7 +517,13 @@
     function create() {
       return {
         formData: {
-          customer: "",
+          customer: 0,
+          sales: null,
+          surveyor: null,
+          collector: null,
+          credit: false,
+          duration: null,
+          notes: "",
         },
         instantData: {
           customer: "",
@@ -476,10 +539,16 @@
         product: [],
         creditPrice: [],
         notifStatus: "",
-        errName: false,
-        errmName: "",
-        errCode: false,
-        errmCode: "",
+        errCustomer: false,
+        errmCustomer: "",
+        errSales: false,
+        errmSales: "",
+        errSurveyor: false,
+        errmSurveyor: "",
+        errCollector: false,
+        errmCollector: "",
+        errDuration: false,
+        errmDuration: "",
         errBrand: false,
         errmBrand: "",
         errType: false,
@@ -493,6 +562,11 @@
           this.loadingText = "Loading...";
           this.loading = true;
 
+          // Jika bukan kredit
+          if (this.formData.credit == false) {
+            this.formData.duration = null;
+          }
+
           fetch("/api/v1/local/product/add", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -502,13 +576,6 @@
             .then((data) => {
               this.loadingText = "Buat Order";
               this.loading = false;
-              if (data.name) {
-                this.errName = true;
-                this.errmName = data.name;
-              } else {
-                this.errName = false;
-                this.errmName = "";
-              }
               if (data.code) {
                 this.errCode = true;
                 this.errmCode = data.code;
