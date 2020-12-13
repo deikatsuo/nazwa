@@ -975,7 +975,7 @@ func UserSearchByNameSales(db *sqlx.DB) gin.HandlerFunc {
 		var users []wrapper.User
 
 		if next {
-			u.Where("WHERE r.id=4 AND u.ric LIKE '" + search + "%' ORDER BY u.id ASC")
+			u.Where("WHERE r.id=4 AND concat(u.first_name, ' ', u.last_name) LIKE '" + search + "%' ORDER BY u.id ASC")
 			fmt.Println(search)
 			u.LastID(lastid)
 
