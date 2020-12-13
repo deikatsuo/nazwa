@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/contrib/sessions"
@@ -951,7 +952,7 @@ func UserSearchByNameSales(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		// Ambil query pencarian
-		search = c.Query("search")
+		search = strings.ToLower(c.Query("search"))
 
 		// Ambil query id terakhir
 		lst, err := strconv.Atoi(c.Query("lastid"))
