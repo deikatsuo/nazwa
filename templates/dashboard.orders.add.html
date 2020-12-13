@@ -527,11 +527,15 @@
         },
         instantData: {
           customer: "",
+          sales: "",
         },
-        tempDataCustomer: {},
         orderCreated: false,
+        tempDataCustomer: {},
+        tempDataSales: {},
         closeCustomerIS: true,
+        closeSalesIS: true,
         customerIS: [],
+        salesIS: [],
         loadingText: "Buat Order",
         loading: false,
         duration: null,
@@ -666,6 +670,33 @@
             .catch(() => {
               this.loading = false;
               console.log("Telah terjadi kesalahan saat memuat data customer");
+            });
+        },
+        searchSales() {
+          fetch(
+            `/api/v1/local/user/search/sales/10?search=${this.instantData.sales}`,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.error) {
+                $dispatch("notif", {
+                  type: "error",
+                  message: data.error,
+                });
+              }
+              if (data.users) {
+                this.salesIS = data.users;
+              } else {
+                this.salesIS = [];
+              }
+            })
+            .catch(() => {
+              this.loading = false;
+              console.log("Telah terjadi kesalahan saat memuat data sales");
             });
         },
         resetProductForm() {

@@ -8,6 +8,7 @@
   x-data="UserData()"
   x-init="fetchInit($watch, $dispatch)"
   class="w-full mb-8 overflow-hidden rounded-lg shadow-xs"
+  id="user_data"
 >
   <div class="w-full overflow-x-auto">
     <table class="w-full whitespace-no-wrap">
@@ -62,7 +63,10 @@
           </tr>
         </template>
         <template x-ref="userDetail">
-          <div x-init="fetchById($dispatch)" x-data="fUseDetail($parent)">
+          <div
+            x-init="watchData($watch, $dispatch); fetchById($dispatch);"
+            x-data="fUseDetail($parent)"
+          >
             <div
               class="absolute top-0 mt-4 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
               x-text="'Kode #'+user.Username"
@@ -198,10 +202,13 @@
                 <dt class="text-sm leading-5 font-medium text-gray-500">
                   Peran
                 </dt>
-                <dd
-                  class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                  x-text="user.Role"
-                ></dd>
+                <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+                  <select x-model="setRole">
+                    <template x-for="(name, index) in role" :key="index">
+                      <option :value="index" x-text="name"></option>
+                    </template>
+                  </select>
+                </dd>
               </div>
               <div class="px-4 py-1 sm:grid sm:grid-cols-2">
                 <dt class="text-sm leading-5 font-medium text-gray-500">
@@ -303,11 +310,29 @@
         <script>
           function fUseDetail($parent) {
             return {
+              watchData($watch, $dispatch) {
+                $watch("setRole", (value) => {
+                  if (this.counter > 0) {
+                    //alert(value);
+                    this.updateRole($dispatch, this.id, value);
+                  }
+                });
+              },
               id: $parent.modalTmp,
               user: [],
               emails: [],
               phones: [],
               addresses: [],
+              role: [
+                "Dev",
+                "Admin",
+                "Surveyor",
+                "Collector",
+                "Sales",
+                "Customer",
+              ],
+              setRole: null,
+              counter: 0,
               fetchById($dispatch) {
                 fetch(`/api/v1/local/user/id/${this.id}`, {
                   method: "GET",
@@ -329,6 +354,12 @@
                       });
                     } else {
                       this.user = json.user;
+                      this.setRole = json.user.Role;
+                      for (i = 0; i < this.role.length; i++) {
+                        if (this.role[i] == json.user.Role) {
+                          this.setRole = i;
+                        }
+                      }
                       if (json.user.Emails) {
                         this.emails = json.user.Emails;
                       }
@@ -338,10 +369,39 @@
                       if (json.user.Addresses) {
                         this.addresses = json.user.Addresses;
                       }
+                      this.counter += 1;
                     }
                   })
                   .catch((err) => {
                     console.log(err);
+                  });
+              },
+              updateRole($dispatch, uid, role) {
+                fetch(
+                  `/api/v1/local/user/edit/${uid}/update/role?set=${role}`,
+                  {
+                    method: "PATCH",
+                  }
+                )
+                  .then((res) => res.json())
+                  .then((json) => {
+                    if (json.error) {
+                      $dispatch("notif", {
+                        type: "error",
+                        message: json.error,
+                      });
+                    }
+                    if (json.success) {
+                      $dispatch("notif", {
+                        type: "success",
+                        message: "Peran pengguna berhasil diubah",
+                      });
+                      user = document.getElementById("user_data").__x.$data;
+                      user.fetchUsersData($dispatch, false, "next", true);
+                    }
+                  })
+                  .catch((err) => {
+                    console.log("Error: updateRole() " + err);
                   });
               },
             };
@@ -460,7 +520,8 @@
       last: false,
       page: 1,
       total: 0,
-      fetchUsersData($dispatch, reset, go) {
+      lastURL: "",
+      fetchUsersData($dispatch, reset, go, reload = false) {
         this.loading = true;
         if (reset) {
           this.lastid = 0;
@@ -470,6 +531,10 @@
         } else {
           ffrom = `/api/v1/local/user/list/${this.limit}?lastid=${this.lastid}&direction=next&role=${this.userType}`;
         }
+        if (reload) {
+          ffrom = this.lastURL;
+        }
+        this.lastURL = ffrom;
         fetch(ffrom, {
           method: "GET",
         })
@@ -488,12 +553,14 @@
               this.last = json.last;
               this.total = json.total;
 
-              if (go == "back") {
-                this.page = Number(this.page) - 1;
-                this.loaded -= 10;
-              } else if (go == "next") {
-                this.page = Number(this.page) + 1;
-                this.loaded += 10;
+              if (!reload) {
+                if (go == "back") {
+                  this.page = Number(this.page) - 1;
+                  this.loaded -= 10;
+                } else if (go == "next") {
+                  this.page = Number(this.page) + 1;
+                  this.loaded += 10;
+                }
               }
             } else {
               this.last = true;

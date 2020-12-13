@@ -246,6 +246,69 @@ func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
+// UserUpdateRole api untuk mengupdate kontak user
+func UserUpdateRole(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		nowID := session.Get("userid")
+		// Role user yang melakukan request
+		nowRole := session.Get("role")
+		// ID user yang role nya akan di ubah
+		uid, err := strconv.Atoi(c.Param("id"))
+		if err != nil || nowID == nil {
+			router.Page404(c)
+			return
+		}
+
+		errMess := ""
+		next := true
+		httpStatus := http.StatusBadRequest
+		success := ""
+		var simpleErr map[string]interface{}
+
+		// Role baru
+		newRole := c.Query("set")
+		newRoleID, err := strconv.Atoi(newRole)
+		if err != nil || nowRole == nil {
+			errMess = "Request tidak valid"
+			next = false
+		}
+
+		// Jika request set role ke dev (0)
+		if next {
+			if newRoleID == 0 {
+				if nowRole != 0 {
+					errMess = "Harus dev untuk membuat dev baru"
+					next = false
+				}
+			}
+		}
+
+		// Update role
+		if next {
+			if err := dbquery.UserUpdateRole(db, uid, newRoleID); err != nil {
+				errMess = "Gagal mengubah role"
+				next = false
+			}
+		}
+
+		// Berhasil update data
+		if next {
+			httpStatus = http.StatusOK
+			success = "Data berhasil disimpan"
+		}
+
+		gh := gin.H{
+			"error":   errMess,
+			"success": success,
+		}
+
+		c.JSON(httpStatus, misc.Mete(gh, simpleErr))
+	}
+	return gin.HandlerFunc(fn)
+}
+
 ////////////
 /* DELETE */
 ////////////
@@ -791,10 +854,7 @@ func UserSearchByNIK(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		// Ambil query pencarian
-		sq := c.Query("search")
-		if err == nil {
-			search = sq
-		}
+		search = c.Query("search")
 
 		// Ambil query id terakhir
 		lst, err := strconv.Atoi(c.Query("lastid"))
@@ -819,6 +879,103 @@ func UserSearchByNIK(db *sqlx.DB) gin.HandlerFunc {
 
 		if next {
 			u.Where("WHERE u.ric LIKE '" + search + "%' ORDER BY u.id ASC")
+			fmt.Println(search)
+			u.LastID(lastid)
+
+			usr, err := u.Show(db)
+			if err != nil {
+				errMess = err.Error()
+				httpStatus = http.StatusInternalServerError
+			}
+			users = usr
+		}
+
+		if len(users) > 0 && direction == "back" {
+			// Reverse urutan array user
+			temp := make([]wrapper.User, len(users))
+			in := 0
+			for i := len(users) - 1; i >= 0; i-- {
+				temp[in] = users[i]
+				in++
+			}
+			users = temp
+		}
+
+		// Cek id terakhir
+		if len(users) > 0 && len(users) < limit {
+			// Periksa apakah ini data terakhir atau bukan
+			last = true
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"users": users,
+			"error": errMess,
+			"total": total,
+			"last":  last,
+		})
+	}
+	return gin.HandlerFunc(fn)
+}
+
+// UserSearchByNameSales cari sales berdasarkan nama
+func UserSearchByNameSales(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		// Tolak jika yang request bukan user terdaftar
+		uid := session.Get("userid")
+		if uid == nil {
+			router.Page404(c)
+			return
+		}
+
+		search := ""
+		lastid := 1
+		last := false
+		limit := 10
+		var direction string
+		httpStatus := http.StatusOK
+		errMess := ""
+		u := dbquery.GetUsers{}
+		next := true
+
+		// Mengambil parameter limit
+		lim, err := strconv.Atoi(c.Param("limit"))
+		if err == nil {
+			limit = lim
+			u.Limit(limit)
+		} else {
+			errMess = "Limit tidak valid"
+			httpStatus = http.StatusBadRequest
+			next = false
+		}
+
+		// Ambil query pencarian
+		search = c.Query("search")
+
+		// Ambil query id terakhir
+		lst, err := strconv.Atoi(c.Query("lastid"))
+		if err == nil {
+			lastid = lst
+		}
+
+		// Forward/backward
+		direction = c.Query("direction")
+		if direction == "back" {
+			u.Direction(direction)
+		} else {
+			u.Direction("next")
+		}
+
+		var total int
+		if t, err := dbquery.GetUserTotalRow(db); err == nil {
+			total = t
+		}
+
+		var users []wrapper.User
+
+		if next {
+			u.Where("WHERE r.id=4 AND u.ric LIKE '" + search + "%' ORDER BY u.id ASC")
 			fmt.Println(search)
 			u.LastID(lastid)
 
