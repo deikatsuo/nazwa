@@ -149,12 +149,16 @@ func runServer(db *sqlx.DB) {
 	v1user.GET("/id/:id", api.UserShowByID(db))
 
 	// User API search/pencarian
+	// /api/v1/local/user/search
 	v1use := v1user.Group("/search")
 	v1use.GET("/ric/:limit", api.UserSearchByNIK(db))
+	v1use.GET("/sales/:limit", api.UserSearchByNameSales(db))
 
 	// User API edit
+	// /api/v1/local/user/edit
 	v1ue := v1user.Group("/edit")
 	v1ue.PATCH("/:id/update/contact", api.UserUpdateContact(db))
+	v1ue.PATCH("/:id/update/role", api.UserUpdateRole(db))
 	v1ue.DELETE("/:id/delete/email", api.UserDeleteEmail(db))
 	v1ue.POST("/:id/add/email", api.UserAddEmail(db))
 	v1ue.DELETE("/:id/delete/phone", api.UserDeletePhone(db))
