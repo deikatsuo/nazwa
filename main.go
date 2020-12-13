@@ -152,7 +152,9 @@ func runServer(db *sqlx.DB) {
 	// /api/v1/local/user/search
 	v1use := v1user.Group("/search")
 	v1use.GET("/ric/:limit", api.UserSearchByNIK(db))
-	v1use.GET("/sales/:limit", api.UserSearchByNameSales(db))
+	v1use.GET("/surveyor/:limit", api.UserSearchByNameType(db, "2"))
+	v1use.GET("/collector/:limit", api.UserSearchByNameType(db, "3"))
+	v1use.GET("/sales/:limit", api.UserSearchByNameType(db, "4"))
 
 	// User API edit
 	// /api/v1/local/user/edit

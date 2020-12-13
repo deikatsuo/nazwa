@@ -918,8 +918,8 @@ func UserSearchByNIK(db *sqlx.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// UserSearchByNameSales cari sales berdasarkan nama
-func UserSearchByNameSales(db *sqlx.DB) gin.HandlerFunc {
+// UserSearchByNameType cari sales berdasarkan nama
+func UserSearchByNameType(db *sqlx.DB, roleid string) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
 		// User session saat ini
@@ -976,7 +976,7 @@ func UserSearchByNameSales(db *sqlx.DB) gin.HandlerFunc {
 		var users []wrapper.User
 
 		if next {
-			u.Where("WHERE r.id=4 AND concat(u.first_name, ' ', u.last_name) LIKE '" + search + "%' ORDER BY u.id ASC")
+			u.Where("WHERE r.id=" + roleid + " AND concat(u.first_name, ' ', u.last_name) LIKE '" + search + "%' ORDER BY u.id ASC")
 			fmt.Println(search)
 			u.LastID(lastid)
 
