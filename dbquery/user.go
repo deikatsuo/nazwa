@@ -97,6 +97,7 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 			Balance:   string(u.Balance),
 			Avatar:    u.Avatar,
 			RIC:       u.RIC,
+			Role:      u.Role,
 		})
 	}
 
@@ -791,6 +792,16 @@ func UsernameExist(db *sqlx.DB, uname string) bool {
 ////////////
 /* UPDATE */
 ////////////
+
+// UserUpdateRole mengubah role user
+func UserUpdateRole(db *sqlx.DB, uid, roleid int) error {
+	query := `UPDATE "user_role"
+	SET role_id=$1
+	WHERE user_id=$2`
+	_, err := db.Exec(query, roleid, uid)
+
+	return err
+}
 
 // UpdateUsername mengubah username user
 func UpdateUsername(db *sqlx.DB, uid int, uname string) error {
