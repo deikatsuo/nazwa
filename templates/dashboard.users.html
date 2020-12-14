@@ -300,7 +300,7 @@
                   class="text-gray-700 dark:text-gray-400"
                   x-show="addresses.length == 0"
                 >
-                  <td class="px-4 py-1 text-sm align-top">-</td>
+                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Tidak ada alamat</td>
                   <td></td>
                 </tr>
 
@@ -315,7 +315,7 @@
                       ></a
                     ></span>
                   </td>
-                  <td>
+                  <td class="px-4 py-1 text-sm whitespace-normal break-words align-top">
                     <!-- Tambah alamat -->
                     <div
                       x-data="addAddressDetail()"
@@ -323,16 +323,6 @@
                       id="address"
                     >
                       <!-- Tambah address -->
-                      <label class="block mt-4 text-sm">
-                        <span class="text-blue-700 dark:text-blue-400">
-                          <a
-                            href="#"
-                            @click="addAddressOpen = !addAddressOpen"
-                            x-text="addAddressOpen ? '{{ .l_u_address_remove }}' : '{{ .l_u_address_add }}'"
-                            :class="{ 'text-red-500': addAddressOpen }"
-                          ></a
-                        ></span>
-                      </label>
                       <div x-show="addAddressOpen">
                         <!-- Nama panggilan alamat -->
                         <label class="block mt-4 text-sm">
