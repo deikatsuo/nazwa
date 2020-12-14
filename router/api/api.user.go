@@ -63,12 +63,12 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			status = "fail"
 			save = false
 		} else {
-			if dbquery.RICExist(db, json.RIC) {
+			if dbquery.UserRICExist(db, json.RIC) {
 				simpleErrMap["ric"] = "Nomor KTP sudah terdaftar"
 				status = "fail"
 				save = false
 			}
-			if dbquery.PhoneExist(db, json.Phone) {
+			if dbquery.UserPhoneExist(db, json.Phone) {
 				simpleErrMap["phone"] = "Nomor ini sudah terdaftar"
 				status = "fail"
 				save = false
@@ -126,7 +126,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				status = "success"
 				message = "Berhasil membuat user baru"
 
-				if u, err := dbquery.GetUserByID(db, uid); err == nil {
+				if u, err := dbquery.UserGetByID(db, uid); err == nil {
 					retUser = u
 				} else {
 					httpStatus = http.StatusInternalServerError
@@ -206,7 +206,7 @@ func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 
 		// Update username
 		if next {
-			if err := dbquery.UpdateUsername(db, uid, update.Username); err != nil {
+			if err := dbquery.UserUpdateUsername(db, uid, update.Username); err != nil {
 				errMess = "Gagal mengubah username"
 				next = false
 			}
@@ -225,7 +225,7 @@ func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 		// Update password
 		if next {
 			if update.Password != "" {
-				if err := dbquery.UpdatePassword(db, uid, update.Password); err != nil {
+				if err := dbquery.UserUpdatePassword(db, uid, update.Password); err != nil {
 					errMess = "Gagal merubah kata sandi"
 					next = false
 				}
@@ -345,7 +345,7 @@ func UserDeletePhone(db *sqlx.DB) gin.HandlerFunc {
 
 		// Delete nomor HP
 		if next {
-			if err := dbquery.DeletePhone(db, id, uid); err != nil {
+			if err := dbquery.UserDeletePhone(db, id, uid); err != nil {
 				errMess = "Gagal menghapus nomor HP"
 				next = false
 			}
@@ -354,7 +354,7 @@ func UserDeletePhone(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil nomor sisa jika masih ada
 		var phones []wrapper.UserPhone
 		if next {
-			ph, err := dbquery.GetPhone(db, uid)
+			ph, err := dbquery.UserGetPhone(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat nomor HP/semua nomor sudah dihapus"
 			} else {
@@ -403,7 +403,7 @@ func UserDeleteEmail(db *sqlx.DB) gin.HandlerFunc {
 
 		// Delete email
 		if next {
-			if err := dbquery.DeleteEmail(db, id, uid); err != nil {
+			if err := dbquery.UserDeleteEmail(db, id, uid); err != nil {
 				errMess = "Gagal menghapus email"
 				next = false
 			}
@@ -412,7 +412,7 @@ func UserDeleteEmail(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil email sisa jika masih ada
 		var emails []wrapper.UserEmail
 		if next {
-			em, err := dbquery.GetEmail(db, uid)
+			em, err := dbquery.UserGetEmail(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat email/semua email sudah dihapus"
 			} else {
@@ -461,7 +461,7 @@ func UserDeleteAddress(db *sqlx.DB) gin.HandlerFunc {
 
 		// Hapus alamat
 		if next {
-			if err := dbquery.DeleteAddress(db, id, uid); err != nil {
+			if err := dbquery.UserDeleteAddress(db, id, uid); err != nil {
 				errMess = "Gagal menghapus alamat"
 				next = false
 			}
@@ -470,7 +470,7 @@ func UserDeleteAddress(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil alamat sisa jika masih ada
 		var addresses []wrapper.UserAddress
 		if next {
-			em, err := dbquery.GetAddress(db, uid)
+			em, err := dbquery.UserGetAddress(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat alamat/semua alamat sudah dihapus"
 			} else {
@@ -523,7 +523,7 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 
 		// Periksa jika email sudah digunakan
 		if next {
-			if dbquery.EmailExist(db, newEmail.Email) {
+			if dbquery.UserEmailExist(db, newEmail.Email) {
 				errMess = "Email ini sudah digunakan"
 				next = false
 			}
@@ -531,7 +531,7 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 
 		// Tambah email
 		if next {
-			if err := dbquery.AddEmail(db, newEmail.Email, uid); err != nil {
+			if err := dbquery.UserAddEmail(db, newEmail.Email, uid); err != nil {
 				errMess = "Gagal menambahkan email"
 				next = false
 			}
@@ -540,7 +540,7 @@ func UserAddEmail(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil email sisa jika masih ada
 		var emails []wrapper.UserEmail
 		if next {
-			em, err := dbquery.GetEmail(db, uid)
+			em, err := dbquery.UserGetEmail(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat email/semua email sudah dihapus"
 			} else {
@@ -589,7 +589,7 @@ func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 
 		// Periksa jika nomor sudah digunakan
 		if next {
-			if dbquery.PhoneExist(db, newPhone.Phone) {
+			if dbquery.UserPhoneExist(db, newPhone.Phone) {
 				errMess = "Nomor ini sudah digunakan"
 				next = false
 			}
@@ -597,7 +597,7 @@ func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 
 		// Tambahkan nomor HP
 		if next {
-			if err := dbquery.AddPhone(db, newPhone.Phone, uid); err != nil {
+			if err := dbquery.UserAddPhone(db, newPhone.Phone, uid); err != nil {
 				errMess = "Gagal menambahkan nomor HP"
 				next = false
 			}
@@ -606,7 +606,7 @@ func UserAddPhone(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil nomor HP dari database
 		var phones []wrapper.UserPhone
 		if next {
-			ph, err := dbquery.GetPhone(db, uid)
+			ph, err := dbquery.UserGetPhone(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat nomor HP"
 			} else {
@@ -652,7 +652,7 @@ func UserAddAddress(db *sqlx.DB) gin.HandlerFunc {
 		// Tambahkan alamat
 		newAddress.UserID = uid
 		if next {
-			if err := dbquery.AddAddress(db, newAddress); err != nil {
+			if err := dbquery.UserAddAddress(db, newAddress); err != nil {
 				errMess = "Gagal menambahkan alamat"
 				next = false
 			}
@@ -661,7 +661,7 @@ func UserAddAddress(db *sqlx.DB) gin.HandlerFunc {
 		// Ambil data alamat dari database
 		var addresses []wrapper.UserAddress
 		if next {
-			ph, err := dbquery.GetAddress(db, uid)
+			ph, err := dbquery.UserGetAddress(db, uid)
 			if err != nil {
 				errMess = "Gagal memuat alamat"
 			} else {
@@ -731,7 +731,7 @@ func UserShowList(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		var total int
-		if t, err := dbquery.GetUserTotalRow(db); err == nil {
+		if t, err := dbquery.UserGetUserTotalRow(db); err == nil {
 			total = t
 		}
 
@@ -806,7 +806,7 @@ func UserShowByID(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		var user wrapper.User
-		if u, err := dbquery.GetUserByID(db, uid2); err == nil {
+		if u, err := dbquery.UserGetByID(db, uid2); err == nil {
 			user = u
 		} else {
 			httpStatus = http.StatusInternalServerError
@@ -846,7 +846,7 @@ func UserShowAddressByUserID(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		var address []wrapper.UserAddress
-		if addr, err := dbquery.GetAddress(db, uid2); err == nil {
+		if addr, err := dbquery.UserGetAddress(db, uid2); err == nil {
 			address = addr
 		} else {
 			httpStatus = http.StatusInternalServerError
@@ -912,7 +912,7 @@ func UserSearchByNIK(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		var total int
-		if t, err := dbquery.GetUserTotalRow(db); err == nil {
+		if t, err := dbquery.UserGetUserTotalRow(db); err == nil {
 			total = t
 		}
 
@@ -1009,7 +1009,7 @@ func UserSearchByNameType(db *sqlx.DB, roleid string) gin.HandlerFunc {
 		}
 
 		var total int
-		if t, err := dbquery.GetUserTotalRow(db); err == nil {
+		if t, err := dbquery.UserGetUserTotalRow(db); err == nil {
 			total = t
 		}
 

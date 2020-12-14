@@ -47,7 +47,7 @@ func UserLogin(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		// Check role
-		if ur, err := dbquery.GetRole(db, userid); err == nil {
+		if ur, err := dbquery.UserGetRole(db, userid); err == nil {
 			role = ur
 		} else {
 			httpStatus = http.StatusInternalServerError

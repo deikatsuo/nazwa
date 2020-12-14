@@ -299,7 +299,7 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 	// Lakukan pengecekan nomor kk/ insert jika belum ada
 	var fcid int
 	if len(u.familyCard) > 0 {
-		if fe, fv := FamilyCardExist(db, u.familyCard); fe {
+		if fe, fv := UserFamilyCardExist(db, u.familyCard); fe {
 			fcid = fv
 		} else {
 			if rows, err := tx.Query(`INSERT INTO "family_card" (number) VALUES ($1) RETURNING id`, u.familyCard); err == nil {
@@ -473,8 +473,8 @@ func Login(db *sqlx.DB, loginid, password string) (int, error) {
 /* GET */
 /////////
 
-// GetNullableUserByID - mengambil data user berdasarkan ID
-func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) {
+// UserGetNullableUserByID - mengambil data user berdasarkan ID
+func UserGetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) {
 	var user wrapper.NullableUser
 	query := `SELECT
     u.first_name,
@@ -502,8 +502,8 @@ func GetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) 
 	return user, err
 }
 
-// GetUserByID mengambil data pengguna berdasarkan ID produk
-func GetUserByID(db *sqlx.DB, uid int) (wrapper.User, error) {
+// UserGetByID mengambil data pengguna berdasarkan ID produk
+func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 	var user wrapper.User
 	var u wrapper.NullableUser
 	query := `SELECT
@@ -536,19 +536,19 @@ func GetUserByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 	}
 
 	var emails []wrapper.UserEmail
-	if em, err := GetEmail(db, uid); err == nil {
+	if em, err := UserGetEmail(db, uid); err == nil {
 		emails = em
 	}
 
 	var phones []wrapper.UserPhone
-	if ph, err := GetPhone(db, uid); err == nil {
+	if ph, err := UserGetPhone(db, uid); err == nil {
 		phones = ph
 	} else {
 		log.Println(err)
 	}
 
 	var addresses []wrapper.UserAddress
-	if addrs, err := GetAddress(db, uid); err == nil {
+	if addrs, err := UserGetAddress(db, uid); err == nil {
 		addresses = addrs
 
 	}
@@ -574,8 +574,8 @@ func GetUserByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 	return user, nil
 }
 
-// GetUserTotalRow menghitung jumlah row pada tabel user
-func GetUserTotalRow(db *sqlx.DB) (int, error) {
+// UserGetUserTotalRow menghitung jumlah row pada tabel user
+func UserGetUserTotalRow(db *sqlx.DB) (int, error) {
 	var total int
 	query := `SELECT COUNT(id) FROM "user"`
 	err := db.Get(&total, query)
@@ -585,8 +585,8 @@ func GetUserTotalRow(db *sqlx.DB) (int, error) {
 	return total, nil
 }
 
-// GetPhone mengambil nomor HP berdasarkan ID
-func GetPhone(db *sqlx.DB, userid int) ([]wrapper.UserPhone, error) {
+// UserGetPhone mengambil nomor HP berdasarkan ID
+func UserGetPhone(db *sqlx.DB, userid int) ([]wrapper.UserPhone, error) {
 	var phones []wrapper.UserPhone
 	query := `SELECT id, phone, verified
 	FROM "phone"
@@ -598,8 +598,8 @@ func GetPhone(db *sqlx.DB, userid int) ([]wrapper.UserPhone, error) {
 	return phones, err
 }
 
-// GetEmail mengambil email berdasarkan ID
-func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
+// UserGetEmail mengambil email berdasarkan ID
+func UserGetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 	var emails []wrapper.UserEmail
 	query := `SELECT id, email, verified
 	FROM "email"
@@ -611,8 +611,8 @@ func GetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 	return emails, err
 }
 
-// GetAddress mengambil data alamat user
-func GetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
+// UserGetAddress mengambil data alamat user
+func UserGetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
 	var addresses []wrapper.UserAddress
 	query := `SELECT a.id, a.name, a.description, a.one, a.two, a.zip, a.village_id, a.district_id, a.city_id, a.province_id, INITCAP(p.name) AS province_name, INITCAP(c.name) AS city_name, INITCAP(d.name) AS district_name, INITCAP(v.name) AS village_name
 	FROM "address" a
@@ -630,8 +630,8 @@ func GetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
 	return addresses, err
 }
 
-// GetRole mengambil role berdasarkan id
-func GetRole(db *sqlx.DB, userid int) (string, error) {
+// UserGetRole mengambil role berdasarkan id
+func UserGetRole(db *sqlx.DB, userid int) (string, error) {
 	var role string
 	query := `SELECT
 		r.name
@@ -650,24 +650,24 @@ func GetRole(db *sqlx.DB, userid int) (string, error) {
 /* DELETE */
 ////////////
 
-// DeleteEmail menghapus email
-func DeleteEmail(db *sqlx.DB, id int64, uid int) error {
+// UserDeleteEmail menghapus email
+func UserDeleteEmail(db *sqlx.DB, id int64, uid int) error {
 	query := `DELETE FROM "email"
 	WHERE id=$1 AND user_id=$2`
 	_, err := db.Exec(query, id, uid)
 	return err
 }
 
-// DeletePhone menghapus nomor HP
-func DeletePhone(db *sqlx.DB, id int64, uid int) error {
+// UserDeletePhone menghapus nomor HP
+func UserDeletePhone(db *sqlx.DB, id int64, uid int) error {
 	query := `DELETE FROM "phone"
 	WHERE id=$1 AND user_id=$2`
 	_, err := db.Exec(query, id, uid)
 	return err
 }
 
-// DeleteAddress menghapus alamat
-func DeleteAddress(db *sqlx.DB, id int64, uid int) error {
+// UserDeleteAddress menghapus alamat
+func UserDeleteAddress(db *sqlx.DB, id int64, uid int) error {
 	query := `DELETE FROM "address"
 	WHERE id=$1 AND user_id=$2`
 	_, err := db.Exec(query, id, uid)
@@ -678,22 +678,22 @@ func DeleteAddress(db *sqlx.DB, id int64, uid int) error {
 /* ADD */
 /////////
 
-// AddEmail menambahkan email user
-func AddEmail(db *sqlx.DB, email string, uid int) error {
+// UserAddEmail menambahkan email user
+func UserAddEmail(db *sqlx.DB, email string, uid int) error {
 	query := `INSERT INTO "email" (email, user_id) VALUES ($1, $2)`
 	_, err := db.Exec(query, strings.ToLower(email), uid)
 	return err
 }
 
-// AddPhone menambahkan nomor HP ke database
-func AddPhone(db *sqlx.DB, phone string, uid int) error {
+// UserAddPhone menambahkan nomor HP ke database
+func UserAddPhone(db *sqlx.DB, phone string, uid int) error {
 	query := `INSERT INTO "phone" (phone, user_id) VALUES ($1, $2)`
 	_, err := db.Exec(query, phone, uid)
 	return err
 }
 
-// AddAddress menambahkan alamat baru
-func AddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
+// UserAddAddress menambahkan alamat baru
+func UserAddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
 	query := `INSERT INTO "address" (user_id, name, description, one, two, zip, province_id, city_id, district_id, village_id)
 	VALUES (:user_id, :name, :description, :one, :two, :zip, :province_id, :city_id, :district_id, :village_id)`
 	_, err := db.NamedExec(query, address)
@@ -709,8 +709,8 @@ func AddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
 /* CHECK */
 ///////////
 
-// FamilyCardExist check nomor KK
-func FamilyCardExist(db *sqlx.DB, fc string) (bool, int) {
+// UserFamilyCardExist check nomor KK
+func UserFamilyCardExist(db *sqlx.DB, fc string) (bool, int) {
 	var f int
 	query := `SELECT id FROM "family_card" WHERE number=$1`
 	err := db.Get(&f, query, fc)
@@ -725,8 +725,8 @@ func FamilyCardExist(db *sqlx.DB, fc string) (bool, int) {
 	return false, f
 }
 
-// RICExist check nomor KTP
-func RICExist(db *sqlx.DB, ric string) bool {
+// UserRICExist check nomor KTP
+func UserRICExist(db *sqlx.DB, ric string) bool {
 	var r string
 	query := `SELECT id FROM "user" WHERE ric=$1`
 	err := db.Get(&r, query, ric)
@@ -741,8 +741,8 @@ func RICExist(db *sqlx.DB, ric string) bool {
 	return false
 }
 
-// PhoneExist check nomor telepon
-func PhoneExist(db *sqlx.DB, phone string) bool {
+// UserPhoneExist check nomor telepon
+func UserPhoneExist(db *sqlx.DB, phone string) bool {
 	var p string
 	query := `SELECT id FROM "phone" WHERE phone=$1`
 	err := db.Get(&p, query, phone)
@@ -757,8 +757,8 @@ func PhoneExist(db *sqlx.DB, phone string) bool {
 	return false
 }
 
-// EmailExist check alamat email
-func EmailExist(db *sqlx.DB, email string) bool {
+// UserEmailExist check alamat email
+func UserEmailExist(db *sqlx.DB, email string) bool {
 	var p string
 	query := `SELECT id FROM "email" WHERE email=$1`
 	err := db.Get(&p, query, email)
@@ -803,8 +803,8 @@ func UserUpdateRole(db *sqlx.DB, uid, roleid int) error {
 	return err
 }
 
-// UpdateUsername mengubah username user
-func UpdateUsername(db *sqlx.DB, uid int, uname string) error {
+// UserUpdateUsername mengubah username user
+func UserUpdateUsername(db *sqlx.DB, uid int, uname string) error {
 	query := `UPDATE "user"
 	SET username=$1
 	WHERE id=$2`
@@ -813,8 +813,8 @@ func UpdateUsername(db *sqlx.DB, uid int, uname string) error {
 	return err
 }
 
-// UpdatePassword mengubah password user
-func UpdatePassword(db *sqlx.DB, uid int, pwd string) error {
+// UserUpdatePassword mengubah password user
+func UserUpdatePassword(db *sqlx.DB, uid int, pwd string) error {
 	// Hash password
 	pwd, err := hashPassword(pwd)
 	if err != nil {

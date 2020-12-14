@@ -21,7 +21,7 @@ func RoutePermission(db *sqlx.DB, e *casbin.Enforcer) gin.HandlerFunc {
 		role := "guest"
 		// Periksa jika userid kosong
 		if userid != nil {
-			if ur, err := dbquery.GetRole(db, userid.(int)); err == nil {
+			if ur, err := dbquery.UserGetRole(db, userid.(int)); err == nil {
 				role = ur
 			} else {
 				log.Print(err)

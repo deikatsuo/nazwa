@@ -18,7 +18,7 @@ func PageDashboardAccount(db *sqlx.DB) gin.HandlerFunc {
 		var addresses []wrapper.UserAddress
 		if userid != nil {
 			if userid.(int) > 0 {
-				if addrs, err := dbquery.GetAddress(db, userid.(int)); err == nil {
+				if addrs, err := dbquery.UserGetAddress(db, userid.(int)); err == nil {
 					addresses = addrs
 				}
 			}
