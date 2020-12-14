@@ -413,38 +413,38 @@
 
           <div class="w-full md:w-1/3 md:px-1">
             <label class="block mt-4 text-sm">
-              <span class="text-gray-700 dark:text-gray-400">Harga Beli</span>
+              <span class="text-gray-700 dark:text-gray-400"
+                >Tanggal Pemesanan</span
+              >
               <input
                 class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder="Harga dari Pabrik"
-                x-model="formData.base_price"
-                @keydown.enter="submitData($dispatch)"
-                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errBasePrice }"
+                id="order"
+                x-model="formData.order_date"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errOrderDate }"
               />
             </label>
             <span
               class="text-xs text-red-600 dark:text-red-400"
-              x-text="errmBasePrice"
-              :class="{'invisible': errBasePrice == false}"
+              x-text="errmOrderDate"
+              :class="{'invisible': errOrderDate == false}"
             >
             </span>
           </div>
 
           <div class="w-full md:w-1/3 md:px-1">
             <label class="block mt-4 text-sm">
-              <span class="text-gray-700 dark:text-gray-400">Harga Jual</span>
+              <span class="text-gray-700 dark:text-gray-400">Tanggal Pengiriman</span>
               <input
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                placeholder="Harga Jual ke Konsumen"
-                x-model="formData.price"
-                @keydown.enter="submitData($dispatch)"
-                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errPrice }"
+                class="datepicker block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                id="shipping"
+                x-model="formData.shipping_date"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errShippingDate }"
               />
             </label>
             <span
               class="text-xs text-red-600 dark:text-red-400"
-              x-text="errmPrice"
-              :class="{'invisible': errPrice == false}"
+              x-text="errmShippingDate"
+              :class="{'invisible': errShippingDate == false}"
             >
             </span>
           </div>
@@ -707,6 +707,8 @@
           credit: false,
           duration: null,
           notes: "",
+          order_date: "",
+          shipping_date: "",
         },
         instantData: {
           customer: "",
@@ -744,14 +746,10 @@
         errmCollector: "",
         errDuration: false,
         errmDuration: "",
-        errBrand: false,
-        errmBrand: "",
-        errType: false,
-        errmType: "",
-        errBasePrice: false,
-        errmBasePrice: "",
-        errPrice: false,
-        errmPrice: "",
+        errOrderDate: false,
+        errmOrderDate: "",
+        errShippingDate: false,
+        errmShippingDate: "",
 
         submitData($dispatch) {
           this.loadingText = "Loading...";
@@ -771,41 +769,6 @@
             .then((data) => {
               this.loadingText = "Buat Order";
               this.loading = false;
-              if (data.code) {
-                this.errCode = true;
-                this.errmCode = data.code;
-              } else {
-                this.errCode = false;
-                this.errmCode = "";
-              }
-              if (data.brand) {
-                this.errBrand = true;
-                this.errmBrand = data.brand;
-              } else {
-                this.errBrand = false;
-                this.errmBrand = "";
-              }
-              if (data.type) {
-                this.errType = true;
-                this.errmType = data.Type;
-              } else {
-                this.errType = false;
-                this.errmType = "";
-              }
-              if (data.baseprice) {
-                this.errBasePrice = true;
-                this.errmBasePrice = data.baseprice;
-              } else {
-                this.errBasePrice = false;
-                this.errmBasePrice = "";
-              }
-              if (data.price) {
-                this.errPrice = true;
-                this.errmPrice = data.price;
-              } else {
-                this.errPrice = false;
-                this.errmPrice = "";
-              }
 
               if (data.status == "error") {
                 this.notifStatus = "error";
@@ -815,13 +778,8 @@
               }
               if (data.status == "success") {
                 this.notifStatus = "success";
-                this.productCreated = true;
-                this.product = data.product;
-                if (data.product.CreditPrice != null) {
-                  this.creditPrice = data.product.CreditPrice;
-                } else {
-                  this.creditPrice = [];
-                }
+                this.orderCreated = true;
+                this.order = data.order;
               }
 
               if (data.message) {
@@ -944,31 +902,33 @@
               console.log("Telah terjadi kesalahan saat memuat data collector");
             });
         },
-        resetProductForm() {
-          this.productCreated = false;
-          this.product = [];
-          this.formData = {
-            name: "",
-            code: "",
-            brand: "",
-            type: "",
-            base_price: "",
-            price: "",
-            credit_price: [],
-            photos: [],
-          };
-          this.photos = [
-            {
-              ID: 0,
-              Photo: "no-photo.png",
-            },
-          ];
-          this.creditPrice = [];
-          this.activeSlide = 1;
-        },
+        resetProductForm() {},
       };
     }
   </script>
 </div>
+<script src="/assets/js/pikaday.js"></script>
+<script>
+  var order = new Pikaday({
+    field: document.getElementById("order"),
+    onSelect: function (date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1;
+      var year = date.getFullYear();
+      var result = `${day}-${month}-${year}`;
+      document.getElementById("create").__x.$data.formData.order_date = result;
+    },
+  });
 
+  var shipping = new Pikaday({
+    field: document.getElementById("shipping"),
+    onSelect: function (date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1;
+      var year = date.getFullYear();
+      var result = `${day}-${month}-${year}`;
+      document.getElementById("create").__x.$data.formData.shipping_date = result;
+    },
+  });
+</script>
 {{ end }}

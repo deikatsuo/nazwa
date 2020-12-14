@@ -832,9 +832,9 @@ func UpdatePassword(db *sqlx.DB, uid int, pwd string) error {
 /* MATCH */
 ///////////
 
-// MatchPassword mencocokan password input user
+// UserMatchPassword mencocokan password input user
 // dengan yang ada di database
-func MatchPassword(db *sqlx.DB, uid int, pwd string) bool {
+func UserMatchPassword(db *sqlx.DB, uid int, pwd string) bool {
 	// Cocokan password user
 	var inpwd string
 	var next bool

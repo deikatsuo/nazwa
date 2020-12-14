@@ -147,6 +147,7 @@ func runServer(db *sqlx.DB) {
 	v1user.POST("/create", api.UserCreate(db))
 	v1user.GET("/list/:limit", api.UserShowList(db))
 	v1user.GET("/id/:id", api.UserShowByID(db))
+	v1user.GET("/address/:id", api.UserShowAddressByUserID(db))
 
 	// User API search/pencarian
 	// /api/v1/local/user/search

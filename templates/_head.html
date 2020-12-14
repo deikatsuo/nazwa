@@ -7,6 +7,9 @@
   rel="stylesheet"
 />
 <link rel="stylesheet" href="/assets/css/tailwind.optimized.css" />
+{{ range $href := .css }}
+<link rel="stylesheet" href="{{ $href }}" />
+{{ end }}
 <style>
 [x-cloak] {
     display: none !important;
@@ -16,6 +19,9 @@
 <script src="/assets/js/alpine.min.js" defer></script>
 <script src="/assets/js/init.js"></script>
 <script src="/assets/js/focus-trap.js"></script>
+{{ range $href := .js }}
+<script src="{{ $href }}"></script>
+{{ end }}
 {{ if eq .chart true }}
 <link
   rel="stylesheet"

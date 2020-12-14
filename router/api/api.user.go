@@ -215,7 +215,7 @@ func UserUpdateContact(db *sqlx.DB) gin.HandlerFunc {
 		// Cocokan password lama
 		if next {
 			if update.Password != "" {
-				if !dbquery.MatchPassword(db, uid, update.Oldpassword) {
+				if !dbquery.UserMatchPassword(db, uid, update.Oldpassword) {
 					errMess = "Kata sandi lama salah"
 					next = false
 				}
@@ -816,6 +816,46 @@ func UserShowByID(db *sqlx.DB) gin.HandlerFunc {
 		c.JSON(httpStatus, gin.H{
 			"user":  user,
 			"error": errMess,
+		})
+	}
+	return fn
+}
+
+// UserShowAddressByUserID mengambil data alamat pengguna berdasarkan ID pengguna
+func UserShowAddressByUserID(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		// Tolak jika yang request bukan user terdaftar
+		uid := session.Get("userid")
+		if uid == nil {
+			router.Page404(c)
+			return
+		}
+		httpStatus := http.StatusOK
+		errMess := ""
+
+		// Mengambil parameter id user
+		var uid2 int
+		id, err := strconv.Atoi(c.Param("id"))
+		if err == nil {
+			uid2 = id
+		} else {
+			httpStatus = http.StatusBadRequest
+			errMess = "Request tidak valid"
+		}
+
+		var address []wrapper.UserAddress
+		if addr, err := dbquery.GetAddress(db, uid2); err == nil {
+			address = addr
+		} else {
+			httpStatus = http.StatusInternalServerError
+			errMess = "Sepertinya telah terjadi kesalahan saat memuat data"
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"address": address,
+			"error":   errMess,
 		})
 	}
 	return fn
