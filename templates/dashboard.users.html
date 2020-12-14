@@ -653,7 +653,6 @@
               },
               addAddressDisable: true,
               addAddressBtn: {{ .l_u_address_add_btn }},
-              addresses: [],
               addAddress($dispatch) {
                 if (this.addAddressDisable) {
                   $dispatch('notif', {type: 'error', message: "Silahkan buat user terlebih dahulu"});
@@ -737,7 +736,7 @@
                     $dispatch('notif', {type: 'error', message: json.error});
                   } else if (json.success) {
                     $dispatch('notif', {type: 'success', message: json.success});
-                    // this.addresses = json.addresses
+                    // meneruskan hasil (alamat) ke modal user
                     document.getElementById("user_detail").__x.$data.addresses =
                         json.addresses;
                   }
