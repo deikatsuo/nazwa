@@ -27,7 +27,7 @@
         <template x-for="(user, index) in users" :key="index">
           <tr
             class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
-            @click="$dispatch('modal', { tmp: user.ID, html: $refs.userDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
+            @click="$dispatch('modal', { tmp: user.ID, html: $refs.userDetail.innerHTML });"
           >
             <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
             <td class="px-1 py-3">
@@ -66,6 +66,7 @@
           <div
             x-init="watchData($watch, $dispatch); fetchById($dispatch);"
             x-data="fUseDetail($parent)"
+            id="user_detail"
           >
             <div
               class="absolute top-0 mt-4 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
@@ -300,7 +301,11 @@
                   class="text-gray-700 dark:text-gray-400"
                   x-show="addresses.length == 0"
                 >
-                  <td class="px-4 py-1 text-sm leading-5 font-medium text-gray-500">Tidak ada alamat</td>
+                  <td
+                    class="px-4 py-1 text-sm leading-5 font-medium text-gray-500"
+                  >
+                    Tidak ada alamat
+                  </td>
                   <td></td>
                 </tr>
 
@@ -315,7 +320,9 @@
                       ></a
                     ></span>
                   </td>
-                  <td class="px-4 py-1 text-sm whitespace-normal break-words align-top">
+                  <td
+                    class="px-4 py-1 text-sm whitespace-normal break-words align-top"
+                  >
                     <!-- Tambah alamat -->
                     <div
                       x-data="addAddressDetail()"
@@ -730,7 +737,9 @@
                     $dispatch('notif', {type: 'error', message: json.error});
                   } else if (json.success) {
                     $dispatch('notif', {type: 'success', message: json.success});
-                    this.addresses = json.addresses
+                    // this.addresses = json.addresses
+                    document.getElementById("user_detail").__x.$data.addresses =
+                        json.addresses;
                   }
                 })
                 .catch((err) => {
