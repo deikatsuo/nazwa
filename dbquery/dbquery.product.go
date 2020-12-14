@@ -96,8 +96,8 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 	return parse, nil
 }
 
-// GetProductTotalRow menghitung jumlah row pada tabel user
-func GetProductTotalRow(db *sqlx.DB) (int, error) {
+// ProductGetProductTotalRow menghitung jumlah row pada tabel user
+func ProductGetProductTotalRow(db *sqlx.DB) (int, error) {
 	var total int
 	query := `SELECT COUNT(id) FROM "product"`
 	err := db.Get(&total, query)
@@ -107,8 +107,8 @@ func GetProductTotalRow(db *sqlx.DB) (int, error) {
 	return total, nil
 }
 
-// GetProductByID mengambil data produk berdasarkan ID produk
-func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
+// ProductGetProductByID mengambil data produk berdasarkan ID produk
+func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 	var product wrapper.Product
 	var p wrapper.NullableProduct
 	query := `SELECT
@@ -133,12 +133,12 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 
 	var photos []wrapper.ProductPhotoListSelect
 
-	if pp, err := GetProductPhoto(db, p.ID); err == nil {
+	if pp, err := ProductGetProductPhoto(db, p.ID); err == nil {
 		photos = pp
 	}
 
 	var creditPrice []wrapper.ProductCreditPriceSelect
-	if pr, err := GetProductCreditPrice(db, p.ID); err == nil {
+	if pr, err := ProductGetProductCreditPrice(db, p.ID); err == nil {
 		creditPrice = pr
 	}
 
@@ -158,8 +158,8 @@ func GetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 	return product, nil
 }
 
-// GetProductCreditPrice mengambil data harga kredit
-func GetProductCreditPrice(db *sqlx.DB, pid int) ([]wrapper.ProductCreditPriceSelect, error) {
+// ProductGetProductCreditPrice mengambil data harga kredit
+func ProductGetProductCreditPrice(db *sqlx.DB, pid int) ([]wrapper.ProductCreditPriceSelect, error) {
 	var prices []wrapper.ProductCreditPriceSelect
 	query := `SELECT id, duration, TO_CHAR(price,'Rp999G999G999G999G999') AS price
 	FROM "product_credit_price"
@@ -171,8 +171,8 @@ func GetProductCreditPrice(db *sqlx.DB, pid int) ([]wrapper.ProductCreditPriceSe
 	return prices, err
 }
 
-// GetProductPhoto mengambil data photo produk
-func GetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ProductPhotoListSelect, error) {
+// ProductGetProductPhoto mengambil data photo produk
+func ProductGetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ProductPhotoListSelect, error) {
 	var photos []wrapper.ProductPhotoListSelect
 	query := `SELECT id, photo
 	FROM "product_photo"

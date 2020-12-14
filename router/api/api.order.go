@@ -59,7 +59,7 @@ func OrderShowList(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		var total int
-		if t, err := dbquery.GetOrderTotalRow(db); err == nil {
+		if t, err := dbquery.OrderGetOrderTotalRow(db); err == nil {
 			total = t
 		}
 
@@ -127,7 +127,7 @@ func OrderShowByID(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		var order wrapper.Order
-		if o, err := dbquery.GetOrderByID(db, oid); err == nil {
+		if o, err := dbquery.OrderGetOrderByID(db, oid); err == nil {
 			order = o
 		} else {
 			httpStatus = http.StatusInternalServerError
@@ -135,7 +135,7 @@ func OrderShowByID(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		var total int
-		if t, err := dbquery.GetOrderTotalRow(db); err == nil {
+		if t, err := dbquery.OrderGetOrderTotalRow(db); err == nil {
 			total = t
 		}
 

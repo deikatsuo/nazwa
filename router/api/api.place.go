@@ -14,7 +14,7 @@ import (
 // PlaceProvinces mengambil data provinsi
 func PlaceProvinces(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		p, err := dbquery.GetProvinces(db)
+		p, err := dbquery.PlaceGetProvinces(db)
 		if err != nil {
 			router.Page500(c)
 			return
@@ -36,7 +36,7 @@ func PlaceCities(db *sqlx.DB) gin.HandlerFunc {
 			return
 		}
 
-		p, err := dbquery.GetCities(db, pid)
+		p, err := dbquery.PlaceGetCities(db, pid)
 		if err != nil {
 			log.Print(err)
 			router.Page500(c)
@@ -59,7 +59,7 @@ func PlaceDistricts(db *sqlx.DB) gin.HandlerFunc {
 			return
 		}
 
-		p, err := dbquery.GetDistricts(db, pid)
+		p, err := dbquery.PlaceGetDistricts(db, pid)
 		if err != nil {
 			log.Print(err)
 			router.Page500(c)
@@ -82,7 +82,7 @@ func PlaceVillages(db *sqlx.DB) gin.HandlerFunc {
 			return
 		}
 
-		p, err := dbquery.GetVillages(db, pid)
+		p, err := dbquery.PlaceGetVillages(db, pid)
 		if err != nil {
 			log.Print(err)
 			router.Page500(c)

@@ -84,8 +84,8 @@ func (p *GetOrders) Show(db *sqlx.DB) ([]wrapper.Order, error) {
 	return parse, nil
 }
 
-// GetOrderTotalRow menghitung jumlah row pada tabel user
-func GetOrderTotalRow(db *sqlx.DB) (int, error) {
+// OrderGetOrderTotalRow menghitung jumlah row pada tabel user
+func OrderGetOrderTotalRow(db *sqlx.DB) (int, error) {
 	var total int
 	query := `SELECT COUNT(id) FROM "order"`
 	err := db.Get(&total, query)
@@ -95,8 +95,8 @@ func GetOrderTotalRow(db *sqlx.DB) (int, error) {
 	return total, nil
 }
 
-// GetOrderByID mengambil data order berdasarkan ID order
-func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
+// OrderGetOrderByID mengambil data order berdasarkan ID order
+func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 	var order wrapper.Order
 	var o wrapper.NullableOrder
 	query := `SELECT
@@ -139,7 +139,7 @@ func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 
 	// Mengambil list item dari transaksi
 	var items []wrapper.OrderItem
-	if oi, err := GetOrderItem(db, o.ID); err == nil {
+	if oi, err := OrderGetOrderItem(db, o.ID); err == nil {
 		items = oi
 	}
 
@@ -182,8 +182,8 @@ func GetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 	return order, nil
 }
 
-// GetOrderItem mengambil data barang transaksi berdasarkan id order
-func GetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
+// OrderGetOrderItem mengambil data barang transaksi berdasarkan id order
+func OrderGetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
 	var items []wrapper.NullableOrderItem
 	var parse []wrapper.OrderItem
 	query := `SELECT oi.id, oi.product_id, oi.quantity, oi.notes, p.name, p.code

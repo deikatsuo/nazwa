@@ -115,7 +115,7 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				status = "success"
 				message = "Berhasil menambahkan produk"
 
-				if p, err := dbquery.GetProductByID(db, pid); err == nil {
+				if p, err := dbquery.ProductGetProductByID(db, pid); err == nil {
 					retProduct = p
 				} else {
 					httpStatus = http.StatusInternalServerError
@@ -185,7 +185,7 @@ func ShowProductList(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		var total int
-		if t, err := dbquery.GetProductTotalRow(db); err == nil {
+		if t, err := dbquery.ProductGetProductTotalRow(db); err == nil {
 			total = t
 		}
 
@@ -254,7 +254,7 @@ func ShowProductByID(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		var product wrapper.Product
-		if p, err := dbquery.GetProductByID(db, pid); err == nil {
+		if p, err := dbquery.ProductGetProductByID(db, pid); err == nil {
 			product = p
 		} else {
 			httpStatus = http.StatusInternalServerError

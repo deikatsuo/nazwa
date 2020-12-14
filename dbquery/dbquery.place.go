@@ -8,8 +8,8 @@ type Place struct {
 	Name string `db:"name"`
 }
 
-// GetProvinces mengambil data provinsi dari database
-func GetProvinces(db *sqlx.DB) ([]Place, error) {
+// PlaceGetProvinces mengambil data provinsi dari database
+func PlaceGetProvinces(db *sqlx.DB) ([]Place, error) {
 	var p []Place
 	query := `SELECT id, INITCAP(name) AS name FROM "province"`
 	err := db.Select(&p, query)
@@ -19,8 +19,8 @@ func GetProvinces(db *sqlx.DB) ([]Place, error) {
 	return p, nil
 }
 
-// GetCities mengambil data kota/kabupaten dari database
-func GetCities(db *sqlx.DB, pid int) ([]Place, error) {
+// PlaceGetCities mengambil data kota/kabupaten dari database
+func PlaceGetCities(db *sqlx.DB, pid int) ([]Place, error) {
 	var p []Place
 	query := `SELECT id, INITCAP(name) AS name FROM "city" WHERE parent=$1`
 	err := db.Select(&p, query, pid)
@@ -30,8 +30,8 @@ func GetCities(db *sqlx.DB, pid int) ([]Place, error) {
 	return p, nil
 }
 
-// GetDistricts mengambil data distrik/kecamatan dari database
-func GetDistricts(db *sqlx.DB, pid int) ([]Place, error) {
+// PlaceGetDistricts mengambil data distrik/kecamatan dari database
+func PlaceGetDistricts(db *sqlx.DB, pid int) ([]Place, error) {
 	var p []Place
 	query := `SELECT id, INITCAP(name) AS name FROM "district" WHERE parent=$1`
 	err := db.Select(&p, query, pid)
@@ -41,8 +41,8 @@ func GetDistricts(db *sqlx.DB, pid int) ([]Place, error) {
 	return p, nil
 }
 
-// GetVillages mengambil data kelurahan/desa dari database
-func GetVillages(db *sqlx.DB, pid int) ([]Place, error) {
+// PlaceGetVillages mengambil data kelurahan/desa dari database
+func PlaceGetVillages(db *sqlx.DB, pid int) ([]Place, error) {
 	var p []Place
 	query := `SELECT id, INITCAP(name) AS name FROM "village" WHERE parent=$1`
 	err := db.Select(&p, query, pid)
