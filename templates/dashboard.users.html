@@ -26,7 +26,7 @@
       <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
         <template x-for="(user, index) in users" :key="index">
           <tr
-            class="text-gray-700 dark:text-gray-400 hover:opacity-50 cursor-pointer"
+            class="text-gray-700 dark:text-gray-400 hover:bg-yellow-50 cursor-pointer"
             @click="$dispatch('modal', { tmp: user.ID, html: $refs.userDetail.innerHTML });"
           >
             <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
@@ -280,7 +280,7 @@
               </thead>
               <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <template x-for="(address, index) in addresses" :key="index">
-                  <tr class="text-gray-600 dark:text-gray-400">
+                  <tr class="cursor-pointer text-gray-600 dark:text-gray-400 hover:bg-green-100">
                     <td class="px-4 py-1 align-top">
                       <div class="flex items-center text-sm">
                         <div>
@@ -295,8 +295,9 @@
                     <td
                       class="px-4 py-1 text-sm whitespace-normal break-words align-top"
                       x-text="address.one + address.two + ', ' + address.VillageName + ', ' + address.DistrictName + ', ' + address.CityName + ', ' + address.ProvinceName + ', ' +address.zip"
-                    ></td></tr
-                ></template>
+                    ></td>
+                  </tr>
+                </template>
                 <tr
                   class="text-gray-700 dark:text-gray-400"
                   x-show="addresses.length == 0"
@@ -654,10 +655,6 @@
               addAddressDisable: true,
               addAddressBtn: {{ .l_u_address_add_btn }},
               addAddress($dispatch) {
-                if (this.addAddressDisable) {
-                  $dispatch('notif', {type: 'error', message: "Silahkan buat user terlebih dahulu"});
-                  return;
-                }
                 this.addAddressBtn = "Loading. . .";
                 this.addAddressDisable = true;
                 fetch(`/api/v1/local/user/edit/${this.uid}/add/address`, {
