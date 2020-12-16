@@ -131,8 +131,8 @@ func runServer(db *sqlx.DB) {
 
 	// /api/v1/local/product
 	product := v1local.Group("/product")
-	product.GET("/id/:id", api.ShowProductByID(db))
-	product.GET("/list/:limit", api.ShowProductList(db))
+	product.GET("/id/:id", api.ProductShowByID(db))
+	product.GET("/list/:limit", api.ProductShowList(db))
 	product.POST("/add", api.ProductCreate(db))
 
 	// /api/v1/local/order

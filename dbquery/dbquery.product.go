@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"nazwa/wrapper"
-	"strconv"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -19,6 +18,7 @@ type GetProducts struct {
 	limit     int
 	lastid    int
 	direction string
+	where     string
 }
 
 // Limit set limit
@@ -40,6 +40,12 @@ func (p *GetProducts) Direction(direction string) *GetProducts {
 	return p
 }
 
+// Where kondisi
+func (p *GetProducts) Where(where string) *GetProducts {
+	p.where = where
+	return p
+}
+
 // Show tampilkan data
 func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 	var product []wrapper.NullableProduct
@@ -50,13 +56,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 	}
 
 	// Where logic
-	where := ""
-	// Maju/Mundur
-	if p.direction == "next" {
-		where = "WHERE id > " + strconv.Itoa(p.lastid) + " ORDER BY id ASC"
-	} else if p.direction == "back" {
-		where = "WHERE id < " + strconv.Itoa(p.lastid) + " ORDER BY id DESC"
-	}
+	where := p.where
 
 	// query pengambilan data produk
 	query := `SELECT

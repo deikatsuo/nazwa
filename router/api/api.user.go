@@ -1017,7 +1017,6 @@ func UserSearchByNameType(db *sqlx.DB, roleid string) gin.HandlerFunc {
 
 		if next {
 			u.Where("WHERE r.id=" + roleid + " AND concat(u.first_name, ' ', u.last_name) LIKE '" + search + "%' ORDER BY u.id ASC")
-			fmt.Println(search)
 			u.LastID(lastid)
 
 			usr, err := u.Show(db)

@@ -138,8 +138,8 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// ShowProductList mengambil data/list produk
-func ShowProductList(db *sqlx.DB) gin.HandlerFunc {
+// ProductShowList mengambil data/list produk
+func ProductShowList(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
 		// User session saat ini
@@ -193,6 +193,12 @@ func ShowProductList(db *sqlx.DB) gin.HandlerFunc {
 
 		if next {
 			pts.LastID(lastid)
+			// Maju/Mundur
+			if direction == "next" {
+				pts.Where("WHERE id > " + strconv.Itoa(lastid) + " ORDER BY id ASC")
+			} else if direction == "back" {
+				pts.Where("WHERE id < " + strconv.Itoa(lastid) + " ORDER BY id DESC")
+			}
 			p, err := pts.Show(db)
 			if err != nil {
 				errMess = err.Error()
@@ -229,8 +235,8 @@ func ShowProductList(db *sqlx.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// ShowProductByID mengambil data produk berdasarkan ID
-func ShowProductByID(db *sqlx.DB) gin.HandlerFunc {
+// ProductShowByID mengambil data produk berdasarkan ID
+func ProductShowByID(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
 		// User session saat ini
