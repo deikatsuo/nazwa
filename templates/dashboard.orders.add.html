@@ -36,6 +36,7 @@
                   style="margin-top: 0.42rem"
                   class="cursor-pointer absolute right-0 top-0 mr-2"
                   @click="tempDataCustomer = {};
+                  addresses = [];
                   formData.customer = 0;"
                 >
                   {{ template "_svg_icon_close" }}
@@ -67,6 +68,7 @@
                         Lastname: customer.Lastname,
                         RIC: customer.RIC,
                       };
+                      addresses = customer.Addresses;
                       formData.customer = customer.ID;"
                   >
                     <img
@@ -433,7 +435,9 @@
 
           <div class="w-full md:w-1/3 md:px-1">
             <label class="block mt-4 text-sm">
-              <span class="text-gray-700 dark:text-gray-400">Tanggal Pengiriman</span>
+              <span class="text-gray-700 dark:text-gray-400"
+                >Tanggal Pengiriman</span
+              >
               <input
                 class="datepicker block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                 id="shipping"
@@ -447,6 +451,171 @@
               :class="{'invisible': errShippingDate == false}"
             >
             </span>
+          </div>
+
+          <div class="w-full flex flex-wrap">
+            <!-- Alamat Pengiriman -->
+            <div class="w-full relative md:w-1/3 md:px-1">
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400"
+                  >Alamat Pengiriman</span
+                >
+                <input
+                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Alamat Tujuan Pengiriman Barang"
+                  @click="if (addresses.length > 0) { closeShippingAddressIS = false; } else { closeShippingAddressIS = true; }"
+                  @click.away="closeShippingAddressIS = true;"
+                  @keydown.tab="closeShippingAddressIS = true;"
+                  x-show="$parent.isObjEmpty(tempDataShippingAddress)"
+                  :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errShippingAddress }"
+                />
+              </label>
+              <div class="w-full">
+                <div
+                  class="relative bg-blue-400 bg-opacity-50 mt-1 text-sm inline-block py-1 pl-4 pr-8 rounded-full"
+                  x-show="!$parent.isObjEmpty(tempDataShippingAddress)"
+                >
+                  <i x-text="tempDataShippingAddress.name"></i>
+                  (<b x-text="tempDataShippingAddress.description"></b>)
+                  <p
+                    style="margin-top: 0.42rem"
+                    class="cursor-pointer absolute right-0 top-0 mr-2"
+                    @click="tempDataShippingAddress = {};
+                    formData.shipping_address = 0;"
+                  >
+                    {{ template "_svg_icon_close" }}
+                  </p>
+                </div>
+              </div>
+              <ul
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                x-show="!closeShippingAddressIS"
+                class="absolute z-30 left-0 right-0 -mt-1 md:mr-1 md:ml-1 text-gray-600 bg-white border-none border-r border-l border-b border-gray-100 rounded-br-md rounded-bl-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                aria-label="submenu"
+              >
+                <div
+                  x-show="addresses.length > 0 && closeShippingAddressIS == false && $parent.isObjEmpty(tempDataShippingAddress)"
+                >
+                  <template x-for="(address, index) in addresses" :key="index">
+                    <li class="flex">
+                      <a
+                        class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                        href="#"
+                        tabindex="-1"
+                        @click="tempDataShippingAddress = 
+                        {
+                          ID: address.ID,
+                          name: address.name,
+                          description: address.description,
+                        };
+                        formData.shipping_address = address.ID;"
+                      >
+                        <!-- TODO img -->
+                        <span
+                          x-text="address.name"
+                        ></span>
+                      </a>
+                    </li>
+                  </template>
+                </div>
+                <div x-show="addresses.length == 0">
+                  <span
+                    class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                    >Tidak ada data</span
+                  >
+                </div>
+              </ul>
+            </div>
+
+            <!-- Alamat Penagihan -->
+            <div class="w-full relative md:w-1/3 md:px-1">
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400"
+                  >Alamat Penagihan (*opsional)</span
+                >
+                <input
+                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Alamat Penagihan Kredit/Pembayaran"
+                  x-model="instantData.collector"
+                  @keyup="if (instantData.collector.length >= 3 && instantData.collector.length <= 25) { closeCollectorIS = false; searchCollector(); } else { closeCollectorIS = true; }"
+                  @click="if (instantData.collector.length >= 3 && instantData.collector.length <= 25) { closeCollectorIS = false; } else { closeCollectorIS = true; }"
+                  @click.away="closeCollectorIS = true;"
+                  @keydown.tab="closeCollectorIS = true;"
+                  x-show="$parent.isObjEmpty(tempDataCollector)"
+                  :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errCollector }"
+                />
+              </label>
+              <div class="w-full">
+                <div
+                  class="relative bg-blue-400 bg-opacity-50 mt-1 text-sm inline-block py-1 pl-4 pr-8 rounded-full"
+                  x-show="!$parent.isObjEmpty(tempDataCollector)"
+                >
+                  <i
+                    x-text="tempDataCollector.Firstname +' '+ tempDataCollector.Lastname"
+                  ></i>
+                  (<b x-text="tempDataCollector.Username"></b>)
+                  <p
+                    style="margin-top: 0.42rem"
+                    class="cursor-pointer absolute right-0 top-0 mr-2"
+                    @click="tempDataCollector = {};
+                  formData.collector = 0;"
+                  >
+                    {{ template "_svg_icon_close" }}
+                  </p>
+                </div>
+              </div>
+              <ul
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                x-show="!closeCollectorIS"
+                class="absolute z-30 left-0 right-0 -mt-1 md:mr-1 md:ml-1 text-gray-600 bg-white border-none border-r border-l border-b border-gray-100 rounded-br-md rounded-bl-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                aria-label="submenu"
+              >
+                <div
+                  x-show="collectorIS.length > 0 && closeCollectorIS == false && $parent.isObjEmpty(tempDataCollector)"
+                >
+                  <template
+                    x-for="(collector, index) in collectorIS"
+                    :key="index"
+                  >
+                    <li class="flex">
+                      <a
+                        class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                        href="#"
+                        tabindex="-1"
+                        @click="tempDataCollector = 
+                      {
+                        ID: collector.ID,
+                        Firstname: collector.Firstname,
+                        Lastname: collector.Lastname,
+                        Username: collector.Username,
+                      };
+                      formData.collector = collector.ID;"
+                      >
+                        <img
+                          class="object-cover w-5 h-5 rounded-full mr-3"
+                          :src="'/file/profile/thumbnail/'+collector.Avatar"
+                          alt=""
+                          loading="lazy"
+                        />
+                        <span
+                          x-text="collector.Firstname +' '+ collector.Lastname"
+                        ></span>
+                      </a>
+                    </li>
+                  </template>
+                </div>
+                <div x-show="collectorIS.length == 0">
+                  <span
+                    class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                    >Tidak ada data</span
+                  >
+                </div>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -709,26 +878,35 @@
           notes: "",
           order_date: "",
           shipping_date: "",
+          billing_address: null,
+          shipping_address: null,
         },
         instantData: {
           customer: "",
           sales: "",
           surveyor: "",
           collector: "",
+          billing_address: "",
+          shipping_address: "",
         },
         orderCreated: false,
         tempDataCustomer: {},
         tempDataSales: {},
         tempDataSurveyor: {},
         tempDataCollector: {},
+        tempDataShippingAddress: {},
+        tempDataBillingAddress: {},
         closeCustomerIS: true,
         closeSalesIS: true,
         closeSurveyorIS: true,
         closeCollectorIS: true,
+        closeShippingAddressIS: true,
+        closeBillingAddressIS: true,
         customerIS: [],
         salesIS: [],
         surveyorIS: [],
         collectorIS: [],
+        addresses: [],
         loadingText: "Buat Order",
         loading: false,
         duration: null,
@@ -750,6 +928,8 @@
         errmOrderDate: "",
         errShippingDate: false,
         errmShippingDate: "",
+        errShippingAddress: false,
+        errmShippingAddress: "",
 
         submitData($dispatch) {
           this.loadingText = "Loading...";
@@ -927,7 +1107,9 @@
       var month = date.getMonth() + 1;
       var year = date.getFullYear();
       var result = `${day}-${month}-${year}`;
-      document.getElementById("create").__x.$data.formData.shipping_date = result;
+      document.getElementById(
+        "create"
+      ).__x.$data.formData.shipping_date = result;
     },
   });
 </script>

@@ -86,8 +86,13 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 		return []wrapper.User{}, err
 	}
 
+	var addresses []wrapper.UserAddress
 	// mapping data user
 	for _, u := range user {
+
+		if addrs, err := UserGetAddress(db, u.ID); err == nil {
+			addresses = addrs
+		}
 		parse = append(parse, wrapper.User{
 			ID:        u.ID,
 			Firstname: strings.Title(u.Firstname),
@@ -98,6 +103,7 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 			Avatar:    u.Avatar,
 			RIC:       u.RIC,
 			Role:      u.Role,
+			Addresses: addresses,
 		})
 	}
 
@@ -550,7 +556,6 @@ func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 	var addresses []wrapper.UserAddress
 	if addrs, err := UserGetAddress(db, uid); err == nil {
 		addresses = addrs
-
 	}
 
 	user = wrapper.User{
