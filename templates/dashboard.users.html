@@ -870,11 +870,14 @@
                 "Sales",
                 "Customer",
               ],
+              // Set role sesuai dengan data saat fetch
               setRole: null,
               // untuk counter agar role tidak selalu di watch
               counter: 0,
+              // ID/index alamat yang akan dihapus
               delAddr: null,
               delAddrBtn: null,
+              // Alamat yang akan dihapus
               toDelAddr($dispatch, addrid) {
                 address = document.getElementById("address").__x.$data;
                 address.deleteAddress($dispatch, addrid);
