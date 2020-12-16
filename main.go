@@ -123,23 +123,27 @@ func runServer(db *sqlx.DB) {
 	//v1local.POST("/create-account", api.UserCreate(db))
 
 	// /api/v1/local/address
-	address := v1local.Group("/address")
-	address.GET("/provinces", api.PlaceProvinces(db))
-	address.GET("/cities/:id", api.PlaceCities(db))
-	address.GET("/districts/:id", api.PlaceDistricts(db))
-	address.GET("/villages/:id", api.PlaceVillages(db))
+	v1address := v1local.Group("/address")
+	v1address.GET("/provinces", api.PlaceProvinces(db))
+	v1address.GET("/cities/:id", api.PlaceCities(db))
+	v1address.GET("/districts/:id", api.PlaceDistricts(db))
+	v1address.GET("/villages/:id", api.PlaceVillages(db))
 
 	// /api/v1/local/product
-	product := v1local.Group("/product")
-	product.GET("/id/:id", api.ProductShowByID(db))
-	product.GET("/list/:limit", api.ProductShowList(db))
-	product.POST("/add", api.ProductCreate(db))
+	v1product := v1local.Group("/product")
+	v1product.GET("/id/:id", api.ProductShowByID(db))
+	v1product.GET("/list/:limit", api.ProductShowList(db))
+	v1product.POST("/add", api.ProductCreate(db))
+
+	// /api/v1/local/product/search
+	v1pSearch := v1product.Group("/search")
+	v1pSearch.GET("/name/:limit", api.ProductSearchByName(db))
 
 	// /api/v1/local/order
-	order := v1local.Group("/order")
-	order.GET("/id/:id", api.OrderShowByID(db))
-	order.GET("/list/:limit", api.OrderShowList(db))
-	order.POST("/add", api.OrderCreate(db))
+	v1order := v1local.Group("/order")
+	v1order.GET("/id/:id", api.OrderShowByID(db))
+	v1order.GET("/list/:limit", api.OrderShowList(db))
+	v1order.POST("/add", api.OrderCreate(db))
 
 	// User API
 	// /api/v1/local/user
@@ -151,23 +155,23 @@ func runServer(db *sqlx.DB) {
 
 	// User API search/pencarian
 	// /api/v1/local/user/search
-	v1use := v1user.Group("/search")
-	v1use.GET("/ric/:limit", api.UserSearchByNIK(db))
-	v1use.GET("/surveyor/:limit", api.UserSearchByNameType(db, "2"))
-	v1use.GET("/collector/:limit", api.UserSearchByNameType(db, "3"))
-	v1use.GET("/sales/:limit", api.UserSearchByNameType(db, "4"))
+	v1uSearch := v1user.Group("/search")
+	v1uSearch.GET("/ric/:limit", api.UserSearchByNIK(db))
+	v1uSearch.GET("/surveyor/:limit", api.UserSearchByNameType(db, "2"))
+	v1uSearch.GET("/collector/:limit", api.UserSearchByNameType(db, "3"))
+	v1uSearch.GET("/sales/:limit", api.UserSearchByNameType(db, "4"))
 
 	// User API edit
 	// /api/v1/local/user/edit
-	v1ue := v1user.Group("/edit")
-	v1ue.PATCH("/:id/update/contact", api.UserUpdateContact(db))
-	v1ue.PATCH("/:id/update/role", api.UserUpdateRole(db))
-	v1ue.DELETE("/:id/delete/email", api.UserDeleteEmail(db))
-	v1ue.POST("/:id/add/email", api.UserAddEmail(db))
-	v1ue.DELETE("/:id/delete/phone", api.UserDeletePhone(db))
-	v1ue.POST("/:id/add/phone", api.UserAddPhone(db))
-	v1ue.POST("/:id/add/address", api.UserAddAddress(db))
-	v1ue.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
+	v1uEdit := v1user.Group("/edit")
+	v1uEdit.PATCH("/:id/update/contact", api.UserUpdateContact(db))
+	v1uEdit.PATCH("/:id/update/role", api.UserUpdateRole(db))
+	v1uEdit.DELETE("/:id/delete/email", api.UserDeleteEmail(db))
+	v1uEdit.POST("/:id/add/email", api.UserAddEmail(db))
+	v1uEdit.DELETE("/:id/delete/phone", api.UserDeletePhone(db))
+	v1uEdit.POST("/:id/add/phone", api.UserAddPhone(db))
+	v1uEdit.POST("/:id/add/address", api.UserAddAddress(db))
+	v1uEdit.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
 
 	// Jalankan server
 	server.Run(":8080")

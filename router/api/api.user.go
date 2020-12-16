@@ -911,11 +911,6 @@ func UserSearchByNIK(db *sqlx.DB) gin.HandlerFunc {
 			u.Direction("next")
 		}
 
-		var total int
-		if t, err := dbquery.UserGetUserTotalRow(db); err == nil {
-			total = t
-		}
-
 		var users []wrapper.User
 
 		if next {
@@ -951,7 +946,6 @@ func UserSearchByNIK(db *sqlx.DB) gin.HandlerFunc {
 		c.JSON(httpStatus, gin.H{
 			"users": users,
 			"error": errMess,
-			"total": total,
 			"last":  last,
 		})
 	}

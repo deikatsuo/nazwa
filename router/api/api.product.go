@@ -274,3 +274,97 @@ func ProductShowByID(db *sqlx.DB) gin.HandlerFunc {
 	}
 	return fn
 }
+
+////////////
+// SEARCH //
+////////////
+
+// ProductSearchByName cari user berdasarkan Nomor induk kependudukan
+func ProductSearchByName(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		// Tolak jika yang request bukan user terdaftar
+		uid := session.Get("userid")
+		if uid == nil {
+			router.Page404(c)
+			return
+		}
+
+		search := ""
+		lastid := 1
+		last := false
+		limit := 10
+		var direction string
+		httpStatus := http.StatusOK
+		errMess := ""
+		p := dbquery.GetProducts{}
+		next := true
+
+		// Mengambil parameter limit
+		lim, err := strconv.Atoi(c.Param("limit"))
+		if err == nil {
+			limit = lim
+			p.Limit(limit)
+		} else {
+			errMess = "Limit tidak valid"
+			httpStatus = http.StatusBadRequest
+			next = false
+		}
+
+		// Ambil query pencarian
+		search = c.Query("search")
+
+		// Ambil query id terakhir
+		lst, err := strconv.Atoi(c.Query("lastid"))
+		if err == nil {
+			lastid = lst
+		}
+
+		// Forward/backward
+		direction = c.Query("direction")
+		if direction == "back" {
+			p.Direction(direction)
+		} else {
+			p.Direction("next")
+		}
+
+		var products []wrapper.Product
+
+		if next {
+			p.Where("WHERE name LIKE '" + search + "%' ORDER BY id ASC")
+			p.LastID(lastid)
+
+			prod, err := p.Show(db)
+			if err != nil {
+				errMess = err.Error()
+				httpStatus = http.StatusInternalServerError
+			}
+			products = prod
+		}
+
+		if len(products) > 0 && direction == "back" {
+			// Reverse urutan array user
+			temp := make([]wrapper.Product, len(products))
+			in := 0
+			for i := len(products) - 1; i >= 0; i-- {
+				temp[in] = products[i]
+				in++
+			}
+			products = temp
+		}
+
+		// Cek id terakhir
+		if len(products) > 0 && len(products) < limit {
+			// Periksa apakah ini data terakhir atau bukan
+			last = true
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"products": products,
+			"error":    errMess,
+			"last":     last,
+		})
+	}
+	return gin.HandlerFunc(fn)
+}
