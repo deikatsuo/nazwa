@@ -15,10 +15,11 @@ CREATE TABLE "role" (
 INSERT INTO "role" ("id", "name")
 VALUES  (0, 'dev'),
         (1, 'admin'),
-        (2, 'surveyor'),
-        (3, 'collector'),
-        (4, 'sales'),
-        (5, 'customer');
+        (2, 'collector'),
+        (3, 'driver'),
+        (4, 'surveyor'),
+        (5, 'sales'),
+        (6, 'customer');
 
 -- Buat gender
 CREATE TYPE "gender" AS ENUM ('f', 'm');

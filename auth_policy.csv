@@ -8,7 +8,9 @@ g, role::sales, role::customer
 
 g, role::surveyor, role::sales
 
-g, role::collector, role::surveyor
+g, role::driver, role::surveyor
+
+g, role::collector, role::driver
 
 p, role::admin, /*, *
 g, role::admin, role::collector
