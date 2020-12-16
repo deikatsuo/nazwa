@@ -854,8 +854,8 @@ func UserShowAddressByUserID(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		c.JSON(httpStatus, gin.H{
-			"address": address,
-			"error":   errMess,
+			"addresses": address,
+			"error":     errMess,
 		})
 	}
 	return fn

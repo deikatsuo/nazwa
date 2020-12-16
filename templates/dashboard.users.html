@@ -278,17 +278,37 @@
                   <th class="px-4 py-3"></th>
                 </tr>
               </thead>
+
+              <!-- Informasi alamat -->
               <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <template x-for="(address, index) in addresses" :key="index">
-                  <tr class="cursor-pointer text-gray-600 dark:text-gray-400 hover:bg-green-100">
+                  <tr
+                    class="cursor-pointer text-gray-600 dark:text-gray-400 hover:bg-green-100"
+                    @click="if (delAddr != index) { delAddr = index; }"
+                    @contextmenu.prevent="if (delAddr == index ) { delAddr = null; }"
+                  >
                     <td class="px-4 py-1 align-top">
-                      <div class="flex items-center text-sm">
-                        <div>
-                          <p class="font-semibold" x-text="address.name"></p>
-                          <p
-                            class="text-xs text-gray-500 dark:text-gray-400"
-                            x-text="address.description"
-                          ></p>
+                      <div class="relative">
+                        <div class="flex items-center text-sm">
+                          <div x-show="delAddr != index">
+                            <p class="font-semibold" x-text="address.name"></p>
+                            <p
+                              class="text-xs text-gray-500 dark:text-gray-400"
+                              x-text="address.description"
+                            ></p>
+                          </div>
+                          <div
+                            class="inset-0 absolute"
+                            x-show="delAddr == index"
+                          >
+                            <button
+                              class="block mx-auto my-2 shadow bg-red-500 hover:bg-red-400 focus:shadow-outline focus:outline-none text-white text-xs py-1 px-5 rounded"
+                              @click="delAddrBtn = index; toDelAddr($dispatch, address.ID);"
+                              :class="{'disable cursor-not-allowed': delAddrBtn == index }"
+                            >
+                              Hapus
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -298,6 +318,8 @@
                     ></td>
                   </tr>
                 </template>
+
+                <!-- Alamat belum di set -->
                 <tr
                   class="text-gray-700 dark:text-gray-400"
                   x-show="addresses.length == 0"
@@ -310,6 +332,7 @@
                   <td></td>
                 </tr>
 
+                <!-- Tombol tambah alamat -->
                 <tr class="text-gray-700 dark:text-gray-400">
                   <td class="px-4 py-1 text-sm align-top">
                     <span class="text-blue-700 dark:text-blue-400">
@@ -324,6 +347,7 @@
                   <td
                     class="px-4 py-1 text-sm whitespace-normal break-words align-top"
                   >
+                    <!-- KOMPONEN TAMBAH ALAMAT -->
                     <!-- Tambah alamat -->
                     <div
                       x-data="addAddressDetail()"
@@ -630,7 +654,8 @@
                 })
                 .then((res) => res.json())
                 .then((json) => {
-                  this.addresses = json.addresses;
+                  user = document.getElementById("user_detail").__x.$data;
+                  user.addresses = json.addresses;
                   if (json.error) {
                     $dispatch('notif', {type: 'error', message: json.error});
                   } else if (json.success) {
@@ -739,7 +764,7 @@
                   }
                 })
                 .catch((err) => {
-                  console.log(err)
+                  console.log(err);
                 });
               },
               initPlaces($watch) {
@@ -828,7 +853,6 @@
               watchData($watch, $dispatch) {
                 $watch("setRole", (value) => {
                   if (this.counter > 0) {
-                    //alert(value);
                     this.updateRole($dispatch, this.id, value);
                   }
                 });
@@ -847,7 +871,15 @@
                 "Customer",
               ],
               setRole: null,
+              // untuk counter agar role tidak selalu di watch
               counter: 0,
+              delAddr: null,
+              delAddrBtn: null,
+              toDelAddr($dispatch, addrid) {
+                address = document.getElementById("address").__x.$data;
+                address.deleteAddress($dispatch, addrid);
+              },
+
               fetchById($dispatch) {
                 fetch(`/api/v1/local/user/id/${this.id}`, {
                   method: "GET",
