@@ -68,7 +68,9 @@
                         Lastname: customer.Lastname,
                         RIC: customer.RIC,
                       };
-                      addresses = customer.Addresses;
+                      if (customer.Addresses) {
+                        addresses = customer.Addresses;
+                      }
                       formData.customer = customer.ID;"
                   >
                     <img
@@ -472,11 +474,21 @@
               </label>
               <div class="w-full">
                 <div
-                  class="relative bg-blue-400 bg-opacity-50 mt-1 text-sm inline-block py-1 pl-4 pr-8 rounded-full"
+                  class="relative bg-green-300 bg-opacity-50 mt-1 text-sm inline-block py-1 pl-4 pr-8"
                   x-show="!$parent.isObjEmpty(tempDataShippingAddress)"
                 >
-                  <i x-text="tempDataShippingAddress.name"></i>
-                  (<b x-text="tempDataShippingAddress.description"></b>)
+                  <i x-text="tempDataShippingAddress.one+', '"></i>
+                  <i
+                    x-show="tempDataShippingAddress.two != ''"
+                    x-text="tempDataShippingAddress.two+', '"
+                  ></i>
+                  <i
+                    x-text="tempDataShippingAddress.village+', '+tempDataShippingAddress.district+', '+tempDataShippingAddress.city+', '+tempDataShippingAddress.province"
+                  ></i>
+                  <i
+                    x-show="tempDataShippingAddress.zip != ''"
+                    x-text="', '+tempDataShippingAddress.zip"
+                  ></i>
                   <p
                     style="margin-top: 0.42rem"
                     class="cursor-pointer absolute right-0 top-0 mr-2"
@@ -507,15 +519,22 @@
                         @click="tempDataShippingAddress = 
                         {
                           ID: address.ID,
-                          name: address.name,
-                          description: address.description,
+                          one: address.one,
+                          two: address.two,
+                          zip: address.zip,
+                          village: address.VillageName,
+                          district: address.DistrictName,
+                          city: address.CityName,
+                          province: address.ProvinceName,
                         };
                         formData.shipping_address = address.ID;"
                       >
                         <!-- TODO img -->
-                        <span
-                          x-text="address.name"
-                        ></span>
+                        <span x-text="address.name"></span>
+                        &nbsp;<i
+                          x-text="'( '+address.description+' )'"
+                          class="text-xs text-gray-500"
+                        ></i>
                       </a>
                     </li>
                   </template>
@@ -538,29 +557,35 @@
                 <input
                   class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                   placeholder="Alamat Penagihan Kredit/Pembayaran"
-                  x-model="instantData.collector"
-                  @keyup="if (instantData.collector.length >= 3 && instantData.collector.length <= 25) { closeCollectorIS = false; searchCollector(); } else { closeCollectorIS = true; }"
-                  @click="if (instantData.collector.length >= 3 && instantData.collector.length <= 25) { closeCollectorIS = false; } else { closeCollectorIS = true; }"
-                  @click.away="closeCollectorIS = true;"
-                  @keydown.tab="closeCollectorIS = true;"
-                  x-show="$parent.isObjEmpty(tempDataCollector)"
-                  :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errCollector }"
+                  @click="if (addresses.length > 0) { closeBillingAddressIS = false; } else { closeBillingAddressIS = true; }"
+                  @click.away="closeBillingAddressIS = true;"
+                  @keydown.tab="closeBillingAddressIS = true;"
+                  x-show="$parent.isObjEmpty(tempDataBillingAddress)"
+                  :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errBillingAddress }"
                 />
               </label>
               <div class="w-full">
                 <div
-                  class="relative bg-blue-400 bg-opacity-50 mt-1 text-sm inline-block py-1 pl-4 pr-8 rounded-full"
-                  x-show="!$parent.isObjEmpty(tempDataCollector)"
+                  class="relative bg-green-300 bg-opacity-50 mt-1 text-sm inline-block py-1 pl-4 pr-8"
+                  x-show="!$parent.isObjEmpty(tempDataBillingAddress)"
                 >
+                  <i x-text="tempDataBillingAddress.one+', '"></i>
                   <i
-                    x-text="tempDataCollector.Firstname +' '+ tempDataCollector.Lastname"
+                    x-show="tempDataBillingAddress.two != ''"
+                    x-text="tempDataBillingAddress.two+', '"
                   ></i>
-                  (<b x-text="tempDataCollector.Username"></b>)
+                  <i
+                    x-text="tempDataBillingAddress.village+', '+tempDataBillingAddress.district+', '+tempDataBillingAddress.city+', '+tempDataBillingAddress.province"
+                  ></i>
+                  <i
+                    x-show="tempDataBillingAddress.zip != ''"
+                    x-text="', '+tempDataBillingAddress.zip"
+                  ></i>
                   <p
                     style="margin-top: 0.42rem"
                     class="cursor-pointer absolute right-0 top-0 mr-2"
-                    @click="tempDataCollector = {};
-                  formData.collector = 0;"
+                    @click="tempDataBillingAddress = {};
+                    formData.billing_address = 0;"
                   >
                     {{ template "_svg_icon_close" }}
                   </p>
@@ -570,45 +595,42 @@
                 x-transition:leave="transition ease-in duration-150"
                 x-transition:leave-start="opacity-100"
                 x-transition:leave-end="opacity-0"
-                x-show="!closeCollectorIS"
+                x-show="!closeBillingAddressIS"
                 class="absolute z-30 left-0 right-0 -mt-1 md:mr-1 md:ml-1 text-gray-600 bg-white border-none border-r border-l border-b border-gray-100 rounded-br-md rounded-bl-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
                 aria-label="submenu"
               >
                 <div
-                  x-show="collectorIS.length > 0 && closeCollectorIS == false && $parent.isObjEmpty(tempDataCollector)"
+                  x-show="addresses.length > 0 && closeBillingAddressIS == false && $parent.isObjEmpty(tempDataBillingAddress)"
                 >
-                  <template
-                    x-for="(collector, index) in collectorIS"
-                    :key="index"
-                  >
+                  <template x-for="(address, index) in addresses" :key="index">
                     <li class="flex">
                       <a
                         class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                         href="#"
                         tabindex="-1"
-                        @click="tempDataCollector = 
-                      {
-                        ID: collector.ID,
-                        Firstname: collector.Firstname,
-                        Lastname: collector.Lastname,
-                        Username: collector.Username,
-                      };
-                      formData.collector = collector.ID;"
+                        @click="tempDataBillingAddress = 
+                        {
+                          ID: address.ID,
+                          one: address.one,
+                          two: address.two,
+                          zip: address.zip,
+                          village: address.VillageName,
+                          district: address.DistrictName,
+                          city: address.CityName,
+                          province: address.ProvinceName,
+                        };
+                        formData.billing_address = address.ID;"
                       >
-                        <img
-                          class="object-cover w-5 h-5 rounded-full mr-3"
-                          :src="'/file/profile/thumbnail/'+collector.Avatar"
-                          alt=""
-                          loading="lazy"
-                        />
-                        <span
-                          x-text="collector.Firstname +' '+ collector.Lastname"
-                        ></span>
+                        <span x-text="address.name"></span>
+                        &nbsp;<i
+                          x-text="'( '+address.description+' )'"
+                          class="text-xs text-gray-500"
+                        ></i>
                       </a>
                     </li>
                   </template>
                 </div>
-                <div x-show="collectorIS.length == 0">
+                <div x-show="addresses.length == 0">
                   <span
                     class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                     >Tidak ada data</span
@@ -930,6 +952,8 @@
         errmShippingDate: "",
         errShippingAddress: false,
         errmShippingAddress: "",
+        errBillingAddress: false,
+        errmBillingAddress: "",
 
         submitData($dispatch) {
           this.loadingText = "Loading...";
