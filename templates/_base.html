@@ -17,7 +17,7 @@
   <body>
     <div @preview.window="openPreview($event.detail.html);"></div>
     <div @notif.window="showAlert($event.detail.type); alertMessage = $event.detail.message"></div>
-    <div @modal.window="openModal(); if (typeof($event.detail.tmp) != 'undefined') { modalTmp = $event.detail.tmp }; modalFooter = $event.detail.footer; modalTitle = $event.detail.title; modalContent = $event.detail.content; if (typeof($event.detail.html) != 'undefined') { showModalHTML = true }; $refs.modalHTML.innerHTML = $event.detail.html; if (typeof($event.detail.callback) != 'undefined') { modalCallback = $event.detail.callback };"></div>
+    <div @modal.window="openModal(); if (typeof($event.detail.tmp) != 'undefined') { modalTmp = $event.detail.tmp }; if (typeof($event.detail.tmp_arr) != 'undefined') { modalTmpArray = $event.detail.tmp_arr }; modalFooter = $event.detail.footer; modalTitle = $event.detail.title; modalContent = $event.detail.content; if (typeof($event.detail.html) != 'undefined') { showModalHTML = true }; $refs.modalHTML.innerHTML = $event.detail.html; if (typeof($event.detail.callback) != 'undefined') { modalCallback = $event.detail.callback };"></div>
 
     <template x-if="isPreviewOpen">
       <div

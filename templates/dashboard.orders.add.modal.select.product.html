@@ -12,7 +12,10 @@
 <script>
   function product($parent) {
     return {
-      products: [],
+      products: $parent.modalTmpArray,
+      initProduct($dispatch) {
+        console.log(this.products);
+      },
       fetchProduct($dispatch) {
         
       },

@@ -90,6 +90,7 @@ function data() {
     showModalHTML: false,
     modalCallback: function () { },
     modalTmp: null,
+    modalTmpArray: [],
     modalFooter: false,
     openModal() {
       this.isModalOpen = true
