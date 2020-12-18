@@ -133,6 +133,7 @@ func runServer(db *sqlx.DB) {
 	v1product := v1local.Group("/product")
 	v1product.GET("/id/:id", api.ProductShowByID(db))
 	v1product.GET("/list/:limit", api.ProductShowList(db))
+	v1product.GET("/all", api.ProductShowAll(db))
 	v1product.POST("/add", api.ProductCreate(db))
 
 	// /api/v1/local/product/search

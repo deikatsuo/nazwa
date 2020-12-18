@@ -46,17 +46,28 @@ func (p *GetProducts) Where(where string) *GetProducts {
 	return p
 }
 
+// NoLimit tidak membatasi hasil query
+func (p *GetProducts) NoLimit() *GetProducts {
+	return p
+}
+
 // Show tampilkan data
 func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 	var product []wrapper.NullableProduct
 	var parse []wrapper.Product
-	limit := 10
+	limit := 0
 	if p.limit > 0 {
 		limit = p.limit
 	}
 
 	// Where logic
 	where := p.where
+
+	if limit == 0 {
+		where = fmt.Sprintf("%s", where)
+	} else {
+		where = fmt.Sprintf("%s LIMIT %d", where, limit)
+	}
 
 	// query pengambilan data produk
 	query := `SELECT
@@ -68,12 +79,11 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 		thumbnail,
 		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at
 		FROM "product"
-		%s
-		LIMIT $1`
+		%s`
 
 	query = fmt.Sprintf(query, where)
 
-	err := db.Select(&product, query, limit)
+	err := db.Select(&product, query)
 	if err != nil {
 		log.Println("Error: product.go Select all product")
 		log.Println(err)

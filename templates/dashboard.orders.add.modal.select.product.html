@@ -1,0 +1,22 @@
+{{ define "dashboard_orders_add_modal_select_product_content" }}
+<template x-ref="selectProduct">
+  <div x-init="fetchProduct($dispatch)" x-data="product($parent)">
+    <!-- Title -->
+    <div
+      class="absolute top-0 mt-4 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+    >
+      Pilih produk
+    </div>
+  </div>
+</template>
+<script>
+  function product($parent) {
+    return {
+      products: [],
+      fetchProduct($dispatch) {
+        
+      },
+    };
+  }
+</script>
+{{ end }}
