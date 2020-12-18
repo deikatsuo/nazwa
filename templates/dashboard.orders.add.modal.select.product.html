@@ -12,12 +12,33 @@
 <script>
   function product($parent) {
     return {
-      products: $parent.modalTmpArray,
+      //products: [],
       initProduct($dispatch) {
         console.log(this.products);
+        if (this.products.length == 0) {
+          this.fetchProduct($dispatch);
+        }
       },
       fetchProduct($dispatch) {
-        
+        fetch(`/api/v1/local/product/all`, {
+          method: "GET",
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.error) {
+              $dispatch("notif", {
+                type: "error",
+                message: data.error,
+              });
+            }
+            if (data.products) {
+              document.getElementById("create").__x.$data.products =
+                data.products;
+            }
+          })
+          .catch(() => {
+            console.log("Telah terjadi kesalahan saat memuat data produk");
+          });
       },
     };
   }
