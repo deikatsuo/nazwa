@@ -12,11 +12,14 @@
 <script>
   function product($parent) {
     return {
-      //products: [],
+      products: [],
       initProduct($dispatch) {
-        console.log(this.products);
-        if (this.products.length == 0) {
+        var products = document.getElementById("create").__x.$data.products;
+        console.log(products);
+        if (products.length == 0) {
           this.fetchProduct($dispatch);
+        } else {
+          this.products = products;
         }
       },
       fetchProduct($dispatch) {
@@ -34,6 +37,7 @@
             if (data.products) {
               document.getElementById("create").__x.$data.products =
                 data.products;
+              this.products = data.products;
             }
           })
           .catch(() => {
