@@ -22,7 +22,12 @@
         class="grid grid-cols-2 col-gap-4 row-gap-8 md:col-gap-6 md:grid-cols-4"
       >
         <template x-for="(product, index) in fill_products" :key="index">
-          <li x-on:mouseover="if (product.Brand != '' || product.Type != '') { tooltip = index }" x-on:mouseleave="tooltip = null">
+          <li
+            x-on:mouseover="if (product.Brand != '' || product.Type != '') { tooltip = index }"
+            x-on:mouseleave="tooltip = null"
+            class="cursor-pointer"
+            @click="add($dispatch, product)"
+          >
             <!-- Tooltip -->
             <div
               class="relative"
@@ -34,8 +39,15 @@
                 class="absolute top-0 z-10 w-auto min-w-full p-2 -mt-1 mx-auto text-sm leading-tight text-white transform -translate-y-full bg-green-500 rounded-lg shadow-lg"
               >
                 <div class="inline-flex">
-                  <p x-text="product.Brand" class="mr-1" x-show="product.Brand != ''"></p>
-                  <p x-text="'(' + product.Type + ')'" x-show="product.Type != ''"></p>
+                  <p
+                    x-text="product.Brand"
+                    class="mr-1"
+                    x-show="product.Brand != ''"
+                  ></p>
+                  <p
+                    x-text="'(' + product.Type + ')'"
+                    x-show="product.Type != ''"
+                  ></p>
                 </div>
               </div>
               <svg
@@ -155,6 +167,9 @@
         } else {
           this.count += 12;
         }
+      },
+      add($dispatch, product) {
+        
       },
     };
   }

@@ -79,6 +79,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 		TO_CHAR(price,'Rp999G999G999G999G999') AS price,
 		code,
 		thumbnail,
+		created_by,
 		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at
 		FROM "product"
 		%s`
@@ -100,6 +101,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 			Brand:     p.Brand.String,
 			Type:      p.Type.String,
 			CreatedAt: p.CreatedAt,
+			CreatedBy: p.CreatedBy,
 			BasePrice: string(p.BasePrice),
 			Price:     string(p.Price),
 			Code:      p.Code,
