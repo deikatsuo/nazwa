@@ -22,17 +22,47 @@
         class="grid grid-cols-2 col-gap-4 row-gap-8 md:col-gap-6 md:grid-cols-4"
       >
         <template x-for="(product, index) in fill_products" :key="index">
-          <li>
-            <div class="">
+          <li
+            x-on:mouseover="tooltip = index"
+            x-on:mouseleave="tooltip = null"
+          >
+            <!-- Tooltip -->
+            <div
+              class="relative"
+              x-cloak
+              x-show="tooltip == index"
+              x-show.transition.origin.top="tooltip"
+            >
+              <div
+                class="absolute top-0 z-10 w-32 p-2 -mt-1 mx-auto text-sm leading-tight text-white transform -translate-y-full bg-green-500 rounded-lg shadow-lg"
+              >
+                Hi, I am Tooltip
+              </div>
+              <svg
+                class="absolute z-10 w-6 h-6 text-green-500 transform -translate-y-3 fill-current stroke-current"
+                width="8"
+                height="8"
+              >
+                <rect
+                  x="12"
+                  y="-10"
+                  width="8"
+                  height="8"
+                  transform="rotate(45)"
+                />
+              </svg>
+            </div>
+
+            <div>
               <img
-                class="object-cover w-full h-full"
+                class="object-cover w-full h-full border"
                 :src="'/file/product/thumbnail/'+product.Thumbnail"
                 alt=""
                 loading="lazy"
                 x-show="product.Thumbnail != ''"
               />
               <img
-                class="object-cover w-full h-full"
+                class="object-cover w-full h-full border"
                 :src="'/file/product/thumbnail/no-photo.png'"
                 alt=""
                 loading="lazy"
@@ -45,7 +75,7 @@
                   <h4 class="mb-1" x-text="product.Name"></h4>
                   <span
                     x-text="product.Code"
-                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium leading-4 bg-gray-200 text-gray-800"
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs leading-3 bg-orange-500 text-orange-100"
                   ></span>
                 </div>
               </div>
@@ -55,7 +85,7 @@
       </ul>
       <div class="bg-blue-500">
         <button
-          class="block w-full mx-auto mt-5 shadow  hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
+          class="block w-full mx-auto mt-5 shadow hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
           @click="showMore()"
           :class="{'disable cursor-not-allowed bg-blue-400': products.length <= count }"
         >
@@ -71,6 +101,7 @@
       products: [],
       product_instant_search: "",
       count: 12,
+      tooltip: null,
       initProduct($dispatch) {
         var products = document.getElementById("create").__x.$data.products;
         console.log(products);
