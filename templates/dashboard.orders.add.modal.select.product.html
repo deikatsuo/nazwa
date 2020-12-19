@@ -7,12 +7,70 @@
     >
       Pilih produk
     </div>
+    <div class="text-center">
+      <div class="mx-auto py-4">
+        <label for="search" class="sr-only">Search</label>
+        <div class="relative rounded-md shadow">
+          <input
+            class="block h-10 w-full px-4 sm:text-sm sm:leading-5"
+            placeholder="Cari nama atau kode produk"
+            x-model="product_instant_search"
+          />
+        </div>
+      </div>
+      <ul
+        class="grid grid-cols-2 col-gap-4 row-gap-8 md:col-gap-6 md:grid-cols-4"
+      >
+        <template x-for="(product, index) in fill_products" :key="index">
+          <li>
+            <div class="">
+              <img
+                class="object-cover w-full h-full"
+                :src="'/file/product/thumbnail/'+product.Thumbnail"
+                alt=""
+                loading="lazy"
+                x-show="product.Thumbnail != ''"
+              />
+              <img
+                class="object-cover w-full h-full"
+                :src="'/file/product/thumbnail/no-photo.png'"
+                alt=""
+                loading="lazy"
+                x-show="product.Thumbnail === ''"
+              />
+              <div class="space-y-2">
+                <div
+                  class="text-xs leading-4 font-medium lg:text-sm lg:leading-5"
+                >
+                  <h4 class="mb-1" x-text="product.Name"></h4>
+                  <span
+                    x-text="product.Code"
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium leading-4 bg-gray-200 text-gray-800"
+                  ></span>
+                </div>
+              </div>
+            </div>
+          </li>
+        </template>
+      </ul>
+      <div class="bg-blue-500">
+        <button
+          class="block w-full mx-auto mt-5 shadow  hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
+          @click="showMore()"
+          :class="{'disable cursor-not-allowed bg-blue-400': products.length <= count }"
+        >
+          Lihat Lebih Banyak
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 <script>
   function product($parent) {
     return {
       products: [],
+      product_instant_search: "",
+      count: 12,
       initProduct($dispatch) {
         var products = document.getElementById("create").__x.$data.products;
         console.log(products);
@@ -43,6 +101,22 @@
           .catch(() => {
             console.log("Telah terjadi kesalahan saat memuat data produk");
           });
+      },
+      get fill_products() {
+        return this.products
+          .filter((p) => {
+            const pattern = new RegExp(this.product_instant_search, "i");
+            return (
+              p.Name.match(pattern) ||
+              p.Code.match(pattern) ||
+              p.Brand.match(pattern) ||
+              p.Type.match(pattern)
+            );
+          })
+          .slice(0, this.count);
+      },
+      showMore() {
+        this.count += 12;
       },
     };
   }

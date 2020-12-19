@@ -37,8 +37,12 @@
                     style="margin-top: 0.42rem"
                     class="cursor-pointer absolute right-0 top-0 mr-2"
                     @click="tempDataCustomer = {};
-                  addresses = [];
-                  formData.customer = 0;"
+                    addresses = [];
+                    formData.customer = 0;
+                    tempDataBillingAddress = {};
+                    formData.billing_address = 0;
+                    tempDataShippingAddress = {};
+                    formData.shipping_address = 0;"
                   >
                     {{ template "_svg_icon_close" }}
                   </p>
