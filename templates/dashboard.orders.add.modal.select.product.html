@@ -116,7 +116,7 @@
       tooltip: null,
       initProduct($dispatch) {
         var products = document.getElementById("create").__x.$data.products;
-        console.log(products);
+        console.log("nil"+products);
         if (products.length == 0) {
           this.fetchProduct($dispatch);
         } else {
@@ -136,8 +136,7 @@
               });
             }
             if (data.products) {
-              document.getElementById("create").__x.$data.products =
-                data.products;
+              document.getElementById("create").__x.$data.products = data.products;
               this.products = data.products;
             }
           })
@@ -169,7 +168,7 @@
         }
       },
       add($dispatch, product) {
-        
+        document.getElementById("create").__x.$data.selectedProducts.push(product);
       },
     };
   }
