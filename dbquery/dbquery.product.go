@@ -73,6 +73,8 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 	query := `SELECT
 		id,
 		name,
+		brand,
+		type,
 		TO_CHAR(base_price,'Rp999G999G999G999G999') AS base_price,
 		TO_CHAR(price,'Rp999G999G999G999G999') AS price,
 		code,
@@ -95,6 +97,8 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 		parse = append(parse, wrapper.Product{
 			ID:        p.ID,
 			Name:      strings.Title(p.Name),
+			Brand:     p.Brand.String,
+			Type:      p.Type.String,
 			CreatedAt: p.CreatedAt,
 			BasePrice: string(p.BasePrice),
 			Price:     string(p.Price),
