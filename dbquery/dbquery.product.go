@@ -95,17 +95,22 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 
 	// mapping data produk
 	for _, p := range product {
+		var creditPrice []wrapper.ProductCreditPriceSelect
+		if pr, err := ProductGetProductCreditPrice(db, p.ID); err == nil {
+			creditPrice = pr
+		}
 		parse = append(parse, wrapper.Product{
-			ID:        p.ID,
-			Name:      strings.Title(p.Name),
-			Brand:     p.Brand.String,
-			Type:      p.Type.String,
-			CreatedAt: p.CreatedAt,
-			CreatedBy: p.CreatedBy,
-			BasePrice: string(p.BasePrice),
-			Price:     string(p.Price),
-			Code:      p.Code,
-			Thumbnail: p.Thumbnail.String,
+			ID:          p.ID,
+			Name:        strings.Title(p.Name),
+			Brand:       p.Brand.String,
+			Type:        p.Type.String,
+			CreatedAt:   p.CreatedAt,
+			CreatedBy:   p.CreatedBy,
+			BasePrice:   string(p.BasePrice),
+			Price:       string(p.Price),
+			Code:        p.Code,
+			Thumbnail:   p.Thumbnail.String,
+			CreditPrice: creditPrice,
 		})
 	}
 
