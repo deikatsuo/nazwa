@@ -53,7 +53,7 @@ type ProductCreditPriceSelect struct {
 // ProductForm menyimpan input produk
 type ProductForm struct {
 	Name        string                   `json:"name" binding:"required,min=4,max=100"`
-	Code        string                   `json:"code" binding:"omitempty,min=5,max=10"`
+	Code        string                   `json:"code" binding:"min=5,max=10"`
 	Brand       string                   `json:"brand" binding:"omitempty,min=2,max=25"`
 	Type        string                   `json:"type" binding:"omitempty,min=2,max=25"`
 	BasePrice   string                   `json:"base_price" binding:"required,numeric,min=1,max=15"`
