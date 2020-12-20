@@ -417,13 +417,16 @@
                   <span class="text-gray-700 dark:text-gray-400"
                     >Lama Angsuran</span
                   >
-                  <input
-                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    placeholder="Misal: 6, untuk 6 bulan"
+                  <select
+                    class="block bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     x-model="formData.duration"
-                    @keydown.enter="submitData($dispatch)"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDuration }"
-                  />
+                  >
+                    <option>Durasi kredit</option>
+                    <template x-for="(val, index) in 24" :key="index">
+                      <option :value="val" x-text="val + ' bulan'"></option>
+                    </template>
+                  </select>
                 </label>
                 <span
                   class="text-xs text-red-600 dark:text-red-400"
@@ -455,7 +458,7 @@
                   >
                   <input
                     class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    id="order"
+                    type="date"
                     x-model="formData.order_date"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errOrderDate }"
                   />
@@ -475,7 +478,7 @@
                   >
                   <input
                     class="datepicker block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    id="shipping"
+                    type="date"
                     x-model="formData.shipping_date"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errShippingDate }"
                   />
@@ -693,7 +696,7 @@
                 x-for="(product, index) in selectedProducts"
                 :key="index"
               >
-                <div class="flex overflow-hidden border-b mt-1">
+                <div class="flex overflow-hidden border-b mt-1 pb-1">
                   <div class="w-1/4 bg-cover p-1">
                     <img
                       class="object-cover w-16 h-16 border"
@@ -712,21 +715,22 @@
                   </div>
                   <div class="p-1 w-3/4">
                     <h1
-                      class="text-gray-900 font-bold"
+                      class="text-gray-500 font-bold"
                       x-text="product.Name"
                     ></h1>
-                    <p class="text-gray-600 text-sm">
+                    <p class="text-gray-500 text-sm">
                       <span
                         x-text="product.Brand"
-                        class="text-red-400 font-bold"
+                        class="inline-flex items-center px-2 py-1 font-serif font-semibold rounded-full text-sm leading-3 bg-orange-500 text-orange-100"
                       ></span
-                      >&nbsp;<i x-text="product.Type"></i>
+                      >&nbsp;<i x-text="product.Type" class="text-xs"></i>
                     </p>
                     <p class="mt-1 text-gray-600">
                       <textarea
                         class="block w-full text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                         rows="1"
                         placeholder="Catatan mengenai barang!"
+                        x-model="formData.order_items[index].notes"
                       ></textarea>
                     </p>
                     <div class="flex item-center mt-2">
@@ -737,7 +741,12 @@
                         class="text-gray-700 font-bold text-xl"
                         x-text="product.Price"
                       ></h1>
-                      <input type="number" class="w-12 px-1 border rounded" />
+                      <input
+                        type="number"
+                        class="w-12 px-1 border rounded"
+                        x-model="formData.order_items[index].quantity"
+                        min="1"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1007,7 +1016,7 @@
           shipping_date: "",
           billing_address: null,
           shipping_address: null,
-          products: [],
+          order_items: [],
         },
         instantData: {
           customer: "",
@@ -1217,30 +1226,4 @@
     }
   </script>
 </div>
-<script src="/assets/js/pikaday.js"></script>
-<script>
-  var order = new Pikaday({
-    field: document.getElementById("order"),
-    onSelect: function (date) {
-      var day = date.getDate();
-      var month = date.getMonth() + 1;
-      var year = date.getFullYear();
-      var result = `${day}-${month}-${year}`;
-      document.getElementById("create").__x.$data.formData.order_date = result;
-    },
-  });
-
-  var shipping = new Pikaday({
-    field: document.getElementById("shipping"),
-    onSelect: function (date) {
-      var day = date.getDate();
-      var month = date.getMonth() + 1;
-      var year = date.getFullYear();
-      var result = `${day}-${month}-${year}`;
-      document.getElementById(
-        "create"
-      ).__x.$data.formData.shipping_date = result;
-    },
-  });
-</script>
 {{ end }}

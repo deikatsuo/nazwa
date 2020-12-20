@@ -169,6 +169,11 @@
       },
       add($dispatch, product) {
         document.getElementById("create").__x.$data.selectedProducts.push(product);
+        document.getElementById("create").__x.$data.formData.order_items.push({
+          id: product.ID,
+          quantity: 1,
+          notes: "Nothing",
+        });
       },
     };
   }

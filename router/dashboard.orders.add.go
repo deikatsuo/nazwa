@@ -13,9 +13,9 @@ func PageDashboardOrdersAdd(db *sqlx.DB) gin.HandlerFunc {
 		gh := gin.H{
 			"site_title": "Buat Order",
 			"page":       "orders_add",
-			"css": []string{
+			/*"css": []string{
 				"/assets/css/pikaday.css",
-			},
+			},*/
 		}
 
 		df := c.MustGet("dashboard").(map[string]interface{})
