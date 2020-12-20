@@ -422,7 +422,6 @@
                     x-model="formData.duration"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDuration }"
                   >
-                    <option>Durasi kredit</option>
                     <template x-for="(val, index) in 24" :key="index">
                       <option :value="val" x-text="val + ' bulan'"></option>
                     </template>
@@ -733,7 +732,7 @@
                       ></span
                       >&nbsp;<i x-text="product.Type" class="text-xs"></i>
                     </p>
-                    <p class="mt-1 text-gray-600">
+                    <p class="mt-2 text-gray-600">
                       <textarea
                         class="block w-full text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                         rows="1"
@@ -741,13 +740,25 @@
                         x-model="formData.order_items[index].notes"
                       ></textarea>
                     </p>
-                    <div class="flex item-center mt-2">
-                      <span>100.000/bln</span>
+                    <div
+                      x-show="formData.credit == true"
+                      class="flex item-center mt-2"
+                    >
+                      <i
+                        class="text-sm text-orange-400"
+                        x-text="toRupiah(creditPrice(index)) + '/bulan'"
+                      ></i>
                     </div>
                     <div class="flex item-center justify-between mt-3">
                       <h1
                         class="text-gray-700 font-bold text-xl"
-                        x-text="price(index)"
+                        x-text="toRupiah(price(index))"
+                        x-show="formData.credit == false"
+                      ></h1>
+                      <h1
+                        class="text-gray-700 font-bold text-xl"
+                        x-text="toRupiah(creditPrice(index) * formData.order_items[index].quantity)"
+                        x-show="formData.credit == true"
                       ></h1>
                       <input
                         type="number"
@@ -1018,7 +1029,7 @@
           surveyor: null,
           collector: null,
           credit: false,
-          duration: null,
+          duration: 12,
           notes: "",
           order_date: "",
           shipping_date: "",
@@ -1234,9 +1245,26 @@
           this.formData.order_items.splice(pid, 1);
         },
         price(index) {
-          var num = this.selectedProducts[index].Price.replace(/[^0-9]+/g,"") * this.formData.order_items[index].quantity;
+          var num =
+            this.selectedProducts[index].Price.replace(/[^0-9]+/g, "") *
+            this.formData.order_items[index].quantity;
+
+          return num;
+        },
+        creditPrice(index) {
+          var price = 0;
+          var item = this.selectedProducts[index];
+          if (item.CreditPrice != null) {
+            for (i = 0; i < item.CreditPrice.length; i++) {
+              if (this.formData.duration == item.CreditPrice[i].Duration) {
+                price = item.CreditPrice[i].Price;
+                price = price.replace(/[^0-9]+/g, "");
+              }
+            }
+          }
           
-          return toRupiah(num);
+
+          return price;
         },
         resetProductForm() {},
       };
