@@ -701,6 +701,7 @@
                   <div
                     class="cursor-pointer absolute bg-red-200 text-red-500 font-bold text-xs top-0 right-0 mt-1 mr-1"
                     @click="remove(index)"
+                    title="Hapus"
                   >
                     <p>{{ template "_svg_icon_close" }}</p>
                   </div>
@@ -746,7 +747,7 @@
                     <div class="flex item-center justify-between mt-3">
                       <h1
                         class="text-gray-700 font-bold text-xl"
-                        x-text="product.Price"
+                        x-text="price(index)"
                       ></h1>
                       <input
                         type="number"
@@ -1231,6 +1232,11 @@
         remove(pid) {
           this.selectedProducts.splice(pid, 1);
           this.formData.order_items.splice(pid, 1);
+        },
+        price(index) {
+          var num = this.selectedProducts[index].Price.replace(/[^0-9]+/g,"") * this.formData.order_items[index].quantity;
+          
+          return toRupiah(num);
         },
         resetProductForm() {},
       };

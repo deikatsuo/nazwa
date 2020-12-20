@@ -23,8 +23,6 @@
       >
         <template x-for="(product, index) in fill_products" :key="index">
           <li
-            x-on:mouseover="if (product.Brand != '' || product.Type != '') { tooltip = index }"
-            x-on:mouseleave="tooltip = null"
             @click="add($dispatch, product)"
             class="cursor-pointer"
           >
@@ -92,7 +90,6 @@
       products: [],
       product_instant_search: "",
       count: 12,
-      tooltip: null,
       initProduct($dispatch) {
         var products = document.getElementById("create").__x.$data.products;
         console.log("nil" + products);
