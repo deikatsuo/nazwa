@@ -697,7 +697,13 @@
                 x-for="(product, index) in selectedProducts"
                 :key="index"
               >
-                <div class="flex overflow-hidden border-b mt-1 pb-1">
+                <div class="flex overflow-hidden border-b mt-1 pb-1 relative">
+                  <div
+                    class="cursor-pointer absolute bg-red-200 text-red-500 font-bold text-xs top-0 right-0 mt-1 mr-1"
+                    @click="remove(index)"
+                  >
+                    <p>{{ template "_svg_icon_close" }}</p>
+                  </div>
                   <div class="w-1/4 bg-cover p-1">
                     <img
                       class="object-cover w-16 h-16 border"
@@ -1221,6 +1227,10 @@
               this.loading = false;
               console.log("Telah terjadi kesalahan saat memuat data collector");
             });
+        },
+        remove(pid) {
+          this.selectedProducts.splice(pid, 1);
+          this.formData.order_items.splice(pid, 1);
         },
         resetProductForm() {},
       };
