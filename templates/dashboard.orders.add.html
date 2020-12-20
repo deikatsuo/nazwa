@@ -688,57 +688,60 @@
             <label class="block mt-4 text-sm">
               <span class="text-gray-700 dark:text-gray-400">Daftar Item</span>
             </label>
-            <div class="block">
-              <ul class="w-full mt-1">
-                <template
-                  x-for="(product, index) in selectedProducts"
-                  :key="index"
-                >
-                  <li class="p-1 mb-1">
-                    <dl class="w-full whitespace-no-wrap">
-                      <div class="p-1 flex flex-wrap">
-                        <dt>
-                          <img
-                            class="object-cover w-20 h-20 border"
-                            :src="'/file/product/thumbnail/'+product.Thumbnail"
-                            alt=""
-                            loading="lazy"
-                            x-show="product.Thumbnail != ''"
-                          />
-                          <img
-                            class="object-cover w-20 h-20 border"
-                            :src="'/file/product/thumbnail/no-photo.png'"
-                            alt=""
-                            loading="lazy"
-                            x-show="product.Thumbnail === ''"
-                          />
-                        </dt>
-                        <dd
-                          class="px-2 text-sm leading-5 text-gray-900 sm:mt-0"
-                        >
-                          <h4 class="mb-1" x-text="product.Name"></h4>
-                          <div
-                            x-show="product.Brand != ''"
-                            class="mb-1 w-full flex flex-wrap"
-                          >
-                            <div class="w-full flex flex-wrap">
-                              <span class="block pr-1">Merk:</span>
-                              <p x-text="product.Brand"></p>
-                            </div>
-                            <div
-                              x-show="product.Type != ''"
-                              class="w-full flex flex-wrap"
-                            >
-                              <span class="pr-1">Tipe:</span>
-                              <p x-text="product.Type"></p>
-                            </div>
-                          </div>
-                        </dd>
-                      </div>
-                    </dl>
-                  </li>
-                </template>
-              </ul>
+            <div class="w-full mt-1">
+              <template
+                x-for="(product, index) in selectedProducts"
+                :key="index"
+              >
+                <div class="flex overflow-hidden border-b mt-1">
+                  <div class="w-1/4 bg-cover p-1">
+                    <img
+                      class="object-cover w-16 h-16 border"
+                      :src="'/file/product/thumbnail/'+product.Thumbnail"
+                      alt=""
+                      loading="lazy"
+                      x-show="product.Thumbnail != ''"
+                    />
+                    <img
+                      class="object-cover w-16 h-16 border"
+                      :src="'/file/product/thumbnail/no-photo.png'"
+                      alt=""
+                      loading="lazy"
+                      x-show="product.Thumbnail === ''"
+                    />
+                  </div>
+                  <div class="p-1 w-3/4">
+                    <h1
+                      class="text-gray-900 font-bold"
+                      x-text="product.Name"
+                    ></h1>
+                    <p class="text-gray-600 text-sm">
+                      <span
+                        x-text="product.Brand"
+                        class="text-red-400 font-bold"
+                      ></span
+                      >&nbsp;<i x-text="product.Type"></i>
+                    </p>
+                    <p class="mt-1 text-gray-600">
+                      <textarea
+                        class="block w-full text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                        rows="1"
+                        placeholder="Catatan mengenai barang!"
+                      ></textarea>
+                    </p>
+                    <div class="flex item-center mt-2">
+                      <span>100.000/bln</span>
+                    </div>
+                    <div class="flex item-center justify-between mt-3">
+                      <h1
+                        class="text-gray-700 font-bold text-xl"
+                        x-text="product.Price"
+                      ></h1>
+                      <input type="number" class="w-12 px-1 border rounded" />
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </div>
