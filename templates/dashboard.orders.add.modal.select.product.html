@@ -19,77 +19,56 @@
         </div>
       </div>
       <ul
-        class="grid grid-cols-2 col-gap-4 row-gap-8 md:col-gap-6 md:grid-cols-4"
+        class="grid grid-cols-1 col-gap-4 row-gap-8 md:col-gap-6 md:grid-cols-2"
       >
         <template x-for="(product, index) in fill_products" :key="index">
           <li
             x-on:mouseover="if (product.Brand != '' || product.Type != '') { tooltip = index }"
             x-on:mouseleave="tooltip = null"
-            class="cursor-pointer"
             @click="add($dispatch, product)"
+            class="cursor-pointer"
           >
-            <!-- Tooltip -->
-            <div
-              class="relative"
-              x-cloak
-              x-show="tooltip == index"
-              x-show.transition.origin.top="tooltip"
-            >
-              <div
-                class="absolute top-0 z-10 w-auto min-w-full p-2 -mt-1 mx-auto text-sm leading-tight text-white transform -translate-y-full bg-green-500 rounded-lg shadow-lg"
-              >
-                <div class="inline-flex">
-                  <p
-                    x-text="product.Brand"
-                    class="mr-1"
-                    x-show="product.Brand != ''"
-                  ></p>
-                  <p
-                    x-text="'(' + product.Type + ')'"
-                    x-show="product.Type != ''"
-                  ></p>
-                </div>
+            <div class="rounded relative overflow-hidden shadow-lg">
+              <div class="absolute bg-blue-200 text-blue-500 font-bold text-xs top-0 right-0 px-1">
+                <p x-text="product.Price"></p>
               </div>
-              <svg
-                class="absolute z-10 w-6 h-6 text-green-500 transform -translate-y-3 fill-current stroke-current"
-                width="8"
-                height="8"
-              >
-                <rect
-                  x="12"
-                  y="-10"
-                  width="8"
-                  height="8"
-                  transform="rotate(45)"
-                />
-              </svg>
-            </div>
-
-            <div>
               <img
-                class="object-cover w-full h-full border"
-                :src="'/file/product/thumbnail/'+product.Thumbnail"
+                class="object-cover w-full"
+                :src="'/file/product/'+product.Thumbnail"
                 alt=""
                 loading="lazy"
                 x-show="product.Thumbnail != ''"
               />
               <img
-                class="object-cover w-full h-full border"
-                :src="'/file/product/thumbnail/no-photo.png'"
+                class="object-cover w-full"
+                :src="'/file/product/no-photo.png'"
                 alt=""
                 loading="lazy"
                 x-show="product.Thumbnail === ''"
               />
-              <div class="space-y-2">
-                <div
-                  class="text-xs leading-4 font-medium lg:text-sm lg:leading-5"
+              <div class="px-6 py-2">
+                <div class="font-bold text-xl mb-2" x-text="product.Name"></div>
+                <p
+                  x-show="product.Description != ''"
+                  class="text-gray-700 text-base text-left"
+                  x-text="product.Description"
+                ></p>
+              </div>
+              <div class="px-2 pt-2 pb-2">
+                <span
+                  class="inline-block bg-orange-200 rounded-full px-3 py-1 text-xs font-semibold text-orange-500 mr-2 mb-2"
+                  x-text="'#Merk: ' + product.Brand"
+                  x-show="product.Brand != ''"
+                ></span>
+                <span
+                  class="inline-block bg-green-200 rounded-full px-3 py-1 text-xs font-semibold text-green-500 mr-2 mb-2"
+                  x-text="'#Tipe: ' + product.Type"
+                  x-show="product.Type != ''"
+                ></span>
+                <span
+                  class="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-500 mr-2 mb-2"
+                  x-text="'#Beli: ' + product.BasePrice"></span
                 >
-                  <h4 class="mb-1" x-text="product.Name"></h4>
-                  <span
-                    x-text="product.Code"
-                    class="inline-flex items-center px-2 py-1 rounded-full text-xs leading-3 bg-orange-500 text-orange-100"
-                  ></span>
-                </div>
               </div>
             </div>
           </li>
@@ -116,7 +95,7 @@
       tooltip: null,
       initProduct($dispatch) {
         var products = document.getElementById("create").__x.$data.products;
-        console.log("nil"+products);
+        console.log("nil" + products);
         if (products.length == 0) {
           this.fetchProduct($dispatch);
         } else {
@@ -136,7 +115,8 @@
               });
             }
             if (data.products) {
-              document.getElementById("create").__x.$data.products = data.products;
+              document.getElementById("create").__x.$data.products =
+                data.products;
               this.products = data.products;
             }
           })
@@ -168,11 +148,13 @@
         }
       },
       add($dispatch, product) {
-        document.getElementById("create").__x.$data.selectedProducts.push(product);
+        document
+          .getElementById("create")
+          .__x.$data.selectedProducts.push(product);
         document.getElementById("create").__x.$data.formData.order_items.push({
           id: product.ID,
           quantity: 1,
-          notes: "Nothing",
+          notes: "",
         });
       },
     };

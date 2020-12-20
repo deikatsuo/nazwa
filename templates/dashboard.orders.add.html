@@ -461,6 +461,7 @@
                     type="date"
                     x-model="formData.order_date"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errOrderDate }"
+                    :max="new Date().toISOString().split('T')[0];"
                   />
                 </label>
                 <span
