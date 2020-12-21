@@ -145,6 +145,9 @@
         }
       },
       add($dispatch, product) {
+        product.discountPrice = 0;
+        product.creditDiscountPrice = 0;
+        product.edited = false;
         document
           .getElementById("create")
           .__x.$data.selectedProducts.push(product);
@@ -152,6 +155,7 @@
           id: product.ID,
           quantity: 1,
           notes: "",
+          discount: 0,
         });
       },
     };

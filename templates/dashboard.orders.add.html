@@ -741,25 +741,62 @@
                       ></textarea>
                     </p>
                     <div
-                      x-show="formData.credit == true"
+                      x-show="selectedProducts[index].discountPrice != 0 && formData.credit == false"
                       class="flex item-center mt-2"
                     >
                       <i
-                        class="text-sm text-orange-400"
-                        x-text="toRupiah(creditPrice(index)/formData.order_items[index].quantity) + '/bulan'"
+                        class="text-sm text-red-400 line-through"
+                        x-text="toRupiah(price(index,true)/formData.order_items[index].quantity)"
+                      ></i>
+                      <i
+                        class="text-sm text-green-400 pl-1 font-bold"
+                        x-text="'(' + ((price(index,true)-price(index))/price(index,true))*100 + '%)'"
+                      ></i>
+                    </div>
+                    <div
+                      x-show="selectedProducts[index].creditDiscountPrice != 0 && formData.credit == true"
+                      class="flex item-center mt-2"
+                    >
+                      <i
+                        class="text-sm text-red-400 line-through"
+                        x-text="toRupiah(creditPrice(index, true)/formData.order_items[index].quantity)"
+                      ></i>
+                      <i
+                        class="text-sm text-green-400 pl-1 font-bold"
+                        x-text="'(' + ((creditPrice(index,true)-creditPrice(index))/creditPrice(index,true))*100 + '%)'"
                       ></i>
                     </div>
                     <div class="flex item-center justify-between mt-3">
                       <h1
                         class="text-gray-700 font-semibold text-lg"
                         x-text="toRupiah(price(index))"
-                        x-show="formData.credit == false"
+                        x-show="formData.credit == false && editPrice != index"
+                        @dblclick="toggleEditPrice(index)"
                       ></h1>
                       <h1
                         class="text-gray-700 font-semibold text-lg"
                         x-text="toRupiah(creditPrice(index))"
-                        x-show="formData.credit == true"
+                        x-show="formData.credit == true && editPrice != index"
+                        @dblclick="toggleEditPrice(index)"
                       ></h1>
+                      <input
+                        class="w-32 appearance-none outline-none"
+                        x-model="selectedProducts[index].discountPrice"
+                        x-show="formData.credit == false && editPrice == index"
+                        @click.away="toggleEditPrice(index)"
+                        @keydown.enter="toggleEditPrice(index)"
+                        @keydown.escape="toggleEditPrice(index)"
+                        :id="`input-price-${index}`"
+                      />
+                      <input
+                        class="w-32 appearance-none outline-none"
+                        x-model="selectedProducts[index].creditDiscountPrice"
+                        x-show="formData.credit == true && editPrice == index"
+                        @click.away="toggleEditPrice(index)"
+                        @keydown.enter="toggleEditPrice(index)"
+                        @keydown.escape="toggleEditPrice(index)"
+                        :id="`input-credit-price-${index}`"
+                      />
                       <input
                         type="number"
                         class="w-12 px-1 border rounded"
@@ -783,10 +820,7 @@
             <div class="w-full flex">
               <div class="w-1/4 px-1"><span>Diskon</span></div>
               <div class="w-3/4 px-1">
-                <span
-                  class="text-gray-700 text-sm"
-                  x-text="toRupiah(discount)"
-                ></span>
+                <span class="text-gray-700 text-sm">0</span>
               </div>
             </div>
             <div class="w-full flex">
@@ -795,19 +829,7 @@
                 <span
                   class="text-gray-700 font-bold text-xl"
                   x-text="toRupiah(pay)"
-                  x-show="payEdit == false"
-                  @dblclick="togglePayEdit"
                 ></span>
-                <input
-                  type="text"
-                  class=""
-                  x-model="pay"
-                  x-ref="payinput"
-                  @click.away="togglePayEdit"
-                  @keydown.enter="togglePayEdit"
-                  @keydown.escape="togglePayEdit"
-                  x-show="payEdit == true"
-                />
               </div>
             </div>
           </div>
@@ -1105,13 +1127,11 @@
         loadingText: "Buat Order",
         loading: false,
         duration: null,
-        //price: null,
         total: 0,
-        discount: 0,
         pay: 0,
-        payEdit: false,
         products: [],
         selectedProducts: [],
+        editPrice: null,
         notifStatus: "",
         errCustomer: false,
         errmCustomer: "",
@@ -1287,14 +1307,28 @@
           this.selectedProducts.splice(pid, 1);
           this.formData.order_items.splice(pid, 1);
         },
-        price(index) {
-          var num =
+        price(index, ori = false) {
+          var num = 0;
+
+          num =
             this.selectedProducts[index].Price.replace(/[^0-9]+/g, "") *
             this.formData.order_items[index].quantity;
 
+          if (ori) {
+            return num;
+          }
+
+          if (this.selectedProducts[index].discountPrice != 0) {
+            num =
+              this.selectedProducts[index].discountPrice.replace(
+                /[^0-9]+/g,
+                ""
+              ) * this.formData.order_items[index].quantity;
+          }
+
           return num;
         },
-        creditPrice(index) {
+        creditPrice(index, ori = false) {
           var price = 0;
           var item = this.selectedProducts[index];
           if (item.CreditPrice != null) {
@@ -1307,6 +1341,18 @@
           }
 
           price = price * this.formData.order_items[index].quantity;
+
+          if (ori) {
+            return price;
+          }
+
+          if (this.selectedProducts[index].creditDiscountPrice != 0) {
+            price =
+              this.selectedProducts[index].creditDiscountPrice.replace(
+                /[^0-9]+/g,
+                ""
+              ) * this.formData.order_items[index].quantity;
+          }
 
           return price;
         },
@@ -1324,19 +1370,26 @@
           }
 
           this.total = total;
-          if (this.payEdit == false) {
-            this.pay = total;
-          }
+          this.pay = total;
 
           return total;
         },
-        togglePayEdit() {
-          this.payEdit = !this.payEdit;
+        toggleEditPrice(index) {
+          if (this.editPrice == index) {
+            this.editPrice = null;
+          } else {
+            this.editPrice = index;
+
+            this.$nextTick(() => {
+              if (this.formData.credit == false) {
+                document.getElementById(`input-price-${index}`).select();
+              } else {
+                document.getElementById(`input-credit-price-${index}`).select();
+              }
+            });
+          }
 
           if (this.payEdit) {
-            this.$nextTick(() => {
-              this.$refs.payinput.focus();
-            });
           }
         },
         resetProductForm() {},
