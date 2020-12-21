@@ -746,18 +746,18 @@
                     >
                       <i
                         class="text-sm text-orange-400"
-                        x-text="toRupiah(creditPrice(index)) + '/bulan'"
+                        x-text="toRupiah(creditPrice(index)/formData.order_items[index].quantity) + '/bulan'"
                       ></i>
                     </div>
                     <div class="flex item-center justify-between mt-3">
                       <h1
-                        class="text-gray-700 font-bold text-xl"
+                        class="text-gray-700 font-semibold text-lg"
                         x-text="toRupiah(price(index))"
                         x-show="formData.credit == false"
                       ></h1>
                       <h1
-                        class="text-gray-700 font-bold text-xl"
-                        x-text="toRupiah(creditPrice(index) * formData.order_items[index].quantity)"
+                        class="text-gray-700 font-semibold text-lg"
+                        x-text="toRupiah(creditPrice(index))"
                         x-show="formData.credit == true"
                       ></h1>
                       <input
@@ -770,6 +770,45 @@
                   </div>
                 </div>
               </template>
+            </div>
+            <div class="w-full flex mt-1">
+              <div class="w-1/4 px-1"><span>Total</span></div>
+              <div class="w-3/4 px-1">
+                <span
+                  class="text-gray-700 font-semi text-xl"
+                  x-text="toRupiah(countTotal())"
+                ></span>
+              </div>
+            </div>
+            <div class="w-full flex">
+              <div class="w-1/4 px-1"><span>Diskon</span></div>
+              <div class="w-3/4 px-1">
+                <span
+                  class="text-gray-700 text-sm"
+                  x-text="toRupiah(discount)"
+                ></span>
+              </div>
+            </div>
+            <div class="w-full flex">
+              <div class="w-1/4 px-1"><span>Bayar</span></div>
+              <div class="w-3/4 px-1">
+                <span
+                  class="text-gray-700 font-bold text-xl"
+                  x-text="toRupiah(pay)"
+                  x-show="payEdit == false"
+                  @dblclick="togglePayEdit"
+                ></span>
+                <input
+                  type="text"
+                  class=""
+                  x-model="pay"
+                  x-ref="payinput"
+                  @click.away="togglePayEdit"
+                  @keydown.enter="togglePayEdit"
+                  @keydown.escape="togglePayEdit"
+                  x-show="payEdit == true"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -1066,7 +1105,11 @@
         loadingText: "Buat Order",
         loading: false,
         duration: null,
-        price: null,
+        //price: null,
+        total: 0,
+        discount: 0,
+        pay: 0,
+        payEdit: false,
         products: [],
         selectedProducts: [],
         notifStatus: "",
@@ -1262,9 +1305,39 @@
               }
             }
           }
-          
+
+          price = price * this.formData.order_items[index].quantity;
 
           return price;
+        },
+        countTotal() {
+          var total = 0;
+          var products = this.selectedProducts;
+          if (this.formData.credit == false) {
+            for (i = 0; i < products.length; i++) {
+              total += this.price(i);
+            }
+          } else {
+            for (i = 0; i < products.length; i++) {
+              total += this.creditPrice(i);
+            }
+          }
+
+          this.total = total;
+          if (this.payEdit == false) {
+            this.pay = total;
+          }
+
+          return total;
+        },
+        togglePayEdit() {
+          this.payEdit = !this.payEdit;
+
+          if (this.payEdit) {
+            this.$nextTick(() => {
+              this.$refs.payinput.focus();
+            });
+          }
         },
         resetProductForm() {},
       };
