@@ -15,6 +15,7 @@ module.exports = {
         },
       },
     }),
+
     colors: {
       transparent: 'transparent',
       white: '#ffffff',
@@ -163,10 +164,18 @@ module.exports = {
     extend: {
       maxHeight: {
         '0': '0',
+        '28': '28rem',
+        '30': '30rem',
+        '36': '36rem',
         xl: '36rem',
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
+      },
+      screens: {
+        xs: {
+          max: '425px',
+        },
       },
     },
   },
