@@ -193,6 +193,7 @@ CREATE TABLE "order" (
     "sales_id" INT,
     "surveyor_id" INT,
     "collector_id" INT,
+    "driver_id" INT,
     "shipping_address_id" INT NOT NULL,
     "billing_address_id" INT,
     "code" VARCHAR(10) NOT NULL UNIQUE,
@@ -202,12 +203,16 @@ CREATE TABLE "order" (
     "notes" VARCHAR(100),
     "order_date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "shipping_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "created_by" INT,
     PRIMARY KEY (id),
     FOREIGN KEY (customer_id) REFERENCES "user"("id"),
     FOREIGN KEY (sales_id) REFERENCES "user"("id"),
     FOREIGN KEY (surveyor_id) REFERENCES "user"("id"),
+    FOREIGN KEY (driver_id) REFERENCES "user"("id"),
     FOREIGN KEY (shipping_address_id) REFERENCES "address"("id"),
-    FOREIGN KEY (billing_address_id) REFERENCES "address"("id")
+    FOREIGN KEY (billing_address_id) REFERENCES "address"("id"),
+    FOREIGN KEY (created_by) REFERENCES "user"("id")
 );
 
 -- Tabel order item
