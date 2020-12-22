@@ -297,7 +297,7 @@
               ></dt>
               <dd
                 class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                x-text="'Rp.' + Number(credit.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,').slice(0, -3); + ' / bulan'"
+                x-text="toRupiah(credit.price); + ' / bulan'"
               ></dd>
             </div>
           </template>
