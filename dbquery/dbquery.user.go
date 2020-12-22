@@ -126,25 +126,10 @@ const (
 	RoleCustomer int8 = 5
 )
 
-// User base struk
-type User struct {
-	Firstname  string  `db:"first_name"`
-	Lastname   string  `db:"last_name"`
-	Username   string  `db:"username"`
-	Avatar     string  `db:"avatar"`
-	Gender     string  `db:"gender"`
-	Occupation string  `db:"occupation"`
-	CreatedAt  string  `db:"created_at"`
-	Balance    []uint8 `db:"balance"`
-	Password   string  `db:"password"`
-	Role       string  `db:"role"`
-	RIC        string  `db:"ric"`
-}
-
 // CreateUser struk buat user baru
 // Struct data user
 type CreateUser struct {
-	User
+	wrapper.UserInsert
 	tempPassword string
 	into         map[string]string
 	returnID     bool
@@ -256,6 +241,15 @@ func (u *CreateUser) SetPhone(p string) *CreateUser {
 // SetEmail fungsi untuk menambahkan email
 func (u *CreateUser) SetEmail(p string) *CreateUser {
 	u.email = strings.ToLower(p)
+	return u
+}
+
+// SetCreatedBy tentukan admin/user yang membuat user ini
+func (u *CreateUser) SetCreatedBy(p int) *CreateUser {
+	if p > 0 {
+		u.CreatedBy = p
+		u.into["created_by"] = ":created_by"
+	}
 	return u
 }
 

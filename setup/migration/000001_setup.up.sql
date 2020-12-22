@@ -36,8 +36,10 @@ CREATE TABLE "user" (
     "gender" GENDER NOT NULL,
     "occupation" VARCHAR(25),
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "created_by" INT,
     "balance" DECIMAL(15,2) DEFAULT '0',
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (created_by) REFERENCES "user"("id")
 );
 
 -- Tabel KK

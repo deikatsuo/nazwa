@@ -42,6 +42,10 @@ type FormUser struct {
 // UserCreate API untuk membuat user baru
 func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		nowID := session.Get("userid")
+
 		var json FormUser
 
 		status := "success"
@@ -107,6 +111,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetGender(json.Gender).
 				SetOccupation(json.Occupation).
 				SetRole(dbquery.RoleCustomer).
+				SetCreatedBy(nowID.(int)).
 				ReturnID(&uid).
 				Save(db)
 			if err != nil {
