@@ -2,6 +2,22 @@ package wrapper
 
 import "database/sql"
 
+// UserInsert base struk
+type UserInsert struct {
+	Firstname  string  `db:"first_name"`
+	Lastname   string  `db:"last_name"`
+	Username   string  `db:"username"`
+	Avatar     string  `db:"avatar"`
+	Gender     string  `db:"gender"`
+	Occupation string  `db:"occupation"`
+	CreatedAt  string  `db:"created_at"`
+	Balance    []uint8 `db:"balance"`
+	Password   string  `db:"password"`
+	Role       string  `db:"role"`
+	RIC        string  `db:"ric"`
+	CreatedBy  int     `db:"created_by"`
+}
+
 // NullableUser struk user dari database
 type NullableUser struct {
 	ID               int            `db:"id"`
