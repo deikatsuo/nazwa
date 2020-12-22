@@ -25,18 +25,18 @@ type OrderInsert struct {
 
 // OrderForm formulir buat order
 type OrderForm struct {
-	Customer        int             `json:"customer"`
-	Sales           int             `json:"sales"`
-	Surveyor        int             `json:"surveyor"`
-	Collector       int             `json:"collector"`
-	Credit          bool            `json:"credit"`
-	Duration        int             `json:"duration"`
-	Notes           string          `json:"notes"`
-	OrderDate       string          `json:"order_date"`
-	ShippingDate    string          `json:"shipping_date"`
-	BillingAddress  int             `json:"billing_address"`
-	ShippingAddress int             `json:"shipping_address"`
-	OrderItem       []OrderItemForm `json:"order_items"`
+	Customer        int             `json:"customer" binding:"required,numeric"`
+	Sales           int             `json:"sales" binding:"omitempty,numeric"`
+	Surveyor        int             `json:"surveyor" binding:"omitempty,numeric"`
+	Collector       int             `json:"collector" binding:"omitempty,numeric"`
+	Credit          bool            `json:"credit" binding:"required"`
+	Duration        int             `json:"duration" binding:"omitempty,numeric"`
+	Notes           string          `json:"notes" binding:"omitempty"`
+	OrderDate       string          `json:"order_date" binding:"required,datetime"`
+	ShippingDate    string          `json:"shipping_date" binding:"omitempty,datetime"`
+	BillingAddress  int             `json:"billing_address" binding:"omitempty,numeric"`
+	ShippingAddress int             `json:"shipping_address" binding:"omitempty,numeric"`
+	OrderItem       []OrderItemForm `json:"order_items" binding:"omitempty"`
 }
 
 // OrderItemForm form item
