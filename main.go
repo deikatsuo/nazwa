@@ -144,7 +144,7 @@ func runServer(db *sqlx.DB) {
 	v1order := v1local.Group("/order")
 	v1order.GET("/id/:id", api.OrderShowByID(db))
 	v1order.GET("/list/:limit", api.OrderShowList(db))
-	v1order.POST("/add", api.OrderCreate(db))
+	v1order.POST("/create", api.OrderCreate(db))
 
 	// User API
 	// /api/v1/local/user

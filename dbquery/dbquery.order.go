@@ -118,7 +118,6 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		o.notes,
 		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
 		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
-		o.first_time,
 		o.code
 		FROM "order" o
 		LEFT JOIN "user" c ON c.id=o.customer_id
@@ -172,7 +171,6 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		Status:       strings.Title(o.Status),
 		Code:         o.Code,
 		Credit:       o.Credit,
-		FirstTime:    o.FirstTime,
 		Notes:        o.Notes.String,
 		OrderDate:    o.OrderDate,
 		ShippingDate: string(o.ShippingDate.String),

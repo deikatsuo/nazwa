@@ -2,6 +2,51 @@ package wrapper
 
 import "database/sql"
 
+// OrderInsert base struk
+type OrderInsert struct {
+	CustomerID        int    `db:"customer_id"`
+	SalesID           int    `db:"sales_id"`
+	CollectorID       int    `db:"collector_id"`
+	SurveyorID        int    `db:"surveyor_id"`
+	DriverID          int    `db:"driver_id"`
+	ShippingAddressID int    `db:"shipping_address_id"`
+	BillingAddressID  int    `db:"billing_address_id"`
+	Code              string `db:"code"`
+	Status            string `db:"status"`
+	Credit            bool   `db:"credit"`
+
+	Notes        string `db:"notes"`
+	OrderDate    string `db:"order_date"`
+	ShippingDate string `db:"shipping_date"`
+
+	CreatedAt string `db:"created_at"`
+	CreatedBy int    `db:"created_by"`
+}
+
+// OrderForm formulir buat order
+type OrderForm struct {
+	Customer        int             `json:"customer"`
+	Sales           int             `json:"sales"`
+	Surveyor        int             `json:"surveyor"`
+	Collector       int             `json:"collector"`
+	Credit          bool            `json:"credit"`
+	Duration        int             `json:"duration"`
+	Notes           string          `json:"notes"`
+	OrderDate       string          `json:"order_date"`
+	ShippingDate    string          `json:"shipping_date"`
+	BillingAddress  int             `json:"billing_address"`
+	ShippingAddress int             `json:"shipping_address"`
+	OrderItem       []OrderItemForm `json:"order_items"`
+}
+
+// OrderItemForm form item
+type OrderItemForm struct {
+	ID       int    `json:"id"`
+	Quantity int    `json:"quantity"`
+	Notes    string `json:"notes"`
+	Discount int    `json:"discount"`
+}
+
 // NullableOrder menampilkan data order
 type NullableOrder struct {
 	ID                  int            `db:"id"`
@@ -13,6 +58,8 @@ type NullableOrder struct {
 	SurveyorName        sql.NullString `db:"surveyor_name"`
 	CollectorID         sql.NullInt64  `db:"collector_id"`
 	CollectorName       sql.NullString `db:"collector_name"`
+	DriverID            sql.NullInt64  `db:"driver_id"`
+	DriverName          sql.NullString `db:"driver_name"`
 	ShippingAddressID   int            `db:"shipping_address_id"`
 	ShippingAddressName string         `db:"shipping_address_name"`
 	BillingAddressID    sql.NullInt64  `db:"billing_address_id"`
@@ -20,10 +67,11 @@ type NullableOrder struct {
 	Status              string         `db:"status"`
 	Code                string         `db:"code"`
 	Credit              bool           `db:"credit"`
-	FirstTime           bool           `db:"first_time"`
 	Notes               sql.NullString `db:"notes"`
 	OrderDate           string         `db:"order_date"`
 	ShippingDate        sql.NullString `db:"shipping_date"`
+	CreatedAt           string         `db:"created_at"`
+	CreatedBy           int            `db:"created_by"`
 }
 
 // Order mapping data order
@@ -33,16 +81,18 @@ type Order struct {
 	Sales           NameID
 	Surveyor        NameID
 	Collector       NameID
+	Driver          NameID
 	ShippingAddress NameID
 	BillingAddress  NameID
 	Status          string
 	Code            string
 	Credit          bool
-	FirstTime       bool
 	Notes           string
 	OrderDate       string
 	ShippingDate    string
 	Items           []OrderItem
+	CreatedAt       string
+	CreatedBy       NameID
 }
 
 // NullableOrderItem item/produk yang di order
