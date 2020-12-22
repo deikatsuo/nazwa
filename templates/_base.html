@@ -135,7 +135,7 @@
         x-transition:leave-end="opacity-0  transform translate-y-1/2"
         @click.away="if (!isPreviewOpen && previewContent == '') { closeModal(); } else { previewContent = ''; }"
         @keydown.escape="if (!isPreviewOpen) { closeModal(); }"
-        class="w-full md:w-3/4 lg:w-2/4 relative px-6 py-4 bg-white rounded-lg dark:bg-gray-800 sm:rounded-lg sm:m-4"
+        class="w-full md:w-3/4 lg:w-2/4 relative px-6 py-4 bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-b-lg sm:m-4"
         role="dialog"
         id="modal"
       >
