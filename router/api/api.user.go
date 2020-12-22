@@ -24,21 +24,6 @@ import (
 // CREATE //
 ////////////
 
-// FormUser user baru
-type FormUser struct {
-	FC         string `json:"fc" binding:"omitempty,numeric,min=16,max=16"`
-	RIC        string `json:"ric" binding:"numeric,min=16,max=16"`
-	Phone      string `json:"phone" binding:"omitempty,numeric,min=6,max=15"`
-	Firstname  string `json:"firstname" binding:"required,min=3,max=25"`
-	Lastname   string `json:"lastname" binding:"omitempty,min=1,max=25"`
-	Gender     string `json:"gender" binding:"required,oneof=m f"`
-	Occupation string `json:"occupation" binding:"omitempty,min=4,max=25"`
-	Password   string `json:"password" binding:"omitempty,alphanumunicode,min=8,max=25"`
-	Repassword string `json:"repassword" binding:"eqfield=Password"`
-	Photo      string `json:"photo" binding:"omitempty,base64"`
-	PhotoType  string `json:"photo_type"`
-}
-
 // UserCreate API untuk membuat user baru
 func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
@@ -46,7 +31,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		// User session saat ini
 		nowID := session.Get("userid")
 
-		var json FormUser
+		var json wrapper.UserForm
 
 		status := "success"
 		var httpStatus int
