@@ -85,5 +85,6 @@ var ValidationErrorsMask = map[string]string{
 	"eqfield":         "Kolom ini harus sama",
 	"required_with":   "Kolom ini perlu diisi",
 	"base64":          "Harus string base64",
-	"datetime":        "Format tanggal salah",
+	"datetime":        "Format tanggal dan waktu salah",
+	"date":            "Format tanggal salah",
 }
