@@ -5,6 +5,7 @@ import (
 	"log"
 	"nazwa/middleware"
 	"nazwa/misc"
+	"nazwa/misc/validation"
 	"nazwa/router"
 	"nazwa/router/api"
 	"nazwa/setup"
@@ -13,6 +14,9 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -62,6 +66,10 @@ func runServer(db *sqlx.DB) {
 
 	// Buat server
 	server := gin.Default()
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("date", validation.CustomValidationDate())
+	}
 
 	// Daftarkan fungsi ke template
 	server.SetFuncMap(middleware.RegTmplFunc())
