@@ -337,7 +337,7 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 
 	if len(c.photos) > 0 {
 		for id, s := range c.photos {
-			// Set harga kredit untuk produk
+			// Set foto produk
 			if _, err := tx.Exec(`INSERT INTO "product_photo" (product_id, photo) VALUES ($1, $2)`, tempReturnID, s); err != nil {
 				log.Println("ERROR: product.go Save() Insert photo ID: ", id)
 				return err
@@ -352,7 +352,7 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 
 	if len(c.creditPrice) > 0 {
 		for _, cp := range c.creditPrice {
-			// Set role user
+			// Set harga kredit untuk produk
 			if _, err := tx.Exec(`INSERT INTO "product_credit_price" (product_id, duration, price) VALUES ($1, $2, $3)`, tempReturnID, cp.Duration, cp.Price); err != nil {
 				log.Println("ERROR: product.go Save() Menambahkan harga produk")
 				return err
