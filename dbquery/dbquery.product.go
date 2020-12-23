@@ -337,7 +337,7 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 
 	if len(c.photos) > 0 {
 		for id, s := range c.photos {
-			// Set role user
+			// Set harga kredit untuk produk
 			if _, err := tx.Exec(`INSERT INTO "product_photo" (product_id, photo) VALUES ($1, $2)`, tempReturnID, s); err != nil {
 				log.Println("ERROR: product.go Save() Insert photo ID: ", id)
 				return err
