@@ -10,6 +10,208 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// CreateOrder struct untuk menyimpan data order yang akan di insert
+type CreateOrder struct {
+	wrapper.OrderInsert
+	into       map[string]string
+	returnID   bool
+	returnIDTO *int
+	orderItems []wrapper.OrderItemForm
+}
+
+// NewOrder membuat order baru
+func NewOrder() *CreateOrder {
+	return &CreateOrder{
+		into: make(map[string]string),
+	}
+}
+
+// SetCustomer ID kostumer
+func (c *CreateOrder) SetCustomer(o int) *CreateOrder {
+	c.CustomerID = o
+	c.into["customer_id"] = ":customer_id"
+	return c
+}
+
+// SetSales ID sales
+func (c *CreateOrder) SetSales(o int) *CreateOrder {
+	c.SalesID = o
+	c.into["sales_id"] = ":sales_id"
+	return c
+}
+
+// SetCollector ID kolektor
+func (c *CreateOrder) SetCollector(o int) *CreateOrder {
+	c.CollectorID = o
+	c.into["collector_id"] = ":collector_id"
+	return c
+}
+
+// SetSurveyor ID surveyor
+func (c *CreateOrder) SetSurveyor(o int) *CreateOrder {
+	c.SurveyorID = o
+	c.into["surveyor_id"] = ":surveyor_id"
+	return c
+}
+
+// SetDriver ID supir
+func (c *CreateOrder) SetDriver(o int) *CreateOrder {
+	c.DriverID = o
+	c.into["driver_id"] = ":driver_id"
+	return c
+}
+
+// SetShipping ID alamat pengiriman
+func (c *CreateOrder) SetShipping(o int) *CreateOrder {
+	c.ShippingAddressID = o
+	c.into["shipping_address_id"] = ":shipping_address_id"
+	return c
+}
+
+// SetBilling ID alamat penagihan
+func (c *CreateOrder) SetBilling(o int) *CreateOrder {
+	c.BillingAddressID = o
+	c.into["billing_address_id"] = ":billing_address_id"
+	return c
+}
+
+// SetCode Tentukan kode transaksi secara manual
+func (c *CreateOrder) SetCode(o string) *CreateOrder {
+	c.Code = o
+	c.into["code"] = ":code"
+	return c
+}
+
+// SetStatus Status order
+// default 'pending'
+func (c *CreateOrder) SetStatus(o string) *CreateOrder {
+	c.Status = o
+	c.into["status"] = ":status"
+	return c
+}
+
+// SetCredit true | false
+func (c *CreateOrder) SetCredit(o bool) *CreateOrder {
+	c.Credit = o
+	c.into["credit"] = ":credit"
+	return c
+}
+
+// SetNotes Catatan order
+func (c *CreateOrder) SetNotes(o string) *CreateOrder {
+	c.Notes = o
+	c.into["notes"] = ":notes"
+	return c
+}
+
+// SetOrderDate Tanggal order
+func (c *CreateOrder) SetOrderDate(o string) *CreateOrder {
+	c.OrderDate = o
+	c.into["order_date"] = ":order_date"
+	return c
+}
+
+// SetShippingDate Tanggal pengiriman barang yang diorder
+func (c *CreateOrder) SetShippingDate(o string) *CreateOrder {
+	c.ShippingDate = o
+	c.into["shipping_date"] = ":shipping_date"
+	return c
+}
+
+// SetCreatedBy ID admin yang membuat order
+func (c *CreateOrder) SetCreatedBy(o int) *CreateOrder {
+	c.CreatedBy = o
+	c.into["created_by"] = ":created_by"
+	return c
+}
+
+// SetOrderItems items
+func (c *CreateOrder) SetOrderItems(o []wrapper.OrderItemForm) *CreateOrder {
+	c.orderItems = o
+	return c
+}
+
+// ReturnID Mengembalikan ID produk terakhir
+func (c *CreateOrder) ReturnID(id *int) *CreateOrder {
+	c.returnID = true
+	c.returnIDTO = id
+	return c
+}
+
+// Insert query berdasarka data yang diisi
+func (c CreateOrder) generateInsertQuery() string {
+	iq := c.into
+	var kk []string
+	var kv []string
+	for k, v := range iq {
+		kk = append(kk, k)
+		kv = append(kv, v)
+	}
+	result := fmt.Sprintf("(%s) VALUES (%s) RETURNING id", strings.Join(kk, ","), strings.Join(kv, ","))
+
+	return result
+}
+
+// Save Simpan produk
+func (c *CreateOrder) Save(db *sqlx.DB) error {
+	// Mulai transaksi
+	tx := db.MustBegin()
+	var tempReturnID int
+	orderInsertQuery := fmt.Sprintf(`INSERT INTO "order" %s`, c.generateInsertQuery())
+	if rows, err := tx.NamedQuery(orderInsertQuery, c); err == nil {
+		// Ambil id dari transaksi terakhir
+		if rows.Next() {
+			rows.Scan(&tempReturnID)
+		}
+
+		if c.returnID && tempReturnID != 0 {
+			*c.returnIDTO = tempReturnID
+		}
+
+		if err := rows.Close(); err != nil {
+			return err
+		}
+	} else {
+		tx.Rollback()
+		return err
+	}
+
+	/*
+		if len(c.photos) > 0 {
+			for id, s := range c.photos {
+				// Set role user
+				if _, err := tx.Exec(`INSERT INTO "product_photo" (product_id, photo) VALUES ($1, $2)`, tempReturnID, s); err != nil {
+					log.Println("ERROR: product.go Save() Insert photo ID: ", id)
+					return err
+				}
+			}
+
+			if _, err := tx.Exec(`UPDATE "product" SET thumbnail=$1	WHERE id=$2`, c.photos[0], tempReturnID); err != nil {
+				log.Println("ERROR: product.go Save() Update thumbnail")
+				return err
+			}
+		}
+
+		if len(c.creditPrice) > 0 {
+			for _, cp := range c.creditPrice {
+				// Set role user
+				if _, err := tx.Exec(`INSERT INTO "product_credit_price" (product_id, duration, price) VALUES ($1, $2, $3)`, tempReturnID, cp.Duration, cp.Price); err != nil {
+					log.Println("ERROR: product.go Save() Menambahkan harga produk")
+					return err
+				}
+			}
+		}
+	*/
+
+	// Komit
+	err := tx.Commit()
+	return err
+}
+
+///////////
+/// GET ///
+///////////
+
 // GetOrders mengambil list order/penjualan
 type GetOrders struct {
 	limit     int
