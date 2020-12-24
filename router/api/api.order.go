@@ -233,9 +233,10 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 				log.Print(err)
 				status = "error"
 				message = "Gagal membuat order"
+				httpStatus = http.StatusBadRequest
 			} else {
 				status = "success"
-				message = "di save"
+				message = "Berhasil membuat order"
 			}
 		}
 

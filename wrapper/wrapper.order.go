@@ -24,7 +24,8 @@ type OrderInsert struct {
 	CreatedAt string `db:"created_at"`
 	CreatedBy int    `db:"created_by"`
 
-	Total int `db:"total"`
+	Total        int `db:"total"`
+	TotalInitial int `db:"total_initial"`
 }
 
 // OrderForm formulir buat order
@@ -77,6 +78,7 @@ type NullableOrder struct {
 	CreatedAt           string         `db:"created_at"`
 	CreatedBy           int            `db:"created_by"`
 	Total               int            `db:"total"`
+	TotalInitial        int            `db:"total_initial"`
 }
 
 // Order mapping data order
@@ -99,6 +101,7 @@ type Order struct {
 	CreatedAt       string
 	CreatedBy       NameID
 	Total           int
+	TotalInitial    int
 }
 
 // NullableOrderItem item/produk yang di order

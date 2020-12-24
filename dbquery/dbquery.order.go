@@ -185,11 +185,43 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 		return errors.New("ERROR: dbuery.order.go (CreateOrder) Save() Item order kosong")
 	}
 
+	var total int
+	var totalInitial int
 	// Periksa apakah pembelian kredit
 	if c.Credit {
 
 	} else {
+		for _, p := range c.orderItems {
+			prc, err := ProductGetProductPrice(db, p.ID)
+			if err != nil {
+				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
+				return err
+			}
+			total += prc
 
+			initprc, err := ProductGetProductBasePrice(db, p.ID)
+			if err != nil {
+				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
+				return err
+			}
+			totalInitial += initprc
+		}
+
+	}
+
+	if total != 0 {
+		c.Total = total
+		c.into["total"] = ":total"
+	}
+
+	if totalInitial != 0 {
+		c.TotalInitial = totalInitial
+		c.into["total_initial"] = ":total_initial"
+	}
+
+	if totalInitial != 0 {
+		c.TotalInitial = totalInitial
+		c.into["total_initial"] = ":total_initial"
 	}
 
 	// Mulai transaksi
