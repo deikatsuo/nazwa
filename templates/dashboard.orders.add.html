@@ -49,6 +49,12 @@
                 </div>
               </div>
             </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmCustomer"
+              :class="{'invisible': errCustomer == false}"
+            >
+            </span>
             <ul
               x-transition:leave="transition ease-in duration-150"
               x-transition:leave-start="opacity-100"
@@ -102,8 +108,10 @@
 
           <div class="w-full block mt-5 md:w-1/3 md:px-1">
             <button
-              class="inline-block p-3 text-center text-white transition bg-green-500 rounded-full shadow hover:shadow-lg hover:bg-green-400 focus:outline-none"
+              class="inline-block p-3 text-center text-white transition rounded-full shadow hover:shadow-lg focus:outline-none"
               @click="$dispatch('modal', { html: $refs.selectProduct.innerHTML });"
+              :class="{'bg-red-500 hover:bg-red-400': errOrderItems, 'bg-green-500 hover:bg-green-400': !errOrderItems }"
+              :title="errmOrderItems"
             >
               <svg
                 class="w-5 h-5 text-white"
@@ -502,13 +510,18 @@
                   <input
                     class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                     placeholder="Alamat Tujuan Pengiriman Barang"
-                    @click="if (addresses.length > 0) { closeShippingAddressIS = false; } else { closeShippingAddressIS = true; }"
+                    @click="if (!$parent.isObjEmpty(tempDataCustomer)) { closeShippingAddressIS = false; } else { closeShippingAddressIS = true; }"
                     @click.away="closeShippingAddressIS = true;"
                     @keydown.tab="closeShippingAddressIS = true;"
                     x-show="$parent.isObjEmpty(tempDataShippingAddress)"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errShippingAddress }"
                   />
                 </label>
+                <span
+                  class="text-xs text-red-600 dark:text-red-400"
+                  x-text="errmShippingAddress"
+                  :class="{'invisible': errShippingAddress == false}"
+                ></span>
                 <div class="w-full">
                   <div
                     class="relative bg-green-300 bg-opacity-50 mt-1 text-sm inline-block py-1 pl-4 pr-8"
@@ -590,14 +603,17 @@
 
               <!-- Alamat Penagihan -->
               <div class="w-full relative md:w-1/2 md:px-1">
-                <label class="block mt-4 text-sm">
+                <label
+                  class="block mt-4 text-sm"
+                  title="Jika alamat penagihan tidak ditetapkan maka alamat penagihan sama dengan alamat pengiriman"
+                >
                   <span class="text-gray-700 dark:text-gray-400"
                     >Alamat Penagihan (*opsional)</span
                   >
                   <input
                     class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                     placeholder="Alamat Penagihan Kredit/Pembayaran"
-                    @click="if (addresses.length > 0) { closeBillingAddressIS = false; } else { closeBillingAddressIS = true; }"
+                    @click="if (!$parent.isObjEmpty(tempDataCustomer)) { closeBillingAddressIS = false; } else { closeBillingAddressIS = true; }"
                     @click.away="closeBillingAddressIS = true;"
                     @keydown.tab="closeBillingAddressIS = true;"
                     x-show="$parent.isObjEmpty(tempDataBillingAddress)"
@@ -1022,8 +1038,8 @@
           credit: false,
           duration: 12,
           notes: "",
-          order_date: "",
-          shipping_date: "",
+          order_date: null,
+          shipping_date: null,
           billing_address: null,
           shipping_address: null,
           order_items: [],
@@ -1080,6 +1096,8 @@
         errmShippingAddress: "",
         errBillingAddress: false,
         errmBillingAddress: "",
+        errOrderItems: false,
+        errmOrderItems: "",
 
         submitData($dispatch) {
           this.loadingText = "Loading...";
@@ -1110,6 +1128,46 @@
                 this.notifStatus = "success";
                 this.orderCreated = true;
                 this.order = data.order;
+              }
+
+              if (data.customer) {
+                this.errCustomer = true;
+                this.errmCustomer = data.customer;
+              } else {
+                this.errCustomer = false;
+                this.errmCustomer = "";
+              }
+
+              if (data.orderdate) {
+                this.errOrderDate = true;
+                this.errmOrderDate = data.orderdate;
+              } else {
+                this.errOrderDate = false;
+                this.errmOrderDate = "";
+              }
+
+              if (data.shippingdate) {
+                this.errShippingDate = true;
+                this.errmShippingDate = data.shippingdate;
+              } else {
+                this.errShippingDate = false;
+                this.errmShippingDate = "";
+              }
+
+              if (data.shippingaddress) {
+                this.errShippingAddress = true;
+                this.errmShippingAddress = data.shippingaddress;
+              } else {
+                this.errShippingAddress = false;
+                this.errmShippingAddress = "";
+              }
+
+              if (data.orderitems) {
+                this.errOrderItems = true;
+                this.errmOrderItems = data.orderitems;
+              } else {
+                this.errOrderItems = false;
+                this.errmOrderItems = "";
               }
 
               if (data.message) {

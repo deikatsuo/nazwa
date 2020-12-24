@@ -1,7 +1,11 @@
 package api
 
 import (
+	"fmt"
+	"log"
 	"nazwa/dbquery"
+	"nazwa/misc"
+	"nazwa/misc/validation"
 	"nazwa/router"
 	"nazwa/wrapper"
 	"net/http"
@@ -160,10 +164,67 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 			return
 		}
 
-		m := gin.H{
-			"message": "ok",
+		var json wrapper.OrderForm
+
+		status := "success"
+		var httpStatus int
+		message := ""
+		var simpleErrMap = make(map[string]interface{})
+		save := true
+
+		if err := c.ShouldBindJSON(&json); err != nil {
+			log.Println("ERROR: api.order.go OrderCreate() bind json")
+			log.Println(err)
+			if fmt.Sprintf("%T", err) == "validator.ValidationErrors" {
+				simpleErrMap = validation.SimpleValErrMap(err)
+			}
+			httpStatus = http.StatusBadRequest
+			status = "fail"
+			save = false
 		}
-		c.JSON(http.StatusAccepted, m)
+
+		if len(json.OrderItems) == 0 {
+			simpleErrMap["orderitems"] = "Item tidak boleh kosong"
+			httpStatus = http.StatusBadRequest
+			status = "error"
+			message = "Harap pilih setidaknya satu produk"
+			save = false
+		}
+
+		fmt.Println(json)
+
+		if save {
+			order := dbquery.NewOrder()
+			err := order.SetCustomer(json.Customer).
+				SetSales(json.Sales).
+				SetCollector(json.Collector).
+				SetSurveyor(json.Surveyor).
+				SetShipping(json.ShippingAddress).
+				SetBilling(json.BillingAddress).
+				SetCredit(*json.Credit).
+				SetNotes(json.Notes).
+				SetOrderDate(json.OrderDate).
+				SetShippingDate(json.ShippingDate).
+				SetOrderItems(json.OrderItems).
+				SetCreatedBy(uid.(int)).
+				Save(db)
+
+			if err != nil {
+				log.Println("ERROR: api.order.go OrderCreate() Gagal membuat order baru")
+				log.Print(err)
+				status = "error"
+				message = "Gagal membuat order"
+			} else {
+				status = "success"
+				message = "di save"
+			}
+		}
+
+		m := gin.H{
+			"message": message,
+			"status":  status,
+		}
+		c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
 	}
 	return gin.HandlerFunc(fn)
 }

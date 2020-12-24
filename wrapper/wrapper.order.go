@@ -1,6 +1,8 @@
 package wrapper
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 // OrderInsert base struk
 type OrderInsert struct {
@@ -29,22 +31,22 @@ type OrderForm struct {
 	Sales           int             `json:"sales" binding:"omitempty,numeric"`
 	Surveyor        int             `json:"surveyor" binding:"omitempty,numeric"`
 	Collector       int             `json:"collector" binding:"omitempty,numeric"`
-	Credit          bool            `json:"credit" binding:"required"`
+	Credit          *bool           `json:"credit" binding:"required"`
 	Duration        int             `json:"duration" binding:"omitempty,numeric"`
 	Notes           string          `json:"notes" binding:"omitempty"`
-	OrderDate       string          `json:"order_date" binding:"required,datetime"`
-	ShippingDate    string          `json:"shipping_date" binding:"omitempty,datetime"`
+	OrderDate       string          `json:"order_date" binding:"required,date"`
+	ShippingDate    string          `json:"shipping_date" binding:"omitempty,date"`
 	BillingAddress  int             `json:"billing_address" binding:"omitempty,numeric"`
-	ShippingAddress int             `json:"shipping_address" binding:"omitempty,numeric"`
-	OrderItem       []OrderItemForm `json:"order_items" binding:"omitempty"`
+	ShippingAddress int             `json:"shipping_address" binding:"required,numeric"`
+	OrderItems      []OrderItemForm `json:"order_items" binding:"omitempty"`
 }
 
 // OrderItemForm form item
 type OrderItemForm struct {
-	ID       int    `json:"id"`
-	Quantity int    `json:"quantity"`
-	Notes    string `json:"notes"`
-	Discount int    `json:"discount"`
+	ID       int    `json:"id" binding:"required,numeric"`
+	Quantity int    `json:"quantity" binding:"required,numeric"`
+	Notes    string `json:"notes" binding:"omitempty"`
+	Discount int    `json:"discount" binding:"omitempty,numeric"`
 }
 
 // NullableOrder menampilkan data order

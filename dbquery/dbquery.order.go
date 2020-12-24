@@ -1,6 +1,7 @@
 package dbquery
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"nazwa/wrapper"
@@ -28,65 +29,85 @@ func NewOrder() *CreateOrder {
 
 // SetCustomer ID kostumer
 func (c *CreateOrder) SetCustomer(o int) *CreateOrder {
-	c.CustomerID = o
-	c.into["customer_id"] = ":customer_id"
+	if o > 0 {
+		c.CustomerID = o
+		c.into["customer_id"] = ":customer_id"
+	}
 	return c
 }
 
 // SetSales ID sales
 func (c *CreateOrder) SetSales(o int) *CreateOrder {
-	c.SalesID = o
-	c.into["sales_id"] = ":sales_id"
+	if o > 0 {
+		c.SalesID = o
+		c.into["sales_id"] = ":sales_id"
+	}
 	return c
 }
 
 // SetCollector ID kolektor
 func (c *CreateOrder) SetCollector(o int) *CreateOrder {
-	c.CollectorID = o
-	c.into["collector_id"] = ":collector_id"
+	if o > 0 {
+		c.CollectorID = o
+		c.into["collector_id"] = ":collector_id"
+	}
 	return c
 }
 
 // SetSurveyor ID surveyor
 func (c *CreateOrder) SetSurveyor(o int) *CreateOrder {
-	c.SurveyorID = o
-	c.into["surveyor_id"] = ":surveyor_id"
+	if o > 0 {
+		c.SurveyorID = o
+		c.into["surveyor_id"] = ":surveyor_id"
+	}
 	return c
 }
 
 // SetDriver ID supir
 func (c *CreateOrder) SetDriver(o int) *CreateOrder {
-	c.DriverID = o
-	c.into["driver_id"] = ":driver_id"
+	if o > 0 {
+		c.DriverID = o
+		c.into["driver_id"] = ":driver_id"
+	}
 	return c
 }
 
 // SetShipping ID alamat pengiriman
 func (c *CreateOrder) SetShipping(o int) *CreateOrder {
-	c.ShippingAddressID = o
-	c.into["shipping_address_id"] = ":shipping_address_id"
+	if o > 0 {
+		c.ShippingAddressID = o
+		c.into["shipping_address_id"] = ":shipping_address_id"
+	}
 	return c
 }
 
 // SetBilling ID alamat penagihan
 func (c *CreateOrder) SetBilling(o int) *CreateOrder {
-	c.BillingAddressID = o
-	c.into["billing_address_id"] = ":billing_address_id"
+	if o > 0 {
+		c.BillingAddressID = o
+		c.into["billing_address_id"] = ":billing_address_id"
+	}
 	return c
 }
 
 // SetCode Tentukan kode transaksi secara manual
 func (c *CreateOrder) SetCode(o string) *CreateOrder {
-	c.Code = o
-	c.into["code"] = ":code"
+	if o != "" {
+		c.Code = o
+		c.into["code"] = ":code"
+	} else {
+
+	}
 	return c
 }
 
 // SetStatus Status order
 // default 'pending'
 func (c *CreateOrder) SetStatus(o string) *CreateOrder {
-	c.Status = o
-	c.into["status"] = ":status"
+	if o != "" {
+		c.Status = o
+		c.into["status"] = ":status"
+	}
 	return c
 }
 
@@ -106,28 +127,36 @@ func (c *CreateOrder) SetNotes(o string) *CreateOrder {
 
 // SetOrderDate Tanggal order
 func (c *CreateOrder) SetOrderDate(o string) *CreateOrder {
-	c.OrderDate = o
-	c.into["order_date"] = ":order_date"
+	if o != "" {
+		c.OrderDate = o
+		c.into["order_date"] = ":order_date"
+	}
 	return c
 }
 
 // SetShippingDate Tanggal pengiriman barang yang diorder
 func (c *CreateOrder) SetShippingDate(o string) *CreateOrder {
-	c.ShippingDate = o
-	c.into["shipping_date"] = ":shipping_date"
+	if o != "" {
+		c.ShippingDate = o
+		c.into["shipping_date"] = ":shipping_date"
+	}
 	return c
 }
 
 // SetCreatedBy ID admin yang membuat order
 func (c *CreateOrder) SetCreatedBy(o int) *CreateOrder {
-	c.CreatedBy = o
-	c.into["created_by"] = ":created_by"
+	if o > 0 {
+		c.CreatedBy = o
+		c.into["created_by"] = ":created_by"
+	}
 	return c
 }
 
 // SetOrderItems items
 func (c *CreateOrder) SetOrderItems(o []wrapper.OrderItemForm) *CreateOrder {
-	c.orderItems = o
+	if len(o) > 0 {
+		c.orderItems = o
+	}
 	return c
 }
 
@@ -154,6 +183,9 @@ func (c CreateOrder) generateInsertQuery() string {
 
 // Save Simpan produk
 func (c *CreateOrder) Save(db *sqlx.DB) error {
+	if len(c.orderItems) == 0 {
+		return errors.New("ERROR: dbuery.order.go (CreateOrder) Save() Item order kosong")
+	}
 	// Mulai transaksi
 	tx := db.MustBegin()
 	var tempReturnID int
