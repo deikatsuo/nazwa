@@ -98,7 +98,7 @@
                 </tr>
                 <tr class="text-gray-700 dark:text-gray-400">
                   <td class="px-4 py-1 text-sm">Collector</td>
-                  <td class="px-4 py-1 text-sm">None</td>
+                  <td class="px-4 py-1 text-sm" x-text="collector.Name"></td>
                 </tr>
               </tbody>
             </table>
@@ -292,6 +292,7 @@
               customer: [],
               sales: [],
               surveyor: [],
+              collector: [],
               shippingAddress: [],
               billingAddress: [],
               items: [],
@@ -319,6 +320,7 @@
                       this.customer = json.order.Customer;
                       this.sales = json.order.Sales;
                       this.surveyor = json.order.Surveyor;
+                      this.collector = json.order.Collector;
                       this.shippingAddress = json.order.ShippingAddress;
                       this.billingAddress = json.order.BillingAddress;
                       this.items = json.order.Items;
