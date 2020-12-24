@@ -199,7 +199,6 @@ CREATE TABLE "order" (
     "code" VARCHAR(50) NOT NULL UNIQUE,
     "status" VARCHAR(25) NOT NULL DEFAULT 'pending',
     "credit" BOOLEAN DEFAULT 'false' NOT NULL,
-    -- "first_time" BOOLEAN DEFAULT 'true' NOT NULL,
     "notes" VARCHAR(100),
     "order_date" DATE NOT NULL DEFAULT CURRENT_DATE,
     "shipping_date" DATE DEFAULT CURRENT_DATE,
