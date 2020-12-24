@@ -10,6 +10,8 @@ import (
 	"nazwa/wrapper"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -191,7 +193,23 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 			save = false
 		}
 
-		fmt.Println(json)
+		var code string
+		if save {
+			uname, err := dbquery.UserGetUsername(db, json.Customer)
+			if err == nil {
+				uname = uname[3:]
+				tm := time.Now()
+				dt := strings.ReplaceAll(tm.Format("01-02-2006"), "-", "")
+				dy := tm.Format("Mon")
+				uq := tm.Format(".000")[1:]
+				code = strings.ToUpper(fmt.Sprintf("%s%s-%s%s-%s%s", uname[4:], dy, uq, dt[4:], dt[:4], uname[:4]))
+			} else {
+				message = "Telah terjadi kesalahan saat memeriksa data konsumen"
+				status = "error"
+				save = false
+				httpStatus = http.StatusInternalServerError
+			}
+		}
 
 		if save {
 			order := dbquery.NewOrder()
@@ -203,6 +221,7 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetBilling(json.BillingAddress).
 				SetCredit(*json.Credit).
 				SetNotes(json.Notes).
+				SetCode(code).
 				SetOrderDate(json.OrderDate).
 				SetShippingDate(json.ShippingDate).
 				SetOrderItems(json.OrderItems).

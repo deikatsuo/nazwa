@@ -23,6 +23,8 @@ type OrderInsert struct {
 
 	CreatedAt string `db:"created_at"`
 	CreatedBy int    `db:"created_by"`
+
+	Total int `db:"total"`
 }
 
 // OrderForm formulir buat order
@@ -74,6 +76,7 @@ type NullableOrder struct {
 	ShippingDate        sql.NullString `db:"shipping_date"`
 	CreatedAt           string         `db:"created_at"`
 	CreatedBy           int            `db:"created_by"`
+	Total               int            `db:"total"`
 }
 
 // Order mapping data order
@@ -95,6 +98,7 @@ type Order struct {
 	Items           []OrderItem
 	CreatedAt       string
 	CreatedBy       NameID
+	Total           int
 }
 
 // NullableOrderItem item/produk yang di order
@@ -105,6 +109,7 @@ type NullableOrderItem struct {
 	ProductCode string         `db:"code"`
 	Quantity    int            `db:"quantity"`
 	Notes       sql.NullString `db:"notes"`
+	Discount    int            `db:"discount"`
 }
 
 // OrderItem item/produk yang di order
@@ -113,4 +118,5 @@ type OrderItem struct {
 	Product  NameIDCode
 	Quantity int
 	Notes    string
+	Discount int
 }

@@ -204,6 +204,7 @@ CREATE TABLE "order" (
     "shipping_date" DATE DEFAULT CURRENT_DATE,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "created_by" INT NOT NULL,
+    "total" DECIMAL(15,2) DEFAULT '0',
     PRIMARY KEY (id),
     FOREIGN KEY (customer_id) REFERENCES "user"("id"),
     FOREIGN KEY (sales_id) REFERENCES "user"("id"),
@@ -221,6 +222,7 @@ CREATE TABLE "order_item" (
     "product_id" INT NOT NULL,
     "quantity" INT NOT NULL DEFAULT '1',
     "notes" VARCHAR(100),
+    "discount" DECIMAL(15,2) DEFAULT '0',
     PRIMARY KEY (id),
     FOREIGN KEY (order_id) REFERENCES "order"("id"),
     FOREIGN KEY (product_id) REFERENCES "product"("id")

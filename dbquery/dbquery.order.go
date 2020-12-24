@@ -95,8 +95,6 @@ func (c *CreateOrder) SetCode(o string) *CreateOrder {
 	if o != "" {
 		c.Code = o
 		c.into["code"] = ":code"
-	} else {
-
 	}
 	return c
 }
