@@ -645,6 +645,17 @@ func UserGetRole(db *sqlx.DB, userid int) (string, error) {
 	return role, err
 }
 
+// UserGetUsername Mengambil username user
+// atau tidak
+func UserGetUsername(db *sqlx.DB, uid int) (string, error) {
+	// Ambil username
+	var uname string
+	query := `SELECT username FROM "user" WHERE id=$1`
+	err := db.Get(&uname, query, uid)
+
+	return uname, err
+}
+
 ////////////
 /* DELETE */
 ////////////
