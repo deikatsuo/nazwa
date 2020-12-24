@@ -390,7 +390,9 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		o.notes,
 		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
 		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
-		o.code
+		o.code,
+		o.total,
+		o.total_initial
 		FROM "order" o
 		LEFT JOIN "user" c ON c.id=o.customer_id
 		LEFT JOIN "user" sa ON sa.id=o.sales_id
@@ -446,6 +448,8 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		Notes:        o.Notes.String,
 		OrderDate:    o.OrderDate,
 		ShippingDate: string(o.ShippingDate.String),
+		Total:        o.Total,
+		TotalInitial: o.TotalInitial,
 		Items:        items,
 	}
 
