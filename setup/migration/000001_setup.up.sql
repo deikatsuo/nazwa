@@ -37,7 +37,7 @@ CREATE TABLE "user" (
     "occupation" VARCHAR(25),
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "created_by" INT,
-    "balance" DECIMAL(15,2) DEFAULT '0',
+    "balance" NUMERIC(15) DEFAULT '0',
     PRIMARY KEY (id),
     FOREIGN KEY (created_by) REFERENCES "user"("id")
 );
@@ -157,8 +157,8 @@ CREATE TABLE "product" (
     "created_by" INT NOT NULL,
     "name" VARCHAR(100) NOT NULL,
     "code" VARCHAR(10) UNIQUE NOT NULL,
-    "base_price" DECIMAL(15,2) DEFAULT '0',
-    "price" DECIMAL(15,2) DEFAULT '0',
+    "base_price" NUMERIC(15) DEFAULT '0',
+    "price" NUMERIC(15) DEFAULT '0',
     "type" VARCHAR(25),
     "brand" VARCHAR(25),
     "thumbnail" VARCHAR(50),
@@ -172,7 +172,7 @@ CREATE TABLE "product_credit_price" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "product_id" INT NOT NULL,
     "duration" SMALLINT NOT NULL,
-    "price" DECIMAL(15,2) DEFAULT '0',
+    "price" NUMERIC(15) DEFAULT '0',
     PRIMARY KEY (id),
     FOREIGN KEY (product_id) REFERENCES "product"("id")
 );
@@ -204,7 +204,7 @@ CREATE TABLE "order" (
     "shipping_date" DATE DEFAULT CURRENT_DATE,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "created_by" INT NOT NULL,
-    "total" DECIMAL(15,2) DEFAULT '0',
+    "total" NUMERIC(15) DEFAULT '0',
     PRIMARY KEY (id),
     FOREIGN KEY (customer_id) REFERENCES "user"("id"),
     FOREIGN KEY (sales_id) REFERENCES "user"("id"),
@@ -222,7 +222,7 @@ CREATE TABLE "order_item" (
     "product_id" INT NOT NULL,
     "quantity" INT NOT NULL DEFAULT '1',
     "notes" VARCHAR(100),
-    "discount" DECIMAL(15,2) DEFAULT '0',
+    "discount" NUMERIC(15) DEFAULT '0',
     PRIMARY KEY (id),
     FOREIGN KEY (order_id) REFERENCES "order"("id"),
     FOREIGN KEY (product_id) REFERENCES "product"("id")

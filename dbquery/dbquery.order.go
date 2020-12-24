@@ -184,6 +184,14 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 	if len(c.orderItems) == 0 {
 		return errors.New("ERROR: dbuery.order.go (CreateOrder) Save() Item order kosong")
 	}
+
+	// Periksa apakah pembelian kredit
+	if c.Credit {
+
+	} else {
+
+	}
+
 	// Mulai transaksi
 	tx := db.MustBegin()
 	var tempReturnID int
