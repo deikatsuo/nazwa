@@ -192,6 +192,23 @@ func ProductGetProductCreditPrice(db *sqlx.DB, pid int) ([]wrapper.ProductCredit
 	return prices, err
 }
 
+// ProductGetProductPrice mengambil harga barang
+func ProductGetProductPrice(db *sqlx.DB, pid int) (int, error) {
+	var price int
+	query := `SELECT
+		base_price
+		FROM "product"
+		WHERE id=$1
+		LIMIT 1`
+	err := db.Get(&price, query, pid)
+	if err != nil {
+		log.Println("ERROR: dbquery.product.go ProductGetProductPrice() error saat mengambil data harga")
+		return 0, err
+	}
+
+	return price, nil
+}
+
 // ProductGetProductPhoto mengambil data photo produk
 func ProductGetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ProductPhotoListSelect, error) {
 	var photos []wrapper.ProductPhotoListSelect
