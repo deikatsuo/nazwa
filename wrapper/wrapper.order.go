@@ -24,6 +24,7 @@ type OrderInsert struct {
 	CreatedAt string `db:"created_at"`
 	CreatedBy int    `db:"created_by"`
 
+	Deposit      int `db:"deposit"`
 	Total        int `db:"total"`
 	TotalInitial int `db:"total_initial"`
 }
@@ -41,6 +42,7 @@ type OrderForm struct {
 	ShippingDate    string          `json:"shipping_date" binding:"omitempty,date"`
 	BillingAddress  int             `json:"billing_address" binding:"omitempty,numeric"`
 	ShippingAddress int             `json:"shipping_address" binding:"required,numeric"`
+	Deposit         int             `json:"deposit" binding:"omitempty,numeric"`
 	OrderItems      []OrderItemForm `json:"order_items" binding:"omitempty"`
 }
 
@@ -77,6 +79,7 @@ type NullableOrder struct {
 	ShippingDate        sql.NullString `db:"shipping_date"`
 	CreatedAt           string         `db:"created_at"`
 	CreatedBy           int            `db:"created_by"`
+	Deposit             int            `db:"deposit"`
 	Total               int            `db:"total"`
 	TotalInitial        int            `db:"total_initial"`
 }
@@ -100,6 +103,7 @@ type Order struct {
 	Items           []OrderItem
 	CreatedAt       string
 	CreatedBy       NameID
+	Deposit         int
 	Total           int
 	TotalInitial    int
 }

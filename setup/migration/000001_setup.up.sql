@@ -204,6 +204,7 @@ CREATE TABLE "order" (
     "shipping_date" DATE DEFAULT CURRENT_DATE,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "created_by" INT NOT NULL,
+    "deposit" NUMERIC(15) DEFAULT '0',
     "total" NUMERIC(15) DEFAULT '0',
     "total_initial" NUMERIC(15) DEFAULT '0',
     PRIMARY KEY (id),
