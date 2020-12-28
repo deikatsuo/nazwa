@@ -154,9 +154,11 @@
                           }
                           if (data.status == "success") {
                             this.notifStatus = "success";
-                            window.location.replace(
-                              window.location.hostname + "/dashboard"
-                            );
+                            var redir = window.location.protocol + "//" + window.location.hostname;
+                            if (window.location.port.length > 0) {
+                              redir = redir + ":" + window.location.port;
+                            }
+                            window.location.replace(redir + "/dashboard");
                           }
                           if (data.message) {
                             this.message = data.message;
