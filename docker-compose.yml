@@ -1,0 +1,18 @@
+version: '3.3'
+#services describe the containers that will start
+services: 
+    # nazwa is the container name for our Go API
+    nazwa:
+        # It will look for a dockerfile in the project root and build it
+        build: "."
+        # Exposes the port 8080 from a container and binds it to a random port
+        ports:
+            - "8080:8080"
+        # If the container goes down, it will restart
+        restart: "always"
+        # Connects the service to a common api.network bridge
+        networks: 
+            - "api.network"
+# declares network used to connect all the apps
+networks: 
+    api.network:

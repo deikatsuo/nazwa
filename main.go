@@ -184,6 +184,8 @@ func runServer(db *sqlx.DB) {
 	v1uEdit.POST("/:id/add/address", api.UserAddAddress(db))
 	v1uEdit.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
 
+	port := ":" + misc.GetEnv("PORT", "8080").(string)
+
 	if misc.GetEnv("REMOTE", "false") == "true" {
 		var hostname string
 		if misc.GetEnv("HOSTNAME", "") != "" {
@@ -192,13 +194,13 @@ func runServer(db *sqlx.DB) {
 		cert := autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
 			HostPolicy: autocert.HostWhitelist(hostname, "www."+hostname),
-			Cache:      autocert.DirCache(".cert_cache"),
+			Cache:      autocert.DirCache("../cert_cache"),
 		}
 
 		// Jalankan server dalam mode aman
 		log.Fatal(autotls.RunWithManager(server, &cert))
 	} else {
 		// Jalankan server dalam mode tidak aman
-		server.Run(":8080")
+		server.Run(port)
 	}
 }

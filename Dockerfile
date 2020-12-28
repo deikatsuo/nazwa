@@ -11,13 +11,14 @@ WORKDIR /tmp/app
 ## If you have a go.mod and go.sum file in your project, uncomment lines 13, 14, 15
 
 COPY go.mod go.sum ./
-RUN go mod download
+# RUN go mod download
 
 COPY . .
 
 # Builds the current project to a binary file called nazwa
 # The location of the binary file is /tmp/app/out/nazwa
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ./out/nazwa .
+# RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ./out/nazwa .
+RUN GOOS=linux go build -o ./out/nazwa .
 
 #########################################################
 
