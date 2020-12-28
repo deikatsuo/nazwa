@@ -27,6 +27,7 @@ type OrderInsert struct {
 	Deposit      int `db:"deposit"`
 	Total        int `db:"total"`
 	TotalInitial int `db:"total_initial"`
+	Remaining    int `db:"remaining"`
 }
 
 // OrderForm formulir buat order
@@ -82,6 +83,7 @@ type NullableOrder struct {
 	Deposit             int            `db:"deposit"`
 	Total               int            `db:"total"`
 	TotalInitial        int            `db:"total_initial"`
+	Remaining           int            `db:"remaining"`
 }
 
 // Order mapping data order
@@ -106,6 +108,7 @@ type Order struct {
 	Deposit         int
 	Total           int
 	TotalInitial    int
+	Remaining       int
 }
 
 // NullableOrderItem item/produk yang di order

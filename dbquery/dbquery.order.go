@@ -116,6 +116,15 @@ func (c *CreateOrder) SetCredit(o bool) *CreateOrder {
 	return c
 }
 
+// SetDeposit uang muka
+func (c *CreateOrder) SetDeposit(o int) *CreateOrder {
+	if o > 0 {
+		c.Deposit = o
+		c.into["deposit"] = ":deposit"
+	}
+	return c
+}
+
 // SetNotes Catatan order
 func (c *CreateOrder) SetNotes(o string) *CreateOrder {
 	c.Notes = o
@@ -185,9 +194,14 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 		return errors.New("ERROR: dbuery.order.go (CreateOrder) Save() Item order kosong")
 	}
 
+	// Total keseluruhan tagihan
 	var total int
+	// Total keseluruhan harga awal barang (harga beli) sebelum profit
 	var totalInitial int
-	// Periksa apakah pembelian kredit
+	// Sisa tagihan yang harus dibayar
+	var remaining int
+
+	// Periksa apakah pembelian kredit atau cash
 	if c.Credit {
 
 	} else {
@@ -211,12 +225,13 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 
 	if total != 0 {
 		c.Total = total
+		c.Remaining = total
 		c.into["total"] = ":total"
 	}
 
-	if totalInitial != 0 {
-		c.TotalInitial = totalInitial
-		c.into["total_initial"] = ":total_initial"
+	if remaining != 0 {
+		c.Remaining = remaining
+		c.into["remaining"] = ":remaining"
 	}
 
 	if totalInitial != 0 {

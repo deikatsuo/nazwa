@@ -220,6 +220,7 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetShipping(json.ShippingAddress).
 				SetBilling(json.BillingAddress).
 				SetCredit(*json.Credit).
+				SetDeposit(json.Deposit).
 				SetNotes(json.Notes).
 				SetCode(code).
 				SetOrderDate(json.OrderDate).

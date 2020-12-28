@@ -12,8 +12,10 @@ import (
 	"os"
 
 	"github.com/casbin/casbin/v2"
+	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -182,6 +184,21 @@ func runServer(db *sqlx.DB) {
 	v1uEdit.POST("/:id/add/address", api.UserAddAddress(db))
 	v1uEdit.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
 
-	// Jalankan server
-	server.Run(":8080")
+	if misc.GetEnv("REMOTE", "false") == "true" {
+		var hostname string
+		if misc.GetEnv("HOSTNAME", "") != "" {
+			hostname = misc.GetEnvND("HOSTNAME")
+		}
+		cert := autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: autocert.HostWhitelist(hostname, "www."+hostname),
+			Cache:      autocert.DirCache(".cert_cache"),
+		}
+
+		// Jalankan server dalam mode aman
+		log.Fatal(autotls.RunWithManager(server, &cert))
+	} else {
+		// Jalankan server dalam mode tidak aman
+		server.Run(":8080")
+	}
 }

@@ -426,7 +426,7 @@
                     >Lama Angsuran</span
                   >
                   <select
-                    class="block bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                     x-model="formData.duration"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDuration }"
                   >
@@ -444,12 +444,34 @@
               </div>
             </div>
 
+            <div class="w-full flex flex-wrap">
+              <!-- Deposit -->
+              <div class="w-full md:w-1/2 md:px-1">
+                <label class="block mt-4 text-sm">
+                  <span class="text-gray-700 dark:text-gray-400"
+                    >Uang DP (deposit)</span
+                  >
+                  <input
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    x-model.number="formData.deposit"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDeposit }"
+                  />
+                </label>
+                <span
+                  class="text-xs text-red-600 dark:text-red-400"
+                  x-text="errmDeposit"
+                  :class="{'invisible': errDeposit == false}"
+                >
+                </span>
+              </div>
+            </div>
+
             <!-- Catatan -->
             <div class="w-full md:px-1">
               <label class="block mt-4 text-sm">
                 <span class="text-gray-700 dark:text-gray-400">Catatan</span>
                 <textarea
-                  class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                   rows="3"
                   placeholder="Catatan mengenai order!"
                   x-model="formData.notes"
@@ -464,7 +486,7 @@
                     >Tanggal Pemesanan</span
                   >
                   <input
-                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                     type="date"
                     x-model="formData.order_date"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errOrderDate }"
@@ -485,7 +507,7 @@
                     >Tanggal Pengiriman</span
                   >
                   <input
-                    class="datepicker block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                     type="date"
                     x-model="formData.shipping_date"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errShippingDate }"
@@ -816,7 +838,7 @@
                       <input
                         type="number"
                         class="w-12 px-1 border rounded"
-                        x-model="formData.order_items[index].quantity"
+                        x-model.number="formData.order_items[index].quantity"
                         min="1"
                       />
                     </div>
@@ -1042,6 +1064,7 @@
           shipping_date: null,
           billing_address: null,
           shipping_address: null,
+          deposit: null,
           order_items: [],
         },
         instantData: {
@@ -1096,6 +1119,8 @@
         errmShippingAddress: "",
         errBillingAddress: false,
         errmBillingAddress: "",
+        errDeposit: false,
+        errmDeposit: "",
         errOrderItems: false,
         errmOrderItems: "",
 
@@ -1160,6 +1185,14 @@
               } else {
                 this.errShippingAddress = false;
                 this.errmShippingAddress = "";
+              }
+
+              if (data.deposit) {
+                this.errDeposit = true;
+                this.errmDeposit = data.deposit;
+              } else {
+                this.errDeposit = false;
+                this.errmDeposit = "";
               }
 
               if (data.orderitems) {
