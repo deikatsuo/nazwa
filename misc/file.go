@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"image"
 	"image/color"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -76,6 +77,37 @@ func FileGenerateThumb(f string, dir string) error {
 		log.Println("ERROR: file.go FileGenerateThumb() Menyimpan file thumbnail")
 		log.Println(err)
 
+		return err
+	}
+
+	return nil
+}
+
+// CopyFile copy file ke lokasi baru
+func CopyFile(newfile string, file string) error {
+	// Membuka file yang akan di copy
+	original, err := os.Open(file)
+	if err != nil {
+		log.Println("ERROR: file.go CopyFile() gagal membuka source file")
+		log.Println(err)
+		return err
+	}
+	defer original.Close()
+
+	// Membuat copy
+	new, err := os.Create(newfile)
+	if err != nil {
+		log.Println("ERROR: file.go CopyFile() gagal membuat copy file")
+		log.Println(err)
+		return err
+	}
+	defer new.Close()
+
+	//This will copy
+	_, err = io.Copy(new, original)
+	if err != nil {
+		log.Println("ERROR: file.go CopyFile() gagal meng copy file")
+		log.Fatal(err)
 		return err
 	}
 
