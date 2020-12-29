@@ -6,14 +6,11 @@ import (
 	"nazwa/misc"
 	"nazwa/router"
 	"nazwa/wrapper"
-	"sync"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
-
-var mut = sync.RWMutex{}
 
 // NewDefaultConfig - mengambil konfigurasi default dari .env
 func NewDefaultConfig() gin.HandlerFunc {
