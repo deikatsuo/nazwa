@@ -46,16 +46,75 @@ func RunSetup(db *sqlx.DB) {
 					fmt.Println("Tabel berhasil dihapus ('-')")
 				}
 
-				purgeUser := os.RemoveAll("../data/upload/profile")
+				fmt.Println("Menghaspus data user dan produk")
+				purgeUser := os.RemoveAll("../data/upload")
 				if purgeUser != nil {
-					log.Println("ERROR: setup.go RunSetup() gagal menghapus data user")
+					log.Println("ERROR: setup.go RunSetup() gagal menghapus data user dan produk")
 					log.Println(purgeUser)
-				}
+				} else {
+					// Membuat folder untuk menyimpan data user
+					fmt.Println("Membuat kembali data user dan produk")
 
-				purgeProduct := os.RemoveAll("../data/upload/product")
-				if purgeProduct != nil {
-					log.Println("ERROR: setup.go RunSetup() gagal menghapus data produk")
-					log.Println(purgeProduct)
+					if err := os.Mkdir("../data/upload", 0755); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload")
+						log.Println(err)
+					}
+
+					if err := os.Mkdir("../data/upload/profile", 0755); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload/profile")
+						log.Println(err)
+					}
+
+					if err := os.Mkdir("../data/upload/profile/thumbnail", 0755); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload/profile/thumbnail")
+						log.Println(err)
+					}
+
+					if err := os.Mkdir("../data/upload/product", 0755); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload/product")
+						log.Println(err)
+					}
+
+					if err := os.Mkdir("../data/upload/product/thumbnail", 0755); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload/product/thumbnail")
+						log.Println(err)
+					}
+
+					// Copy file male.png
+					if err := misc.CopyFile("../data/upload/profile/male.png", "./setup/male.png"); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal meng copy file male.png")
+						log.Println(err)
+					}
+
+					// Copy file thumb.male.png
+					if err := misc.CopyFile("../data/upload/profile/thumbnail/male.png", "./setup/thumb.male.png"); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal meng copy file thumb.male.png")
+						log.Println(err)
+					}
+
+					// Copy file female.png
+					if err := misc.CopyFile("../data/upload/profile/female.png", "./setup/female.png"); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal meng copy file user")
+						log.Println(err)
+					}
+
+					// Copy file thumb.female.png
+					if err := misc.CopyFile("../data/upload/profile/thumbnail/female.png", "./setup/thumb.female.png"); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal meng copy file user")
+						log.Println(err)
+					}
+
+					// Copy file no-photo.png
+					if err := misc.CopyFile("../data/upload/product/no-photo.png", "./setup/no-photo.png"); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal meng copy file no-photo.png")
+						log.Println(err)
+					}
+
+					// Copy file thumb.no-photo.png
+					if err := misc.CopyFile("../data/upload/product/thumbnail/no-photo.png", "./setup/thumb.no-photo.png"); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal meng copy thumb.no-photo.png")
+						log.Println(err)
+					}
 				}
 
 			} else {
@@ -71,6 +130,7 @@ func RunSetup(db *sqlx.DB) {
 	} else {
 		fmt.Println("Sedang memutakhirkan tabel")
 	}
+
 	if misc.Migration("up") {
 		fmt.Println("Tabel berhasil dibuat ('-')")
 	}
