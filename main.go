@@ -91,7 +91,7 @@ func runServer(db *sqlx.DB) {
 	// Daftarkan aset statik
 	// misal css, js, dan beragam file gambar
 	server.Static("/assets", "./statics")
-	server.Static("/file", "./upload")
+	server.Static("/file", "../data/upload")
 	server.StaticFile("/favicon.ico", "./statics/favicon.ico")
 
 	// Load file template
@@ -202,7 +202,7 @@ func runServer(db *sqlx.DB) {
 		cert := autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
 			HostPolicy: autocert.HostWhitelist(hostname, "www."+hostname),
-			Cache:      autocert.DirCache("../cert_cache"),
+			Cache:      autocert.DirCache("../data/cert_cache"),
 		}
 
 		// Jalankan server dalam mode aman

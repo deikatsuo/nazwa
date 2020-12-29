@@ -58,7 +58,7 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 		if len(json.Photo) > 0 {
 			for _, p := range json.Photo {
 				if p.PhotoType != "" && p.Photo != "" {
-					if f, err := misc.Base64ToFileWithData("./upload/product/", p.Photo, p.PhotoType); err == nil {
+					if f, err := misc.Base64ToFileWithData("../data/upload/product/", p.Photo, p.PhotoType); err == nil {
 						files = append(files, f)
 					} else {
 						log.Println("ERROR: api.product.go ProductCreate() Konversi base64 ke dalam bentuk file")
@@ -70,7 +70,7 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 
 		// Buat thumbnail
 		if len(files) > 0 {
-			err := misc.FileGenerateThumb(files[0], "./upload/product/")
+			err := misc.FileGenerateThumb(files[0], "../data/upload/product/")
 			if err != nil {
 				message = err.Error()
 			}
@@ -99,13 +99,13 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 
 				if len(files) > 0 {
 					for _, s := range files {
-						if err := os.Remove("./upload/product/" + s); err != nil {
+						if err := os.Remove("../data/upload/product/" + s); err != nil {
 							log.Println("ERROR: api.product.go ProductCreate() Gagal menghapus file")
 							log.Println(err)
 						}
 					}
 					// Hapus thumbnail
-					if err := os.Remove("./upload/product/thumbnail/" + files[0]); err != nil {
+					if err := os.Remove("../data/upload/product/thumbnail/" + files[0]); err != nil {
 						log.Println("ERROR: api.product.go ProductCreate() Gagal menghapus file thumbnail")
 						log.Println(err)
 					}

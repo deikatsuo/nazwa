@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -14,8 +13,7 @@ func RedirectWWW() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		url := location.Get(c)
 		if host := strings.TrimPrefix(url.Host, "www."); host != url.Host {
-			fmt.Println("Host", host)
-			fmt.Println("URL Host", url.Host)
+
 			url.Host = host
 			c.Redirect(http.StatusMovedPermanently, url.String())
 			c.Abort()

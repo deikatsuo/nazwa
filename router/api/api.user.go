@@ -67,7 +67,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		if json.PhotoType != "" && json.Photo != "" {
 			avatarExt = json.PhotoType
 			avatar = json.Photo
-			if f, err := misc.Base64ToFileWithData("./upload/profile/", avatar, avatarExt); err == nil {
+			if f, err := misc.Base64ToFileWithData("../data/upload/profile/", avatar, avatarExt); err == nil {
 				file = f
 			} else {
 				log.Println("ERROR: api.user.go UserCreate() Konversi base64 ke file gambar")
@@ -76,7 +76,7 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		if file != "" {
-			err := misc.FileGenerateThumb(file, "./upload/profile/")
+			err := misc.FileGenerateThumb(file, "../data/upload/profile/")
 			if err != nil {
 				message = err.Error()
 			}
@@ -102,12 +102,12 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 			if err != nil {
 				log.Println("ERROR: api.user.go UserCreate() Gagal membuat user baru")
 				log.Print(err)
-				if err := os.Remove("./upload/profile/" + file); err != nil {
+				if err := os.Remove("../data/upload/profile/" + file); err != nil {
 					log.Println("ERROR: api.user.go UserCreate() Gagal menghapus photo")
 					log.Println(err)
 				}
 
-				if err := os.Remove("./upload/profile/thumbnail/" + file); err != nil {
+				if err := os.Remove("../data/upload/profile/thumbnail/" + file); err != nil {
 					log.Println("ERROR: api.user.go UserCreate() Gagal menghapus thumbnail")
 					log.Println(err)
 				}

@@ -32,7 +32,7 @@ func RunSetup(db *sqlx.DB) {
 	// jika ya
 	// maka hapus tabel (reset) pada database
 	if reset {
-		fmt.Println("PERINGATAN: Ini akan menghapus semua data di database!")
+		fmt.Println("PERINGATAN: Ini akan menghapus semua data user pada server dan database!")
 		var lanjut string
 		fmt.Println("Lanjutkan? [y/N]")
 		fmt.Scanf("%s", &lanjut)
@@ -45,6 +45,19 @@ func RunSetup(db *sqlx.DB) {
 				if misc.Migration("down") {
 					fmt.Println("Tabel berhasil dihapus ('-')")
 				}
+
+				purgeUser := os.RemoveAll("../data/upload/profile")
+				if purgeUser != nil {
+					log.Println("ERROR: setup.go RunSetup() gagal menghapus data user")
+					log.Println(purgeUser)
+				}
+
+				purgeProduct := os.RemoveAll("../data/upload/product")
+				if purgeProduct != nil {
+					log.Println("ERROR: setup.go RunSetup() gagal menghapus data produk")
+					log.Println(purgeProduct)
+				}
+
 			} else {
 				fmt.Println("Kata sandi tidak sesuai")
 				os.Exit(1)
