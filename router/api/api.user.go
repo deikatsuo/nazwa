@@ -266,13 +266,16 @@ func UserUpdateRole(db *sqlx.DB) gin.HandlerFunc {
 			next = false
 		}
 
+		if nowID == uid {
+			errMess = "Tidak bisa merubah peran sendiri"
+			next = false
+		}
+
 		// Jika request set role ke dev (0)
 		if next {
-			if newRoleID == 0 {
-				if nowRole != 0 {
-					errMess = "Harus dev untuk membuat dev baru"
-					next = false
-				}
+			if newRoleID == 0 && nowRole != 0 {
+				errMess = "Harus dev untuk membuat dev baru"
+				next = false
 			}
 		}
 
