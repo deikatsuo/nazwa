@@ -35,8 +35,9 @@
       >
         <div class="pl-4 flex items-center">
           <a
-            class="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
+            class="text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
             href="#"
+            id="logo"
           >
             <!--Icon from: http://www.potlabicons.com/ -->
             <svg
@@ -78,7 +79,7 @@
         </div>
 
         <div
-          class="w-full flex-grow lg:flex lg:items-center lg:w-auto hidden lg:block mt-2 lg:mt-0 lg:bg-transparent text-black p-4 lg:p-0 z-20"
+          class="w-full sm:bg-white flex-grow lg:flex lg:items-center lg:w-auto hidden mt-2 lg:mt-0 lg:bg-transparent text-black p-4 lg:p-0 z-20"
           id="nav-content"
         >
           <ul class="list-reset lg:flex justify-end flex-1 items-center">
@@ -850,6 +851,7 @@
       var navaction = document.getElementById("navAction");
       var brandname = document.getElementById("brandname");
       var toToggle = document.querySelectorAll(".toggleColour");
+      var logo = document.getElementById("logo");
 
       document.addEventListener("scroll", function () {
         /*Apply classes for slide in bar*/
@@ -857,6 +859,8 @@
 
         if (scrollpos > 10) {
           header.classList.add("bg-white");
+          logo.classList.remove("text-white");
+          logo.classList.add("text-gray-800");
           navaction.classList.remove("bg-white");
           navaction.classList.add("gradient");
           navaction.classList.remove("text-gray-800");
@@ -871,6 +875,8 @@
           navcontent.classList.add("bg-white");
         } else {
           header.classList.remove("bg-white");
+          logo.classList.add("text-white");
+          logo.classList.remove("text-gray-800");
           navaction.classList.remove("gradient");
           navaction.classList.add("bg-white");
           navaction.classList.remove("text-white");

@@ -12,7 +12,6 @@ import (
 	"os"
 
 	"github.com/casbin/casbin/v2"
-	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -69,9 +68,6 @@ func runServer(db *sqlx.DB) {
 
 	// Buat server
 	server := gin.Default()
-
-	// Gunakan lokasi default
-	server.Use(location.Default())
 
 	// Redirect www ke non-www
 	server.Use(middleware.RedirectWWW())

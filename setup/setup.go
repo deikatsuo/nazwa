@@ -55,6 +55,11 @@ func RunSetup(db *sqlx.DB) {
 					// Membuat folder untuk menyimpan data user
 					fmt.Println("Membuat kembali data user dan produk")
 
+					if err := os.Mkdir("../data", 0755); err != nil {
+						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori data")
+						log.Println(err)
+					}
+
 					if err := os.Mkdir("../data/upload", 0755); err != nil {
 						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload")
 						log.Println(err)
