@@ -11,7 +11,15 @@ import (
 func RedirectWWW() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if host := strings.TrimPrefix(c.Request.Host, "www."); host != c.Request.Host {
-			c.Redirect(http.StatusMovedPermanently, host+c.Request.RequestURI)
+			u := c.Request.URL
+			u.Host = host
+
+			// Cek apakah absolut atau tidak
+			if c.Request.URL.IsAbs() == false {
+				u.Scheme = "http"
+			}
+
+			c.Redirect(http.StatusMovedPermanently, u.String())
 			c.Abort()
 			return
 		}
