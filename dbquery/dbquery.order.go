@@ -199,7 +199,6 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 	// Total keseluruhan harga awal barang (harga beli) sebelum profit
 	var totalInitial int
 	// Sisa tagihan yang harus dibayar
-	var remaining int
 
 	// Periksa apakah pembelian kredit atau cash
 	if c.Credit {
@@ -225,13 +224,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 
 	if total != 0 {
 		c.Total = total
-		c.Remaining = total
 		c.into["total"] = ":total"
-	}
-
-	if remaining != 0 {
-		c.Remaining = remaining
-		c.into["remaining"] = ":remaining"
 	}
 
 	if totalInitial != 0 {
