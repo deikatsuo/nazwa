@@ -207,7 +207,6 @@ CREATE TABLE "order" (
     "deposit" NUMERIC(15) DEFAULT '0',
     "total" NUMERIC(15) NOT NULL,
     "total_initial" NUMERIC(15) NOT NULL,
-    "remaining" NUMERIC(15) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (customer_id) REFERENCES "user"("id"),
     FOREIGN KEY (sales_id) REFERENCES "user"("id"),
