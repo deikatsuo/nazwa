@@ -24,9 +24,20 @@ type OrderInsert struct {
 	CreatedAt string `db:"created_at"`
 	CreatedBy int    `db:"created_by"`
 
-	Deposit      int `db:"deposit"`
-	Total        int `db:"total"`
-	TotalInitial int `db:"total_initial"`
+	Deposit        int `db:"deposit"`
+	PriceTotal     int `db:"price_total"`
+	BasePriceTotal int `db:"base_price_total"`
+}
+
+// OrderItemInsert insert item
+type OrderItemInsert struct {
+	OrderID   int    `db:"order_id"`
+	ProductID int    `db:"product_id"`
+	Quantity  int    `db:"quantity"`
+	Notes     string `db:"notes"`
+	BasePrice int    `db:"base_price"`
+	Price     int    `db:"price"`
+	Discount  int    `db:"discount"`
 }
 
 // OrderForm formulir buat order
@@ -48,10 +59,10 @@ type OrderForm struct {
 
 // OrderItemForm form item
 type OrderItemForm struct {
-	ID       int    `json:"id" binding:"required,numeric"`
-	Quantity int    `json:"quantity" binding:"required,numeric"`
-	Notes    string `json:"notes" binding:"omitempty"`
-	Discount int    `json:"discount" binding:"omitempty,numeric"`
+	ProductID int    `json:"id" binding:"required,numeric"`
+	Quantity  int    `json:"quantity" binding:"required,numeric"`
+	Notes     string `json:"notes" binding:"omitempty"`
+	Discount  int    `json:"discount" binding:"omitempty,numeric"`
 }
 
 // NullableOrder menampilkan data order
@@ -80,8 +91,8 @@ type NullableOrder struct {
 	CreatedAt           string         `db:"created_at"`
 	CreatedBy           int            `db:"created_by"`
 	Deposit             int            `db:"deposit"`
-	Total               int            `db:"total"`
-	TotalInitial        int            `db:"total_initial"`
+	PriceTotal          int            `db:"price_total"`
+	BasePriceTotal      int            `db:"base_price_total"`
 }
 
 // Order mapping data order
@@ -104,8 +115,8 @@ type Order struct {
 	CreatedAt       string
 	CreatedBy       NameID
 	Deposit         int
-	Total           int
-	TotalInitial    int
+	PriceTotal      int
+	BasePriceTotal  int
 }
 
 // NullableOrderItem item/produk yang di order
@@ -116,14 +127,18 @@ type NullableOrderItem struct {
 	ProductCode string         `db:"code"`
 	Quantity    int            `db:"quantity"`
 	Notes       sql.NullString `db:"notes"`
+	BasePrice   int            `db:"base_price"`
+	Price       int            `db:"price"`
 	Discount    int            `db:"discount"`
 }
 
 // OrderItem item/produk yang di order
 type OrderItem struct {
-	ID       int
-	Product  NameIDCode
-	Quantity int
-	Notes    string
-	Discount int
+	ID        int
+	Product   NameIDCode
+	Quantity  int
+	Notes     string
+	BasePrice int
+	Price     int
+	Discount  int
 }

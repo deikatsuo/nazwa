@@ -190,46 +190,52 @@ func (c CreateOrder) generateInsertQuery() string {
 
 // Save Simpan produk
 func (c *CreateOrder) Save(db *sqlx.DB) error {
+
+	// Jika tidak ada barang yang di order
 	if len(c.orderItems) == 0 {
 		return errors.New("ERROR: dbuery.order.go (CreateOrder) Save() Item order kosong")
 	}
 
 	// Total keseluruhan tagihan
-	var total int
+	var priceTotal int
 	// Total keseluruhan harga awal barang (harga beli) sebelum profit
-	var totalInitial int
-	// Sisa tagihan yang harus dibayar
+	var basePriceTotal int
+
+	var prices []int
+	var basePrices []int
 
 	// Periksa apakah pembelian kredit atau cash
 	if c.Credit {
 
 	} else {
-		for _, p := range c.orderItems {
-			prc, err := ProductGetProductPrice(db, p.ID)
+		for _, item := range c.orderItems {
+			p, err := ProductGetProductPrice(db, item.ProductID)
 			if err != nil {
 				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
 				return err
 			}
-			total += prc
+			priceTotal += p
+			prices = append(prices, p)
 
-			initprc, err := ProductGetProductBasePrice(db, p.ID)
+			bp, err := ProductGetProductBasePrice(db, item.ProductID)
 			if err != nil {
 				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
 				return err
 			}
-			totalInitial += initprc
+			basePriceTotal += bp
+			basePrices = append(basePrices, bp)
 		}
 
 	}
 
-	if total != 0 {
-		c.Total = total
-		c.into["total"] = ":total"
+	if priceTotal != 0 {
+		c.PriceTotal = priceTotal
+		c.into["price_total"] = ":price_total"
 	}
 
-	if totalInitial != 0 {
-		c.TotalInitial = totalInitial
-		c.into["total_initial"] = ":total_initial"
+	if basePriceTotal != 0 {
+		c.BasePriceTotal = basePriceTotal
+		c.into["base_price_total"] = ":base_price_total"
 	}
 
 	// Mulai transaksi
@@ -250,8 +256,30 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 			return err
 		}
 	} else {
+		log.Println("ERROR: dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert order")
 		tx.Rollback()
 		return err
+	}
+
+	// Item yang akan di insert
+	var itemInsert wrapper.OrderItemInsert
+
+	itemInsertQuery := `INSERT INTO "order_item" (order_id, product_id, quantity, notes, base_price, price, discount) VALUES (:order_id, :product_id, :quantity, :notes, :base_price, :price, :discount)`
+	for n, i := range c.orderItems {
+		itemInsert = wrapper.OrderItemInsert{
+			OrderID:   tempReturnID,
+			ProductID: i.ProductID,
+			Quantity:  i.Quantity,
+			Notes:     i.Notes,
+			Price:     prices[n],
+			BasePrice: basePrices[n],
+			Discount:  i.Discount,
+		}
+		if _, err := tx.NamedQuery(itemInsertQuery, itemInsert); err != nil {
+			log.Println("ERROR: dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert item ", n)
+			tx.Rollback()
+			return err
+		}
 	}
 
 	/*
@@ -399,8 +427,8 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
 		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
 		o.code,
-		o.total,
-		o.total_initial
+		o.price_total,
+		o.base_price_total
 		FROM "order" o
 		LEFT JOIN "user" c ON c.id=o.customer_id
 		LEFT JOIN "user" sa ON sa.id=o.sales_id
@@ -413,7 +441,7 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 
 	err := db.Get(&o, query, oid)
 	if err != nil {
-		log.Println("order.go Select order berdasarkan ID")
+		log.Println("dbquery.order.go OrderGetOrderByID() Select order berdasarkan ID")
 		log.Println(err)
 		return wrapper.Order{}, err
 	}
@@ -450,15 +478,15 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 			ID:   int(o.BillingAddressID.Int64),
 			Name: string(o.BillingAddressName.String),
 		},
-		Status:       strings.Title(o.Status),
-		Code:         o.Code,
-		Credit:       o.Credit,
-		Notes:        o.Notes.String,
-		OrderDate:    o.OrderDate,
-		ShippingDate: string(o.ShippingDate.String),
-		Total:        o.Total,
-		TotalInitial: o.TotalInitial,
-		Items:        items,
+		Status:         strings.Title(o.Status),
+		Code:           o.Code,
+		Credit:         o.Credit,
+		Notes:          o.Notes.String,
+		OrderDate:      o.OrderDate,
+		ShippingDate:   string(o.ShippingDate.String),
+		PriceTotal:     o.PriceTotal,
+		BasePriceTotal: o.BasePriceTotal,
+		Items:          items,
 	}
 
 	return order, nil
