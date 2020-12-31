@@ -40,28 +40,36 @@ func NewDashboardDefaultConfig(db *sqlx.DB) gin.HandlerFunc {
 		// guna menghindari error saat konversi nil ke int
 		if userid != nil {
 			if userid.(int) > 0 {
+				abort := false
 				if u, err := dbquery.UserGetNullableUserByID(db, userid.(int)); err != nil {
-					log.Print("ERR-500")
+					log.Print("ERROR: default-config.go NewDashboardDefaultConfig() Gagal mengambil user by ID")
 					log.Print(err)
-					router.Page500(c)
-					c.Abort()
+					abort = true
 				} else {
 					user = u
-					user.ID = userid.(int)
-					// Ambil data email
-					email, err := dbquery.UserGetEmail(db, userid.(int))
-					if err != nil {
-						log.Print("User tidak memiliki email ", err)
-					}
-					user.Emails = email
-
-					// Ambil nomor HP
-					phone, err := dbquery.UserGetPhone(db, userid.(int))
-					if err != nil {
-						log.Print("User tidak memiliki nomor HP ", err)
-					}
-					user.Phones = phone
 				}
+
+				if abort {
+					router.Page500(c)
+					c.Abort()
+					return
+				}
+
+				user.ID = userid.(int)
+				// Ambil data email
+				email, err := dbquery.UserGetEmail(db, userid.(int))
+				if err != nil {
+					log.Print("User tidak memiliki email ", err)
+				}
+				user.Emails = email
+
+				// Ambil nomor HP
+				phone, err := dbquery.UserGetPhone(db, userid.(int))
+				if err != nil {
+					log.Print("User tidak memiliki nomor HP ", err)
+				}
+				user.Phones = phone
+
 			}
 		}
 

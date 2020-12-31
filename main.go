@@ -9,12 +9,16 @@ import (
 	"nazwa/router"
 	"nazwa/router/api"
 	"nazwa/setup"
+	"net/http"
 	"os"
 
 	"github.com/casbin/casbin/v2"
+	"github.com/gin-contrib/gzip"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	stats "github.com/semihalev/gin-stats"
 	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/gin-gonic/gin/binding"
@@ -72,6 +76,9 @@ func runServer(db *sqlx.DB) {
 	// Redirect www ke non-www
 	server.Use(middleware.RedirectWWW())
 
+	// Kompress menggunakan gzip
+	server.Use(gzip.Gzip(gzip.BestCompression))
+
 	// Menambahkan validator date
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("date", validation.CustomValidationDate())
@@ -110,6 +117,17 @@ func runServer(db *sqlx.DB) {
 	dashboard.Use(middleware.RoutePermission(db, e))
 	// Middleware untuk mengambil pengaturan default untuk dashboard
 	dashboard.Use(middleware.NewDashboardDefaultConfig(db))
+
+	// PProf
+	pprof.RouteRegister(dashboard, "pprof")
+
+	// Stats
+	dashboard.Use(stats.RequestStats())
+	dashboard.GET("/stats", func(c *gin.Context) {
+		c.JSON(http.StatusOK, stats.Report())
+	})
+
+	// dashboard.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	dashboard.GET("/", router.PageDashboard)
 	dashboard.GET("/account", router.PageDashboardAccount(db))
