@@ -116,14 +116,16 @@ const (
 	// RoleAdmin memiliki akses penuh
 	// sebagai admin
 	RoleAdmin int8 = 1
-	// RoleSurveyor adalah penyurvey
-	RoleSurveyor int8 = 2
 	// RoleCollector sebagai seorang penagih
-	RoleCollector int8 = 3
+	RoleCollector int8 = 2
+	// RoleDriver sebagai supir
+	RoleDriver int8 = 3
+	// RoleSurveyor adalah penyurvey
+	RoleSurveyor int8 = 4
 	// RoleSales bagian marketing atau pemasaran
-	RoleSales int8 = 4
+	RoleSales int8 = 5
 	// RoleCustomer pelanggan
-	RoleCustomer int8 = 5
+	RoleCustomer int8 = 6
 )
 
 // CreateUser struk buat user baru

@@ -277,20 +277,24 @@
 
         <!-- Harga Kredit -->
         <dl
-          class="w-full whitespace-no-wrap"
+          class="w-full whitespace-no-wrap overflow-x-auto"
           x-show="formData.credit_price.length > 0"
         >
           <div
-            class="sm:grid sm:grid-cols-2 text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+            class="w-full grid grid-cols-3 text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
           >
             <dt class="px-3 py-3">Tenor</dt>
             <dd class="px-3 py-3">Angsuran</dd>
+            <dd class="px-3 py-3">Total</dd>
           </div>
           <template
             x-for="(credit, index) in formData.credit_price"
             :key="index"
           >
-            <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+            <div
+              class="w-full cursor-pointer px-4 py-1 grid grid-cols-3 hover:bg-green-200"
+              @dblclick="removeCreditPrice(index)"
+            >
               <dt
                 class="text-sm leading-5 font-medium text-gray-500"
                 x-text="credit.duration + ' Bulan'"
@@ -298,6 +302,10 @@
               <dd
                 class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
                 x-text="toRupiah(credit.price); + ' / bulan'"
+              ></dd>
+              <dd
+                class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                x-text="toRupiah(credit.duration * credit.price)"
               ></dd>
             </div>
           </template>
@@ -652,6 +660,9 @@
         },
         delPhoto(id) {
           this.formData.photos.splice(id, 1);
+        },
+        removeCreditPrice(id) {
+          this.formData.credit_price.splice(id, 1);
         },
         resetProductForm() {
           this.productCreated = false;
