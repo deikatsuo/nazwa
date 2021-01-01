@@ -214,7 +214,13 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
 				return err
 			}
-			priceTotal += p * item.Quantity
+
+			// Jika menggunakan harga diskon
+			if item.Discount > 0 {
+				priceTotal += item.Discount * item.Quantity
+			} else {
+				priceTotal += p * item.Quantity
+			}
 			prices = append(prices, p)
 
 			bp, err := ProductGetProductBasePrice(db, item.ProductID)
@@ -411,12 +417,19 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		o.id,
 		o.customer_id,
 		concat_ws(' ', c.first_name, c.last_name) as customer_name,
+		c.avatar as customer_thumb,
 		o.sales_id,
 		concat_ws(' ', sa.first_name, sa.last_name) as sales_name,
+		sa.avatar as sales_thumb,
 		o.surveyor_id,
 		concat_ws(' ', su.first_name, su.last_name) as surveyor_name,
+		su.avatar as surveyor_thumb,
 		o.collector_id,
 		concat_ws(' ', co.first_name, co.last_name) as collector_name,
+		co.avatar as collector_thumb,
+		o.created_by as created_by_id,
+		concat_ws(' ', cb.first_name, cb.last_name) as created_by_name,
+		cb.avatar as created_by_thumb,
 		o.shipping_address_id,
 		concat_ws(', ', sad.one, sad.two) as shipping_address_name,
 		o.billing_address_id,
@@ -434,6 +447,7 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		LEFT JOIN "user" sa ON sa.id=o.sales_id
 		LEFT JOIN "user" su ON su.id=o.surveyor_id
 		LEFT JOIN "user" co ON co.id=o.collector_id
+		LEFT JOIN "user" cb ON cb.id=o.created_by
 		LEFT JOIN "address" sad ON sad.id=o.shipping_address_id
 		LEFT JOIN "address" bad ON bad.id=o.billing_address_id
 		WHERE o.id=$1
@@ -455,20 +469,29 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 	order = wrapper.Order{
 		ID: o.ID,
 		Customer: wrapper.NameID{
-			ID:   o.CustomerID,
-			Name: o.CustomerName,
+			ID:        o.CustomerID,
+			Name:      o.CustomerName,
+			Thumbnail: o.CustomerThumb,
 		},
 		Sales: wrapper.NameID{
-			ID:   int(o.SalesID.Int64),
-			Name: o.SalesName.String,
+			ID:        int(o.SalesID.Int64),
+			Name:      o.SalesName.String,
+			Thumbnail: o.SalesThumb.String,
 		},
 		Surveyor: wrapper.NameID{
-			ID:   int(o.SurveyorID.Int64),
-			Name: o.SurveyorName.String,
+			ID:        int(o.SurveyorID.Int64),
+			Name:      o.SurveyorName.String,
+			Thumbnail: o.SurveyorThumb.String,
 		},
 		Collector: wrapper.NameID{
-			ID:   int(o.CollectorID.Int64),
-			Name: o.CollectorName.String,
+			ID:        int(o.CollectorID.Int64),
+			Name:      o.CollectorName.String,
+			Thumbnail: o.CollectorThumb.String,
+		},
+		CreatedBy: wrapper.NameID{
+			ID:        o.CreatedByID,
+			Name:      o.CreatedByName,
+			Thumbnail: o.CreatedByThumb,
 		},
 		ShippingAddress: wrapper.NameID{
 			ID:   o.ShippingAddressID,

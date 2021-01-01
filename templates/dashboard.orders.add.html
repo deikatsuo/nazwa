@@ -1411,7 +1411,14 @@
             });
           }
 
-          if (this.payEdit) {
+          if (this.formData.credit == false) {
+            this.formData.order_items[index].discount = Number(this.selectedProducts[
+              index
+            ].discountPrice);
+          } else {
+            this.formData.order_items[index].discount = Number(this.selectedProducts[
+              index
+            ].creditDiscountPrice);
           }
         },
         resetProductForm() {},
