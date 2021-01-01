@@ -169,6 +169,10 @@ module.exports = {
         '36': '36rem',
         xl: '36rem',
       },
+      inset: {
+        '10': '10rem',
+        '20': '20rem',
+      },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },

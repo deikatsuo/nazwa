@@ -235,7 +235,7 @@
                     <th class="px-4 py-3">Nama</th>
                     <th class="px-4 py-3">Qty</th>
 
-                    <th class="px-4 py-3">Catatan</th>
+                    <th class="px-4 py-3">Harga</th>
                   </tr>
                 </thead>
                 <tbody
@@ -257,6 +257,14 @@
                               :src="'/file/product/no-photo.png'"
                               alt=""
                               loading="lazy"
+                              x-show="item.Product.Thumbnail == ''"
+                            />
+                            <img
+                              class="object-cover w-full h-full rounded-full"
+                              :src="`/file/product/thumbnail/${item.Product.Thumbnail}`"
+                              alt=""
+                              loading="lazy"
+                              x-show="item.Product.Thumbnail != ''"
                             />
                             <div
                               class="absolute inset-0 rounded-full shadow-inner"
@@ -276,9 +284,30 @@
                         </div>
                       </td>
                       <td class="px-4 py-3 text-sm" x-text="item.Quantity"></td>
-                      <td class="px-4 py-3 text-sm" x-text="item.Notes"></td>
+                      <td
+                        x-show="item.Discount == 0"
+                        class="px-4 py-3 text-sm"
+                        x-text="toRupiah(item.Price*item.Quantity)"
+                      ></td>
+                      <td
+                        x-show="item.Discount > 0"
+                        class="px-4 py-3 text-sm"
+                        x-text="toRupiah(item.Discount*item.Quantity)"
+                      ></td>
                     </tr>
                   </template>
+                  <tr
+                    class="text-gray-700 dark:text-gray-400"
+                  >
+                    <td class="px-3 py-3 text-sm"></td>
+                    <td class="px-3 py-3 text-sm"></td>
+                    <td class="px-3 py-3 text-sm">Total</td>
+                    <td
+                      class="px-4 py-3 text-sm"
+                      x-text="toRupiah(Number(order.PriceTotal))"
+                      :title="`Harga beli total ${toRupiah(Number(order.BasePriceTotal))}`"
+                    ></td>
+                  </tr>
                 </tbody>
               </table>
             </div>

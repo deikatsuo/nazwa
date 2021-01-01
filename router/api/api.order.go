@@ -140,15 +140,9 @@ func OrderShowByID(db *sqlx.DB) gin.HandlerFunc {
 			errMess = "Sepertinya telah terjadi kesalahan saat memuat data"
 		}
 
-		var total int
-		if t, err := dbquery.OrderGetOrderTotalRow(db); err == nil {
-			total = t
-		}
-
 		c.JSON(httpStatus, gin.H{
 			"order": order,
 			"error": errMess,
-			"total": total,
 		})
 	}
 	return fn

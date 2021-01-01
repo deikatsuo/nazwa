@@ -125,6 +125,7 @@ type NullableOrderItem struct {
 	ProductID   int            `db:"product_id"`
 	ProductName string         `db:"name"`
 	ProductCode string         `db:"code"`
+	Thumbnail   string         `db:"thumbnail"`
 	Quantity    int            `db:"quantity"`
 	Notes       sql.NullString `db:"notes"`
 	BasePrice   int            `db:"base_price"`

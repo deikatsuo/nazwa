@@ -214,7 +214,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
 				return err
 			}
-			priceTotal += p
+			priceTotal += p * item.Quantity
 			prices = append(prices, p)
 
 			bp, err := ProductGetProductBasePrice(db, item.ProductID)
@@ -222,7 +222,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
 				return err
 			}
-			basePriceTotal += bp
+			basePriceTotal += bp * item.Quantity
 			basePrices = append(basePrices, bp)
 		}
 
@@ -496,7 +496,7 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 func OrderGetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
 	var items []wrapper.NullableOrderItem
 	var parse []wrapper.OrderItem
-	query := `SELECT oi.id, oi.product_id, oi.quantity, oi.notes, p.name, p.code
+	query := `SELECT oi.id, oi.product_id, oi.quantity, oi.notes, oi.discount, oi.base_price, oi.price, p.name, p.code, p.thumbnail
 	FROM "order_item" oi
 	LEFT JOIN "product" p ON p.id=oi.product_id
 	WHERE order_id=$1`
@@ -509,12 +509,16 @@ func OrderGetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
 		parse = append(parse, wrapper.OrderItem{
 			ID: i.ID,
 			Product: wrapper.NameIDCode{
-				ID:   i.ProductID,
-				Name: i.ProductName,
-				Code: i.ProductCode,
+				ID:        i.ProductID,
+				Name:      i.ProductName,
+				Code:      i.ProductCode,
+				Thumbnail: i.Thumbnail,
 			},
-			Quantity: i.Quantity,
-			Notes:    string(i.Notes.String),
+			Quantity:  i.Quantity,
+			Notes:     string(i.Notes.String),
+			Price:     i.Price,
+			BasePrice: i.BasePrice,
+			Discount:  i.Discount,
 		})
 	}
 	return parse, err

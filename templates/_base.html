@@ -122,7 +122,7 @@
       x-transition:leave="transition ease-in duration-150"
       x-transition:leave-start="opacity-100"
       x-transition:leave-end="opacity-0"
-      class="fixed inset-0 z-30 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center"
+      class="fixed pt-20 sm:py-20 inset-0 z-30 flex sm:items-start justify-center bg-black bg-opacity-50 overflow-y-auto overflow-x-hidden"
     >
       <!-- Modal -->
       <div
@@ -135,7 +135,7 @@
         x-transition:leave-end="opacity-0  transform translate-y-1/2"
         @click.away="if (!isPreviewOpen && previewContent == '') { closeModal(); } else { previewContent = ''; }"
         @keydown.escape="if (!isPreviewOpen) { closeModal(); }"
-        class="w-full md:w-3/4 lg:w-2/4 relative px-6 py-4 bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-b-lg sm:m-4"
+        class="w-full md:w-3/4 lg:w-2/4 relative sm:px-6 sm:py-5 bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-b-lg sm:m-4"
         role="dialog"
         id="modal"
       >
@@ -151,7 +151,7 @@
         </header>
         <!-- Modal body -->
         <div
-          class="mt-4 mb-6"          
+          class="mt-4"          
         >
           <!-- Modal title -->
           <p
@@ -162,7 +162,7 @@
             {{ .l_modal_header }}
           </p>
           <!-- Modal content -->
-          <div x-ref="modalHTML" x-show="showModalHTML" class="max-h-28 sm:max-h-36 overflow-y-auto overflow-x-hidden px-2"></div>
+          <div x-ref="modalHTML" x-show="showModalHTML" class="px-2 bg-white"></div>
           <p
             class="text-sm text-gray-700 dark:text-gray-400"
             x-text="modalContent"
