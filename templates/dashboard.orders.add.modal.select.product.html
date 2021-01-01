@@ -22,12 +22,11 @@
         class="grid grid-cols-1 col-gap-4 row-gap-8 md:col-gap-6 sm:grid-cols-2"
       >
         <template x-for="(product, index) in fill_products" :key="index">
-          <li
-            @click="add($dispatch, product)"
-            class="cursor-pointer"
-          >
+          <li @click="add($dispatch, product)" class="cursor-pointer">
             <div class="rounded relative overflow-hidden shadow-lg">
-              <div class="absolute bg-blue-200 text-blue-500 font-bold text-xs top-0 right-0 px-1">
+              <div
+                class="absolute bg-blue-200 text-blue-500 font-bold text-xs top-0 right-0 px-1"
+              >
                 <p x-text="product.Price"></p>
               </div>
               <img
@@ -65,8 +64,8 @@
                 ></span>
                 <span
                   class="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-500 mr-2 mb-2"
-                  x-text="'#Beli: ' + product.BasePrice"></span
-                >
+                  x-text="'#Beli: ' + product.BasePrice"
+                ></span>
               </div>
             </div>
           </li>
@@ -148,6 +147,18 @@
         product.discountPrice = 0;
         product.creditDiscountPrice = 0;
         product.edited = false;
+        var isSelected = document.getElementById("create").__x.$data
+          .selectedProducts;
+        for (i = 0; i < isSelected.length; i++) {
+          if (isSelected[i].ID == product.ID) {
+            $dispatch("notif", {
+              type: "warning",
+              message: "Produk ini sudah ditambahkan",
+            });
+            return
+          }
+        }
+
         document
           .getElementById("create")
           .__x.$data.selectedProducts.push(product);
