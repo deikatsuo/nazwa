@@ -192,7 +192,7 @@
                     ></span>
                   </td>
                 </tr>
-                
+
                 <tr class="text-gray-700 dark:text-gray-400">
                   <td class="px-4 py-1 text-sm">Pembayaran</td>
                   <td class="px-4 py-1 text-xs">
@@ -275,16 +275,21 @@
                         class="px-4 py-3 text-sm"
                         x-text="toRupiah(item.Price*item.Quantity)"
                       ></td>
-                      <td
-                        x-show="item.Discount > 0"
-                        class="px-4 py-3 text-sm"
-                        x-text="toRupiah(item.Discount*item.Quantity)"
-                      ></td>
+                      <td x-show="item.Discount > 0" class="px-4 py-3 text-sm">
+                        <div>
+                          <p
+                            class="font-semibold"
+                            x-text="toRupiah(item.Discount*item.Quantity)"
+                          ></p>
+                          <p
+                            class="text-xs text-red-400 line-through dark:text-gray-400"
+                            x-text="toRupiah(item.Price*item.Quantity)"
+                          ></p>
+                        </div>
+                      </td>
                     </tr>
                   </template>
-                  <tr
-                    class="text-gray-700 dark:text-gray-400"
-                  >
+                  <tr class="text-gray-700 dark:text-gray-400">
                     <td class="px-3 py-3 text-sm"></td>
                     <td class="px-3 py-3 text-sm"></td>
                     <td class="px-3 py-3 text-sm">Total</td>
