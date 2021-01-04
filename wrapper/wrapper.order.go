@@ -95,7 +95,7 @@ type NullableOrder struct {
 	Credit              bool           `db:"credit"`
 	Notes               sql.NullString `db:"notes"`
 	OrderDate           string         `db:"order_date"`
-	ShippingDate        sql.NullString `db:"shipping_date"`
+	ShippingDate        string         `db:"shipping_date"`
 	CreatedAt           string         `db:"created_at"`
 	Deposit             int            `db:"deposit"`
 	PriceTotal          int            `db:"price_total"`

@@ -201,7 +201,7 @@ CREATE TABLE "order" (
     "credit" BOOLEAN DEFAULT 'false' NOT NULL,
     "notes" VARCHAR(100),
     "order_date" DATE NOT NULL DEFAULT CURRENT_DATE,
-    "shipping_date" DATE DEFAULT CURRENT_DATE,
+    "shipping_date" DATE NOT NULL DEFAULT CURRENT_DATE,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "created_by" INT NOT NULL,
     "deposit" NUMERIC(15) DEFAULT 0,

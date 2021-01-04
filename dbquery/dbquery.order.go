@@ -196,6 +196,13 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 		return errors.New("ERROR: dbuery.order.go (CreateOrder) Save() Item order kosong")
 	}
 
+	// Jika tanggal pengiriman kosong
+	// Maka tanggal pengiriman disamakan dengan tanggal pemesanan
+	if c.ShippingDate == "" {
+		c.ShippingDate = c.OrderDate
+		c.into["shipping_date"] = ":shipping_date"
+	}
+
 	// Total keseluruhan tagihan
 	var priceTotal int
 	// Total keseluruhan harga awal barang (harga beli) sebelum profit
@@ -361,18 +368,23 @@ func (p *GetOrders) Show(db *sqlx.DB) ([]wrapper.Order, error) {
 
 	where := ""
 	if p.direction == "next" {
-		where = "WHERE id > " + strconv.Itoa(p.lastid) + "ORDER BY id ASC"
+		where = "WHERE o.id > " + strconv.Itoa(p.lastid) + "ORDER BY o.id ASC"
 	} else if p.direction == "back" {
-		where = "WHERE id < " + strconv.Itoa(p.lastid) + " ORDER BY id DESC"
+		where = "WHERE o.id < " + strconv.Itoa(p.lastid) + " ORDER BY o.id DESC"
 	}
 
 	query := `SELECT
-		id,
-		code,
-		status,
-		credit,
-		TO_CHAR(order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date
-		FROM "order"
+		o.id,
+		o.code,
+		o.status,
+		o.credit,
+		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
+		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
+		o.customer_id,
+		concat_ws(' ', c.first_name, c.last_name) as customer_name,
+		c.avatar as customer_thumb
+		FROM "order" o
+		LEFT JOIN "user" c ON c.id=customer_id
 		%s
 		LIMIT $1`
 
@@ -386,12 +398,25 @@ func (p *GetOrders) Show(db *sqlx.DB) ([]wrapper.Order, error) {
 	}
 
 	for _, p := range order {
+		// Mengambil list item dari transaksi
+		var items []wrapper.OrderItem
+		if oi, err := OrderGetOrderItem(db, p.ID); err == nil {
+			items = oi
+		}
+
 		parse = append(parse, wrapper.Order{
-			ID:        p.ID,
-			OrderDate: p.OrderDate,
-			Credit:    p.Credit,
-			Code:      p.Code,
-			Status:    strings.Title(p.Status),
+			ID:           p.ID,
+			OrderDate:    p.OrderDate,
+			ShippingDate: p.ShippingDate,
+			Credit:       p.Credit,
+			Code:         p.Code,
+			Status:       strings.Title(p.Status),
+			Customer: wrapper.NameID{
+				ID:        p.CustomerID,
+				Name:      p.CustomerName,
+				Thumbnail: p.CustomerThumb,
+			},
+			Items: items,
 		})
 	}
 
@@ -506,7 +531,7 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		Credit:         o.Credit,
 		Notes:          o.Notes.String,
 		OrderDate:      o.OrderDate,
-		ShippingDate:   string(o.ShippingDate.String),
+		ShippingDate:   o.ShippingDate,
 		PriceTotal:     o.PriceTotal,
 		BasePriceTotal: o.BasePriceTotal,
 		Items:          items,

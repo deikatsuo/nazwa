@@ -1,5 +1,5 @@
 {{ template "base" .}} {{ define "dashboard_orders_content" }}
-<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+<h2 class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
   Penjualan
 </h2>
 
@@ -15,11 +15,11 @@
         <tr
           class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
         >
-          <th class="px-3 py-3">No</th>
-          <th class="px-4 py-3">Code</th>
+          <th class="px-1 py-3 text-center">No</th>
+          <th class="px-4 py-3">Konsumen</th>
+          <th class="px-4 py-3">Barang</th>
           <th class="px-4 py-3">Status</th>
-          <th class="px-4 py-3">Pembayaran</th>
-          <th class="px-4 py-3">Tanggal Pemesanan</th>
+          <th class="px-4 py-3">Tanggal</th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
@@ -28,8 +28,56 @@
             class="text-gray-700 dark:text-gray-400 hover:bg-yellow-50 cursor-pointer"
             @click="$dispatch('modal', { tmp: order.ID, html: $refs.orderDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
           >
-            <td class="px-3 py-3 text-sm" x-text="index + loaded + 1"></td>
-            <td class="px-4 py-3 text-sm" x-text="'#'+order.Code"></td>
+            <td
+              class="px-1 py-3 text-sm text-center"
+              x-text="index + loaded + 1"
+            ></td>
+            <td class="px-4 py-3 text-sm">
+              <div class="flex items-center text-sm">
+                <!-- Tampilkan avatar -->
+                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
+                  <img
+                    class="object-cover w-full h-full rounded-full border"
+                    :src="'/file/profile/thumbnail/'+order.Customer.Thumbnail"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <div
+                    class="absolute inset-0 rounded-full shadow-inner"
+                    aria-hidden="true"
+                  ></div>
+                </div>
+                <div>
+                  <p
+                    class="text-xs"
+                    x-text="order.Code"
+                    :class="{'px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-r-full dark:bg-green-700 dark:text-green-100': !order.Credit, 'px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600': order.Credit }"
+                  ></p>
+                  <p class="text-xs" x-text="order.Customer.Name"></p>
+                </div>
+              </div>
+            </td>
+
+            <td class="px-4 py-3 text-sm">
+              <div class="flex item-center text-sm">
+                <template x-if="order.Items != null">
+                  <template x-for="(item, idx) in order.Items" :key="idx">
+                    <div>
+                      <p
+                        class="text-xs text-gray-600 dark:text-gray-400"
+                        x-text="`${item.Quantity}x ${item.Product.Name}`"
+                      ></p>
+                    </div>
+                  </template>
+                </template>
+                <template x-if="order.Items == null">
+                  <p
+                    class="text-xs text-gray-600 dark:text-gray-400"
+                  >Tidak ada produk</p>
+                </template>
+              </div>
+            </td>
+
             <td class="px-4 py-3 text-xs">
               <span
                 class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
@@ -52,19 +100,23 @@
                 x-text="order.Status"
               ></span>
             </td>
-            <td class="px-4 py-3 text-xs">
-              <span
-                class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
-                x-show="!order.Credit"
-                >Cash</span
-              >
-              <span
-                class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600"
-                x-show="order.Credit"
-                >Kredit</span
-              >
+
+            <td class="px-4 py-3 text-sm">
+              <div class="flex item-center text-sm">
+                <div>
+                  <p
+                    class="text-xs text-gray-600 dark:text-gray-400"
+                    x-text="'Pesan: ' + order.OrderDate"
+                    x-show="order.OrderDate != ''"
+                  ></p>
+                  <p
+                    class="text-xs text-gray-600 dark:text-gray-400"
+                    x-text="'Kirim: ' + order.ShippingDate"
+                    x-show="order.ShippingDate != ''"
+                  ></p>
+                </div>
+              </div>
             </td>
-            <td class="px-4 py-3 text-sm" x-text="order.OrderDate"></td>
           </tr>
         </template>
         <template x-ref="orderDetail">
@@ -79,7 +131,7 @@
                 <tr
                   class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
                 >
-                  <th class="px-3 py-3">Melibatkan</th>
+                  <th class="px-3 py-3">#Melibatkan</th>
                   <th class="px-4 py-3"></th>
                 </tr>
               </thead>
