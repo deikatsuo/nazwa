@@ -18,6 +18,7 @@ type CreateOrder struct {
 	returnID   bool
 	returnIDTO *int
 	orderItems []wrapper.OrderItemForm
+	due        int
 }
 
 // NewOrder membuat order baru
@@ -121,6 +122,14 @@ func (c *CreateOrder) SetDeposit(o int) *CreateOrder {
 	if o > 0 {
 		c.Deposit = o
 		c.into["deposit"] = ":deposit"
+	}
+	return c
+}
+
+// SetDue tenggang/tanggal waktu pembayaran
+func (c *CreateOrder) SetDue(o int) *CreateOrder {
+	if o > 0 {
+		c.due = o
 	}
 	return c
 }

@@ -1,5 +1,7 @@
 {{ template "base" .}} {{ define "dashboard_orders_add_content" }}
-<h2 class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+<h2
+  class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+>
   Buat Order
 </h2>
 
@@ -423,6 +425,34 @@
               >
                 <label class="block mt-4 text-sm">
                   <span class="text-gray-700 dark:text-gray-400"
+                    >Jatuh tempo</span
+                  >
+                  <select
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    x-model="formData.due"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDue }"
+                  >
+                    <option>Setiap...</option>
+                    <template x-for="val in 28" :key="val">
+                      <option :value="val" x-text="`tanggal ${val}`"></option>
+                    </template>
+                  </select>
+                </label>
+                <span
+                  class="text-xs text-red-600 dark:text-red-400"
+                  x-text="errmDue"
+                  :class="{'invisible': errDue == false}"
+                >
+                </span>
+              </div>
+            </div>
+
+            <div class="w-full flex flex-wrap" x-show="formData.credit == true">
+              <div
+                class="w-full md:w-1/2 md:px-1"
+              >
+                <label class="block mt-4 text-sm">
+                  <span class="text-gray-700 dark:text-gray-400"
                     >Lama Angsuran</span
                   >
                   <select
@@ -442,9 +472,7 @@
                 >
                 </span>
               </div>
-            </div>
 
-            <div class="w-full flex flex-wrap" x-show="formData.credit == true">
               <!-- Deposit -->
               <div class="w-full md:w-1/2 md:px-1">
                 <label class="block mt-4 text-sm">
@@ -504,7 +532,7 @@
               <div class="w-full md:w-1/2 md:px-1">
                 <label class="block mt-4 text-sm">
                   <span class="text-gray-700 dark:text-gray-400"
-                    >Tanggal Pengiriman</span
+                    >Tanggal Pengiriman (*opsional)</span
                   >
                   <input
                     class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
@@ -803,7 +831,7 @@
                       ></i>
                       <i
                         class="text-sm text-green-400 pl-1 font-bold"
-                        x-text="'(' + ((creditPrice(index,true)-creditPrice(index))/creditPrice(index,true))*100 + '%)'"
+                        x-text="'(' + (((creditPrice(index,true)-creditPrice(index))/creditPrice(index,true))*100).toFixed(2) + '%)'"
                       ></i>
                     </div>
                     <div class="flex item-center justify-between mt-3">
@@ -1059,8 +1087,9 @@
           sales: null,
           surveyor: null,
           collector: null,
-          credit: false,
+          credit: true,
           duration: 12,
+          due: 1,
           notes: "",
           order_date: null,
           shipping_date: null,
@@ -1113,6 +1142,8 @@
         errmCollector: "",
         errDuration: false,
         errmDuration: "",
+        errDue: false,
+        errmDue: "",
         errOrderDate: false,
         errmOrderDate: "",
         errShippingDate: false,
@@ -1412,13 +1443,13 @@
           }
 
           if (this.formData.credit == false) {
-            this.formData.order_items[index].discount = Number(this.selectedProducts[
-              index
-            ].discountPrice);
+            this.formData.order_items[index].discount = Number(
+              this.selectedProducts[index].discountPrice
+            );
           } else {
-            this.formData.order_items[index].discount = Number(this.selectedProducts[
-              index
-            ].creditDiscountPrice);
+            this.formData.order_items[index].discount = Number(
+              this.selectedProducts[index].creditDiscountPrice
+            );
           }
         },
         resetProductForm() {},

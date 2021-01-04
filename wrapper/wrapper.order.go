@@ -48,6 +48,7 @@ type OrderForm struct {
 	Collector       int             `json:"collector" binding:"omitempty,numeric"`
 	Credit          *bool           `json:"credit" binding:"required"`
 	Duration        int             `json:"duration" binding:"omitempty,numeric"`
+	Due             int             `json:"due" binding:"omitempty,numeric"`
 	Notes           string          `json:"notes" binding:"omitempty"`
 	OrderDate       string          `json:"order_date" binding:"required,date"`
 	ShippingDate    string          `json:"shipping_date" binding:"omitempty,date"`
