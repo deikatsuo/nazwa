@@ -448,9 +448,7 @@
             </div>
 
             <div class="w-full flex flex-wrap" x-show="formData.credit == true">
-              <div
-                class="w-full md:w-1/2 md:px-1"
-              >
+              <div class="w-full md:w-1/2 md:px-1">
                 <label class="block mt-4 text-sm">
                   <span class="text-gray-700 dark:text-gray-400"
                     >Lama Angsuran</span
@@ -800,6 +798,45 @@
                       ></span
                       >&nbsp;<i x-text="product.Type" class="text-xs"></i>
                     </p>
+
+                    <!-- Harga barang kredit -->
+                    <div
+                      x-show="formData.credit == true && selectedProducts[index].creditDiscountPrice == 0"
+                      class="flex item-center mt-2"
+                    >
+                      <i
+                        class="text-sm"
+                        x-text="'Harga ' + toRupiah(creditPrice(index, true) * formData.duration)"
+                      ></i>
+                    </div>
+                    <!-- Harga barang kredit diskon -->
+                    <div
+                      x-show="formData.credit == true && selectedProducts[index].creditDiscountPrice > 0"
+                      class="w-full item-center mt-2"
+                    >
+                      <i
+                        class="text-sm text-red-400 line-through"
+                        x-text="'Harga ' + toRupiah(creditPrice(index, true) * formData.duration)"
+                      ></i><br />
+                      <i
+                        class="text-sm text-green-400 pl-1 font-bold"
+                        x-text="'Harga ' + toRupiah(selectedProducts[index].creditDiscountPrice * formData.duration)"
+                      ></i>
+                    </div>
+                    <!-- Harga barang cash -->
+                    <div
+                      x-show="selectedProducts[index].discountPrice > 0 && formData.credit == false"
+                      class="flex item-center mt-2"
+                    >
+                      <i
+                        class="text-sm text-red-400 line-through"
+                        x-text="'Harga ' + toRupiah(price(index,true)/formData.order_items[index].quantity)"
+                      ></i>
+                      <i
+                        class="text-sm text-green-400 pl-1 font-bold"
+                        x-text="'(' + (((price(index,true)-price(index))/price(index,true))*100).toFixed(2) + '%)'"
+                      ></i>
+                    </div>
                     <p class="mt-2 text-gray-600">
                       <textarea
                         class="block w-full text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
@@ -808,31 +845,24 @@
                         x-model="formData.order_items[index].notes"
                       ></textarea>
                     </p>
+
                     <div
-                      x-show="selectedProducts[index].discountPrice != 0 && formData.credit == false"
-                      class="flex item-center mt-2"
+                      x-show="formData.credit == true"
+                      class="flex flex-wrap w-full item-center mt-2"
                     >
-                      <i
-                        class="text-sm text-red-400 line-through"
-                        x-text="toRupiah(price(index,true)/formData.order_items[index].quantity)"
-                      ></i>
-                      <i
-                        class="text-sm text-green-400 pl-1 font-bold"
-                        x-text="'(' + (((price(index,true)-price(index))/price(index,true))*100).toFixed(2) + '%)'"
-                      ></i>
-                    </div>
-                    <div
-                      x-show="selectedProducts[index].creditDiscountPrice != 0 && formData.credit == true"
-                      class="flex item-center mt-2"
-                    >
-                      <i
-                        class="text-sm text-red-400 line-through"
-                        x-text="toRupiah(creditPrice(index, true)/formData.order_items[index].quantity)"
-                      ></i>
-                      <i
-                        class="text-sm text-green-400 pl-1 font-bold"
-                        x-text="'(' + (((creditPrice(index,true)-creditPrice(index))/creditPrice(index,true))*100).toFixed(2) + '%)'"
-                      ></i>
+                      <div
+                        x-show="selectedProducts[index].creditDiscountPrice > 0"
+                        class="w-full"
+                      >
+                        <i
+                          class="text-sm text-red-400 line-through"
+                          x-text="toRupiah(creditPrice(index, true)/formData.order_items[index].quantity) + '/bulan'"
+                        ></i>
+                        <i
+                          class="text-sm text-green-400 pl-1 font-bold"
+                          x-text="'(' + (((creditPrice(index,true)-creditPrice(index))/creditPrice(index,true))*100).toFixed(2) + '%)'"
+                        ></i>
+                      </div>
                     </div>
                     <div class="flex item-center justify-between mt-3">
                       <h1
