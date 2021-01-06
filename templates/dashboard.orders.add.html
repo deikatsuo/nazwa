@@ -750,6 +750,7 @@
             </div>
           </div>
 
+          <!-- List Item/Produk -->
           <div
             class="w-full md:w-1/3 md:px-1"
             x-show="selectedProducts.length > 0"
@@ -763,6 +764,7 @@
                 :key="index"
               >
                 <div class="flex overflow-hidden border-b mt-1 pb-1 relative">
+                  <!-- Tombol discard item -->
                   <div
                     class="cursor-pointer absolute bg-red-200 text-red-500 font-bold text-xs top-0 right-0 mt-1 mr-1"
                     @click="remove(index)"
@@ -770,6 +772,7 @@
                   >
                     <p>{{ template "_svg_icon_close" }}</p>
                   </div>
+                  <!-- Gambar/thumbnail produk -->
                   <div class="w-1/4 bg-cover p-1">
                     <img
                       class="object-cover w-16 h-16 border"
@@ -786,6 +789,7 @@
                       x-show="product.Thumbnail === ''"
                     />
                   </div>
+                  <!-- Deskripsi/detail produk -->
                   <div class="p-1 w-3/4">
                     <h1
                       class="text-gray-500 font-bold"
@@ -794,49 +798,46 @@
                     <p class="text-gray-500 text-sm">
                       <span
                         x-text="product.Brand"
-                        class="inline-flex items-center px-2 py-1 font-serif font-semibold rounded-full text-sm leading-3 bg-orange-500 text-orange-100"
+                        class="inline-block bg-orange-500 rounded-full px-3 py-1 text-xs font-semibold text-orange-100 mr-2"
                       ></span
                       >&nbsp;<i x-text="product.Type" class="text-xs"></i>
                     </p>
 
                     <!-- Harga barang kredit -->
                     <div
-                      x-show="formData.credit == true && selectedProducts[index].creditDiscountPrice == 0"
+                      x-show="formData.credit == true"
                       class="flex item-center mt-2"
                     >
-                      <i
-                        class="text-sm"
-                        x-text="'Harga ' + toRupiah(creditPrice(index, true) * formData.duration)"
-                      ></i>
+                      <span
+                        class="inline-block rounded-full px-3 py-1 text-xs font-semibold mr-2"
+                        :class="{'bg-red-200 text-red-500 line-through': selectedProducts[index].creditDiscountPrice > 0, 'bg-yellow-200 text-yellow-500': selectedProducts[index].creditDiscountPrice == 0 }"
+                        x-text="'Harga kredit ' + toRupiah(creditPrice(index, true) * formData.duration)"
+                      ></span>
                     </div>
                     <!-- Harga barang kredit diskon -->
                     <div
                       x-show="formData.credit == true && selectedProducts[index].creditDiscountPrice > 0"
                       class="w-full item-center mt-2"
                     >
-                      <i
-                        class="text-sm text-red-400 line-through"
-                        x-text="'Harga ' + toRupiah(creditPrice(index, true) * formData.duration)"
-                      ></i><br />
-                      <i
-                        class="text-sm text-green-400 pl-1 font-bold"
-                        x-text="'Harga ' + toRupiah(selectedProducts[index].creditDiscountPrice * formData.duration)"
-                      ></i>
+                      <span
+                        class="inline-block bg-green-200 rounded-full px-3 py-1 text-xs font-semibold text-green-500 mr-2"
+                        x-text="'Harga diskon ' + toRupiah(selectedProducts[index].creditDiscountPrice * formData.duration)"
+                      ></span>
                     </div>
                     <!-- Harga barang cash -->
-                    <div
+                    <p
                       x-show="selectedProducts[index].discountPrice > 0 && formData.credit == false"
-                      class="flex item-center mt-2"
+                      class="text-sm mt-2"
                     >
-                      <i
-                        class="text-sm text-red-400 line-through"
+                      <span
+                        class="inline-block bg-red-200 rounded-full px-3 py-1 text-xs font-semibold text-red-500 line-through"
                         x-text="'Harga ' + toRupiah(price(index,true)/formData.order_items[index].quantity)"
-                      ></i>
+                      ></span>
                       <i
-                        class="text-sm text-green-400 pl-1 font-bold"
+                        class="text-xs text-green-400 pl-1 font-bold"
                         x-text="'(' + (((price(index,true)-price(index))/price(index,true))*100).toFixed(2) + '%)'"
                       ></i>
-                    </div>
+                    </p>
                     <p class="mt-2 text-gray-600">
                       <textarea
                         class="block w-full text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
@@ -1419,11 +1420,13 @@
               if (this.formData.duration == item.CreditPrice[i].Duration) {
                 price = item.CreditPrice[i].Price;
                 price = price.replace(/[^0-9]+/g, "");
+              } else {
+                price = 0;
               }
             }
           }
 
-          price = price * this.formData.order_items[index].quantity;
+          price = Number(price * this.formData.order_items[index].quantity);
 
           if (ori) {
             return price;
@@ -1445,10 +1448,19 @@
           if (this.formData.credit == false) {
             for (i = 0; i < products.length; i++) {
               total += this.price(i);
+              console.log("CASH");
+              console.log("Total " +total);
+              console.log("Index " +i);
+              console.log("Length " +products.length);
             }
-          } else {
+          } 
+          if (this.formData.credit == true) {
             for (i = 0; i < products.length; i++) {
               total += this.creditPrice(i);
+              console.log("KREDIT");
+              console.log("Total " +total);
+              console.log("Index " +i);
+              console.log("Length " +products.length);
             }
           }
 
