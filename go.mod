@@ -10,7 +10,6 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/gin-contrib/gzip v0.0.3
-	github.com/gin-contrib/location v0.0.2
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/autotls v0.0.3
 	github.com/gin-gonic/contrib v0.0.0-20201101042839-6a891bf89f19
@@ -23,12 +22,11 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/jmoiron/sqlx v1.2.1-0.20200615141059-0794cb1f47ee
 	github.com/joho/godotenv v1.3.0
+	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lib/pq v1.9.0
 	github.com/martinlindhe/base36 v1.1.0
 	github.com/mattn/go-runewidth v0.0.9 // indirect
-	github.com/penglongli/gin-metrics v0.1.1
-	github.com/prometheus/client_golang v1.7.1
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/semihalev/gin-stats v0.0.0-20180505163755-30fdcbbd3533
 	github.com/ugorji/go v1.2.2 // indirect
@@ -37,6 +35,6 @@ require (
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/sys v0.0.0-20201231184435-2d18734c6014 // indirect
 	golang.org/x/text v0.3.4 // indirect
+	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gotest.tools/v3 v3.0.2 // indirect
 )
