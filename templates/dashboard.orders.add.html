@@ -1416,12 +1416,10 @@
           var price = 0;
           var item = this.selectedProducts[index];
           if (item.CreditPrice != null) {
-            for (i = 0; i < item.CreditPrice.length; i++) {
-              if (this.formData.duration == item.CreditPrice[i].Duration) {
-                price = item.CreditPrice[i].Price;
+            for (cpi = 0; cpi < item.CreditPrice.length; cpi++) {
+              if (this.formData.duration == item.CreditPrice[cpi].Duration) {
+                price = item.CreditPrice[cpi].Price;
                 price = price.replace(/[^0-9]+/g, "");
-              } else {
-                price = 0;
               }
             }
           }
@@ -1448,19 +1446,11 @@
           if (this.formData.credit == false) {
             for (i = 0; i < products.length; i++) {
               total += this.price(i);
-              console.log("CASH");
-              console.log("Total " +total);
-              console.log("Index " +i);
-              console.log("Length " +products.length);
             }
           } 
           if (this.formData.credit == true) {
             for (i = 0; i < products.length; i++) {
               total += this.creditPrice(i);
-              console.log("KREDIT");
-              console.log("Total " +total);
-              console.log("Index " +i);
-              console.log("Length " +products.length);
             }
           }
 
