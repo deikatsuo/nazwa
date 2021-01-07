@@ -914,12 +914,20 @@
               </div>
             </div>
             <div class="w-full flex mt-1">
-              <div class="w-1/4 px-1"><span>Total</span></div>
+              <div class="w-1/4 px-1">
+                <span x-show="formData.credit == false">Total</span>
+                <span x-show="formData.credit == true">Cicilan</span>
+              </div>
               <div class="w-3/4 px-1">
                 <span
                   class="text-gray-700 font-semi text-xl"
                   x-text="toRupiah(countTotal())"
                 ></span>
+                <span
+                  class="text-sm text-gray-500"
+                  x-show="formData.credit == true"
+                  >/ bulan</span
+                >
               </div>
             </div>
           </div>
@@ -1447,7 +1455,7 @@
             for (i = 0; i < products.length; i++) {
               total += this.price(i);
             }
-          } 
+          }
           if (this.formData.credit == true) {
             for (i = 0; i < products.length; i++) {
               total += this.creditPrice(i);
