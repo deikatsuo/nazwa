@@ -910,7 +910,9 @@
             <div class="w-full flex">
               <div class="w-1/4 px-1"><span>Diskon</span></div>
               <div class="w-3/4 px-1">
-                <span class="text-gray-700 text-sm">0</span>
+                <span x-show="formData.credit == false" class="text-gray-700 text-sm" x-text="toRupiah(total_ori-countTotal())"></span>
+                <span x-show="formData.credit == true" class="text-gray-700 text-sm" x-text="toRupiah((total_ori-countTotal())*formData.duration)"></span>
+                <span x-show="formData.credit == true" class="text-gray-500 text-xs" x-text="'(' +toRupiah(total_ori-countTotal()) + '/bulan)'"></span>
               </div>
             </div>
             <div class="w-full flex mt-1">
@@ -928,6 +930,17 @@
                   x-show="formData.credit == true"
                   >/ bulan</span
                 >
+              </div>
+            </div>
+            <div class="w-full flex mt-1" x-show="formData.credit == true">
+              <div class="w-1/4 px-1">
+                <span>Total</span>
+              </div>
+              <div class="w-3/4 px-1">
+                <span
+                  class="text-gray-700 font-semi text-xl"
+                  x-text="toRupiah(countTotal()*formData.duration)"
+                ></span>
               </div>
             </div>
           </div>
@@ -1166,7 +1179,7 @@
         loadingText: "Buat Order",
         loading: false,
         duration: null,
-        total: 0,
+        total_ori: 0,
         products: [],
         selectedProducts: [],
         editPrice: null,
@@ -1450,20 +1463,22 @@
         },
         countTotal() {
           var total = 0;
+          var total_ori = 0;
           var products = this.selectedProducts;
           if (this.formData.credit == false) {
             for (i = 0; i < products.length; i++) {
               total += this.price(i);
+              total_ori += this.price(i, true);
             }
           }
           if (this.formData.credit == true) {
             for (i = 0; i < products.length; i++) {
               total += this.creditPrice(i);
+              total_ori += this.creditPrice(i, true);
             }
           }
 
-          this.total = total;
-          this.pay = total;
+          this.total_ori = total_ori;
 
           return total;
         },
