@@ -284,11 +284,11 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 	}
 
 	// Item yang akan di insert
-	var itemInsert wrapper.OrderItemInsert
+	var itemInsert []wrapper.OrderItemInsert
 
 	itemInsertQuery := `INSERT INTO "order_item" (order_id, product_id, quantity, notes, base_price, price, discount) VALUES (:order_id, :product_id, :quantity, :notes, :base_price, :price, :discount)`
 	for n, i := range c.orderItems {
-		itemInsert = wrapper.OrderItemInsert{
+		itemInsert = append(itemInsert, wrapper.OrderItemInsert{
 			OrderID:   tempReturnID,
 			ProductID: i.ProductID,
 			Quantity:  i.Quantity,
@@ -296,12 +296,13 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 			Price:     prices[n],
 			BasePrice: basePrices[n],
 			Discount:  i.Discount,
-		}
-		if _, err := tx.NamedQuery(itemInsertQuery, itemInsert); err != nil {
-			log.Println("ERROR: dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert item ", n)
-			tx.Rollback()
-			return err
-		}
+		})
+	}
+
+	if _, err := tx.NamedQuery(itemInsertQuery, itemInsert); err != nil {
+		log.Println("ERROR: dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert item ")
+		tx.Rollback()
+		return err
 	}
 
 	/*

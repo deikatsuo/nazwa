@@ -62,11 +62,13 @@
               <div class="flex item-center text-sm">
                 <template x-if="order.Items != null">
                   <template x-for="(item, idx) in order.Items" :key="idx">
-                    <div>
+                    <div class="flex item-center text-sm">
                       <p
                         class="text-xs text-gray-600 dark:text-gray-400"
-                        x-text="`${item.Quantity}x ${item.Product.Name}`"
+                        x-text="`[${item.Quantity}x ${item.Product.Name}]`"
                       ></p>
+                      <p class="pr-1" x-show="order.Items.length > 1 && idx < (order.Items.length-2)">,</p>
+                      <p class="px-1" x-show="order.Items.length > 1 && idx == (order.Items.length-2)">dan</p>
                     </div>
                   </template>
                 </template>
@@ -568,7 +570,7 @@
       },
       backW($dispatch) {
         if (this.page > 1) {
-          this.lastid = this.users[0].ID;
+          this.lastid = this.orders[0].ID;
           this.fetchOrdersData($dispatch, false, "back");
         }
       },
