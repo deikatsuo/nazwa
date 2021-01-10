@@ -98,7 +98,10 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 		var creditPrice []wrapper.ProductCreditPriceSelect
 		if pr, err := ProductGetProductCreditPrice(db, p.ID); err == nil {
 			creditPrice = pr
+		} else {
+			log.Println(err)
 		}
+		fmt.Println(creditPrice)
 		parse = append(parse, wrapper.Product{
 			ID:          p.ID,
 			Name:        strings.Title(p.Name),
@@ -182,7 +185,7 @@ func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 // ProductGetProductCreditPrice mengambil data harga kredit
 func ProductGetProductCreditPrice(db *sqlx.DB, pid int) ([]wrapper.ProductCreditPriceSelect, error) {
 	var prices []wrapper.ProductCreditPriceSelect
-	query := `SELECT id, duration, TO_CHAR(price,'Rp999G999G999G999G999') AS price
+	query := `SELECT id, duration, price
 	FROM "product_credit_price"
 	WHERE product_id=$1`
 	err := db.Select(&prices, query, pid)

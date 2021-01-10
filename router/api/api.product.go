@@ -339,7 +339,7 @@ func ProductShowByID(db *sqlx.DB) gin.HandlerFunc {
 // SEARCH //
 ////////////
 
-// ProductSearchByName cari user berdasarkan Nomor induk kependudukan
+// ProductSearchByName cari produk berdasarkan nama
 func ProductSearchByName(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)

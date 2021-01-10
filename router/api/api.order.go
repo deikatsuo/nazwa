@@ -215,6 +215,7 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetBilling(json.BillingAddress).
 				SetCredit(*json.Credit).
 				SetDeposit(json.Deposit).
+				SetDuration(json.Duration).
 				SetDue(json.Due).
 				SetNotes(json.Notes).
 				SetCode(code).

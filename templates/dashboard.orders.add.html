@@ -1443,7 +1443,7 @@
           var num = 0;
 
           num =
-            this.selectedProducts[index].Price.replace(/[^0-9]+/g, "") *
+            this.selectedProducts[index].Price *
             this.formData.order_items[index].quantity;
 
           if (ori) {
@@ -1467,7 +1467,6 @@
             for (cpi = 0; cpi < item.CreditPrice.length; cpi++) {
               if (this.formData.duration == item.CreditPrice[cpi].Duration) {
                 price = item.CreditPrice[cpi].Price;
-                price = price.replace(/[^0-9]+/g, "");
               }
             }
           }

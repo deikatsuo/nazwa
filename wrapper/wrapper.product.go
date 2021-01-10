@@ -42,9 +42,9 @@ type NullableProduct struct {
 
 // ProductCreditPriceSelect list harga kredit produk
 type ProductCreditPriceSelect struct {
-	ID       int    `db:"id"`
-	Duration int    `db:"duration"`
-	Price    string `db:"price"`
+	ID       int `db:"id"`
+	Duration int `db:"duration"`
+	Price    int `db:"price"`
 }
 
 /* ----------------------------------------------------- */

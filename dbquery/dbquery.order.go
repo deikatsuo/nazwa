@@ -19,6 +19,7 @@ type CreateOrder struct {
 	returnIDTO *int
 	orderItems []wrapper.OrderItemForm
 	due        int
+	duration   int
 }
 
 // NewOrder membuat order baru
@@ -126,6 +127,14 @@ func (c *CreateOrder) SetDeposit(o int) *CreateOrder {
 	return c
 }
 
+// SetDuration Durasi kredit barang
+func (c *CreateOrder) SetDuration(o int) *CreateOrder {
+	if o > 0 {
+		c.duration = o
+	}
+	return c
+}
+
 // SetDue tenggang/tanggal waktu pembayaran
 func (c *CreateOrder) SetDue(o int) *CreateOrder {
 	if o > 0 {
@@ -221,10 +230,27 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 	var basePrices []int
 
 	// Periksa apakah pembelian kredit atau cash
-	if c.Credit {
+	// Lalu kalkulasikan
+	for _, item := range c.orderItems {
+		if c.Credit {
+			// Temporary credit price
+			var tmpcp int
+			p, err := ProductGetProductCreditPrice(db, item.ProductID)
+			if err == nil {
+				for _, ps := range p {
+					if ps.Duration == c.duration {
+						tmpcp = ps.Price
+					}
+				}
+			}
 
-	} else {
-		for _, item := range c.orderItems {
+			if item.Discount > 0 {
+				priceTotal += (item.Discount * item.Quantity) * c.duration
+			} else {
+				priceTotal += (tmpcp * item.Quantity) * c.duration
+			}
+			prices = append(prices, tmpcp)
+		} else {
 			p, err := ProductGetProductPrice(db, item.ProductID)
 			if err != nil {
 				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
@@ -238,16 +264,15 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 				priceTotal += p * item.Quantity
 			}
 			prices = append(prices, p)
-
-			bp, err := ProductGetProductBasePrice(db, item.ProductID)
-			if err != nil {
-				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
-				return err
-			}
-			basePriceTotal += bp * item.Quantity
-			basePrices = append(basePrices, bp)
 		}
 
+		bp, err := ProductGetProductBasePrice(db, item.ProductID)
+		if err != nil {
+			log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item base price")
+			return err
+		}
+		basePriceTotal += bp * item.Quantity
+		basePrices = append(basePrices, bp)
 	}
 
 	if priceTotal != 0 {
