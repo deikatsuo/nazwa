@@ -909,10 +909,37 @@
             </div>
             <div class="w-full flex">
               <div class="w-1/4 px-1"><span>Diskon</span></div>
-              <div class="w-3/4 px-1">
-                <span x-show="formData.credit == false" class="text-gray-700 text-sm" x-text="toRupiah(total_ori-countTotal())"></span>
-                <span x-show="formData.credit == true" class="text-gray-700 text-sm" x-text="toRupiah((total_ori-countTotal())*formData.duration)"></span>
-                <span x-show="formData.credit == true" class="text-gray-500 text-xs" x-text="'(' +toRupiah(total_ori-countTotal()) + '/bulan)'"></span>
+              <div
+                class="w-3/4 px-1 flex flex-wrap items-center"
+                :class="{'text-red-500': total_ori < countTotal() }"
+                class="text-sm"
+              >
+                <span x-show="total_ori < countTotal()" class="text-sm">-</span>
+                <!-- Diskon pembelian cash -->
+                <span
+                  x-show="formData.credit == false"
+                  class="text-sm"
+                  x-text="toRupiah(total_ori-countTotal())"
+                ></span>
+                <!-- Diskon pembelian kredit -->
+                <span
+                  x-show="formData.credit == true"
+                  x-text="toRupiah((total_ori-countTotal())*formData.duration)"
+                  class="pr-1"
+                ></span>
+                <div
+                  class="text-gray-500 text-xs"
+                  x-show="formData.credit == true"
+                >
+                  (
+                  <span x-show="total_ori < countTotal()" class="text-sm"
+                    >-</span
+                  >
+                  <span
+                    x-text="toRupiah(total_ori-countTotal())"
+                  ></span>
+                  /bulan)
+                </div>
               </div>
             </div>
             <div class="w-full flex mt-1">
