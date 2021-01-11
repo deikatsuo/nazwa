@@ -168,6 +168,11 @@ func runServer(db *sqlx.DB) {
 	v1product.GET("/all", api.ProductShowAll(db))
 	v1product.POST("/add", api.ProductCreate(db))
 
+	// /api/v1/local/product/edit
+	v1pEdit := v1product.Group("/edit")
+	v1pEdit.POST("/:id/add/credit_price", api.ProductAddCreditPrice(db))
+	v1pEdit.DELETE("/:id/delete/credit_price", api.ProductDeleteCreditPrice(db))
+
 	// /api/v1/local/product/search
 	v1pSearch := v1product.Group("/search")
 	v1pSearch.GET("/name/:limit", api.ProductSearchByName(db))
@@ -186,14 +191,6 @@ func runServer(db *sqlx.DB) {
 	v1user.GET("/id/:id", api.UserShowByID(db))
 	v1user.GET("/address/:id", api.UserShowAddressByUserID(db))
 
-	// User API search/pencarian
-	// /api/v1/local/user/search
-	v1uSearch := v1user.Group("/search")
-	v1uSearch.GET("/ric/:limit", api.UserSearchByNIK(db))
-	v1uSearch.GET("/collector/:limit", api.UserSearchByNameType(db, "2"))
-	v1uSearch.GET("/surveyor/:limit", api.UserSearchByNameType(db, "4"))
-	v1uSearch.GET("/sales/:limit", api.UserSearchByNameType(db, "5"))
-
 	// User API edit
 	// /api/v1/local/user/edit
 	v1uEdit := v1user.Group("/edit")
@@ -205,6 +202,14 @@ func runServer(db *sqlx.DB) {
 	v1uEdit.POST("/:id/add/phone", api.UserAddPhone(db))
 	v1uEdit.POST("/:id/add/address", api.UserAddAddress(db))
 	v1uEdit.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
+
+	// User API search/pencarian
+	// /api/v1/local/user/search
+	v1uSearch := v1user.Group("/search")
+	v1uSearch.GET("/ric/:limit", api.UserSearchByNIK(db))
+	v1uSearch.GET("/collector/:limit", api.UserSearchByNameType(db, "2"))
+	v1uSearch.GET("/surveyor/:limit", api.UserSearchByNameType(db, "4"))
+	v1uSearch.GET("/sales/:limit", api.UserSearchByNameType(db, "5"))
 
 	port := ":" + misc.GetEnv("PORT", "8080").(string)
 

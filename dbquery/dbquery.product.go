@@ -101,7 +101,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 		} else {
 			log.Println(err)
 		}
-		fmt.Println(creditPrice)
+
 		parse = append(parse, wrapper.Product{
 			ID:          p.ID,
 			Name:        strings.Title(p.Name),
@@ -402,6 +402,25 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 	return err
 }
 
+// ProductInsertCreditPrice menambahkan harga kredit produk ke database
+func ProductInsertCreditPrice(db *sqlx.DB, cps []wrapper.ProductCreditPriceInsert) error {
+	query := `INSERT INTO "product_credit_price" (product_id, duration, price) VALUES (:product_id, :duration, :price)`
+	if _, err := db.NamedQuery(query, cps); err != nil {
+		log.Println("ERROR: dbquery.product.go ProductInsertCreditPrice() Gagal menambahkan harga kredit")
+		return err
+	}
+
+	return nil
+}
+
+// ProductDeleteCreditPrice menghapus harga kredit barang
+func ProductDeleteCreditPrice(db *sqlx.DB, pcpid int64, pid int) error {
+	query := `DELETE FROM "product_credit_price"
+	WHERE id=$1 AND product_id=$2`
+	_, err := db.Exec(query, pcpid, pid)
+	return err
+}
+
 ///////////
 // CHECK //
 ///////////
@@ -416,6 +435,21 @@ func ProductSkuExist(db *sqlx.DB, sku string) bool {
 		if indb != "" {
 			return true
 		}
+	}
+
+	return false
+}
+
+// ProductCreditDurationExist chek apakah durasi kredit sudah ada
+func ProductCreditDurationExist(db *sqlx.DB, pid int, dur int) bool {
+	var indb int
+	query := `SELECT duration FROM "product_credit_price" WHERE product_id=$1 AND duration=$2 LIMIT 1`
+	err := db.Get(&indb, query, pid, dur)
+	if err == nil {
+		if indb != 0 {
+			return true
+		}
+
 	}
 
 	return false

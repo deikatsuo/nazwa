@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"nazwa/dbquery"
 	"nazwa/misc"
@@ -12,10 +13,13 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
+
+//////////////////////////////////// [POST] //////////////////////////////////////////
 
 // ProductCreate API untuk menambahkan produk baru
 func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
@@ -137,6 +141,140 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 	}
 	return gin.HandlerFunc(fn)
 }
+
+// ProductAddCreditPrice menambahkan harga kredit barang
+func ProductAddCreditPrice(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		nowID := session.Get("userid")
+		// User id yang merequest
+		pid, err := strconv.Atoi(c.Param("id"))
+		if err != nil || nowID == nil {
+			router.Page404(c)
+			return
+		}
+
+		errMess := ""
+		next := true
+		httpStatus := http.StatusBadRequest
+		success := ""
+
+		var creditPrice wrapper.ProductCreditPriceForm
+		if err := c.ShouldBindJSON(&creditPrice); err != nil {
+			log.Println("ERROR: api.product.go ProductAddCreditPrice() gagal bind json")
+			log.Println(err)
+			next = false
+		}
+
+		if creditPrice.Duration <= 1 {
+			errMess = "Durasi harus lebih dari satu bulan"
+			next = false
+		}
+
+		if next {
+			if dbquery.ProductCreditDurationExist(db, pid, creditPrice.Duration) {
+				errMess = fmt.Sprintf("Produk dengan durasi %d sudah ada", creditPrice.Duration)
+				next = false
+			}
+		}
+
+		var insertCreditPrice []wrapper.ProductCreditPriceInsert
+		if next {
+			insertCreditPrice = append(insertCreditPrice, wrapper.ProductCreditPriceInsert{
+				ProductID: pid,
+				Duration:  creditPrice.Duration,
+				Price:     creditPrice.Price,
+			})
+			if err := dbquery.ProductInsertCreditPrice(db, insertCreditPrice); err != nil {
+				errMess = "Gagal menambahkan harga kredit"
+				next = false
+			}
+
+		}
+
+		// Ambil harga kredit barang dari database
+		var retCreditPrices []wrapper.ProductCreditPriceSelect
+		if next {
+			pp, err := dbquery.ProductGetProductCreditPrice(db, pid)
+			if err != nil {
+				errMess = "Gagal memuat harga kredit barang"
+			} else {
+				retCreditPrices = pp
+				httpStatus = http.StatusOK
+				success = "Harga kredit berhasil ditambahkan"
+			}
+		}
+		c.JSON(httpStatus, gin.H{
+			"error":        errMess,
+			"success":      success,
+			"credit_price": retCreditPrices,
+		})
+	}
+	return gin.HandlerFunc(fn)
+}
+
+/////////////////////////////////////// DELETE /////////////////////////////////////////
+
+// ProductDeleteCreditPrice hapus harga kredit barang
+func ProductDeleteCreditPrice(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		nowID := session.Get("userid")
+		// User id yang merequest
+		pid, err := strconv.Atoi(c.Param("id"))
+		if err != nil || nowID == nil {
+			router.Page404(c)
+			return
+		}
+
+		errMess := ""
+		next := true
+		httpStatus := http.StatusBadRequest
+		success := ""
+
+		body, err := ioutil.ReadAll(c.Request.Body)
+		if err != nil {
+			errMess = "Data tidak benar"
+			next = false
+		}
+
+		pcpid, err := jsonparser.GetInt(body, "id")
+		if err != nil {
+			errMess = "Request tidak valid"
+		}
+
+		// Delete harga kredit
+		if next {
+			if err := dbquery.ProductDeleteCreditPrice(db, pcpid, pid); err != nil {
+				errMess = "Gagal menghapus harga kredit"
+				next = false
+			}
+		}
+
+		// Ambil harga kredit sisa jika masih ada
+		var retCreditPrices []wrapper.ProductCreditPriceSelect
+		if next {
+			rcp, err := dbquery.ProductGetProductCreditPrice(db, pid)
+			if err != nil {
+				errMess = "Gagal memuat harga kredit/semua harga kredit sudah dihapus"
+			} else {
+				retCreditPrices = rcp
+				httpStatus = http.StatusOK
+				success = "Harga kredit berhasil dihapus"
+			}
+		}
+		c.JSON(httpStatus, gin.H{
+			"error":        errMess,
+			"success":      success,
+			"credit_price": retCreditPrices,
+		})
+	}
+	return gin.HandlerFunc(fn)
+}
+
+/////////////////////////////////////// GET ////////////////////////////////////////////
 
 // ProductShowList mengambil data/list produk
 func ProductShowList(db *sqlx.DB) gin.HandlerFunc {
@@ -334,10 +472,6 @@ func ProductShowByID(db *sqlx.DB) gin.HandlerFunc {
 	}
 	return fn
 }
-
-////////////
-// SEARCH //
-////////////
 
 // ProductSearchByName cari produk berdasarkan nama
 func ProductSearchByName(db *sqlx.DB) gin.HandlerFunc {

@@ -191,7 +191,11 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 		if save {
 			uname, err := dbquery.UserGetUsername(db, json.Customer)
 			if err == nil {
-				uname = uname[3:]
+				if uname[:3] == "NZ-" || uname[:3] == "NE-" {
+					if len(uname) >= 7 {
+						uname = uname[3:]
+					}
+				}
 				tm := time.Now()
 				dt := strings.ReplaceAll(tm.Format("01-02-2006"), "-", "")
 				dy := tm.Format("Mon")

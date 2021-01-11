@@ -40,6 +40,19 @@ type NullableProduct struct {
 	CreatedBy int            `db:"created_by"`
 }
 
+// ProductCreditPriceInsert tambah harga kredit barang
+type ProductCreditPriceInsert struct {
+	ProductID int `db:"product_id"`
+	Duration  int `db:"duration"`
+	Price     int `db:"price"`
+}
+
+// ProductCreditPriceForm harga kredit barang
+type ProductCreditPriceForm struct {
+	Duration int `json:"duration"`
+	Price    int `json:"price"`
+}
+
 // ProductCreditPriceSelect list harga kredit produk
 type ProductCreditPriceSelect struct {
 	ID       int `db:"id"`
@@ -60,12 +73,6 @@ type ProductForm struct {
 	Price       string                   `json:"price" binding:"required,numeric,min=1,max=15"`
 	CreditPrice []ProductCreditPriceForm `json:"credit_price" binding:"omitempty"`
 	Photo       []ProductPhotoForm       `json:"photos" binding:"omitempty"`
-}
-
-// ProductCreditPriceForm harga kredit barang
-type ProductCreditPriceForm struct {
-	Duration int `json:"duration"`
-	Price    int `json:"price"`
 }
 
 // ProductPhotoForm list photo produk

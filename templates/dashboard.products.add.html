@@ -1,5 +1,7 @@
 {{ template "base" .}} {{ define "dashboard_products_add_content" }}
-<h2 class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+<h2
+  class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+>
   Tambah Produk
 </h2>
 
@@ -708,6 +710,17 @@
             });
             return;
           }
+
+          for (i = 0; i < this.formData.credit_price.length; i++) {
+            if (this.formData.credit_price[i].duration == this.duration) {
+              $dispatch("notif", {
+                type: "error",
+                message: `Harga untuk durasi ${this.duration} bulan sudah ditambahkan`,
+              });
+              return;
+            }
+          }
+
           this.formData.credit_price.push({
             duration: Number(this.duration),
             price: Number(this.price),
