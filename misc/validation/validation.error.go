@@ -59,7 +59,7 @@ func SimpleValErrMap(verr interface{}) map[string]interface{} {
 		for mi, mv := range ValidationErrorsMask {
 			if v.Tag() == mi {
 				errmap[strings.ToLower(v.StructField())] = mv
-				if v.Tag() == "min" || v.Tag() == "max" {
+				if v.Tag() == "min" || v.Tag() == "max" || v.Tag() == "gte" || v.Tag() == "lte" {
 					errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, v.Param())
 				}
 				if v.Tag() == "oneof" {
@@ -87,4 +87,6 @@ var ValidationErrorsMask = map[string]string{
 	"base64":          "Harus string base64",
 	"datetime":        "Format tanggal dan waktu salah",
 	"date":            "Format tanggal salah",
+	"gte":             "Harus lebih besar dari",
+	"lte":             "Tidak boleh lebih dari",
 }

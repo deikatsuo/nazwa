@@ -243,11 +243,15 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 					}
 				}
 			}
+			if tmpcp <= 0 {
+				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Harga kredit tidak ada")
+				return fmt.Errorf("Tidak ditemukan harga kredit untuk durasi %d bulan", c.duration)
+			}
 
 			if item.Discount > 0 {
-				priceTotal += (item.Discount * item.Quantity) * c.duration
+				priceTotal += ((item.Discount * item.Quantity) - c.Deposit) * c.duration
 			} else {
-				priceTotal += (tmpcp * item.Quantity) * c.duration
+				priceTotal += ((tmpcp * item.Quantity) - c.Deposit) * c.duration
 			}
 			prices = append(prices, tmpcp)
 		} else {
@@ -500,6 +504,7 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
 		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
 		o.code,
+		o.deposit,
 		o.price_total,
 		o.base_price_total
 		FROM "order" o
@@ -567,6 +572,7 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		Notes:          o.Notes.String,
 		OrderDate:      o.OrderDate,
 		ShippingDate:   o.ShippingDate,
+		Deposit:        o.Deposit,
 		PriceTotal:     o.PriceTotal,
 		BasePriceTotal: o.BasePriceTotal,
 		Items:          items,
