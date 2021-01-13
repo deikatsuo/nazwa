@@ -1,5 +1,7 @@
 {{ template "base" .}} {{ define "dashboard_users_add_content" }}
-<h2 class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+<h2
+  class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+>
   Tambah Pengguna
 </h2>
 
@@ -81,6 +83,12 @@
                 :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFirstname }"
               />
             </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmFirstname"
+              :class="{'invisible': errFirstname == false}"
+            >
+            </span>
           </div>
           <div class="w-full md:w-1/2 md:pl-3">
             <label class="block mt-4 text-sm">
@@ -92,15 +100,16 @@
                 placeholder="Artamevia"
                 x-model="formData.lastname"
                 @keydown.enter="submitData($dispatch)"
+                :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errLastname }"
               />
             </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmLastname"
+              :class="{'invisible': errLastname == false}"
+            >
+            </span>
           </div>
-          <span
-            class="text-xs text-red-600 dark:text-red-400"
-            x-text="errmFirstname"
-            :class="{'invisible': errFirstname == false}"
-          >
-          </span>
         </div>
 
         <div class="mt-4 text-sm">
@@ -158,6 +167,20 @@
           </span>
         </label>
 
+        <!-- Pengganti/orang yang ikut bertanggung jawab -->
+        <label class="block mt-4 text-sm">
+          <span class="text-blue-700 dark:text-blue-400">
+            <a
+              href="#"
+              @click="$dispatch('modal', { html: $refs.userSubstitute.innerHTML });"
+              >Tambahkan Pendamping</a
+            ></span
+          >
+        </label>
+
+        {{ template "dashboard_users_add_substitute_modal" .}}
+
+        <!-- Tampilkan kolom tambah password -->
         <label class="block mt-4 text-sm">
           <span class="text-blue-700 dark:text-blue-400">
             <a
@@ -168,6 +191,7 @@
             ></a
           ></span>
         </label>
+
         <div x-show="addPassword !== false">
           <label class="block mt-4 text-sm">
             <span class="text-gray-700 dark:text-gray-400"
@@ -230,11 +254,11 @@
                     type="file"
                     class="hidden"
                   />
-                  
+
                   <!-- overlay -->
                   <div
                     x-show="!formData.photo"
-                    class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center"
+                    class="w-full h-full absolute top-0 left-0 pointer-events-none z-10 flex flex-col items-center justify-center"
                   >
                     <i>
                       <svg
@@ -496,6 +520,7 @@
             repassword: "",
             photo: "",
             photo_type: "",
+            substitutes: [],
           },
           loadingText: "{{ .l_c_form_create }}",
           loading: false,
@@ -513,6 +538,8 @@
           errmPhone: "",
           errFirstname: false,
           errmFirstname: "",
+          errLastname: false,
+          errmLastname: "",
           errGender: false,
           errmGender: "",
           errOccupation: false,
@@ -565,6 +592,13 @@
                 } else {
                   this.errFirstname = false;
                   this.errmFirstname = "";
+                }
+                if (data.lastname) {
+                  this.errLastname = true;
+                  this.errmLastname = data.lastname;
+                } else {
+                  this.errLastname = false;
+                  this.errmLastname = "";
                 }
                 if (data.gender) {
                   this.errGender = true;
@@ -647,17 +681,17 @@
             this.emails = [];
             this.phones = [];
             this.formData = {
-              fc: '',
-              ric: '',
-              phone: '',
-              firstname: '',
-              lastname: '',
-              gender: '',
-              occupation: '',
-              password: '',
-              repassword: '',
-              photo: '',
-              photo_type: '',
+              fc: "",
+              ric: "",
+              phone: "",
+              firstname: "",
+              lastname: "",
+              gender: "",
+              occupation: "",
+              password: "",
+              repassword: "",
+              photo: "",
+              photo_type: "",
             };
             document.getElementById("address").__x.$data.uid = null;
             document.getElementById(
@@ -665,15 +699,15 @@
             ).__x.$data.addAddressDisable = true;
             document.getElementById("address").__x.$data.addresses = [];
             document.getElementById("address").__x.$data.addAddressData = {
-              name: '',
-              description: '',
-              one: '',
-              two: '',
-              zip: '',
-              province: '',
-              city: '',
-              district: '',
-              village: '',
+              name: "",
+              description: "",
+              one: "",
+              two: "",
+              zip: "",
+              province: "",
+              city: "",
+              district: "",
+              village: "",
             };
             document.getElementById("address").__x.$data.addAddressOpen = false;
           },

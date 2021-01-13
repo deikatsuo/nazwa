@@ -1,0 +1,236 @@
+{{ define "dashboard_users_add_substitute_modal" }}
+<template x-ref="userSubstitute">
+  <div x-data="substitute()">
+    <!-- Title -->
+    <div
+      class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+    >
+      Tambah Pendamping
+    </div>
+    <!-- Formulir data pendamping -->
+    <div
+      class="mx-3 text-sm tracking-wide text-left text-gray-500 dark:text-gray-400"
+    >
+      <label class="block mt-4 text-sm">
+        <span class="text-gray-700 dark:text-gray-400"
+          >{{ .l_c_form_ric }}</span
+        >
+        <input
+          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+          placeholder="Nomor Induk Kependudukan"
+          x-model="substitute.ric"
+          @keydown.enter="add($dispatch)"
+          :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errRIC }"
+        />
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmRIC"
+          :class="{'invisible': errRIC == false}"
+        >
+        </span>
+      </label>
+      <!-- Nama Lengkap -->
+      <div class="flex flex-wrap mb-6">
+        <div class="w-full md:w-1/2 md:pr-3">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400"
+              >{{ .l_c_form_firstname }}</span
+            >
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              placeholder="Rika"
+              x-model="substitute.firstname"
+              @keydown.enter="add($dispatch)"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFirstname }"
+            />
+          </label>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmFirstname"
+            :class="{'invisible': errFirstname == false}"
+          >
+          </span>
+        </div>
+        <div class="w-full md:w-1/2 md:pl-3">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400"
+              >{{ .l_c_form_lastname }}</span
+            >
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              placeholder="Artamevia"
+              x-model="substitute.lastname"
+              @keydown.enter="add($dispatch)"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errLastname }"
+            />
+          </label>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmLastname"
+            :class="{'invisible': errLastname == false}"
+          >
+          </span>
+        </div>
+      </div>
+      <!-- Jenis Kelamin -->
+      <div class="mt-4 text-sm">
+        <span class="text-gray-700 dark:text-gray-400">
+          {{ .l_c_form_gender }}
+        </span>
+        <div class="mt-2">
+          <label
+            class="inline-flex items-center text-gray-600 dark:text-gray-400"
+          >
+            <input
+              type="radio"
+              class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+              name="gender"
+              @click="substitute.gender = 'm'"
+            />
+            <span class="ml-2">{{ .l_c_form_gender_m }}</span>
+          </label>
+          <label
+            class="inline-flex items-center ml-6 text-gray-600 dark:text-gray-400"
+          >
+            <input
+              type="radio"
+              class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+              name="gender"
+              @click="substitute.gender = 'f'"
+            />
+            <span class="ml-2">{{ .l_c_form_gender_f }}</span>
+          </label>
+        </div>
+        <span
+          class="text-xs text-red-600 dark:text-red-400"
+          x-text="errmGender"
+          :class="{'invisible': errGender == false}"
+        >
+        </span>
+      </div>
+      <!-- Tombol tambah -->
+      <button
+        type="submit"
+        class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+        @click="add($dispatch)"
+        :disabled="loading == true"
+        :class="{'cursor-not-allowed opacity-50': loading == true }"
+      >
+        Tambahkan
+      </button>
+    </div>
+  </div>
+</template>
+<script>
+  function substitute() {
+    return {
+      substitute: {
+        ric: "",
+        firstname: "",
+        lastname: "",
+        gender: "",
+      },
+      loading: false,
+      errRIC: false,
+      errmRIC: "",
+      errFirstname: false,
+      errmFirstname: "",
+      errLastname: false,
+      errmLastname: "",
+      errGender: false,
+      errmGender: "",
+      add($dispatch, product) {
+        this.loading = true;
+
+        var next = true;
+
+        if (this.substitute.ric != "") {
+          if (isNaN(this.substitute.ric)) {
+            this.errRIC = true;
+            this.errmRIC = "Nomor ID KTP harus berupa angka";
+            next = false;
+          } else {
+            if (this.substitute.ric.toString().length > 16) {
+              this.errRIC = true;
+              this.errmRIC = "Nomor ID KTP tidak boleh lebih dari 16 digit";
+              next = false;
+            } else if (this.substitute.ric.toString().length < 16) {
+              this.errRIC = true;
+              this.errmRIC = "Nomor ID KTP tidak boleh kurang dari 16 digit";
+              next = false;
+            } else {
+              this.errRIC = false;
+              this.errmRIC = "";
+              next = true;
+            }
+          }
+        } else {
+          this.errRIC = false;
+          this.errmRIC = "";
+          next = true;
+        }
+
+        if (this.substitute.firstname == "") {
+          this.errFirstname = true;
+          this.errmFirstname = "Nama depan harus di isi";
+          next = false;
+        } else {
+          if (this.substitute.firstname.length > 25) {
+            this.errFirstname = true;
+            this.errmFirstname =
+              "Nama depan tidak boleh lebih dari 25 karakter";
+            next = false;
+          } else if (this.substitute.firstname.length < 3) {
+            this.errFirstname = true;
+            this.errmFirstname = "Nama depan tidak boleh kurang dari 3 huruf";
+            next = false;
+          } else {
+            this.errFirstname = false;
+            this.errmFirstname = "";
+          }
+        }
+
+        if (this.substitute.lastname != "") {
+          if (this.substitute.lastname.length > 25) {
+            this.errLastname = true;
+            this.errmLastname =
+              "Nama belakang tidak boleh lebih dari 25 karakter";
+            next = false;
+          } else {
+            this.errLastname = false;
+            this.errmLastname = "";
+          }
+        }
+
+        if (this.substitute.gender == "") {
+          this.errGender = true;
+          this.errmGender = "Jenis kelamin tidak boleh kosong";
+          next = false;
+        } else {
+          if (this.substitute.gender == "m" || this.substitute.gender == "f") {
+            this.errGender = false;
+            this.errmGender = "";
+          } else {
+            this.errGender = true;
+            this.errmGender = "Format tidak valid";
+            next = false;
+          }
+        }
+
+        if (!next) {
+          this.loading = false;
+          return;
+        }
+
+        document
+          .getElementById("create")
+          .__x.$data.formData.substitutes.push(this.substitute);
+
+				document
+          .getElementById("root")
+          .__x.$data.closeModal();
+      },
+    };
+  }
+</script>
+{{ end }}

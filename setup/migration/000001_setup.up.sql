@@ -42,6 +42,33 @@ CREATE TABLE "user" (
     FOREIGN KEY (created_by) REFERENCES "user"("id")
 );
 
+-- Tabel anggota keluarga (user) penanggung jawab user
+CREATE TABLE "user_u_substitute" (
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "userid" INT NOT NULL,
+    "substitute_to" INT,
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "created_by" INT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userid) REFERENCES "user"("id"),
+    FOREIGN KEY (substitute_to) REFERENCES "user"("id"),
+    FOREIGN KEY (created_by) REFERENCES "user"("id")
+);
+
+-- Tabel anggota keluarga penanggung jawab user
+CREATE TABLE "user_o_substitute" (
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "first_name" VARCHAR(25) NOT NULL,
+    "last_name" VARCHAR(25),
+    "gender" GENDER NOT NULL,
+    "substitute_to" INT NOT NULL,
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "created_by" INT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (substitute_to) REFERENCES "user"("id"),
+    FOREIGN KEY (created_by) REFERENCES "user"("id")
+);
+
 -- Tabel KK
 CREATE TABLE "family_card" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,

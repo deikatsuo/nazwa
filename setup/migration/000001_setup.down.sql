@@ -21,6 +21,8 @@ DROP TABLE IF EXISTS "email";
 DROP TABLE IF EXISTS "phone";
 DROP TABLE IF EXISTS "family";
 DROP TABLE IF EXISTS "family_card";
+DROP TABLE IF EXISTS "user_o_substitute";
+DROP TABLE IF EXISTS "user_u_substitute";
 DROP TABLE IF EXISTS "user";
 
 

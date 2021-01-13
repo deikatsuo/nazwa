@@ -1,6 +1,6 @@
-{{ define "dashboard_orders_add_modal_select_product_content" }}
+{{ define "dashboard_orders_add_select_product_modal" }}
 <template x-ref="selectProduct">
-  <div x-init="fetchProduct($dispatch)" x-data="product($parent)">
+  <div x-init="initProduct($dispatch)" x-data="product()">
     <!-- Title -->
     <div
       class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
@@ -84,14 +84,13 @@
   </div>
 </template>
 <script>
-  function product($parent) {
+  function product() {
     return {
       products: [],
       product_instant_search: "",
       count: 12,
       initProduct($dispatch) {
         var products = document.getElementById("create").__x.$data.products;
-        console.log("nil" + products);
         if (products.length == 0) {
           this.fetchProduct($dispatch);
         } else {
