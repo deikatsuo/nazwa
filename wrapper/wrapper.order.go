@@ -42,20 +42,21 @@ type OrderItemInsert struct {
 
 // OrderForm formulir buat order
 type OrderForm struct {
-	Customer        int             `json:"customer" binding:"required,numeric"`
-	Sales           int             `json:"sales" binding:"omitempty,numeric"`
-	Surveyor        int             `json:"surveyor" binding:"omitempty,numeric"`
-	Collector       int             `json:"collector" binding:"omitempty,numeric"`
-	Credit          *bool           `json:"credit" binding:"required"`
-	Duration        int             `json:"duration" binding:"omitempty,numeric,gte=1,lte=24"`
-	Due             int             `json:"due" binding:"omitempty,numeric,gte=1,lte=28"`
-	Notes           string          `json:"notes" binding:"omitempty"`
-	OrderDate       string          `json:"order_date" binding:"required,date"`
-	ShippingDate    string          `json:"shipping_date" binding:"omitempty,date"`
-	BillingAddress  int             `json:"billing_address" binding:"omitempty,numeric"`
-	ShippingAddress int             `json:"shipping_address" binding:"required,numeric"`
-	Deposit         int             `json:"deposit" binding:"omitempty,numeric"`
-	OrderItems      []OrderItemForm `json:"order_items" binding:"omitempty"`
+	Customer        int                       `json:"customer" binding:"required,numeric"`
+	Sales           int                       `json:"sales" binding:"omitempty,numeric"`
+	Surveyor        int                       `json:"surveyor" binding:"omitempty,numeric"`
+	Collector       int                       `json:"collector" binding:"omitempty,numeric"`
+	Credit          *bool                     `json:"credit" binding:"required"`
+	Duration        int                       `json:"duration" binding:"omitempty,numeric,gte=1,lte=24"`
+	Due             int                       `json:"due" binding:"omitempty,numeric,gte=1,lte=28"`
+	Notes           string                    `json:"notes" binding:"omitempty"`
+	OrderDate       string                    `json:"order_date" binding:"required,date"`
+	ShippingDate    string                    `json:"shipping_date" binding:"omitempty,date"`
+	BillingAddress  int                       `json:"billing_address" binding:"omitempty,numeric"`
+	ShippingAddress int                       `json:"shipping_address" binding:"required,numeric"`
+	Deposit         int                       `json:"deposit" binding:"omitempty,numeric"`
+	OrderItems      []OrderItemForm           `json:"order_items" binding:"omitempty"`
+	Substitutes     []OrderUserSubstituteForm `json:"substitutes" binding:"omitempty"`
 }
 
 // OrderItemForm form item
@@ -64,6 +65,14 @@ type OrderItemForm struct {
 	Quantity  int    `json:"quantity" binding:"required,numeric"`
 	Notes     string `json:"notes" binding:"omitempty"`
 	Discount  int    `json:"discount" binding:"omitempty,numeric"`
+}
+
+// OrderUserSubstituteForm penanggung jawab/pendamping user (konsumen)
+type OrderUserSubstituteForm struct {
+	RIC       string `json:"ric"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Gender    string `json:"gender"`
 }
 
 // NullableOrder menampilkan data order

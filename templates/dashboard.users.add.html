@@ -167,8 +167,6 @@
           </span>
         </label>
 
-        {{ template "dashboard_users_add_substitute_modal" .}}
-
         <!-- Tampilkan kolom tambah password -->
         <label class="block mt-4 text-sm">
           <span class="text-blue-700 dark:text-blue-400">
@@ -700,10 +698,6 @@
               village: "",
             };
             document.getElementById("address").__x.$data.addAddressOpen = false;
-          },
-
-          remove(id) {
-            this.formData.substitutes.splice(id, 1);
           },
         };
       }

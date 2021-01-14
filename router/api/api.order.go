@@ -226,6 +226,7 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetOrderDate(json.OrderDate).
 				SetShippingDate(json.ShippingDate).
 				SetOrderItems(json.OrderItems).
+				SetSubstitutes(json.Substitutes).
 				SetCreatedBy(uid.(int)).
 				Save(db)
 

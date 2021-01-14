@@ -1,7 +1,7 @@
-{{ define "dashboard_users_add_substitute_modal" }}
+{{ define "dashboard_orders_add_substitute_modal" }}
 
 <template x-if="formData.substitutes.length > 0">
-  <div>
+  <div class="w-full relative md:w-2/3 md:px-1">
     <label class="block mt-4 text-sm">
       <span class="text-gray-700 dark:text-gray-400"> Pendamping</span>
     </label>
@@ -14,6 +14,7 @@
           >
             <th class="px-3 py-3 w-3">No</th>
             <th class="px-4 py-3">Nama</th>
+            <th class="px-4 py-3">NIK</th>
           </tr>
         </thead>
         <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
@@ -33,13 +34,11 @@
                       <span class="text-sm" x-show="s.gender == 'f'">Ibu </span>
                       <span x-text="`${s.firstname} ${s.lastname}`"></span>
                     </p>
-                    <p
-                      class="text-xs text-gray-500"
-                      x-show="s.ric != ''"
-                      x-text="`NIK ${s.ric}`"
-                    ></p>
                   </div>
                 </div>
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-500">
+                <p x-show="s.ric != ''" x-text="`NIK ${s.ric}`"></p>
               </td>
             </tr>
           </template>
@@ -49,16 +48,18 @@
   </div>
 </template>
 
-<!-- Pengganti/orang yang ikut bertanggung jawab -->
-<label class="block mt-4 text-sm">
-  <span class="text-blue-700 dark:text-blue-400">
-    <a
-      href="#"
-      @click="$dispatch('modal', { html: $refs.userSubstitute.innerHTML });"
-      >Tambahkan Pendamping</a
-    ></span
-  >
-</label>
+<div class="w-full md:px-1">
+  <!-- Pengganti/orang yang ikut bertanggung jawab -->
+  <label class="block mt-4 text-sm">
+    <span class="text-blue-700 dark:text-blue-400">
+      <a
+        href="#"
+        @click="$dispatch('modal', { html: $refs.userSubstitute.innerHTML });"
+        >Tambahkan Pendamping</a
+      ></span
+    >
+  </label>
+</div>
 
 <template x-ref="userSubstitute">
   <div x-data="substitute()">
@@ -73,9 +74,7 @@
       class="mx-3 text-sm tracking-wide text-left text-gray-500 dark:text-gray-400"
     >
       <label class="block mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400"
-          >{{ .l_c_form_ric }}</span
-        >
+        <span class="text-gray-700 dark:text-gray-400">Nomor KTP</span>
         <input
           class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
           placeholder="Nomor Induk Kependudukan"
@@ -94,9 +93,7 @@
       <div class="flex flex-wrap mb-6">
         <div class="w-full md:w-1/2 md:pr-3">
           <label class="block mt-4 text-sm">
-            <span class="text-gray-700 dark:text-gray-400"
-              >{{ .l_c_form_firstname }}</span
-            >
+            <span class="text-gray-700 dark:text-gray-400">Nama Depan</span>
             <input
               class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
               placeholder="Rika"
@@ -114,9 +111,7 @@
         </div>
         <div class="w-full md:w-1/2 md:pl-3">
           <label class="block mt-4 text-sm">
-            <span class="text-gray-700 dark:text-gray-400"
-              >{{ .l_c_form_lastname }}</span
-            >
+            <span class="text-gray-700 dark:text-gray-400">Nama Belakang</span>
             <input
               class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
               placeholder="Artamevia"
@@ -135,9 +130,7 @@
       </div>
       <!-- Jenis Kelamin -->
       <div class="mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400">
-          {{ .l_c_form_gender }}
-        </span>
+        <span class="text-gray-700 dark:text-gray-400"> Jenis Kelamin </span>
         <div class="mt-2">
           <label
             class="inline-flex items-center text-gray-600 dark:text-gray-400"
@@ -145,10 +138,10 @@
             <input
               type="radio"
               class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-              name="gender"
+              name="s_gender"
               @click="substitute.gender = 'm'"
             />
-            <span class="ml-2">{{ .l_c_form_gender_m }}</span>
+            <span class="ml-2">Laki-laki</span>
           </label>
           <label
             class="inline-flex items-center ml-6 text-gray-600 dark:text-gray-400"
@@ -156,10 +149,10 @@
             <input
               type="radio"
               class="text-purple-600 form-radio focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-              name="gender"
+              name="s_gender"
               @click="substitute.gender = 'f'"
             />
-            <span class="ml-2">{{ .l_c_form_gender_f }}</span>
+            <span class="ml-2">Perempuan</span>
           </label>
         </div>
         <span

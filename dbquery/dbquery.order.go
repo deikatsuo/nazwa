@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"nazwa/misc"
 	"nazwa/wrapper"
 	"strconv"
 	"strings"
@@ -14,12 +15,13 @@ import (
 // CreateOrder struct untuk menyimpan data order yang akan di insert
 type CreateOrder struct {
 	wrapper.OrderInsert
-	into       map[string]string
-	returnID   bool
-	returnIDTO *int
-	orderItems []wrapper.OrderItemForm
-	due        int
-	duration   int
+	into        map[string]string
+	returnID    bool
+	returnIDTO  *int
+	orderItems  []wrapper.OrderItemForm
+	substitutes []wrapper.OrderUserSubstituteForm
+	due         int
+	duration    int
 }
 
 // NewOrder membuat order baru
@@ -185,6 +187,14 @@ func (c *CreateOrder) SetOrderItems(o []wrapper.OrderItemForm) *CreateOrder {
 	return c
 }
 
+// SetSubstitutes menambahkan pengganti user/konsumen
+func (c *CreateOrder) SetSubstitutes(o []wrapper.OrderUserSubstituteForm) *CreateOrder {
+	if len(o) > 0 {
+		c.substitutes = o
+	}
+	return c
+}
+
 // ReturnID Mengembalikan ID produk terakhir
 func (c *CreateOrder) ReturnID(id *int) *CreateOrder {
 	c.returnID = true
@@ -328,10 +338,70 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 		})
 	}
 
-	if _, err := tx.NamedQuery(itemInsertQuery, itemInsert); err != nil {
+	if rows, err := tx.NamedQuery(itemInsertQuery, itemInsert); err == nil {
+		if err := rows.Close(); err != nil {
+			log.Println("ERROR: dbquery.order.go Save() Insert item closing row")
+			return err
+		}
+	} else {
 		log.Println("ERROR: dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert item ")
 		tx.Rollback()
 		return err
+	}
+
+	// Simpan data substitutes
+	if len(c.substitutes) > 0 {
+		type uos struct {
+			RIC          string `db:"ric"`
+			Firstname    string `db:"first_name"`
+			Lastname     string `db:"last_name"`
+			Gender       string `db:"gender"`
+			SubstituteTo int    `db:"substitute_to"`
+			CreatedBy    int    `db:"created_by"`
+		}
+		for _, s := range c.substitutes {
+
+			// Simpan data pendamping (bukan sebagai user karena tidak ada NIK)
+			into := map[string]string{}
+			uosd := uos{}
+			if s.RIC != "" {
+				into["ric"] = ":ric"
+				uosd.RIC = s.RIC
+			}
+			if s.Firstname != "" {
+				into["first_name"] = ":first_name"
+				uosd.Firstname = s.Firstname
+			}
+			if s.Lastname != "" {
+				into["last_name"] = ":last_name"
+				uosd.Lastname = s.Lastname
+			}
+			if s.Gender != "" {
+				into["gender"] = ":gender"
+				uosd.Gender = s.Gender
+			}
+			if tempReturnID > 0 {
+				into["substitute_to"] = ":substitute_to"
+				uosd.SubstituteTo = tempReturnID
+			}
+			if c.CreatedBy > 0 {
+				into["created_by"] = ":created_by"
+				uosd.CreatedBy = c.CreatedBy
+			}
+			gev := fmt.Sprintf(`INSERT INTO "order_user_substitute" %s`, misc.GenerateSimpleInsertValues(into))
+
+			if rows, err := tx.NamedQuery(gev, uosd); err == nil {
+				if err := rows.Close(); err != nil {
+					log.Println("ERROR: dbquery.order.go Save() Insert substitute closing row")
+					return err
+				}
+			} else {
+				tx.Rollback()
+				log.Println("Oh error ", err)
+				return err
+			}
+
+		}
 	}
 
 	/*

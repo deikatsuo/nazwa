@@ -6,6 +6,7 @@
 
 -- DROP tabel
 DROP TABLE IF EXISTS "order_item";
+DROP TABLE IF EXISTS "order_user_substitute";
 DROP TABLE IF EXISTS "order";
 DROP TABLE IF EXISTS "product_photo";
 DROP TABLE IF EXISTS "product_credit_price";
@@ -21,8 +22,6 @@ DROP TABLE IF EXISTS "email";
 DROP TABLE IF EXISTS "phone";
 DROP TABLE IF EXISTS "family";
 DROP TABLE IF EXISTS "family_card";
-DROP TABLE IF EXISTS "user_o_substitute";
-DROP TABLE IF EXISTS "user_u_substitute";
 DROP TABLE IF EXISTS "user";
 
 

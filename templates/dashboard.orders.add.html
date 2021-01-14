@@ -132,7 +132,11 @@
             </button>
           </div>
 
+          <!-- Pilih Produk -->
           {{ template "dashboard_orders_add_select_product_modal" .}}
+
+          <!-- Pendamping -->
+          {{ template "dashboard_orders_add_substitute_modal" .}}
 
           <!-- Sales -->
           <div class="w-full relative md:w-1/3 md:px-1">
@@ -935,9 +939,7 @@
                   <span x-show="total_ori < countTotal()" class="text-sm"
                     >-</span
                   >
-                  <span
-                    x-text="toRupiah(total_ori-countTotal())"
-                  ></span>
+                  <span x-text="toRupiah(total_ori-countTotal())"></span>
                   /bulan)
                 </div>
               </div>
@@ -1176,6 +1178,7 @@
           shipping_address: null,
           deposit: null,
           order_items: [],
+          substitutes: [],
         },
         instantData: {
           customer: "",
@@ -1532,6 +1535,9 @@
               this.selectedProducts[index].creditDiscountPrice
             );
           }
+        },
+        remove(id) {
+          this.formData.substitutes.splice(id, 1);
         },
         resetProductForm() {},
       };

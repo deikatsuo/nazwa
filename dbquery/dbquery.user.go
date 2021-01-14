@@ -122,7 +122,6 @@ type CreateUser struct {
 	phone        string
 	email        string
 	familyCard   string
-	substitutes  []wrapper.UserSubstituteForm
 }
 
 // UserNew membuat user baru
@@ -226,14 +225,6 @@ func (u *CreateUser) SetPhone(p string) *CreateUser {
 // SetEmail fungsi untuk menambahkan email
 func (u *CreateUser) SetEmail(p string) *CreateUser {
 	u.email = strings.ToLower(p)
-	return u
-}
-
-// SetSubstitutes menambahkan pengganti user/konsumen
-func (u *CreateUser) SetSubstitutes(p []wrapper.UserSubstituteForm) *CreateUser {
-	if len(p) > 0 {
-		u.substitutes = p
-	}
 	return u
 }
 
@@ -374,73 +365,6 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 		if _, err := tx.Exec(`INSERT INTO "email" (user_id, email) VALUES ($1, $2)`, tempReturnID, u.email); err != nil {
 			log.Println("ERROR: user.go Save() Insert email")
 			return err
-		}
-	}
-
-	// Simpan data substitutes
-	if len(u.substitutes) > 0 {
-		type uos struct {
-			Firstname    string `db:"first_name"`
-			Lastname     string `db:"last_name"`
-			Gender       string `db:"gender"`
-			SubstituteTo int    `db:"substitute_to"`
-			CreatedBy    int    `db:"created_by"`
-		}
-		for _, s := range u.substitutes {
-			if s.RIC != "" {
-				into := map[string]string{}
-				uusd := wrapper.UserInsert{}
-				if s.RIC != "" {
-					into["ric"] = ":ric"
-					uusd.RIC = s.RIC
-				}
-				if s.Firstname != "" {
-					into["first_name"] = ":first_name"
-					uusd.Firstname = s.Firstname
-				}
-				if s.Lastname != "" {
-					into["last_name"] = ":last_name"
-					uusd.Lastname = s.Lastname
-				}
-				if s.Gender != "" {
-					into["gender"] = ":gender"
-					uusd.Gender = s.Gender
-				}
-				if u.CreatedBy > 0 {
-					into["created_by"] = ":created_by"
-					uusd.CreatedBy = u.CreatedBy
-				}
-			} else {
-				// Simpan data pendamping (bukan sebagai user karena tidak ada NIK)
-				into := map[string]string{}
-				uosd := uos{}
-				if s.Firstname != "" {
-					into["first_name"] = ":first_name"
-					uosd.Firstname = s.Firstname
-				}
-				if s.Lastname != "" {
-					into["last_name"] = ":last_name"
-					//uosd.Lastname = s.Lastname
-				}
-				if s.Gender != "" {
-					into["gender"] = ":gender"
-					uosd.Gender = s.Gender
-				}
-				if tempReturnID > 0 {
-					into["substitute_to"] = ":substitute_to"
-					uosd.SubstituteTo = tempReturnID
-				}
-				if u.CreatedBy > 0 {
-					into["created_by"] = ":created_by"
-					uosd.CreatedBy = u.CreatedBy
-				}
-				gev := fmt.Sprintf(`INSERT INTO "user_o_substitute" %s`, misc.GenerateSimpleInsertValues(into))
-
-				if _, err := tx.NamedQuery(gev, uosd); err != nil {
-					tx.Rollback()
-					return err
-				}
-			}
 		}
 	}
 
