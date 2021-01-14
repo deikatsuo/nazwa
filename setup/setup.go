@@ -6,6 +6,7 @@ import (
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"
+	"nazwa/wrapper"
 	"os"
 	"time"
 
@@ -230,7 +231,7 @@ func setupUserAdmin(db *sqlx.DB) error {
 		SetEmail(input.Email).
 		SetPassword(input.Password).
 		SetGender(input.Gender).
-		SetRole(dbquery.RoleDev).
+		SetRole(wrapper.UserRoleDev).
 		ReturnID(&uid).
 		Save(db)
 	if err != nil {

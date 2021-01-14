@@ -2,6 +2,27 @@ package wrapper
 
 import "database/sql"
 
+// Definisikan ROLE
+const (
+	// UserRoleDev Tingkatan teratas
+	UserRoleDev int8 = 0
+	// UserRoleAdmin memiliki akses penuh
+	// sebagai admin
+	UserRoleAdmin int8 = 1
+	// UserRoleCollector sebagai seorang penagih
+	UserRoleCollector int8 = 2
+	// UserRoleDriver sebagai supir
+	UserRoleDriver int8 = 3
+	// UserRoleSurveyor adalah penyurvey
+	UserRoleSurveyor int8 = 4
+	// UserRoleSales bagian marketing atau pemasaran
+	UserRoleSales int8 = 5
+	// UserRoleCustomer pelanggan
+	UserRoleCustomer int8 = 6
+	// UserRoleSubstitute pendamping/pengganti
+	UserRoleSubstitute int8 = 7
+)
+
 // UserInsert base struk
 type UserInsert struct {
 	Firstname  string  `db:"first_name"`

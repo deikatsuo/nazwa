@@ -110,24 +110,6 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 	return parse, nil
 }
 
-const (
-	// RoleDev Tingkatan teratas
-	RoleDev int8 = 0
-	// RoleAdmin memiliki akses penuh
-	// sebagai admin
-	RoleAdmin int8 = 1
-	// RoleCollector sebagai seorang penagih
-	RoleCollector int8 = 2
-	// RoleDriver sebagai supir
-	RoleDriver int8 = 3
-	// RoleSurveyor adalah penyurvey
-	RoleSurveyor int8 = 4
-	// RoleSales bagian marketing atau pemasaran
-	RoleSales int8 = 5
-	// RoleCustomer pelanggan
-	RoleCustomer int8 = 6
-)
-
 // CreateUser struk buat user baru
 // Struct data user
 type CreateUser struct {
@@ -140,6 +122,7 @@ type CreateUser struct {
 	phone        string
 	email        string
 	familyCard   string
+	substitutes  []wrapper.UserSubstituteForm
 }
 
 // UserNew membuat user baru
@@ -147,7 +130,7 @@ type CreateUser struct {
 func UserNew() *CreateUser {
 	return &CreateUser{
 		into: make(map[string]string),
-		role: RoleCustomer,
+		role: wrapper.UserRoleCustomer,
 	}
 }
 
@@ -243,6 +226,14 @@ func (u *CreateUser) SetPhone(p string) *CreateUser {
 // SetEmail fungsi untuk menambahkan email
 func (u *CreateUser) SetEmail(p string) *CreateUser {
 	u.email = strings.ToLower(p)
+	return u
+}
+
+// SetSubstitutes menambahkan pengganti user/konsumen
+func (u *CreateUser) SetSubstitutes(p []wrapper.UserSubstituteForm) *CreateUser {
+	if len(p) > 0 {
+		u.substitutes = p
+	}
 	return u
 }
 
@@ -357,6 +348,8 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 			return err
 		}
 	}
+
+	// Simpan username
 	if _, err := tx.Exec(`UPDATE "user"	SET username=$1	WHERE id=$2`, username, tempReturnID); err != nil {
 		log.Println("ERROR: user.go Save() Insert username/kode pelanggan")
 		return err
@@ -381,6 +374,73 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 		if _, err := tx.Exec(`INSERT INTO "email" (user_id, email) VALUES ($1, $2)`, tempReturnID, u.email); err != nil {
 			log.Println("ERROR: user.go Save() Insert email")
 			return err
+		}
+	}
+
+	// Simpan data substitutes
+	if len(u.substitutes) > 0 {
+		type uos struct {
+			Firstname    string `db:"first_name"`
+			Lastname     string `db:"last_name"`
+			Gender       string `db:"gender"`
+			SubstituteTo int    `db:"substitute_to"`
+			CreatedBy    int    `db:"created_by"`
+		}
+		for _, s := range u.substitutes {
+			if s.RIC != "" {
+				into := map[string]string{}
+				uusd := wrapper.UserInsert{}
+				if s.RIC != "" {
+					into["ric"] = ":ric"
+					uusd.RIC = s.RIC
+				}
+				if s.Firstname != "" {
+					into["first_name"] = ":first_name"
+					uusd.Firstname = s.Firstname
+				}
+				if s.Lastname != "" {
+					into["last_name"] = ":last_name"
+					uusd.Lastname = s.Lastname
+				}
+				if s.Gender != "" {
+					into["gender"] = ":gender"
+					uusd.Gender = s.Gender
+				}
+				if u.CreatedBy > 0 {
+					into["created_by"] = ":created_by"
+					uusd.CreatedBy = u.CreatedBy
+				}
+			} else {
+				// Simpan data pendamping (bukan sebagai user karena tidak ada NIK)
+				into := map[string]string{}
+				uosd := uos{}
+				if s.Firstname != "" {
+					into["first_name"] = ":first_name"
+					uosd.Firstname = s.Firstname
+				}
+				if s.Lastname != "" {
+					into["last_name"] = ":last_name"
+					//uosd.Lastname = s.Lastname
+				}
+				if s.Gender != "" {
+					into["gender"] = ":gender"
+					uosd.Gender = s.Gender
+				}
+				if tempReturnID > 0 {
+					into["substitute_to"] = ":substitute_to"
+					uosd.SubstituteTo = tempReturnID
+				}
+				if u.CreatedBy > 0 {
+					into["created_by"] = ":created_by"
+					uosd.CreatedBy = u.CreatedBy
+				}
+				gev := fmt.Sprintf(`INSERT INTO "user_o_substitute" %s`, misc.GenerateSimpleInsertValues(into))
+
+				if _, err := tx.NamedQuery(gev, uosd); err != nil {
+					tx.Rollback()
+					return err
+				}
+			}
 		}
 	}
 
@@ -747,7 +807,7 @@ func UserRICExist(db *sqlx.DB, ric string) bool {
 			return true
 		}
 	} else {
-		log.Println("ERROR: user.go RICExist() NIK KTP tidak ditemukan")
+		log.Println("Warning: NIK KTP tidak ditemukan")
 		log.Println(err)
 	}
 	return false
@@ -763,7 +823,7 @@ func UserPhoneExist(db *sqlx.DB, phone string) bool {
 			return true
 		}
 	} else {
-		log.Println("ERROR: user.go PhoneExist() Nomor hp tidak ditemukan")
+		log.Println("Warning: Nomor hp tidak ditemukan")
 		log.Println(err)
 	}
 	return false
@@ -779,7 +839,7 @@ func UserEmailExist(db *sqlx.DB, email string) bool {
 			return true
 		}
 	} else {
-		log.Println("ERROR: user.go EmailExist() email tidak ditemukan")
+		log.Println("Warning: Email tidak ditemukan")
 		log.Println(err)
 	}
 	return false

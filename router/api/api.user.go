@@ -95,7 +95,8 @@ func UserCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetPassword(json.Password).
 				SetGender(json.Gender).
 				SetOccupation(json.Occupation).
-				SetRole(dbquery.RoleCustomer).
+				SetSubstitutes(json.Substitutes).
+				SetRole(wrapper.UserRoleCustomer).
 				SetCreatedBy(nowID.(int)).
 				ReturnID(&uid).
 				Save(db)
