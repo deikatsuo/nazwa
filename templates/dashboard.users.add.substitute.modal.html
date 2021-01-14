@@ -1,4 +1,65 @@
 {{ define "dashboard_users_add_substitute_modal" }}
+
+<template x-if="formData.substitutes.length > 0">
+  <div>
+    <label class="block mt-4 text-sm">
+      <span class="text-gray-700 dark:text-gray-400"> Pendamping</span>
+    </label>
+    <div class="overflow-x-auto mt-4">
+      <!-- Items -->
+      <table class="w-full whitespace-no-wrap">
+        <thead>
+          <tr
+            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          >
+            <th class="px-3 py-3 w-3">No</th>
+            <th class="px-4 py-3">Nama</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
+          <template x-for="(s, index) in formData.substitutes" :key="index">
+            <tr
+              class="text-gray-700 dark:text-gray-400 hover:bg-green-100 cursor-pointer border-b"
+              @dblclick="remove(index)"
+            >
+              <td class="px-3 py-3 text-sm" x-text="index + 1"></td>
+              <td class="px-4 py-3 text-sm">
+                <div class="flex items-center text-sm">
+                  <div>
+                    <p class="text-sm">
+                      <span class="text-sm" x-show="s.gender == 'm'"
+                        >Bpk.
+                      </span>
+                      <span class="text-sm" x-show="s.gender == 'f'">Ibu </span>
+                      <span x-text="`${s.firstname} ${s.lastname}`"></span>
+                    </p>
+                    <p
+                      class="text-xs text-gray-500"
+                      x-show="s.ric != ''"
+                      x-text="`NIK ${s.ric}`"
+                    ></p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<!-- Pengganti/orang yang ikut bertanggung jawab -->
+<label class="block mt-4 text-sm">
+  <span class="text-blue-700 dark:text-blue-400">
+    <a
+      href="#"
+      @click="$dispatch('modal', { html: $refs.userSubstitute.innerHTML });"
+      >Tambahkan Pendamping</a
+    ></span
+  >
+</label>
+
 <template x-ref="userSubstitute">
   <div x-data="substitute()">
     <!-- Title -->
@@ -226,9 +287,7 @@
           .getElementById("create")
           .__x.$data.formData.substitutes.push(this.substitute);
 
-				document
-          .getElementById("root")
-          .__x.$data.closeModal();
+        document.getElementById("root").__x.$data.closeModal();
       },
     };
   }

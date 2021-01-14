@@ -167,17 +167,6 @@
           </span>
         </label>
 
-        <!-- Pengganti/orang yang ikut bertanggung jawab -->
-        <label class="block mt-4 text-sm">
-          <span class="text-blue-700 dark:text-blue-400">
-            <a
-              href="#"
-              @click="$dispatch('modal', { html: $refs.userSubstitute.innerHTML });"
-              >Tambahkan Pendamping</a
-            ></span
-          >
-        </label>
-
         {{ template "dashboard_users_add_substitute_modal" .}}
 
         <!-- Tampilkan kolom tambah password -->
@@ -710,6 +699,10 @@
               village: "",
             };
             document.getElementById("address").__x.$data.addAddressOpen = false;
+          },
+
+          remove(id) {
+            this.formData.substitutes.splice(id, 1);
           },
         };
       }
