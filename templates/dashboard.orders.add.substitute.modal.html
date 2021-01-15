@@ -88,6 +88,16 @@
           :class="{'invisible': errRIC == false}"
         >
         </span>
+        <span class="text-xs text-gray-500" x-show="existSubstitute !== ''">
+          <p>Ditemukan pendamping dengan nama</p>
+          <div class="flex">
+            <p
+              class="font-bold pr-1" :class="{'text-green-600 dark:text-green-400': confirm, 'text-red-600 dark:text-red-400': !confirm }"
+              x-text="existSubstitute"
+            ></p>
+            <a class="text-blue-500" href="#" @click="confirm = true" x-show="!confirm">Benar?</a>
+          </div>
+        </span>
       </label>
       <!-- Nama Lengkap -->
       <div class="flex flex-wrap mb-6">
@@ -184,6 +194,9 @@
         lastname: "",
         gender: "",
       },
+      next: true,
+      confirm: false,
+      existSubstitute: "",
       loading: false,
       errRIC: false,
       errmRIC: "",
@@ -196,48 +209,46 @@
       add($dispatch, product) {
         this.loading = true;
 
-        var next = true;
-
         if (this.substitute.ric != "") {
           if (isNaN(this.substitute.ric)) {
             this.errRIC = true;
             this.errmRIC = "Nomor ID KTP harus berupa angka";
-            next = false;
+            this.next = false;
           } else {
             if (this.substitute.ric.toString().length > 16) {
               this.errRIC = true;
               this.errmRIC = "Nomor ID KTP tidak boleh lebih dari 16 digit";
-              next = false;
+              this.next = false;
             } else if (this.substitute.ric.toString().length < 16) {
               this.errRIC = true;
               this.errmRIC = "Nomor ID KTP tidak boleh kurang dari 16 digit";
-              next = false;
+              this.next = false;
             } else {
               this.errRIC = false;
               this.errmRIC = "";
-              next = true;
+              this.next = true;
             }
           }
         } else {
           this.errRIC = false;
           this.errmRIC = "";
-          next = true;
+          this.next = true;
         }
 
         if (this.substitute.firstname == "") {
           this.errFirstname = true;
           this.errmFirstname = "Nama depan harus di isi";
-          next = false;
+          this.next = false;
         } else {
           if (this.substitute.firstname.length > 25) {
             this.errFirstname = true;
             this.errmFirstname =
               "Nama depan tidak boleh lebih dari 25 karakter";
-            next = false;
+            this.next = false;
           } else if (this.substitute.firstname.length < 3) {
             this.errFirstname = true;
             this.errmFirstname = "Nama depan tidak boleh kurang dari 3 huruf";
-            next = false;
+            this.next = false;
           } else {
             this.errFirstname = false;
             this.errmFirstname = "";
@@ -249,7 +260,7 @@
             this.errLastname = true;
             this.errmLastname =
               "Nama belakang tidak boleh lebih dari 25 karakter";
-            next = false;
+            this.next = false;
           } else {
             this.errLastname = false;
             this.errmLastname = "";
@@ -259,7 +270,7 @@
         if (this.substitute.gender == "") {
           this.errGender = true;
           this.errmGender = "Jenis kelamin tidak boleh kosong";
-          next = false;
+          this.next = false;
         } else {
           if (this.substitute.gender == "m" || this.substitute.gender == "f") {
             this.errGender = false;
@@ -267,11 +278,18 @@
           } else {
             this.errGender = true;
             this.errmGender = "Format tidak valid";
-            next = false;
+            this.next = false;
           }
         }
 
-        if (!next) {
+        if (!this.confirm) {
+          this.next = false;
+          this.checkRIC();
+        } else {
+          this.next = true;
+        }
+
+        if (!this.next) {
           this.loading = false;
           return;
         }
@@ -281,6 +299,25 @@
           .__x.$data.formData.substitutes.push(this.substitute);
 
         document.getElementById("root").__x.$data.closeModal();
+      },
+      checkRIC() {
+        fetch(
+          `/api/v1/local/order/substitute/ric?number=${this.substitute.ric}`,
+          {
+            method: "GET",
+          }
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.substitute.ID > 0) {
+              this.existSubstitute = data.substitute.Name;
+            } else {
+              this.existSubstitute = "";
+            }
+          })
+          .catch(() => {
+            console.log("Telah terjadi kesalahan saat memuat data produk");
+          });
       },
     };
   }

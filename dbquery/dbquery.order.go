@@ -692,7 +692,7 @@ func OrderGetSubstituteByRic(db *sqlx.DB, ric string) (wrapper.NameID, error) {
 	FROM "order_user_substitute"
 	WHERE ric=$1`
 
-	err := db.Select(&substitute, query, ric)
+	err := db.Get(&substitute, query, ric)
 	if err != nil {
 		return wrapper.NameID{}, err
 	}

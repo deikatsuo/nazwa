@@ -169,7 +169,7 @@ func OrderSubstituteByRicShow(db *sqlx.DB) gin.HandlerFunc {
 			substitute = s
 		} else {
 			httpStatus = http.StatusInternalServerError
-			errMess = "Sepertinya telah terjadi kesalahan saat memuat data"
+			errMess = "Tidak ditemukan data pendamping berdasarkan NIK ini"
 		}
 
 		c.JSON(httpStatus, gin.H{
