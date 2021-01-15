@@ -682,3 +682,20 @@ func OrderGetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
 	}
 	return parse, err
 }
+
+// OrderGetSubstituteByRic ambil data substitute berdasarkan NIK
+func OrderGetSubstituteByRic(db *sqlx.DB, ric string) (wrapper.NameID, error) {
+	var substitute wrapper.NameID
+	query := `SELECT
+	id,
+	concat_ws(' ', first_name, last_name) as name
+	FROM "order_user_substitute"
+	WHERE ric=$1`
+
+	err := db.Select(&substitute, query, ric)
+	if err != nil {
+		return wrapper.NameID{}, err
+	}
+
+	return substitute, nil
+}

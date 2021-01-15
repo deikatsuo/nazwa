@@ -148,6 +148,38 @@ func OrderShowByID(db *sqlx.DB) gin.HandlerFunc {
 	return fn
 }
 
+// OrderSubstituteByRicShow menampilkan informasi ric substitute
+func OrderSubstituteByRicShow(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		// Tolak jika yang request bukan user terdaftar
+		uid := session.Get("userid")
+		if uid == nil {
+			router.Page404(c)
+			return
+		}
+		httpStatus := http.StatusOK
+		errMess := ""
+
+		ric := c.Query("number")
+
+		var substitute wrapper.NameID
+		if s, err := dbquery.OrderGetSubstituteByRic(db, ric); err == nil {
+			substitute = s
+		} else {
+			httpStatus = http.StatusInternalServerError
+			errMess = "Sepertinya telah terjadi kesalahan saat memuat data"
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"substitute": substitute,
+			"error":      errMess,
+		})
+	}
+	return fn
+}
+
 // OrderCreate API untuk menambahkan produk baru
 func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
