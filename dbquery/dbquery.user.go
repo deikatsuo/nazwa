@@ -488,6 +488,7 @@ func UserGetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, err
 	return user, err
 }
 
+/*
 // UserGetByID mengambil data pengguna berdasarkan ID produk
 func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 	var user wrapper.User
@@ -558,6 +559,7 @@ func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 
 	return user, nil
 }
+*/
 
 // UserGetUserTotalRow menghitung jumlah row pada tabel user
 func UserGetUserTotalRow(db *sqlx.DB) (int, error) {
@@ -608,7 +610,7 @@ func UserGetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
 	WHERE user_id=$1`
 	err := db.Select(&addresses, query, userid)
 	if err != nil {
-		log.Println("ERROR: user.go GetAddress() Tidak ada alamat ditemukan")
+		log.Println("Warning: user.go GetAddress() Tidak ada alamat ditemukan")
 		log.Println(err)
 		return []wrapper.UserAddress{}, err
 	}
@@ -715,7 +717,7 @@ func UserFamilyCardExist(db *sqlx.DB, fc string) (bool, int) {
 			return true, f
 		}
 	} else {
-		log.Println("ERROR: user.go FamilyCardExist() KK tidak ditemukan")
+		log.Println("Warning: user.go FamilyCardExist() KK tidak ditemukan")
 		log.Println(err)
 	}
 	return false, f
@@ -843,7 +845,7 @@ func UserMatchPassword(db *sqlx.DB, uid int, pwd string) bool {
 			next = true
 		}
 	} else {
-		log.Println("ERROR: user.go MatchPassword() password tidak cocok")
+		log.Println("Warning: user.go MatchPassword() password tidak cocok")
 		log.Println(err)
 	}
 	if next {
