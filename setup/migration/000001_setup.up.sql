@@ -19,7 +19,7 @@ VALUES  (0, 'dev'),
         (3, 'driver'),
         (4, 'surveyor'),
         (5, 'sales'),
-        (6, 'customer');
+        (6, 'customer'),
         (7, 'substitute');
 
 -- Buat gender
