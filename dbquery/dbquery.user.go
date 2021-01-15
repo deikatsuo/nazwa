@@ -488,7 +488,6 @@ func UserGetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, err
 	return user, err
 }
 
-/*
 // UserGetByID mengambil data pengguna berdasarkan ID produk
 func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 	var user wrapper.User
@@ -559,7 +558,6 @@ func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 
 	return user, nil
 }
-*/
 
 // UserGetUserTotalRow menghitung jumlah row pada tabel user
 func UserGetUserTotalRow(db *sqlx.DB) (int, error) {
