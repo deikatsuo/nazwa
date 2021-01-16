@@ -2,10 +2,14 @@
 Project nazwa buat teteh
 
 # konfigurasi database
-```sudo -u postgres psql
-postgres=# CREATE DATABASE mydb;
-postgres=# CREATE USER myuser WITH PASSWORD 'mypass';
-postgres=# GRANT ALL PRIVILEGES ON DATABASE mydb TO myuser;```
+```bash
+sudo -u postgres psql
+```
+```sql
+CREATE DATABASE mydb;
+CREATE USER myuser WITH PASSWORD 'mypass';
+GRANT ALL PRIVILEGES ON DATABASE mydb TO myuser;
+```
 
 \
 |
