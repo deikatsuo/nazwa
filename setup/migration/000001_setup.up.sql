@@ -247,3 +247,16 @@ CREATE TABLE "order_item" (
     FOREIGN KEY (order_id) REFERENCES "order"("id"),
     FOREIGN KEY (product_id) REFERENCES "product"("id")
 );
+
+-- Tabel detail credit
+CREATE TABLE "order_credit_detail" (
+    "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "order_id" INT NOT NULL UNIQUE,
+    "monthly" INT NOT NULL,
+    "duration" SMALLINT NOT NULL,
+    "due" SMALLINT NOT NULL,
+    "remaining"  NUMERIC(15) NOT NULL,
+    "lucky_discount" NUMERIC(15) DEFAULT 0,
+    PRIMARY KEY (id),
+    FOREIGN KEY (order_id) REFERENCES "order"("id")
+);

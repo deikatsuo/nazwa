@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math"
 	"nazwa/misc"
 	"nazwa/wrapper"
 	"strconv"
@@ -259,10 +260,11 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 			}
 
 			if item.Discount > 0 {
-				priceTotal += ((item.Discount * item.Quantity) - c.Deposit) * c.duration
+				priceTotal += ((item.Discount * item.Quantity) * c.duration)
 			} else {
-				priceTotal += ((tmpcp * item.Quantity) - c.Deposit) * c.duration
+				priceTotal += ((tmpcp * item.Quantity) * c.duration)
 			}
+
 			prices = append(prices, tmpcp)
 		} else {
 			p, err := ProductGetProductPrice(db, item.ProductID)
@@ -287,6 +289,16 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 		}
 		basePriceTotal += bp * item.Quantity
 		basePrices = append(basePrices, bp)
+	}
+
+	remaining := priceTotal
+	monthly := priceTotal / c.duration
+	var luckyDiscount int
+	if c.Credit && c.Deposit > 0 {
+		remaining = priceTotal - c.Deposit
+		monthly = (priceTotal - c.Deposit) / c.duration
+		monthly = int(math.Floor(float64(monthly)/1000)) * 1000
+		luckyDiscount = ((priceTotal - c.Deposit) / c.duration) - monthly
 	}
 
 	if priceTotal != 0 {
@@ -401,6 +413,14 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 				return err
 			}
 
+		}
+	}
+
+	// Simpan credit detail
+	if c.Credit {
+		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, monthly, duration, due, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6)`, tempReturnID, monthly, c.duration, c.due, remaining, luckyDiscount); err != nil {
+			log.Println("ERROR: dbquery.order.go Save() Insert product detail")
+			return err
 		}
 	}
 

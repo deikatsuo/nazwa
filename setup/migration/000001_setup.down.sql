@@ -5,6 +5,7 @@
 */
 
 -- DROP tabel
+DROP TABLE IF EXISTS "order_credit_detail";
 DROP TABLE IF EXISTS "order_item";
 DROP TABLE IF EXISTS "order_user_substitute";
 DROP TABLE IF EXISTS "order";
