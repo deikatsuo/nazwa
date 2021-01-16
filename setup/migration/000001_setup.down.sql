@@ -27,3 +27,5 @@ DROP TABLE IF EXISTS "user";
 
 -- DROP tipe
 DROP TYPE IF EXISTS "gender";
+
+DROP TABLE IF EXISTS "schema_migrations";

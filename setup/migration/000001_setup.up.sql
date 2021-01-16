@@ -221,7 +221,7 @@ CREATE TABLE "order" (
 -- Tabel anggota keluarga penanggung jawab user
 CREATE TABLE "order_user_substitute" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
-    "ric" VARCHAR(16) UNIQUE,
+    "ric" VARCHAR(16),
     "first_name" VARCHAR(25) NOT NULL,
     "last_name" VARCHAR(25),
     "gender" GENDER NOT NULL,

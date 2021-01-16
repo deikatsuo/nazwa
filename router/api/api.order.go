@@ -164,17 +164,17 @@ func OrderSubstituteByRicShow(db *sqlx.DB) gin.HandlerFunc {
 
 		ric := c.Query("number")
 
-		var substitute wrapper.NameID
+		var substitutes []wrapper.NameID
 		if s, err := dbquery.OrderGetSubstituteByRic(db, ric); err == nil {
-			substitute = s
+			substitutes = s
 		} else {
 			httpStatus = http.StatusInternalServerError
 			errMess = "Tidak ditemukan data pendamping berdasarkan NIK ini"
 		}
 
 		c.JSON(httpStatus, gin.H{
-			"substitute": substitute,
-			"error":      errMess,
+			"substitutes": substitutes,
+			"error":       errMess,
 		})
 	}
 	return fn

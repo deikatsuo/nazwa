@@ -88,16 +88,39 @@
           :class="{'invisible': errRIC == false}"
         >
         </span>
-        <span class="text-xs text-gray-500" x-show="existSubstitute !== ''">
+        <span
+          class="text-xs text-gray-500"
+          x-show="existSubstitutes.length > 0"
+        >
           <p>Ditemukan pendamping dengan nama</p>
-          <div class="flex">
-            <p
-              class="font-bold pr-1"
-              :class="{'text-green-600 dark:text-green-400': confirm, 'text-red-600 dark:text-red-400': !confirm }"
-              x-text="existSubstitute"
-            ></p>
+          <div class="flex flex-wrap">
+            <template
+              x-if="existSubstitutes.length > 0"
+              x-for="(s, index) in existSubstitutes"
+              :key="index"
+            >
+              <div class="flex">
+                <p
+                  class="font-bold"
+                  :class="{'text-green-600 dark:text-green-400': confirm, 'text-red-600 dark:text-red-400': !confirm }"
+                  x-text="s.Name"
+                ></p>
+                <p
+                  class="pr-1"
+                  x-show="existSubstitutes.length > 1 && index < (existSubstitutes.length-2)"
+                >
+                  ,
+                </p>
+                <p
+                  class="px-1"
+                  x-show="existSubstitutes.length > 1 && index == (existSubstitutes.length-2)"
+                >
+                  dan
+                </p>
+              </div>
+            </template>
             <a
-              class="text-blue-500"
+              class="text-blue-500 pl-1"
               href="#"
               @click="confirm = true"
               x-show="!confirm"
@@ -204,7 +227,7 @@
       next: true,
       last: "",
       confirm: true,
-      existSubstitute: "",
+      existSubstitutes: [],
       loading: false,
       errRIC: false,
       errmRIC: "",
@@ -216,6 +239,8 @@
       errmGender: "",
       add($dispatch) {
         this.loading = true;
+        var ste = document.getElementById("create").__x.$data.formData
+          .substitutes;
 
         if (this.substitute.ric != "") {
           if (isNaN(this.substitute.ric)) {
@@ -302,14 +327,24 @@
           }
         }
 
+        if (this.next) {
+          for (i = 0; i < ste.length; i++) {
+            if (ste[i].ric == this.substitute.ric) {
+              $dispatch("notif", {
+                type: "warning",
+                message: "Pendamping ini sudah ditambahkan",
+              });
+              this.next = false;
+            }
+          }
+        }
+
         if (!this.next) {
           this.loading = false;
           return;
         }
 
-        document
-          .getElementById("create")
-          .__x.$data.formData.substitutes.push(this.substitute);
+        ste.push(this.substitute);
 
         document.getElementById("root").__x.$data.closeModal();
       },
@@ -322,11 +357,11 @@
         )
           .then((res) => res.json())
           .then((data) => {
-            if (data.substitute.ID > 0) {
-              this.existSubstitute = data.substitute.Name;
+            if (data.substitutes.length > 0) {
+              this.existSubstitutes = data.substitutes;
               this.confirm = false;
             } else {
-              this.existSubstitute = "";
+              this.existSubstitutes = "";
               this.confirm = true;
               this.add($dispatch);
             }

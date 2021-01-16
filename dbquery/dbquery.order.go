@@ -361,7 +361,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 		}
 		for _, s := range c.substitutes {
 
-			// Simpan data pendamping (bukan sebagai user karena tidak ada NIK)
+			// Simpan data pendamping
 			into := map[string]string{}
 			uosd := uos{}
 			if s.RIC != "" {
@@ -684,18 +684,29 @@ func OrderGetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
 }
 
 // OrderGetSubstituteByRic ambil data substitute berdasarkan NIK
-func OrderGetSubstituteByRic(db *sqlx.DB, ric string) (wrapper.NameID, error) {
-	var substitute wrapper.NameID
+func OrderGetSubstituteByRic(db *sqlx.DB, ric string) ([]wrapper.NameID, error) {
+	var substitute []wrapper.NameID
 	query := `SELECT
 	id,
 	concat_ws(' ', first_name, last_name) as name
 	FROM "order_user_substitute"
 	WHERE ric=$1`
 
-	err := db.Get(&substitute, query, ric)
+	err := db.Select(&substitute, query, ric)
 	if err != nil {
-		return wrapper.NameID{}, err
+		return []wrapper.NameID{}, err
 	}
 
-	return substitute, nil
+	keys := make(map[string]bool)
+	new := []wrapper.NameID{}
+
+	// Hilangkan data dengan nama yang sama
+	for _, entry := range substitute {
+		if _, value := keys[entry.Name]; !value {
+			keys[entry.Name] = true
+			new = append(new, entry)
+		}
+	}
+
+	return new, nil
 }
