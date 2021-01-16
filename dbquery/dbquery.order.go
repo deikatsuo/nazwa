@@ -621,6 +621,12 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		items = oi
 	}
 
+	// Detail kredit
+	var creditDetail wrapper.OrderCreditDetail
+	if cd, err := OrderGetCreditInfo(db, o.ID); err == nil {
+		creditDetail = cd
+	}
+
 	order = wrapper.Order{
 		ID: o.ID,
 		Customer: wrapper.NameID{
@@ -666,6 +672,7 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 		PriceTotal:     o.PriceTotal,
 		BasePriceTotal: o.BasePriceTotal,
 		Items:          items,
+		CreditDetail:   creditDetail,
 	}
 
 	return order, nil
@@ -729,4 +736,19 @@ func OrderGetSubstituteByRic(db *sqlx.DB, ric string) ([]wrapper.NameID, error) 
 	}
 
 	return new, nil
+}
+
+// OrderGetCreditInfo mengambil informasi kredit
+func OrderGetCreditInfo(db *sqlx.DB, oid int) (wrapper.OrderCreditDetail, error) {
+	var creditDetail wrapper.OrderCreditDetail
+	query := `SELECT id, monthly, duration, due, remaining, lucky_discount
+	FROM "order_credit_detail"
+	WHERE order_id=$1`
+
+	err := db.Get(&creditDetail, query, oid)
+	if err != nil {
+		return wrapper.OrderCreditDetail{}, err
+	}
+
+	return creditDetail, nil
 }

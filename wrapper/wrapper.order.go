@@ -134,6 +134,7 @@ type Order struct {
 	Deposit         int
 	PriceTotal      int
 	BasePriceTotal  int
+	CreditDetail    OrderCreditDetail
 }
 
 // NullableOrderItem item/produk yang di order
@@ -159,4 +160,14 @@ type OrderItem struct {
 	BasePrice int
 	Price     int
 	Discount  int
+}
+
+// OrderCreditDetail detail order kredit
+type OrderCreditDetail struct {
+	ID            int `db:"id"`
+	Monthly       int `db:"monthly"`
+	Duration      int `db:"duration"`
+	Due           int `db:"due"`
+	Remaining     int `db:"remaining"`
+	LuckyDiscount int `db:"lucky_discount"`
 }
