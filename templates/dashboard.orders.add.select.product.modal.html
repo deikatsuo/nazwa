@@ -154,20 +154,32 @@
               type: "warning",
               message: "Produk ini sudah ditambahkan",
             });
-            return
+            return;
           }
         }
 
+        currentLength = document.getElementById("create").__x.$data
+          .selectedProducts.length;
         document
           .getElementById("create")
           .__x.$data.selectedProducts.push(product);
-        
+
         document.getElementById("create").__x.$data.formData.order_items.push({
           id: product.ID,
           quantity: 1,
           notes: "",
           discount: 0,
         });
+
+        updatedLength = document.getElementById("create").__x.$data
+          .selectedProducts.length;
+
+        if (updatedLength > currentLength) {
+          $dispatch("notif", {
+            type: "success",
+            message: "Produk berhasil ditambahkan",
+          });
+        }
       },
     };
   }

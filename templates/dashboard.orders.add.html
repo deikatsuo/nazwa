@@ -771,7 +771,7 @@
                   <!-- Tombol discard item -->
                   <div
                     class="cursor-pointer absolute bg-red-200 text-red-500 font-bold text-xs top-0 right-0 mt-1 mr-1"
-                    @click="remove(index)"
+                    @click="removeSelectedProduct(index)"
                     title="Hapus"
                   >
                     <p>{{ template "_svg_icon_close" }}</p>
@@ -1438,7 +1438,7 @@
               console.log("Telah terjadi kesalahan saat memuat data collector");
             });
         },
-        remove(pid) {
+        removeSelectedProduct(pid) {
           this.selectedProducts.splice(pid, 1);
           this.formData.order_items.splice(pid, 1);
         },
@@ -1536,7 +1536,7 @@
             );
           }
         },
-        remove(id) {
+        removeSubstitute(id) {
           this.formData.substitutes.splice(id, 1);
         },
         resetProductForm() {},
