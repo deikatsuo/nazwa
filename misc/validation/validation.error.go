@@ -89,4 +89,5 @@ var ValidationErrorsMask = map[string]string{
 	"date":            "Format tanggal salah",
 	"gte":             "Harus lebih besar dari",
 	"lte":             "Tidak boleh lebih dari",
+	"required_if":     "Tidak boleh kosong",
 }

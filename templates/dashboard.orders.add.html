@@ -436,7 +436,7 @@
                     x-model.number="formData.due"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDue }"
                   >
-                    <option>Setiap...</option>
+                    <option value="0">Setiap...</option>
                     <template x-for="val in 28" :key="val">
                       <option :value="val" x-text="`tanggal ${val}`"></option>
                     </template>
@@ -1169,8 +1169,9 @@
           surveyor: null,
           collector: null,
           credit: true,
+          credit_mask: "",
           duration: 12,
-          due: 1,
+          due: null,
           notes: "",
           order_date: null,
           shipping_date: null,
@@ -1246,6 +1247,9 @@
           // Jika bukan kredit
           if (this.formData.credit == false) {
             this.formData.duration = null;
+            this.formData.credit_mask = "cash";
+          } else {
+            this.formData.credit_mask = "credit";
           }
 
           fetch("/api/v1/local/order/create", {
@@ -1276,6 +1280,14 @@
               } else {
                 this.errCustomer = false;
                 this.errmCustomer = "";
+              }
+
+              if (data.due) {
+                this.errDue = true;
+                this.errmDue = data.due;
+              } else {
+                this.errDue = false;
+                this.errmDue = "";
               }
 
               if (data.orderdate) {
