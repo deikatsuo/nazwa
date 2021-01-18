@@ -90,3 +90,16 @@ VALUES ('12', '12', '7', '4', '4', 'completed', 'true', 'kredit mania', 'true', 
 
 INSERT INTO "order_item" ("order_id", "product_id", "quantity", "notes")
 VALUES ('7', '5', '5', 'contoh kredit');
+
+SELECT
+		id,
+		name,
+		TO_CHAR(base_price,'Rp999G999G999G999G999') AS base_price,
+		TO_CHAR(price,'Rp999G999G999G999G999') AS price,
+		code,
+		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		type,
+		brand
+		FROM "product"
+		WHERE id=$1
+		LIMIT 1

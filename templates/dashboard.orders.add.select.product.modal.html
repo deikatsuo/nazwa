@@ -27,7 +27,7 @@
               <div
                 class="absolute bg-blue-200 text-blue-500 font-bold text-xs top-0 right-0 px-1"
               >
-                <p x-text="product.Price"></p>
+                <p x-text="toRupiah(product.Price)"></p>
               </div>
               <img
                 class="object-cover w-full"
@@ -64,7 +64,7 @@
                 ></span>
                 <span
                   class="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-500 mr-2 mb-2"
-                  x-text="'#Beli: ' + product.BasePrice"
+                  x-text="'#Beli: ' + toRupiah(product.BasePrice)"
                 ></span>
               </div>
             </div>

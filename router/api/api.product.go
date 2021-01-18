@@ -59,27 +59,31 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 			save = false
 		}
 
-		if len(json.Photo) > 0 {
-			for _, p := range json.Photo {
-				if p.PhotoType != "" && p.Photo != "" {
-					if f, err := misc.Base64ToFileWithData("../data/upload/product/", p.Photo, p.PhotoType); err == nil {
-						files = append(files, f)
-					} else {
-						log.Println("ERROR: api.product.go ProductCreate() Konversi base64 ke dalam bentuk file")
-						message = err.Error()
+		if save {
+			if len(json.Photo) > 0 {
+				for _, p := range json.Photo {
+					if p.PhotoType != "" && p.Photo != "" {
+						if f, err := misc.Base64ToFileWithData("../data/upload/product/", p.Photo, p.PhotoType); err == nil {
+							files = append(files, f)
+						} else {
+							log.Println("ERROR: api.product.go ProductCreate() Konversi base64 ke dalam bentuk file")
+							message = err.Error()
+						}
 					}
+				}
+			}
+
+			// Buat thumbnail
+			if len(files) > 0 {
+				err := misc.FileGenerateThumb(files[0], "../data/upload/product/")
+				if err != nil {
+					message = err.Error()
 				}
 			}
 		}
 
-		// Buat thumbnail
-		if len(files) > 0 {
-			err := misc.FileGenerateThumb(files[0], "../data/upload/product/")
-			if err != nil {
-				message = err.Error()
-			}
-		}
-
+		base, _ := strconv.Atoi(json.BasePrice)
+		price, _ := strconv.Atoi(json.Price)
 		var retProduct wrapper.Product
 		var pid int
 		if save {
@@ -88,8 +92,8 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetCode(json.Code).
 				SetType(json.Type).
 				SetBrand(json.Brand).
-				SetBasePrice(json.BasePrice).
-				SetPrice(json.Price).
+				SetBasePrice(base).
+				SetPrice(price).
 				SetCreatedBy(uid.(int)).
 				SetPhotos(files).
 				SetCreditPrice(json.CreditPrice).

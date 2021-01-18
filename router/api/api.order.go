@@ -242,6 +242,7 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		if save {
+			deposit, _ := strconv.Atoi(json.Deposit)
 			order := dbquery.NewOrder()
 			err := order.SetCustomer(json.Customer).
 				SetSales(json.Sales).
@@ -250,7 +251,7 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetShipping(json.ShippingAddress).
 				SetBilling(json.BillingAddress).
 				SetCredit(*json.Credit).
-				SetDeposit(json.Deposit).
+				SetDeposit(deposit).
 				SetDuration(json.Duration).
 				SetDue(json.Due).
 				SetNotes(json.Notes).

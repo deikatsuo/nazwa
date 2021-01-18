@@ -55,7 +55,7 @@ type OrderForm struct {
 	ShippingDate    string                    `json:"shipping_date" binding:"omitempty,date"`
 	BillingAddress  int                       `json:"billing_address" binding:"omitempty,numeric"`
 	ShippingAddress int                       `json:"shipping_address" binding:"required,numeric"`
-	Deposit         int                       `json:"deposit" binding:"omitempty,numeric"`
+	Deposit         string                    `json:"deposit" binding:"omitempty,numeric"`
 	OrderItems      []OrderItemForm           `json:"order_items" binding:"omitempty"`
 	Substitutes     []OrderUserSubstituteForm `json:"substitutes" binding:"omitempty"`
 }
@@ -63,7 +63,7 @@ type OrderForm struct {
 // OrderItemForm form item
 type OrderItemForm struct {
 	ProductID int    `json:"id" binding:"required,numeric"`
-	Quantity  int    `json:"quantity" binding:"required,numeric"`
+	Quantity  int    `json:"quantity" binding:"required,numeric,gte=0"`
 	Notes     string `json:"notes" binding:"omitempty"`
 	Discount  int    `json:"discount" binding:"omitempty,numeric"`
 }

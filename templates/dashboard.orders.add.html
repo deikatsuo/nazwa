@@ -483,7 +483,7 @@
                   >
                   <input
                     class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                    x-model.number="formData.deposit"
+                    x-model="formData.deposit"
                     :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDeposit }"
                   />
                 </label>
@@ -1457,9 +1457,10 @@
         price(index, ori = false) {
           var num = 0;
 
-          num =
+          num = Number(
             this.selectedProducts[index].Price *
-            this.formData.order_items[index].quantity;
+              this.formData.order_items[index].quantity
+          );
 
           if (ori) {
             return num;
@@ -1478,6 +1479,7 @@
         creditPrice(index, ori = false) {
           var price = 0;
           var item = this.selectedProducts[index];
+
           if (item.CreditPrice != null) {
             for (cpi = 0; cpi < item.CreditPrice.length; cpi++) {
               if (this.formData.duration == item.CreditPrice[cpi].Duration) {

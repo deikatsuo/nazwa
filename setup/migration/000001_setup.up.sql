@@ -229,7 +229,7 @@ CREATE TABLE "order_user_substitute" (
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "created_by" INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (substitute_to) REFERENCES "order"("id"),
+    FOREIGN KEY (substitute_to) REFERENCES "order"("id") ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES "user"("id")
 );
 
@@ -244,7 +244,7 @@ CREATE TABLE "order_item" (
     "price" NUMERIC(15) DEFAULT 0,
     "discount" NUMERIC(15) DEFAULT 0,
     PRIMARY KEY (id),
-    FOREIGN KEY (order_id) REFERENCES "order"("id"),
+    FOREIGN KEY (order_id) REFERENCES "order"("id") ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES "product"("id")
 );
 
@@ -258,5 +258,5 @@ CREATE TABLE "order_credit_detail" (
     "remaining"  NUMERIC(15) NOT NULL,
     "lucky_discount" NUMERIC(15) DEFAULT 0,
     PRIMARY KEY (id),
-    FOREIGN KEY (order_id) REFERENCES "order"("id")
+    FOREIGN KEY (order_id) REFERENCES "order"("id") ON DELETE CASCADE
 );

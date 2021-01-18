@@ -138,7 +138,7 @@ function data() {
 
 // Convert nomor ke mata uang rupiah
 function toRupiah(number) {
-  number = number.toString().replace(/\s+/g, '');
+  //number = number.toString().replace(/\s+/g, '');
   if(isNaN(number) || number == '') {
     number = 0;
   }

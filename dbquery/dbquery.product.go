@@ -75,8 +75,8 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 		name,
 		brand,
 		type,
-		TO_CHAR(base_price,'Rp999G999G999G999G999') AS base_price,
-		TO_CHAR(price,'Rp999G999G999G999G999') AS price,
+		base_price,
+		price,
 		code,
 		thumbnail,
 		created_by,
@@ -109,8 +109,8 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 			Type:        p.Type.String,
 			CreatedAt:   p.CreatedAt,
 			CreatedBy:   p.CreatedBy,
-			BasePrice:   string(p.BasePrice),
-			Price:       string(p.Price),
+			BasePrice:   p.BasePrice,
+			Price:       p.Price,
 			Code:        p.Code,
 			Thumbnail:   p.Thumbnail.String,
 			CreditPrice: creditPrice,
@@ -138,8 +138,8 @@ func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 	query := `SELECT
 		id,
 		name,
-		TO_CHAR(base_price,'Rp999G999G999G999G999') AS base_price,
-		TO_CHAR(price,'Rp999G999G999G999G999') AS price,
+		base_price,
+		price,
 		code,
 		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
 		type,
@@ -170,8 +170,8 @@ func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 		ID:          p.ID,
 		Name:        strings.Title(p.Name),
 		CreatedAt:   p.CreatedAt,
-		BasePrice:   string(p.BasePrice),
-		Price:       string(p.Price),
+		BasePrice:   p.BasePrice,
+		Price:       p.Price,
 		Code:        p.Code,
 		Type:        strings.Title(p.Type.String),
 		Brand:       strings.Title(p.Brand.String),
@@ -281,14 +281,14 @@ func (c *CreateProduct) SetCode(p string) *CreateProduct {
 }
 
 // SetBasePrice Harga beli produk
-func (c *CreateProduct) SetBasePrice(p string) *CreateProduct {
+func (c *CreateProduct) SetBasePrice(p int) *CreateProduct {
 	c.BasePrice = p
 	c.into["base_price"] = ":base_price"
 	return c
 }
 
 // SetPrice Harga jual produk (kontan/cash)
-func (c *CreateProduct) SetPrice(p string) *CreateProduct {
+func (c *CreateProduct) SetPrice(p int) *CreateProduct {
 	c.Price = p
 	c.into["price"] = ":price"
 	return c

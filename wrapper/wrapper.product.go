@@ -9,8 +9,8 @@ import "database/sql"
 type ProductInsert struct {
 	Name      string `db:"name"`
 	Code      string `db:"code"`
-	BasePrice string `db:"base_price"`
-	Price     string `db:"price"`
+	BasePrice int    `db:"base_price"`
+	Price     int    `db:"price"`
 	Type      string `db:"type"`
 	Brand     string `db:"brand"`
 	CreatedAt string `db:"created_at"`
@@ -31,8 +31,8 @@ type NullableProduct struct {
 	ID        int            `db:"id"`
 	Name      string         `db:"name"`
 	Code      string         `db:"code"`
-	BasePrice []uint8        `db:"base_price"`
-	Price     []uint8        `db:"price"`
+	BasePrice int            `db:"base_price"`
+	Price     int            `db:"price"`
 	Type      sql.NullString `db:"type"`
 	Brand     sql.NullString `db:"brand"`
 	Thumbnail sql.NullString `db:"thumbnail"`
@@ -89,8 +89,8 @@ type Product struct {
 	ID          int
 	Name        string
 	Code        string
-	BasePrice   string
-	Price       string
+	BasePrice   int
+	Price       int
 	Type        string
 	Brand       string
 	Thumbnail   string

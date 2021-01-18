@@ -63,8 +63,8 @@
                 </div>
               </div>
             </td>
-            <td class="px-4 py-3 text-sm" x-text="product.BasePrice"></td>
-            <td class="px-4 py-3 text-sm" x-text="product.Price"></td>
+            <td class="px-4 py-3 text-sm" x-text="toRupiah(product.BasePrice)"></td>
+            <td class="px-4 py-3 text-sm" x-text="toRupiah(product.Price)"></td>
             <td class="px-4 py-3 text-sm" x-text="product.CreatedAt"></td>
           </tr>
         </template>
@@ -213,7 +213,7 @@
                 </dt>
                 <dd
                   class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                  x-text="product.BasePrice"
+                  x-text="toRupiah(product.BasePrice)"
                 ></dd>
               </div>
               <div class="px-4 py-1 sm:grid sm:grid-cols-2">
@@ -222,7 +222,7 @@
                 </dt>
                 <dd
                   class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                  x-text="product.Price"
+                  x-text="toRupiah(product.Price)"
                 ></dd>
               </div>
             </dl>

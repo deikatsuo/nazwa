@@ -292,13 +292,18 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 	}
 
 	remaining := priceTotal
-	monthly := priceTotal / c.duration
+	var monthly int
 	var luckyDiscount int
-	if c.Credit && c.Deposit > 0 {
-		remaining = priceTotal - c.Deposit
-		monthly = (priceTotal - c.Deposit) / c.duration
-		monthly = int(math.Floor(float64(monthly)/1000)) * 1000
-		luckyDiscount = ((priceTotal - c.Deposit) / c.duration) - monthly
+
+	if c.Credit {
+		monthly = priceTotal / c.duration
+
+		if c.Deposit > 0 {
+			remaining = priceTotal - c.Deposit
+			monthly = (priceTotal - c.Deposit) / c.duration
+			monthly = int(math.Floor(float64(monthly)/1000)) * 1000
+			luckyDiscount = ((priceTotal - c.Deposit) / c.duration) - monthly
+		}
 	}
 
 	if priceTotal != 0 {
