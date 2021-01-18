@@ -302,7 +302,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 			remaining = priceTotal - c.Deposit
 			monthly = (priceTotal - c.Deposit) / c.duration
 			monthly = int(math.Floor(float64(monthly)/1000)) * 1000
-			luckyDiscount = ((priceTotal - c.Deposit) / c.duration) - monthly
+			luckyDiscount = (priceTotal - c.Deposit) - (monthly * c.duration)
 		}
 	}
 
