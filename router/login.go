@@ -4,17 +4,15 @@ import (
 	"nazwa/misc"
 	"nazwa/wrapper"
 
-	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
-// PageLogin ...
-// Halaman login
+// PageLogin Halaman login
 func PageLogin(c *gin.Context) {
+	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+
 	// Larang akses untuk user login
-	session := sessions.Default(c)
-	userid := session.Get("userid")
-	if userid != nil {
+	if df["login"] != false {
 		Page403(c)
 		return
 	}
@@ -30,6 +28,5 @@ func PageLogin(c *gin.Context) {
 		"l_login_create":   "Buat akun",
 	}
 
-	df := c.MustGet("config").(wrapper.DefaultConfig).Site
 	c.HTML(200, "login.html", misc.Mete(df, gh))
 }
