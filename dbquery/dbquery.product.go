@@ -73,6 +73,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 	query := `SELECT
 		id,
 		name,
+		stock,
 		brand,
 		type,
 		base_price,
@@ -105,6 +106,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 		parse = append(parse, wrapper.Product{
 			ID:          p.ID,
 			Name:        strings.Title(p.Name),
+			Stock:       p.Stock,
 			Brand:       p.Brand.String,
 			Type:        p.Type.String,
 			CreatedAt:   p.CreatedAt,
@@ -138,6 +140,7 @@ func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 	query := `SELECT
 		id,
 		name,
+		stock,
 		base_price,
 		price,
 		code,
@@ -169,6 +172,7 @@ func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 	product = wrapper.Product{
 		ID:          p.ID,
 		Name:        strings.Title(p.Name),
+		Stock:       p.Stock,
 		CreatedAt:   p.CreatedAt,
 		BasePrice:   p.BasePrice,
 		Price:       p.Price,
@@ -276,6 +280,15 @@ func (c *CreateProduct) SetCode(p string) *CreateProduct {
 	if p != "" {
 		c.Code = strings.ToLower(p)
 		c.into["code"] = ":code"
+	}
+	return c
+}
+
+// SetStock Stok produk
+func (c *CreateProduct) SetStock(p int) *CreateProduct {
+	if p >= 0 {
+		c.Stock = p
+		c.into["stock"] = ":stock"
 	}
 	return c
 }

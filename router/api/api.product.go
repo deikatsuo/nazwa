@@ -84,6 +84,7 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 
 		base, _ := strconv.Atoi(json.BasePrice)
 		price, _ := strconv.Atoi(json.Price)
+		stock, _ := strconv.Atoi(json.Stock)
 		var retProduct wrapper.Product
 		var pid int
 		if save {
@@ -92,6 +93,7 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				SetCode(json.Code).
 				SetType(json.Type).
 				SetBrand(json.Brand).
+				SetStock(stock).
 				SetBasePrice(base).
 				SetPrice(price).
 				SetCreatedBy(uid.(int)).

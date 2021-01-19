@@ -8,6 +8,7 @@ import "database/sql"
 // ProductInsert base struk
 type ProductInsert struct {
 	Name      string `db:"name"`
+	Stock     int    `db:"stock"`
 	Code      string `db:"code"`
 	BasePrice int    `db:"base_price"`
 	Price     int    `db:"price"`
@@ -30,6 +31,7 @@ type ProductPhotoListSelect struct {
 type NullableProduct struct {
 	ID        int            `db:"id"`
 	Name      string         `db:"name"`
+	Stock     int            `db:"stock"`
 	Code      string         `db:"code"`
 	BasePrice int            `db:"base_price"`
 	Price     int            `db:"price"`
@@ -66,6 +68,7 @@ type ProductCreditPriceSelect struct {
 // ProductForm menyimpan input produk
 type ProductForm struct {
 	Name        string                   `json:"name" binding:"required,min=4,max=100"`
+	Stock       string                   `json:"stock" binding:"numeric,gte=0"`
 	Code        string                   `json:"code" binding:"min=5,max=10"`
 	Brand       string                   `json:"brand" binding:"omitempty,min=2,max=25"`
 	Type        string                   `json:"type" binding:"omitempty,min=2,max=25"`
@@ -89,6 +92,7 @@ type Product struct {
 	ID          int
 	Name        string
 	Code        string
+	Stock       int
 	BasePrice   int
 	Price       int
 	Type        string

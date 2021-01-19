@@ -157,6 +157,7 @@ CREATE TABLE "product" (
     "id" INT GENERATED ALWAYS AS IDENTITY NOT NULL,
     "created_by" INT NOT NULL,
     "name" VARCHAR(100) NOT NULL,
+    "stock" INT NOT NULL DEFAULT 0,
     "code" VARCHAR(10) UNIQUE NOT NULL,
     "base_price" NUMERIC(15) DEFAULT 0,
     "price" NUMERIC(15) DEFAULT 0,
