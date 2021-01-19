@@ -14,13 +14,26 @@ import (
 
 // NewDefaultConfig - mengambil konfigurasi default dari .env
 func NewDefaultConfig() gin.HandlerFunc {
-	config := map[string]interface{}{
-		"site_url":   misc.GetEnv("SITE_URL", ""),
-		"site_name":  misc.GetEnv("SITE_NAME", ""),
-		"site_title": misc.GetEnv("SITE_TITLE", ""),
-	}
 
 	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		userid := session.Get("userid")
+
+		login := false
+
+		if userid != nil {
+			login = true
+		} else {
+			login = false
+		}
+
+		config := map[string]interface{}{
+			"site_url":   misc.GetEnv("SITE_URL", ""),
+			"site_name":  misc.GetEnv("SITE_NAME", ""),
+			"site_title": misc.GetEnv("SITE_TITLE", ""),
+			"login":      login,
+		}
 
 		c.Set("config", wrapper.DefaultConfig{Site: config})
 
