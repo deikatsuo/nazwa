@@ -22,7 +22,12 @@
         class="grid grid-cols-1 col-gap-4 row-gap-8 md:col-gap-6 sm:grid-cols-2"
       >
         <template x-for="(product, index) in fill_products" :key="index">
-          <li @click="add($dispatch, product)" class="cursor-pointer">
+          <li
+            class="relative"
+            @click="add($dispatch, product)"
+            :class="{'cursor-pointer': product.Stock > 0 }"
+          >
+            <div x-show="product.Stock <= 0" class="absolute z-30 bg-gray-500 opacity-50 inset-0"></div>
             <div class="rounded relative overflow-hidden shadow-lg">
               <div
                 class="absolute bg-blue-200 text-blue-500 font-bold text-xs top-0 right-0 px-1"
@@ -61,6 +66,11 @@
                   class="inline-block bg-green-200 rounded-full px-3 py-1 text-xs font-semibold text-green-500 mr-2 mb-2"
                   x-text="'#Tipe: ' + product.Type"
                   x-show="product.Type != ''"
+                ></span>
+                <span
+                  class="inline-block bg-red-200 rounded-full px-3 py-1 text-xs font-semibold text-red-500 mr-2 mb-2"
+                  x-text="'#Stok: ' + product.Stock"
+                  :class="{}"
                 ></span>
                 <span
                   class="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-500 mr-2 mb-2"
@@ -143,6 +153,13 @@
         }
       },
       add($dispatch, product) {
+        if (product.Stock <= 0) {
+          $dispatch("notif", {
+            type: "warning",
+            message: "Produk ini sudah habis",
+          });
+          return;
+        }
         product.discountPrice = 0;
         product.creditDiscountPrice = 0;
         product.edited = false;
