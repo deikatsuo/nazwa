@@ -306,12 +306,21 @@
             user = document.getElementById("user_detail").__x.$data;
             user.addresses = json.addresses;
           }
-          
-          if (json.error) {
-            $dispatch('notif', {type: 'error', message: json.error});
-          } else if (json.success) {
-            $dispatch('notif', {type: 'success', message: json.success});
+
+          if (json.addresses == null && json.status == "success") {
+            user = document.getElementById("user_detail").__x.$data;
+            user.addresses = [];
           }
+
+          $dispatch('notif', {
+            type: json.status,
+            message: json.message,
+          });
+
+          if (json.error) {
+            alert(json.error);
+          }
+
         })
         .catch((err) => {
           console.log(err)

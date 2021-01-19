@@ -436,27 +436,37 @@ func UserDeleteAddress(db *sqlx.DB) gin.HandlerFunc {
 			return
 		}
 
-		errMess := ""
+		message := ""
 		next := true
 		httpStatus := http.StatusBadRequest
-		success := ""
+		status := ""
+		errAlert := ""
 
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
-			errMess = "Data tidak benar"
+			message = "Data tidak benar"
+			status = "error"
 			next = false
 		}
 
 		id, err := jsonparser.GetInt(body, "id")
 		if err != nil {
-			errMess = "Request tidak valid"
+			message = "Request tidak valid"
+			status = "error"
 		}
 
 		// Hapus alamat
 		if next {
 			if err := dbquery.UserDeleteAddress(db, id, uid); err != nil {
-				errMess = "Gagal menghapus alamat"
+				errAlert = err.Error()
+				message = "Gagal menghapus alamat, kemungkinan karena ada beberapa order yang menggunakan alamat ini"
+				status = "error"
 				next = false
+			} else {
+				httpStatus = http.StatusOK
+				message = "Alamat berhasil dihapus"
+				status = "success"
+				next = true
 			}
 		}
 
@@ -464,18 +474,15 @@ func UserDeleteAddress(db *sqlx.DB) gin.HandlerFunc {
 		var addresses []wrapper.UserAddress
 		if next {
 			em, err := dbquery.UserGetAddress(db, uid)
-			if err != nil {
-				errMess = "Gagal memuat alamat/semua alamat sudah dihapus"
-			} else {
+			if err == nil {
 				addresses = em
-				httpStatus = http.StatusOK
-				success = "Alamat berhasil dihapus"
 			}
 		}
 		c.JSON(httpStatus, gin.H{
-			"error":     errMess,
-			"success":   success,
+			"status":    status,
+			"message":   message,
 			"addresses": addresses,
+			"error":     errAlert,
 		})
 	}
 	return gin.HandlerFunc(fn)
