@@ -757,3 +757,12 @@ func OrderGetCreditInfo(db *sqlx.DB, oid int) (wrapper.OrderCreditDetail, error)
 
 	return creditDetail, nil
 }
+
+// OrderDeleteByID delete order
+func OrderDeleteByID(db *sqlx.DB, oid int) error {
+	query := `DELETE FROM "order"
+	WHERE id=$1`
+	_, err := db.Exec(query, oid)
+
+	return err
+}

@@ -954,7 +954,7 @@
                         message: "Peran pengguna berhasil diubah",
                       });
                       user = document.getElementById("user_data").__x.$data;
-                      user.fetchUsersData($dispatch, false, "next", true);
+                      user.fetchUsersData($dispatch, false, "reload", true);
                     }
                   })
                   .catch((err) => {
@@ -1098,9 +1098,12 @@
         } else {
           ffrom = `/api/v1/local/user/list/${this.limit}?lastid=${this.lastid}&direction=next&role=${this.userType}`;
         }
+
+        // Jika reload
         if (reload) {
           ffrom = this.lastURL;
         }
+
         this.lastURL = ffrom;
         fetch(ffrom, {
           method: "GET",

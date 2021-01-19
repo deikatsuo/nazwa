@@ -184,6 +184,10 @@ func runServer(db *sqlx.DB) {
 	v1order.POST("/create", api.OrderCreate(db))
 	v1order.GET("/substitute/ric", api.OrderSubstituteByRicShow(db))
 
+	// /api/v1/local/order/edit
+	v1oEdit := v1order.Group("/edit")
+	v1oEdit.DELETE("/:id/delete", api.OrderDeleteByID(db))
+
 	// User API
 	// /api/v1/local/user
 	v1user := v1local.Group("/user")

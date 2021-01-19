@@ -27,8 +27,11 @@
       <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
         <template x-for="(order, index) in orders" :key="order.Code">
           <tr
-            class="text-gray-700 dark:text-gray-400 hover:bg-yellow-50 cursor-pointer"
-            @click="$dispatch('modal', { tmp: order.ID, html: $refs.orderDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
+            class="text-gray-700 dark:text-gray-400 cursor-pointer"
+            @click="if (selected !== order.Code) { $dispatch('modal', { tmp: order.ID, html: $refs.orderDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } }); }"
+            @contextmenu.prevent="if (selected !== order.Code) { selected = order.Code; } else { selected = null; }"
+            @dblclick="if (selected == order.Code) { deleteOrder($dispatch, order.ID); }"
+            :class="{ 'hover:bg-yellow-50': selected != order.Code ,'bg-orange-300 hover:bg-orange-200': selected == order.Code }"
           >
             <td
               class="px-1 py-3 text-sm text-center"
@@ -241,6 +244,7 @@
         this.fetchOrdersData($dispatch, true, "init");
       },
       orders: [],
+      selected: null,
       loading: false,
       lastid: 0,
       limit: 10,
@@ -249,7 +253,8 @@
       last: false,
       page: 1,
       total: 0,
-      fetchOrdersData($dispatch, reset, go) {
+      lastURL: "",
+      fetchOrdersData($dispatch, reset, go, reload = false) {
         this.loading = true;
         if (reset) {
           this.lastid = 0;
@@ -259,6 +264,14 @@
         } else {
           ffrom = `/api/v1/local/order/list/${this.limit}?lastid=${this.lastid}&direction=next`;
         }
+
+        // Jika reload
+        if (reload) {
+          ffrom = this.lastURL;
+        }
+
+        this.lastURL = ffrom;
+
         fetch(ffrom, {
           method: "GET",
         })
@@ -306,6 +319,22 @@
       forW($dispatch) {
         this.lastid = this.orders[this.orders.length - 1].ID;
         this.fetchOrdersData($dispatch, false, "next");
+      },
+      deleteOrder($dispatch, oid) {
+        fetch(`/api/v1/local/order/edit/${oid}/delete`, {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            $dispatch("notif", {
+              type: data.status,
+              message: data.message,
+            });
+            this.fetchOrdersData($dispatch, false, "reload", true);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       },
     };
   }

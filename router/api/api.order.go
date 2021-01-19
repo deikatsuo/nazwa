@@ -283,3 +283,41 @@ func OrderCreate(db *sqlx.DB) gin.HandlerFunc {
 	}
 	return gin.HandlerFunc(fn)
 }
+
+// OrderDeleteByID delete order
+func OrderDeleteByID(db *sqlx.DB) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		nowID := session.Get("userid")
+		// id order
+		oid, err := strconv.Atoi(c.Param("id"))
+		if err != nil || nowID == nil {
+			router.Page404(c)
+			return
+		}
+
+		message := ""
+		next := true
+		httpStatus := http.StatusBadRequest
+		status := ""
+
+		// Delete order
+		if next {
+			if err := dbquery.OrderDeleteByID(db, oid); err != nil {
+				message = "Gagal menghapus order"
+				status = "error"
+			} else {
+				httpStatus = http.StatusOK
+				message = "Order berhasil dihapus"
+				status = "success"
+			}
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"status":  status,
+			"message": message,
+		})
+	}
+	return gin.HandlerFunc(fn)
+}
