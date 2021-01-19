@@ -104,6 +104,7 @@ func runServer(db *sqlx.DB) {
 	// Halaman muka
 	server.GET("/", router.PageHome)
 	server.GET("/product", router.PageProduct)
+	server.GET("/product/:id", router.PageProductDetail(db))
 	server.GET("/login", router.PageLogin)
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
@@ -148,6 +149,10 @@ func runServer(db *sqlx.DB) {
 	// V1
 	// /api/v1
 	v1 := apis.Group("/v1")
+
+	// API untuk publik
+	v1public := v1.Group("/public")
+	v1public.GET("/product/all", api.ProductShowAll(db))
 
 	// API yang diakses dari Lokal
 	// /api/v1/local
