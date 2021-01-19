@@ -383,15 +383,6 @@ func ProductShowList(db *sqlx.DB) gin.HandlerFunc {
 // ProductShowAll mengambil semua data/list produk
 func ProductShowAll(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		session := sessions.Default(c)
-		// User session saat ini
-		// Tolak jika yang request bukan user terdaftar
-		uid := session.Get("userid")
-		if uid == nil {
-			router.Page404(c)
-			return
-		}
-
 		var direction string
 		httpStatus := http.StatusOK
 		errMess := ""

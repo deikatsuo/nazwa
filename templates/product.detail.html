@@ -33,14 +33,13 @@
           <div
             class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
           >
-            Detail Produk
           </div>
-          <div class="relative">
+          <div>
             <div x-init="init($dispatch)" x-data="fProDetail()">
               <!-- Title -->
               <div
-                class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
-                x-text="'Kode #'+product.Code"
+                class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 dark:text-gray-400"
+                x-text="product.Name"
               ></div>
               <!-- Photo produk -->
               <div

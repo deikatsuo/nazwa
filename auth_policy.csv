@@ -1,7 +1,9 @@
 p, role::guest, /api/v1/local/login, *
+p, role::guest, /api/v1/public/*, *
 
 p, role::customer, /dashboard/, *
 p, role::customer, /dashboard/account, *
+p, role::customer, /api/v1/public/*, *
 
 p, role::sales, /dashboard/users, *
 g, role::sales, role::customer

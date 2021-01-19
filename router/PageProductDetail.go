@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
@@ -15,14 +14,6 @@ import (
 // PageProductDetail Halaman Detail Produk
 func PageProductDetail(db *sqlx.DB) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		session := sessions.Default(c)
-		// User session saat ini
-		// Tolak jika yang request bukan user terdaftar
-		uid := session.Get("userid")
-		if uid == nil {
-			Page404(c)
-			return
-		}
 		httpStatus := http.StatusOK
 		message := ""
 		status := ""
