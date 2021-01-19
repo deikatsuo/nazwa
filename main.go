@@ -102,7 +102,7 @@ func runServer(db *sqlx.DB) {
 
 	// Router
 	// Halaman muka
-	server.GET("/", router.PageHome)
+	server.GET("/", router.HomePage)
 	server.GET("/login", router.PageLogin)
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)

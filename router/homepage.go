@@ -7,9 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageHome ...
-// Halaman homepage
-func PageHome(c *gin.Context) {
+// HomePage Halaman halaman utama
+func HomePage(c *gin.Context) {
 	// Ambil konfigurasi default
 	df := c.MustGet("config").(wrapper.DefaultConfig).Site
 
