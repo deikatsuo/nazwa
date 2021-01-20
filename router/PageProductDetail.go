@@ -12,8 +12,6 @@ import (
 
 // PageProductDetail Halaman Detail Produk
 func PageProductDetail(c *gin.Context) {
-	db := dbquery.DB
-
 	httpStatus := http.StatusOK
 	message := ""
 	status := ""
@@ -29,7 +27,7 @@ func PageProductDetail(c *gin.Context) {
 	}
 
 	var product wrapper.Product
-	if p, err := dbquery.ProductGetProductByID(db, pid); err == nil {
+	if p, err := dbquery.ProductGetProductByID(pid); err == nil {
 		product = p
 	} else {
 		httpStatus = http.StatusInternalServerError

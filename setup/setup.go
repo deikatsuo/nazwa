@@ -12,13 +12,11 @@ import (
 	"github.com/cheggaaa/pb/v3"
 	"github.com/go-playground/validator/v10"
 	"github.com/gocarina/gocsv"
-	"github.com/jmoiron/sqlx"
 )
 
 // RunSetup menjalankan setup servers
 // Menjalankan setup
 func RunSetup() {
-	db := dbquery.DB
 	var reset bool
 
 	// Tanya user apakah ingin mereset database
@@ -151,7 +149,7 @@ func RunSetup() {
 	fmt.Println("Apakah anda ingin melakukan setup daerah? [y/N]")
 	fmt.Scanf("%s", &setdaerah)
 	if setdaerah == "y" || setdaerah == "Y" {
-		if err := setupDaerah(db); err != nil {
+		if err := setupDaerah(); err != nil {
 			log.Error("Terjadi kesalahan saat konfigurasi daerah")
 			log.Fatal(err)
 		}
@@ -165,7 +163,7 @@ func RunSetup() {
 	if buatAdmin == "y" || buatAdmin == "Y" {
 		// Lakukan pendaftaran admin baru
 		log.Info("Setup user admin...")
-		if err := setupUserAdmin(db); err != nil {
+		if err := setupUserAdmin(); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -176,7 +174,7 @@ func RunSetup() {
 }
 
 // Membuat user admin baru
-func setupUserAdmin(db *sqlx.DB) error {
+func setupUserAdmin() error {
 	user := dbquery.UserNew()
 
 	// Variabel untuk menyimpan hasil input
@@ -213,7 +211,7 @@ func setupUserAdmin(db *sqlx.DB) error {
 		fmt.Print("Ulangi lagi? [y/N]?")
 		fmt.Scanf("%s", &again)
 		if again == "y" || again == "Y" {
-			setupUserAdmin(db)
+			setupUserAdmin()
 			return nil
 		}
 		os.Exit(1)
@@ -232,7 +230,7 @@ func setupUserAdmin(db *sqlx.DB) error {
 		SetGender(input.Gender).
 		SetRole(wrapper.UserRoleDev).
 		ReturnID(&uid).
-		Save(db)
+		Save()
 	if err != nil {
 		return err
 	}
@@ -264,7 +262,7 @@ type Daerah struct {
 	Postal    string  `csv:"-"`
 }
 
-func setupDaerah(db *sqlx.DB) error {
+func setupDaerah() error {
 	tx := db.MustBegin()
 	var err error
 	var query string

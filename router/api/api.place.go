@@ -7,89 +7,76 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
 )
 
 // PlaceProvinces mengambil data provinsi
-func PlaceProvinces(db *sqlx.DB) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		p, err := dbquery.PlaceGetProvinces(db)
-		if err != nil {
-			router.Page500(c)
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"province": p,
-		})
+func PlaceProvinces(c *gin.Context) {
+	p, err := dbquery.PlaceGetProvinces()
+	if err != nil {
+		router.Page500(c)
+		return
 	}
-	return gin.HandlerFunc(fn)
+	c.JSON(http.StatusOK, gin.H{
+		"province": p,
+	})
 }
 
 // PlaceCities mengambil data kota/kabupaten
-func PlaceCities(db *sqlx.DB) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		// ID provinsi
-		pid, err := strconv.Atoi(c.Param("id"))
-		if err != nil {
-			router.Page404(c)
-			return
-		}
-
-		p, err := dbquery.PlaceGetCities(db, pid)
-		if err != nil {
-			log.Print(err)
-			router.Page500(c)
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"cities": p,
-		})
+func PlaceCities(c *gin.Context) {
+	// ID provinsi
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
 	}
-	return gin.HandlerFunc(fn)
+
+	p, err := dbquery.PlaceGetCities(pid)
+	if err != nil {
+		log.Print(err)
+		router.Page500(c)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"cities": p,
+	})
 }
 
 // PlaceDistricts mengambil data distrik/kecamatan
-func PlaceDistricts(db *sqlx.DB) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		// ID kota
-		pid, err := strconv.Atoi(c.Param("id"))
-		if err != nil {
-			router.Page404(c)
-			return
-		}
-
-		p, err := dbquery.PlaceGetDistricts(db, pid)
-		if err != nil {
-			log.Print(err)
-			router.Page500(c)
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"districts": p,
-		})
+func PlaceDistricts(c *gin.Context) {
+	// ID kota
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
 	}
-	return gin.HandlerFunc(fn)
+
+	p, err := dbquery.PlaceGetDistricts(pid)
+	if err != nil {
+		log.Print(err)
+		router.Page500(c)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"districts": p,
+	})
 }
 
 // PlaceVillages mengambil data kelurahan/desa
-func PlaceVillages(db *sqlx.DB) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		// ID kota
-		pid, err := strconv.Atoi(c.Param("id"))
-		if err != nil {
-			router.Page404(c)
-			return
-		}
-
-		p, err := dbquery.PlaceGetVillages(db, pid)
-		if err != nil {
-			log.Print(err)
-			router.Page500(c)
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"villages": p,
-		})
+func PlaceVillages(c *gin.Context) {
+	// ID kota
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
 	}
-	return gin.HandlerFunc(fn)
+
+	p, err := dbquery.PlaceGetVillages(pid)
+	if err != nil {
+		log.Print(err)
+		router.Page500(c)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"villages": p,
+	})
 }

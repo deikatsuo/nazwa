@@ -11,14 +11,12 @@ import (
 
 // PageDashboardAccount halaman tempat user untuk mengubah data akun
 func PageDashboardAccount(c *gin.Context) {
-	db := dbquery.DB
-
 	session := sessions.Default(c)
 	userid := session.Get("userid")
 	var addresses []wrapper.UserAddress
 	if userid != nil {
 		if userid.(int) > 0 {
-			if addrs, err := dbquery.UserGetAddress(db, userid.(int)); err == nil {
+			if addrs, err := dbquery.UserGetAddress(userid.(int)); err == nil {
 				addresses = addrs
 			}
 		}

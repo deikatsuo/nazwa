@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"nazwa/wrapper"
 	"strings"
-
-	"github.com/jmoiron/sqlx"
 )
 
 //////////
@@ -51,7 +49,8 @@ func (p *GetProducts) NoLimit() *GetProducts {
 }
 
 // Show tampilkan data
-func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
+func (p *GetProducts) Show() ([]wrapper.Product, error) {
+	db := DB
 	var product []wrapper.NullableProduct
 	var parse []wrapper.Product
 	limit := 0
@@ -95,7 +94,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 	// mapping data produk
 	for _, p := range product {
 		var creditPrice []wrapper.ProductCreditPriceSelect
-		if pr, err := ProductGetProductCreditPrice(db, p.ID); err == nil {
+		if pr, err := ProductGetProductCreditPrice(p.ID); err == nil {
 			creditPrice = pr
 		} else {
 			log.Println(err)
@@ -121,7 +120,8 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 }
 
 // ProductGetProductTotalRow menghitung jumlah row pada tabel user
-func ProductGetProductTotalRow(db *sqlx.DB) (int, error) {
+func ProductGetProductTotalRow() (int, error) {
+	db := DB
 	var total int
 	query := `SELECT COUNT(id) FROM "product"`
 	err := db.Get(&total, query)
@@ -132,7 +132,8 @@ func ProductGetProductTotalRow(db *sqlx.DB) (int, error) {
 }
 
 // ProductGetProductByID mengambil data produk berdasarkan ID produk
-func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
+func ProductGetProductByID(pid int) (wrapper.Product, error) {
+	db := DB
 	var product wrapper.Product
 	var p wrapper.NullableProduct
 	query := `SELECT
@@ -157,12 +158,12 @@ func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 
 	var photos []wrapper.ProductPhotoListSelect
 
-	if pp, err := ProductGetProductPhoto(db, p.ID); err == nil {
+	if pp, err := ProductGetProductPhoto(p.ID); err == nil {
 		photos = pp
 	}
 
 	var creditPrice []wrapper.ProductCreditPriceSelect
-	if pr, err := ProductGetProductCreditPrice(db, p.ID); err == nil {
+	if pr, err := ProductGetProductCreditPrice(p.ID); err == nil {
 		creditPrice = pr
 	}
 
@@ -184,7 +185,8 @@ func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 }
 
 // ProductGetProductCreditPrice mengambil data harga kredit
-func ProductGetProductCreditPrice(db *sqlx.DB, pid int) ([]wrapper.ProductCreditPriceSelect, error) {
+func ProductGetProductCreditPrice(pid int) ([]wrapper.ProductCreditPriceSelect, error) {
+	db := DB
 	var prices []wrapper.ProductCreditPriceSelect
 	query := `SELECT id, duration, price
 	FROM "product_credit_price"
@@ -197,7 +199,8 @@ func ProductGetProductCreditPrice(db *sqlx.DB, pid int) ([]wrapper.ProductCredit
 }
 
 // ProductGetProductPrice mengambil harga barang
-func ProductGetProductPrice(db *sqlx.DB, pid int) (int, error) {
+func ProductGetProductPrice(pid int) (int, error) {
+	db := DB
 	var price int
 	query := `SELECT
 		price
@@ -214,7 +217,8 @@ func ProductGetProductPrice(db *sqlx.DB, pid int) (int, error) {
 }
 
 // ProductGetProductBasePrice mengambil harga barang
-func ProductGetProductBasePrice(db *sqlx.DB, pid int) (int, error) {
+func ProductGetProductBasePrice(pid int) (int, error) {
+	db := DB
 	var price int
 	query := `SELECT
 		base_price
@@ -231,7 +235,8 @@ func ProductGetProductBasePrice(db *sqlx.DB, pid int) (int, error) {
 }
 
 // ProductGetProductPhoto mengambil data photo produk
-func ProductGetProductPhoto(db *sqlx.DB, pid int) ([]wrapper.ProductPhotoListSelect, error) {
+func ProductGetProductPhoto(pid int) ([]wrapper.ProductPhotoListSelect, error) {
+	db := DB
 	var photos []wrapper.ProductPhotoListSelect
 	query := `SELECT id, photo
 	FROM "product_photo"
@@ -359,7 +364,8 @@ func (c CreateProduct) generateInsertQuery() string {
 }
 
 // Save Simpan produk
-func (c *CreateProduct) Save(db *sqlx.DB) error {
+func (c *CreateProduct) Save() error {
+	db := DB
 	// Mulai transaksi
 	tx := db.MustBegin()
 	var tempReturnID int
@@ -413,7 +419,8 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 }
 
 // ProductInsertCreditPrice menambahkan harga kredit produk ke database
-func ProductInsertCreditPrice(db *sqlx.DB, cps []wrapper.ProductCreditPriceInsert) error {
+func ProductInsertCreditPrice(cps []wrapper.ProductCreditPriceInsert) error {
+	db := DB
 	query := `INSERT INTO "product_credit_price" (product_id, duration, price) VALUES (:product_id, :duration, :price)`
 	if _, err := db.NamedQuery(query, cps); err != nil {
 		log.Warn("dbquery.product.go ProductInsertCreditPrice() Gagal menambahkan harga kredit")
@@ -424,7 +431,8 @@ func ProductInsertCreditPrice(db *sqlx.DB, cps []wrapper.ProductCreditPriceInser
 }
 
 // ProductDeleteCreditPrice menghapus harga kredit barang
-func ProductDeleteCreditPrice(db *sqlx.DB, pcpid int64, pid int) error {
+func ProductDeleteCreditPrice(pcpid int64, pid int) error {
+	db := DB
 	query := `DELETE FROM "product_credit_price"
 	WHERE id=$1 AND product_id=$2`
 	_, err := db.Exec(query, pcpid, pid)
@@ -436,7 +444,8 @@ func ProductDeleteCreditPrice(db *sqlx.DB, pcpid int64, pid int) error {
 ///////////
 
 // ProductSkuExist kode produk sudah digunakan
-func ProductSkuExist(db *sqlx.DB, sku string) bool {
+func ProductSkuExist(sku string) bool {
+	db := DB
 	// Check bila sku sudah ada di database
 	var indb string
 	query := `SELECT code FROM "product" WHERE code=$1`
@@ -451,7 +460,8 @@ func ProductSkuExist(db *sqlx.DB, sku string) bool {
 }
 
 // ProductCreditDurationExist chek apakah durasi kredit sudah ada
-func ProductCreditDurationExist(db *sqlx.DB, pid int, dur int) bool {
+func ProductCreditDurationExist(pid int, dur int) bool {
+	db := DB
 	var indb int
 	query := `SELECT duration FROM "product_credit_price" WHERE product_id=$1 AND duration=$2 LIMIT 1`
 	err := db.Get(&indb, query, pid, dur)

@@ -8,8 +8,6 @@ import (
 	"nazwa/wrapper"
 	"strconv"
 	"strings"
-
-	"github.com/jmoiron/sqlx"
 )
 
 // CreateOrder struct untuk menyimpan data order yang akan di insert
@@ -217,8 +215,8 @@ func (c CreateOrder) generateInsertQuery() string {
 }
 
 // Save Simpan produk
-func (c *CreateOrder) Save(db *sqlx.DB) error {
-
+func (c *CreateOrder) Save() error {
+	db := DB
 	// Jika tidak ada barang yang di order
 	if len(c.orderItems) == 0 {
 		return errors.New("dbuery.order.go (CreateOrder) Save() Item order kosong")
@@ -245,7 +243,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 		if c.Credit {
 			// Temporary credit price
 			var tmpcp int
-			p, err := ProductGetProductCreditPrice(db, item.ProductID)
+			p, err := ProductGetProductCreditPrice(item.ProductID)
 			if err == nil {
 				for _, ps := range p {
 					if ps.Duration == c.duration {
@@ -266,7 +264,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 
 			prices = append(prices, tmpcp)
 		} else {
-			p, err := ProductGetProductPrice(db, item.ProductID)
+			p, err := ProductGetProductPrice(item.ProductID)
 			if err != nil {
 				log.Warn("dbquery.order.go (CreateOrder) Save() Get item price")
 				return err
@@ -281,7 +279,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 			prices = append(prices, p)
 		}
 
-		bp, err := ProductGetProductBasePrice(db, item.ProductID)
+		bp, err := ProductGetProductBasePrice(item.ProductID)
 		if err != nil {
 			log.Warn("dbquery.order.go (CreateOrder) Save() Get item base price")
 			return err
@@ -490,7 +488,8 @@ func (p *GetOrders) Direction(direction string) *GetOrders {
 }
 
 // Show tampilkan data
-func (p *GetOrders) Show(db *sqlx.DB) ([]wrapper.Order, error) {
+func (p *GetOrders) Show() ([]wrapper.Order, error) {
+	db := DB
 	var order []wrapper.NullableOrder
 	var parse []wrapper.Order
 	limit := 10
@@ -531,7 +530,7 @@ func (p *GetOrders) Show(db *sqlx.DB) ([]wrapper.Order, error) {
 	for _, p := range order {
 		// Mengambil list item dari transaksi
 		var items []wrapper.OrderItem
-		if oi, err := OrderGetOrderItem(db, p.ID); err == nil {
+		if oi, err := OrderGetOrderItem(p.ID); err == nil {
 			items = oi
 		}
 
@@ -555,7 +554,8 @@ func (p *GetOrders) Show(db *sqlx.DB) ([]wrapper.Order, error) {
 }
 
 // OrderGetOrderTotalRow menghitung jumlah row pada tabel user
-func OrderGetOrderTotalRow(db *sqlx.DB) (int, error) {
+func OrderGetOrderTotalRow() (int, error) {
+	db := DB
 	var total int
 	query := `SELECT COUNT(id) FROM "order"`
 	err := db.Get(&total, query)
@@ -566,7 +566,8 @@ func OrderGetOrderTotalRow(db *sqlx.DB) (int, error) {
 }
 
 // OrderGetOrderByID mengambil data order berdasarkan ID order
-func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
+func OrderGetOrderByID(oid int) (wrapper.Order, error) {
+	db := DB
 	var order wrapper.Order
 	var o wrapper.NullableOrder
 	query := `SELECT
@@ -618,13 +619,13 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 
 	// Mengambil list item dari transaksi
 	var items []wrapper.OrderItem
-	if oi, err := OrderGetOrderItem(db, o.ID); err == nil {
+	if oi, err := OrderGetOrderItem(o.ID); err == nil {
 		items = oi
 	}
 
 	// Detail kredit
 	var creditDetail wrapper.OrderCreditDetail
-	if cd, err := OrderGetCreditInfo(db, o.ID); err == nil {
+	if cd, err := OrderGetCreditInfo(o.ID); err == nil {
 		creditDetail = cd
 	}
 
@@ -680,7 +681,8 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 }
 
 // OrderGetOrderItem mengambil data barang transaksi berdasarkan id order
-func OrderGetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
+func OrderGetOrderItem(oid int) ([]wrapper.OrderItem, error) {
+	db := DB
 	var items []wrapper.NullableOrderItem
 	var parse []wrapper.OrderItem
 	query := `SELECT oi.id, oi.product_id, oi.quantity, oi.notes, oi.discount, oi.base_price, oi.price, p.name, p.code, p.thumbnail
@@ -712,7 +714,8 @@ func OrderGetOrderItem(db *sqlx.DB, oid int) ([]wrapper.OrderItem, error) {
 }
 
 // OrderGetSubstituteByRic ambil data substitute berdasarkan NIK
-func OrderGetSubstituteByRic(db *sqlx.DB, ric string) ([]wrapper.NameID, error) {
+func OrderGetSubstituteByRic(ric string) ([]wrapper.NameID, error) {
+	db := DB
 	var substitute []wrapper.NameID
 	query := `SELECT
 	id,
@@ -740,7 +743,8 @@ func OrderGetSubstituteByRic(db *sqlx.DB, ric string) ([]wrapper.NameID, error) 
 }
 
 // OrderGetCreditInfo mengambil informasi kredit
-func OrderGetCreditInfo(db *sqlx.DB, oid int) (wrapper.OrderCreditDetail, error) {
+func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
+	db := DB
 	var creditDetail wrapper.OrderCreditDetail
 	query := `SELECT id, monthly, duration, due, remaining, lucky_discount
 	FROM "order_credit_detail"
@@ -755,7 +759,8 @@ func OrderGetCreditInfo(db *sqlx.DB, oid int) (wrapper.OrderCreditDetail, error)
 }
 
 // OrderDeleteByID delete order
-func OrderDeleteByID(db *sqlx.DB, oid int) error {
+func OrderDeleteByID(oid int) error {
+	db := DB
 	query := `DELETE FROM "order"
 	WHERE id=$1`
 	_, err := db.Exec(query, oid)

@@ -30,16 +30,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var db = dbquery.DB
 var log = misc.Log
 
 func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Tidak ada file .env")
 	}
-	gob.Register(wrapper.User{})
-}
 
-func main() {
 	// Membuat koneksi database
 	log.Info("Mencoba membuat koneksi ke database...")
 	db, err := sqlx.Connect(misc.SetupDBType(), misc.SetupDBSource())
@@ -51,6 +49,11 @@ func main() {
 
 	// Set global database
 	dbquery.DB = db
+
+	gob.Register(wrapper.User{})
+}
+
+func main() {
 
 	// Ambil argumen CLI
 	if iag := len(os.Args); iag > 1 {
@@ -72,7 +75,6 @@ func main() {
 }
 
 func runServer() {
-	db := dbquery.DB
 	// Ambil konfigurasi role
 	e, err := casbin.NewEnforcer("auth_model.conf", "auth_policy.csv")
 
@@ -127,7 +129,7 @@ func runServer() {
 	// /dashboard
 	dashboard := server.Group("/dashboard")
 	// Gunakan permision
-	dashboard.Use(middleware.RoutePermission(db, e))
+	dashboard.Use(middleware.RoutePermission(e))
 	// Middleware untuk mengambil pengaturan default untuk dashboard
 	dashboard.Use(middleware.NewDashboardDefaultConfig())
 
@@ -155,7 +157,7 @@ func runServer() {
 	// API
 	// /api
 	apis := server.Group("/api")
-	apis.Use(middleware.RoutePermission(db, e))
+	apis.Use(middleware.RoutePermission(e))
 
 	// V1
 	// /api/v1
@@ -168,70 +170,70 @@ func runServer() {
 	// API yang diakses dari Lokal
 	// /api/v1/local
 	v1local := v1.Group("/local")
-	v1local.POST("/login", api.UserLogin(db))
+	v1local.POST("/login", api.UserLogin)
 	//v1local.POST("/create-account", api.UserCreate(db))
 
 	// /api/v1/local/address
 	v1address := v1local.Group("/address")
-	v1address.GET("/provinces", api.PlaceProvinces(db))
-	v1address.GET("/cities/:id", api.PlaceCities(db))
-	v1address.GET("/districts/:id", api.PlaceDistricts(db))
-	v1address.GET("/villages/:id", api.PlaceVillages(db))
+	v1address.GET("/provinces", api.PlaceProvinces)
+	v1address.GET("/cities/:id", api.PlaceCities)
+	v1address.GET("/districts/:id", api.PlaceDistricts)
+	v1address.GET("/villages/:id", api.PlaceVillages)
 
 	// /api/v1/local/product
 	v1product := v1local.Group("/product")
-	v1product.GET("/id/:id", api.ProductShowByID(db))
-	v1product.GET("/list/:limit", api.ProductShowList(db))
+	v1product.GET("/id/:id", api.ProductShowByID)
+	v1product.GET("/list/:limit", api.ProductShowList)
 	v1product.GET("/all", api.ProductShowAll)
-	v1product.POST("/add", api.ProductCreate(db))
+	v1product.POST("/add", api.ProductCreate)
 
 	// /api/v1/local/product/edit
 	v1pEdit := v1product.Group("/edit")
-	v1pEdit.POST("/:id/add/credit_price", api.ProductAddCreditPrice(db))
-	v1pEdit.DELETE("/:id/delete/credit_price", api.ProductDeleteCreditPrice(db))
+	v1pEdit.POST("/:id/add/credit_price", api.ProductAddCreditPrice)
+	v1pEdit.DELETE("/:id/delete/credit_price", api.ProductDeleteCreditPrice)
 
 	// /api/v1/local/product/search
 	v1pSearch := v1product.Group("/search")
-	v1pSearch.GET("/name/:limit", api.ProductSearchByName(db))
+	v1pSearch.GET("/name/:limit", api.ProductSearchByName)
 
 	// /api/v1/local/order
 	v1order := v1local.Group("/order")
-	v1order.GET("/id/:id", api.OrderShowByID(db))
-	v1order.GET("/list/:limit", api.OrderShowList(db))
-	v1order.POST("/create", api.OrderCreate(db))
-	v1order.GET("/substitute/ric", api.OrderSubstituteByRicShow(db))
+	v1order.GET("/id/:id", api.OrderShowByID)
+	v1order.GET("/list/:limit", api.OrderShowList)
+	v1order.POST("/create", api.OrderCreate)
+	v1order.GET("/substitute/ric", api.OrderSubstituteByRicShow)
 
 	// /api/v1/local/order/edit
 	v1oEdit := v1order.Group("/edit")
-	v1oEdit.DELETE("/:id/delete", api.OrderDeleteByID(db))
+	v1oEdit.DELETE("/:id/delete", api.OrderDeleteByID)
 
 	// User API
 	// /api/v1/local/user
 	v1user := v1local.Group("/user")
-	v1user.POST("/create", api.UserCreate(db))
-	v1user.GET("/list/:limit", api.UserShowList(db))
-	v1user.GET("/id/:id", api.UserShowByID(db))
-	v1user.GET("/address/:id", api.UserShowAddressByUserID(db))
+	v1user.POST("/create", api.UserCreate)
+	v1user.GET("/list/:limit", api.UserShowList)
+	v1user.GET("/id/:id", api.UserShowByID)
+	v1user.GET("/address/:id", api.UserShowAddressByUserID)
 
 	// User API edit
 	// /api/v1/local/user/edit
 	v1uEdit := v1user.Group("/edit")
-	v1uEdit.PATCH("/:id/update/contact", api.UserUpdateContact(db))
-	v1uEdit.PATCH("/:id/update/role", api.UserUpdateRole(db))
-	v1uEdit.DELETE("/:id/delete/email", api.UserDeleteEmail(db))
-	v1uEdit.POST("/:id/add/email", api.UserAddEmail(db))
-	v1uEdit.DELETE("/:id/delete/phone", api.UserDeletePhone(db))
-	v1uEdit.POST("/:id/add/phone", api.UserAddPhone(db))
-	v1uEdit.POST("/:id/add/address", api.UserAddAddress(db))
-	v1uEdit.DELETE("/:id/delete/address", api.UserDeleteAddress(db))
+	v1uEdit.PATCH("/:id/update/contact", api.UserUpdateContact)
+	v1uEdit.PATCH("/:id/update/role", api.UserUpdateRole)
+	v1uEdit.DELETE("/:id/delete/email", api.UserDeleteEmail)
+	v1uEdit.POST("/:id/add/email", api.UserAddEmail)
+	v1uEdit.DELETE("/:id/delete/phone", api.UserDeletePhone)
+	v1uEdit.POST("/:id/add/phone", api.UserAddPhone)
+	v1uEdit.POST("/:id/add/address", api.UserAddAddress)
+	v1uEdit.DELETE("/:id/delete/address", api.UserDeleteAddress)
 
 	// User API search/pencarian
 	// /api/v1/local/user/search
 	v1uSearch := v1user.Group("/search")
-	v1uSearch.GET("/ric/:limit", api.UserSearchByNIK(db))
-	v1uSearch.GET("/collector/:limit", api.UserSearchByNameType(db, "2"))
-	v1uSearch.GET("/surveyor/:limit", api.UserSearchByNameType(db, "4"))
-	v1uSearch.GET("/sales/:limit", api.UserSearchByNameType(db, "5"))
+	v1uSearch.GET("/ric/:limit", api.UserSearchByNIK)
+	v1uSearch.GET("/collector/:limit", api.UserSearchByNameType("2"))
+	v1uSearch.GET("/surveyor/:limit", api.UserSearchByNameType("4"))
+	v1uSearch.GET("/sales/:limit", api.UserSearchByNameType("5"))
 
 	port := ":" + misc.GetEnv("PORT", "8080").(string)
 

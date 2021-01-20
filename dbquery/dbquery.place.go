@@ -1,7 +1,5 @@
 package dbquery
 
-import "github.com/jmoiron/sqlx"
-
 // Place menampung data tempat
 type Place struct {
 	ID   int    `db:"id"`
@@ -9,7 +7,8 @@ type Place struct {
 }
 
 // PlaceGetProvinces mengambil data provinsi dari database
-func PlaceGetProvinces(db *sqlx.DB) ([]Place, error) {
+func PlaceGetProvinces() ([]Place, error) {
+	db := DB
 	var p []Place
 	query := `SELECT id, INITCAP(name) AS name FROM "province"`
 	err := db.Select(&p, query)
@@ -20,7 +19,8 @@ func PlaceGetProvinces(db *sqlx.DB) ([]Place, error) {
 }
 
 // PlaceGetCities mengambil data kota/kabupaten dari database
-func PlaceGetCities(db *sqlx.DB, pid int) ([]Place, error) {
+func PlaceGetCities(pid int) ([]Place, error) {
+	db := DB
 	var p []Place
 	query := `SELECT id, INITCAP(name) AS name FROM "city" WHERE parent=$1`
 	err := db.Select(&p, query, pid)
@@ -31,7 +31,8 @@ func PlaceGetCities(db *sqlx.DB, pid int) ([]Place, error) {
 }
 
 // PlaceGetDistricts mengambil data distrik/kecamatan dari database
-func PlaceGetDistricts(db *sqlx.DB, pid int) ([]Place, error) {
+func PlaceGetDistricts(pid int) ([]Place, error) {
+	db := DB
 	var p []Place
 	query := `SELECT id, INITCAP(name) AS name FROM "district" WHERE parent=$1`
 	err := db.Select(&p, query, pid)
@@ -42,7 +43,8 @@ func PlaceGetDistricts(db *sqlx.DB, pid int) ([]Place, error) {
 }
 
 // PlaceGetVillages mengambil data kelurahan/desa dari database
-func PlaceGetVillages(db *sqlx.DB, pid int) ([]Place, error) {
+func PlaceGetVillages(pid int) ([]Place, error) {
+	db := DB
 	var p []Place
 	query := `SELECT id, INITCAP(name) AS name FROM "village" WHERE parent=$1`
 	err := db.Select(&p, query, pid)

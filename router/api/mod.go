@@ -1,5 +1,7 @@
 package api
 
-import "nazwa/misc"
+import (
+	"nazwa/misc"
+)
 
 var log = misc.Log

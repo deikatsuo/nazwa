@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/martinlindhe/base36"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -47,7 +46,8 @@ func (u *GetUsers) Where(where string) *GetUsers {
 }
 
 // Show tampilkan data
-func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
+func (u *GetUsers) Show() ([]wrapper.User, error) {
+	db := DB
 	var user []wrapper.NullableUser
 	var parse []wrapper.User
 	limit := 10
@@ -88,7 +88,7 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 	// mapping data user
 	for _, u := range user {
 
-		if addrs, err := UserGetAddress(db, u.ID); err == nil {
+		if addrs, err := UserGetAddress(u.ID); err == nil {
 			addresses = addrs
 		}
 		parse = append(parse, wrapper.User{
@@ -131,16 +131,14 @@ func UserNew() *CreateUser {
 	}
 }
 
-// SetFirstName ...
-// Set nama depan
+// SetFirstName Set nama depan
 func (u *CreateUser) SetFirstName(p string) *CreateUser {
 	u.Firstname = strings.ToLower(p)
 	u.into["first_name"] = ":first_name"
 	return u
 }
 
-// SetLastName ...
-// Set nama belakang
+// SetLastName Set nama belakang
 func (u *CreateUser) SetLastName(p string) *CreateUser {
 	// Nama belakang adalah opsional, jadi gak divalidasi
 	// maka perlu di cek sebelum di input ke database
@@ -164,8 +162,7 @@ func (u *CreateUser) SetFamilyCard(p string) *CreateUser {
 	return u
 }
 
-// SetUserName ...
-// Set nilai username
+// SetUserName Set nilai username
 func (u *CreateUser) SetUserName(p string) *CreateUser {
 	u.Username = strings.ToLower(p)
 	u.into["username"] = ":username"
@@ -179,8 +176,7 @@ func (u *CreateUser) SetAvatar(p string) *CreateUser {
 	return u
 }
 
-// SetPassword ...
-// Set password
+// SetPassword Set password
 func (u *CreateUser) SetPassword(p string) *CreateUser {
 	if p != "" {
 		u.tempPassword = p
@@ -235,9 +231,9 @@ func (u *CreateUser) SetCreatedBy(p int) *CreateUser {
 	return u
 }
 
-// Save ...
-// Simpan user ke database
-func (u *CreateUser) Save(db *sqlx.DB) error {
+// Save Simpan user ke database
+func (u *CreateUser) Save() error {
+	db := DB
 	if len(u.tempPassword) > 0 {
 		hash, err := hashPassword(u.tempPassword)
 		if err != nil {
@@ -281,7 +277,7 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 	// Lakukan pengecekan nomor kk/ insert jika belum ada
 	var fcid int
 	if len(u.familyCard) > 0 {
-		if fe, fv := UserFamilyCardExist(db, u.familyCard); fe {
+		if fe, fv := UserFamilyCardExist(u.familyCard); fe {
 			fcid = fv
 		} else {
 			if rows, err := tx.Query(`INSERT INTO "family_card" (number) VALUES ($1) RETURNING id`, u.familyCard); err == nil {
@@ -385,8 +381,7 @@ func (u CreateUser) generateInsertQuery() string {
 	return result
 }
 
-// ReturnID ...
-// Mengembalikan ID user terakhir
+// ReturnID Mengembalikan ID user terakhir
 func (u *CreateUser) ReturnID(id *int) *CreateUser {
 	u.returnID = true
 	u.returnIDTO = id
@@ -415,10 +410,11 @@ func matchPassword(hash, password string) error {
 	return err
 }
 
-// Login - User login
+// Login User login
 // loginid: ID login dari input user
 // password: Password dari input user
-func Login(db *sqlx.DB, loginid, password string) (int, error) {
+func Login(loginid, password string) (int, error) {
+	db := DB
 	var userid int
 	// Cari ID user berdasarkan login id
 	var query = `SELECT id
@@ -457,8 +453,9 @@ func Login(db *sqlx.DB, loginid, password string) (int, error) {
 /* GET */
 /////////
 
-// UserGetNullableUserByID - mengambil data user berdasarkan ID
-func UserGetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, error) {
+// UserGetNullableUserByID mengambil data user berdasarkan ID
+func UserGetNullableUserByID(userid int) (wrapper.NullableUser, error) {
+	db := DB
 	var user wrapper.NullableUser
 	query := `SELECT
     u.first_name,
@@ -487,7 +484,8 @@ func UserGetNullableUserByID(db *sqlx.DB, userid int) (wrapper.NullableUser, err
 }
 
 // UserGetByID mengambil data pengguna berdasarkan ID produk
-func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
+func UserGetByID(uid int) (wrapper.User, error) {
+	db := DB
 	var user wrapper.User
 	var u wrapper.NullableUser
 	query := `SELECT
@@ -519,19 +517,19 @@ func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 	}
 
 	var emails []wrapper.UserEmail
-	if em, err := UserGetEmail(db, uid); err == nil {
+	if em, err := UserGetEmail(uid); err == nil {
 		emails = em
 	}
 
 	var phones []wrapper.UserPhone
-	if ph, err := UserGetPhone(db, uid); err == nil {
+	if ph, err := UserGetPhone(uid); err == nil {
 		phones = ph
 	} else {
 		log.Println(err)
 	}
 
 	var addresses []wrapper.UserAddress
-	if addrs, err := UserGetAddress(db, uid); err == nil {
+	if addrs, err := UserGetAddress(uid); err == nil {
 		addresses = addrs
 	}
 
@@ -557,7 +555,8 @@ func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 }
 
 // UserGetUserTotalRow menghitung jumlah row pada tabel user
-func UserGetUserTotalRow(db *sqlx.DB) (int, error) {
+func UserGetUserTotalRow() (int, error) {
+	db := DB
 	var total int
 	query := `SELECT COUNT(id) FROM "user"`
 	err := db.Get(&total, query)
@@ -568,7 +567,8 @@ func UserGetUserTotalRow(db *sqlx.DB) (int, error) {
 }
 
 // UserGetPhone mengambil nomor HP berdasarkan ID
-func UserGetPhone(db *sqlx.DB, userid int) ([]wrapper.UserPhone, error) {
+func UserGetPhone(userid int) ([]wrapper.UserPhone, error) {
+	db := DB
 	var phones []wrapper.UserPhone
 	query := `SELECT id, phone, verified
 	FROM "phone"
@@ -581,7 +581,8 @@ func UserGetPhone(db *sqlx.DB, userid int) ([]wrapper.UserPhone, error) {
 }
 
 // UserGetEmail mengambil email berdasarkan ID
-func UserGetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
+func UserGetEmail(userid int) ([]wrapper.UserEmail, error) {
+	db := DB
 	var emails []wrapper.UserEmail
 	query := `SELECT id, email, verified
 	FROM "email"
@@ -594,7 +595,8 @@ func UserGetEmail(db *sqlx.DB, userid int) ([]wrapper.UserEmail, error) {
 }
 
 // UserGetAddress mengambil data alamat user
-func UserGetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
+func UserGetAddress(userid int) ([]wrapper.UserAddress, error) {
+	db := DB
 	var addresses []wrapper.UserAddress
 	query := `SELECT a.id, a.name, a.description, a.one, a.two, a.zip, a.village_id, a.district_id, a.city_id, a.province_id, INITCAP(p.name) AS province_name, INITCAP(c.name) AS city_name, INITCAP(d.name) AS district_name, INITCAP(v.name) AS village_name
 	FROM "address" a
@@ -612,7 +614,8 @@ func UserGetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
 }
 
 // UserGetRole mengambil role berdasarkan id
-func UserGetRole(db *sqlx.DB, userid int) (string, error) {
+func UserGetRole(userid int) (string, error) {
+	db := DB
 	var role string
 	query := `SELECT
 		r.name
@@ -629,7 +632,8 @@ func UserGetRole(db *sqlx.DB, userid int) (string, error) {
 
 // UserGetUsername Mengambil username user
 // atau tidak
-func UserGetUsername(db *sqlx.DB, uid int) (string, error) {
+func UserGetUsername(uid int) (string, error) {
+	db := DB
 	// Ambil username
 	var uname string
 	query := `SELECT username FROM "user" WHERE id=$1`
@@ -643,7 +647,8 @@ func UserGetUsername(db *sqlx.DB, uid int) (string, error) {
 ////////////
 
 // UserDeleteEmail menghapus email
-func UserDeleteEmail(db *sqlx.DB, id int64, uid int) error {
+func UserDeleteEmail(id int64, uid int) error {
+	db := DB
 	query := `DELETE FROM "email"
 	WHERE id=$1 AND user_id=$2`
 	_, err := db.Exec(query, id, uid)
@@ -651,7 +656,8 @@ func UserDeleteEmail(db *sqlx.DB, id int64, uid int) error {
 }
 
 // UserDeletePhone menghapus nomor HP
-func UserDeletePhone(db *sqlx.DB, id int64, uid int) error {
+func UserDeletePhone(id int64, uid int) error {
+	db := DB
 	query := `DELETE FROM "phone"
 	WHERE id=$1 AND user_id=$2`
 	_, err := db.Exec(query, id, uid)
@@ -659,7 +665,8 @@ func UserDeletePhone(db *sqlx.DB, id int64, uid int) error {
 }
 
 // UserDeleteAddress menghapus alamat
-func UserDeleteAddress(db *sqlx.DB, id int64, uid int) error {
+func UserDeleteAddress(id int64, uid int) error {
+	db := DB
 	query := `DELETE FROM "address"
 	WHERE id=$1 AND user_id=$2`
 	_, err := db.Exec(query, id, uid)
@@ -671,21 +678,24 @@ func UserDeleteAddress(db *sqlx.DB, id int64, uid int) error {
 /////////
 
 // UserAddEmail menambahkan email user
-func UserAddEmail(db *sqlx.DB, email string, uid int) error {
+func UserAddEmail(email string, uid int) error {
+	db := DB
 	query := `INSERT INTO "email" (email, user_id) VALUES ($1, $2)`
 	_, err := db.Exec(query, strings.ToLower(email), uid)
 	return err
 }
 
 // UserAddPhone menambahkan nomor HP ke database
-func UserAddPhone(db *sqlx.DB, phone string, uid int) error {
+func UserAddPhone(phone string, uid int) error {
+	db := DB
 	query := `INSERT INTO "phone" (phone, user_id) VALUES ($1, $2)`
 	_, err := db.Exec(query, phone, uid)
 	return err
 }
 
 // UserAddAddress menambahkan alamat baru
-func UserAddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
+func UserAddAddress(address wrapper.UserAddress) error {
+	db := DB
 	query := `INSERT INTO "address" (user_id, name, description, one, two, zip, province_id, city_id, district_id, village_id)
 	VALUES (:user_id, :name, :description, :one, :two, :zip, :province_id, :city_id, :district_id, :village_id)`
 	_, err := db.NamedExec(query, address)
@@ -701,7 +711,8 @@ func UserAddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
 ///////////
 
 // UserFamilyCardExist check nomor KK
-func UserFamilyCardExist(db *sqlx.DB, fc string) (bool, int) {
+func UserFamilyCardExist(fc string) (bool, int) {
+	db := DB
 	var f int
 	query := `SELECT id FROM "family_card" WHERE number=$1`
 	err := db.Get(&f, query, fc)
@@ -716,7 +727,8 @@ func UserFamilyCardExist(db *sqlx.DB, fc string) (bool, int) {
 }
 
 // UserRICExist check nomor KTP
-func UserRICExist(db *sqlx.DB, ric string) bool {
+func UserRICExist(ric string) bool {
+	db := DB
 	var r string
 	query := `SELECT id FROM "user" WHERE ric=$1`
 	err := db.Get(&r, query, ric)
@@ -732,7 +744,8 @@ func UserRICExist(db *sqlx.DB, ric string) bool {
 }
 
 // UserPhoneExist check nomor telepon
-func UserPhoneExist(db *sqlx.DB, phone string) bool {
+func UserPhoneExist(phone string) bool {
+	db := DB
 	var p string
 	query := `SELECT id FROM "phone" WHERE phone=$1`
 	err := db.Get(&p, query, phone)
@@ -747,7 +760,8 @@ func UserPhoneExist(db *sqlx.DB, phone string) bool {
 }
 
 // UserEmailExist check alamat email
-func UserEmailExist(db *sqlx.DB, email string) bool {
+func UserEmailExist(email string) bool {
+	db := DB
 	var p string
 	query := `SELECT id FROM "email" WHERE email=$1`
 	err := db.Get(&p, query, email)
@@ -763,7 +777,8 @@ func UserEmailExist(db *sqlx.DB, email string) bool {
 
 // UsernameExist mengecek apakah username tersedia
 // atau tidak
-func UsernameExist(db *sqlx.DB, uname string) bool {
+func UsernameExist(uname string) bool {
+	db := DB
 	// Check bila username sudah ada di database
 	var indb string
 	query := `SELECT username FROM "user" WHERE username=$1`
@@ -782,7 +797,8 @@ func UsernameExist(db *sqlx.DB, uname string) bool {
 ////////////
 
 // UserUpdateRole mengubah role user
-func UserUpdateRole(db *sqlx.DB, uid, roleid int) error {
+func UserUpdateRole(uid, roleid int) error {
+	db := DB
 	query := `UPDATE "user_role"
 	SET role_id=$1
 	WHERE user_id=$2`
@@ -792,7 +808,8 @@ func UserUpdateRole(db *sqlx.DB, uid, roleid int) error {
 }
 
 // UserUpdateUsername mengubah username user
-func UserUpdateUsername(db *sqlx.DB, uid int, uname string) error {
+func UserUpdateUsername(uid int, uname string) error {
+	db := DB
 	query := `UPDATE "user"
 	SET username=$1
 	WHERE id=$2`
@@ -802,7 +819,8 @@ func UserUpdateUsername(db *sqlx.DB, uid int, uname string) error {
 }
 
 // UserUpdatePassword mengubah password user
-func UserUpdatePassword(db *sqlx.DB, uid int, pwd string) error {
+func UserUpdatePassword(uid int, pwd string) error {
+	db := DB
 	// Hash password
 	pwd, err := hashPassword(pwd)
 	if err != nil {
@@ -822,7 +840,8 @@ func UserUpdatePassword(db *sqlx.DB, uid int, pwd string) error {
 
 // UserMatchPassword mencocokan password input user
 // dengan yang ada di database
-func UserMatchPassword(db *sqlx.DB, uid int, pwd string) bool {
+func UserMatchPassword(uid int, pwd string) bool {
+	db := DB
 	// Cocokan password user
 	var inpwd string
 	var next bool

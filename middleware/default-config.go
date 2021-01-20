@@ -12,8 +12,6 @@ import (
 
 // NewDefaultConfig - mengambil konfigurasi default dari .env
 func NewDefaultConfig(c *gin.Context) {
-	db := dbquery.DB
-
 	session := sessions.Default(c)
 	// User session saat ini
 	userid := session.Get("userid")
@@ -35,7 +33,7 @@ func NewDefaultConfig(c *gin.Context) {
 		if userid != nil {
 			if userid.(int) > 0 {
 				abort := false
-				if u, err := dbquery.UserGetByID(db, userid.(int)); err != nil {
+				if u, err := dbquery.UserGetByID(userid.(int)); err != nil {
 					log.Print("ERROR: default-config.go NewDashboardDefaultConfig() Gagal mengambil user by ID")
 					log.Print(err)
 					abort = true
@@ -51,14 +49,14 @@ func NewDefaultConfig(c *gin.Context) {
 
 				user.ID = userid.(int)
 				// Ambil data email
-				email, err := dbquery.UserGetEmail(db, userid.(int))
+				email, err := dbquery.UserGetEmail(userid.(int))
 				if err != nil {
 					log.Print("User tidak memiliki email ", err)
 				}
 				user.Emails = email
 
 				// Ambil nomor HP
-				phone, err := dbquery.UserGetPhone(db, userid.(int))
+				phone, err := dbquery.UserGetPhone(userid.(int))
 				if err != nil {
 					log.Print("User tidak memiliki nomor HP ", err)
 				}
