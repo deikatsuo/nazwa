@@ -8,8 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageForgot ...
-// Halaman pemulihan password
+// PageForgot Halaman pemulihan password
 func PageForgot(c *gin.Context) {
 	// Larang akses untuk user login
 	session := sessions.Default(c)

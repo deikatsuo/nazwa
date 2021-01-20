@@ -8,8 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageCreateAccount ...
-// Halaman buat akun
+// PageCreateAccount Halaman buat akun
 func PageCreateAccount(c *gin.Context) {
 	// Larang akses untuk user login
 	session := sessions.Default(c)
