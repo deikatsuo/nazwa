@@ -52,7 +52,6 @@ func init() {
 }
 
 func main() {
-
 	// Ambil argumen CLI
 	if iag := len(os.Args); iag > 1 {
 		arg := os.Args[1]
@@ -67,7 +66,7 @@ func main() {
 			fmt.Println("Authored by", misc.AUTHOR)
 			fmt.Println("Version ", misc.VERSION)
 		default:
-			log.Warning("Argument salah...")
+			log.Warn("Argument salah...")
 		}
 	}
 }
