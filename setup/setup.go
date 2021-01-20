@@ -2,7 +2,6 @@ package setup
 
 import (
 	"fmt"
-	"log"
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"
@@ -33,7 +32,7 @@ func RunSetup(db *sqlx.DB) {
 	// jika ya
 	// maka hapus tabel (reset) pada database
 	if reset {
-		fmt.Println("PERINGATAN: Ini akan menghapus semua data user pada server dan database!")
+		log.Warn("PERINGATAN: Ini akan menghapus semua data user pada server dan database!")
 		var lanjut string
 		fmt.Println("Lanjutkan? [y/N]")
 		fmt.Scanf("%s", &lanjut)
@@ -42,89 +41,89 @@ func RunSetup(db *sqlx.DB) {
 			fmt.Println("Silahkan masukan kata sandi")
 			fmt.Scanf("%s", &pwd)
 			if pwd == misc.GetEnvND("DEV_PWD") {
-				fmt.Println("Sedang mencoba menghapus semua tabel...")
+				log.Warn("Sedang mencoba menghapus semua tabel...")
 				if misc.Migration("down") {
-					fmt.Println("Tabel berhasil dihapus ('-')")
+					log.Info("Tabel berhasil dihapus ('-')")
 				}
 
-				fmt.Println("Menghaspus data user dan produk")
+				log.Warn("Sedang menghapus data user dan produk")
 				purgeUser := os.RemoveAll("../data/upload")
 				if purgeUser != nil {
-					log.Println("ERROR: setup.go RunSetup() gagal menghapus data user dan produk")
-					log.Println(purgeUser)
+					log.Warn("setup.go RunSetup() gagal menghapus data user dan produk")
+					log.Error(purgeUser)
 				} else {
 					// Membuat folder untuk menyimpan data user
 					fmt.Println("Membuat kembali data user dan produk")
 
 					if err := os.Mkdir("../data", 0755); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori data")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal membuat direktori data")
+						log.Error(err)
 					}
 
 					if err := os.Mkdir("../data/upload", 0755); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal membuat direktori /upload")
+						log.Error(err)
 					}
 
 					if err := os.Mkdir("../data/upload/profile", 0755); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload/profile")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal membuat direktori /upload/profile")
+						log.Error(err)
 					}
 
 					if err := os.Mkdir("../data/upload/profile/thumbnail", 0755); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload/profile/thumbnail")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal membuat direktori /upload/profile/thumbnail")
+						log.Error(err)
 					}
 
 					if err := os.Mkdir("../data/upload/product", 0755); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload/product")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal membuat direktori /upload/product")
+						log.Error(err)
 					}
 
 					if err := os.Mkdir("../data/upload/product/thumbnail", 0755); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal membuat direktori /upload/product/thumbnail")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal membuat direktori /upload/product/thumbnail")
+						log.Error(err)
 					}
 
 					// Copy file male.png
 					if err := misc.CopyFile("../data/upload/profile/male.png", "./setup/male.png"); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal meng copy file male.png")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal meng copy file male.png")
+						log.Error(err)
 					}
 
 					// Copy file thumb.male.png
 					if err := misc.CopyFile("../data/upload/profile/thumbnail/male.png", "./setup/thumb.male.png"); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal meng copy file thumb.male.png")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal meng copy file thumb.male.png")
+						log.Error(err)
 					}
 
 					// Copy file female.png
 					if err := misc.CopyFile("../data/upload/profile/female.png", "./setup/female.png"); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal meng copy file user")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal meng copy file user")
+						log.Error(err)
 					}
 
 					// Copy file thumb.female.png
 					if err := misc.CopyFile("../data/upload/profile/thumbnail/female.png", "./setup/thumb.female.png"); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal meng copy file user")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal meng copy file user")
+						log.Error(err)
 					}
 
 					// Copy file no-photo.png
 					if err := misc.CopyFile("../data/upload/product/no-photo.png", "./setup/no-photo.png"); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal meng copy file no-photo.png")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal meng copy file no-photo.png")
+						log.Error(err)
 					}
 
 					// Copy file thumb.no-photo.png
 					if err := misc.CopyFile("../data/upload/product/thumbnail/no-photo.png", "./setup/thumb.no-photo.png"); err != nil {
-						log.Println("ERROR: setup.go RunSetup() gagal meng copy thumb.no-photo.png")
-						log.Println(err)
+						log.Warn("setup.go RunSetup() gagal meng copy thumb.no-photo.png")
+						log.Error(err)
 					}
 				}
 
 			} else {
-				fmt.Println("Kata sandi tidak sesuai")
+				log.Warn("Kata sandi tidak sesuai")
 				os.Exit(1)
 			}
 		}
@@ -132,17 +131,17 @@ func RunSetup(db *sqlx.DB) {
 
 	// Upgrade tabel, atau buat baru jika belum ada
 	if reset {
-		fmt.Println("Mencoba kembali memulihkan tabel yang telah dihapus")
+		log.Info("Mencoba kembali memulihkan tabel yang telah dihapus")
 	} else {
-		fmt.Println("Sedang memutakhirkan tabel")
+		log.Info("Sedang memutakhirkan tabel")
 	}
 
 	if misc.Migration("up") {
-		fmt.Println("Tabel berhasil dibuat ('-')")
+		log.Info("Tabel berhasil dibuat ('-')")
 	}
 
 	fmt.Println()
-	fmt.Println("Setup tabel di database selesai")
+	log.Info("Setup tabel di database selesai")
 	fmt.Println()
 
 	// Tanya user apakah ingin melakukan
@@ -152,7 +151,7 @@ func RunSetup(db *sqlx.DB) {
 	fmt.Scanf("%s", &setdaerah)
 	if setdaerah == "y" || setdaerah == "Y" {
 		if err := setupDaerah(db); err != nil {
-			fmt.Println("Terjadi kesalahan saat konfigurasi daerah")
+			log.Error("Terjadi kesalahan saat konfigurasi daerah")
 			log.Fatal(err)
 		}
 		fmt.Println()
@@ -164,15 +163,14 @@ func RunSetup(db *sqlx.DB) {
 	fmt.Scanf("%s", &buatAdmin)
 	if buatAdmin == "y" || buatAdmin == "Y" {
 		// Lakukan pendaftaran admin baru
-		fmt.Println("Setup user admin...")
+		log.Info("Setup user admin...")
 		if err := setupUserAdmin(db); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 	}
 
 	fmt.Println()
-	fmt.Println("Setup selesai")
+	log.Info("Setup selesai")
 
 }
 
@@ -276,32 +274,32 @@ func setupDaerah(db *sqlx.DB) error {
 
 	fmt.Println()
 	// PROVINSI
-	fmt.Println(">>Membuat data provinsi")
+	log.Info(">>Membuat data provinsi")
 	// Load data provinsi dari file csv
 	provinces, err = openData("provinces.csv")
 	if err != nil {
-		log.Print("ERRSETUP-19")
+		log.Warn("Gagal membuka data provinsi dari file")
 		return err
 	}
 	// Masukan data provinsi ke database
 	query = `INSERT INTO "province" (id, parent, name) VALUES (:id, :parent, :name)`
 	if _, err := tx.NamedExec(query, provinces); err != nil {
-		log.Print("ERRSETUP-20")
+		log.Warn("Gagal memasukan data provinsi ke database")
 		return err
 	}
 
 	// KOTA/KABUPATEN
-	fmt.Println(">>Membuat data kota/kabupaten")
+	log.Info(">>Membuat data kota/kabupaten")
 	// Load data kota/kabupaten dari csv
 	city, err = openData("cities.csv")
 	if err != nil {
-		log.Println("ERRSETUP-18")
+		log.Warn("Gagal membuka data kota dari file")
 		return err
 	}
 	// Masukan data kota/kabupaten ke database
 	query = `INSERT INTO "city" (id, parent, name) VALUES (:id, :parent, :name)`
 	if _, err := tx.NamedExec(query, city); err != nil {
-		log.Print("ERRSETUP-17")
+		log.Warn("Gagal memasukan data kota ke database")
 		return err
 	}
 
@@ -310,13 +308,13 @@ func setupDaerah(db *sqlx.DB) error {
 	// Load data distrik/kecamatan dari csv
 	district, err = openData("sub-districts.csv")
 	if err != nil {
-		log.Println("ERRSETUP-16")
+		log.Warn("Gagal membuka data kecamatan dari file")
 		return err
 	}
 	// Masukan data distrik/kecamatan ke database
 	query = `INSERT INTO "district" (id, parent, name) VALUES (:id, :parent, :name)`
 	if _, err := tx.NamedExec(query, district); err != nil {
-		log.Print("ERRSETUP-15")
+		log.Warn("Gagal memasukan data kecamatan ke database")
 		return err
 	}
 
@@ -325,7 +323,7 @@ func setupDaerah(db *sqlx.DB) error {
 	// Load data kelurahan/desa dari csv
 	village, err = openData("villages.csv")
 	if err != nil {
-		log.Println("ERRSETUP-14")
+		log.Warn("Gagal membuka data desa dari file")
 		return err
 	}
 	// Karena data kelurahan terlalu besar
@@ -341,13 +339,13 @@ func setupDaerah(db *sqlx.DB) error {
 		time.Sleep(time.Millisecond)
 		if (start + split) < vilen {
 			if _, err := tx.NamedExec(query, village[start:start+split]); err != nil {
-				log.Print("ERRSETUP-13")
+				log.Warn("Gagal memasukan data desa ke database bagian awal")
 				return err
 			}
 			start = start + split
 		} else {
 			if _, err := tx.NamedExec(query, village[start:]); err != nil {
-				log.Print("ERRSETUP-13")
+				log.Warn("Gagal memasukan data desa ke database bagian akhir")
 				return err
 			}
 			break
@@ -357,7 +355,7 @@ func setupDaerah(db *sqlx.DB) error {
 
 	// Comit
 	if err := tx.Commit(); err != nil {
-		log.Print("ERRSETUP-21")
+		log.Warn("Gagal commit transaksi data daerah")
 		return err
 	}
 	fmt.Println("Selesai membuat data daerah")
@@ -375,7 +373,7 @@ func openData(d string) ([]Daerah, error) {
 	data := []Daerah{}
 
 	if err := gocsv.UnmarshalFile(file, &data); err != nil {
-		log.Print("ERRSETUP-22")
+		log.Warn("setup.go openData() Gagal UnmarshalFile")
 		return []Daerah{}, err
 	}
 
