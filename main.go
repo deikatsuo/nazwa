@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/gob"
 	"fmt"
+	"nazwa/dbquery"
 	"nazwa/middleware"
 	"nazwa/misc"
 	"nazwa/misc/validation"
@@ -47,16 +48,20 @@ func main() {
 		log.Fatal(err)
 		os.Exit(1)
 	}
+
+	// Set global database
+	dbquery.DB = db
+
 	// Ambil argumen CLI
 	if iag := len(os.Args); iag > 1 {
 		arg := os.Args[1]
 		switch arg {
 		case "run":
 			log.Info("Menjalankan server...")
-			runServer(db)
+			runServer()
 		case "setup":
 			log.Info("Menjalankan konfigurasi database...")
-			setup.RunSetup(db)
+			setup.RunSetup()
 		case "version":
 			fmt.Println("Authored by", misc.AUTHOR)
 			fmt.Println("Version ", misc.VERSION)
@@ -66,11 +71,13 @@ func main() {
 	}
 }
 
-func runServer(db *sqlx.DB) {
+func runServer() {
+	db := dbquery.DB
 	// Ambil konfigurasi role
 	e, err := casbin.NewEnforcer("auth_model.conf", "auth_policy.csv")
 
 	if err != nil {
+		log.Warn("Casbin enforcer fail")
 		log.Fatal(err)
 	}
 
@@ -93,7 +100,7 @@ func runServer(db *sqlx.DB) {
 
 	// Buat session
 	server.Use(sessions.Sessions("NAZWA_SESSION", sessions.NewCookieStore([]byte("deri and rika"))))
-	server.Use(middleware.NewDefaultConfig(db))
+	server.Use(middleware.NewDefaultConfig)
 
 	// Daftarkan aset statik
 	// misal css, js, dan beragam file gambar
@@ -108,7 +115,7 @@ func runServer(db *sqlx.DB) {
 	// Halaman muka
 	server.GET("/", router.PageHome)
 	server.GET("/product", router.PageProduct)
-	server.GET("/product/:id", router.PageProductDetail(db))
+	server.GET("/product/:id", router.PageProductDetail)
 	server.GET("/login", router.PageLogin)
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)
@@ -136,13 +143,13 @@ func runServer(db *sqlx.DB) {
 	// dashboard.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	dashboard.GET("/", router.PageDashboard)
-	dashboard.GET("/account", router.PageDashboardAccount(db))
-	dashboard.GET("/users", router.PageDashboardUsers(db))
-	dashboard.GET("/users/add", router.PageDashboardUsersAdd(db))
-	dashboard.GET("/products", router.PageDashboardProducts(db))
-	dashboard.GET("/products/add", router.PageDashboardProductsAdd(db))
-	dashboard.GET("/orders", router.PageDashboardOrders(db))
-	dashboard.GET("/orders/add", router.PageDashboardOrdersAdd(db))
+	dashboard.GET("/account", router.PageDashboardAccount)
+	dashboard.GET("/users", router.PageDashboardUsers)
+	dashboard.GET("/users/add", router.PageDashboardUsersAdd)
+	dashboard.GET("/products", router.PageDashboardProducts)
+	dashboard.GET("/products/add", router.PageDashboardProductsAdd)
+	dashboard.GET("/orders", router.PageDashboardOrders)
+	dashboard.GET("/orders/add", router.PageDashboardOrdersAdd)
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	// API
@@ -156,7 +163,7 @@ func runServer(db *sqlx.DB) {
 
 	// API untuk publik
 	v1public := v1.Group("/public")
-	v1public.GET("/product/all", api.ProductShowAll(db))
+	v1public.GET("/product/all", api.ProductShowAll)
 
 	// API yang diakses dari Lokal
 	// /api/v1/local
@@ -175,7 +182,7 @@ func runServer(db *sqlx.DB) {
 	v1product := v1local.Group("/product")
 	v1product.GET("/id/:id", api.ProductShowByID(db))
 	v1product.GET("/list/:limit", api.ProductShowList(db))
-	v1product.GET("/all", api.ProductShowAll(db))
+	v1product.GET("/all", api.ProductShowAll)
 	v1product.POST("/add", api.ProductCreate(db))
 
 	// /api/v1/local/product/edit

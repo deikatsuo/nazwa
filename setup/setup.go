@@ -17,7 +17,8 @@ import (
 
 // RunSetup menjalankan setup servers
 // Menjalankan setup
-func RunSetup(db *sqlx.DB) {
+func RunSetup() {
+	db := dbquery.DB
 	var reset bool
 
 	// Tanya user apakah ingin mereset database

@@ -400,53 +400,51 @@ func ProductShowList(db *sqlx.DB) gin.HandlerFunc {
 }
 
 // ProductShowAll mengambil semua data/list produk
-func ProductShowAll(db *sqlx.DB) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		var direction string
-		httpStatus := http.StatusOK
-		errMess := ""
-		pts := dbquery.GetProducts{}
+func ProductShowAll(c *gin.Context) {
+	db := dbquery.DB
+	var direction string
+	httpStatus := http.StatusOK
+	errMess := ""
+	pts := dbquery.GetProducts{}
 
-		// Forward/backward
-		direction = c.Query("direction")
-		if direction == "back" {
-			pts.Direction(direction)
-		} else {
-			pts.Direction("next")
-		}
-
-		var products []wrapper.Product
-
-		// Maju/Mundur
-		if direction == "next" {
-			pts.Where("ORDER BY id ASC")
-		} else if direction == "back" {
-			pts.Where("ORDER BY id DESC")
-		}
-		p, err := pts.Show(db)
-		if err != nil {
-			errMess = err.Error()
-			httpStatus = http.StatusInternalServerError
-		}
-		products = p
-
-		if len(products) > 0 && direction == "back" {
-			// Reverse urutan array produk
-			temp := make([]wrapper.Product, len(products))
-			in := 0
-			for i := len(products) - 1; i >= 0; i-- {
-				temp[in] = products[i]
-				in++
-			}
-			products = temp
-		}
-
-		c.JSON(httpStatus, gin.H{
-			"products": products,
-			"error":    errMess,
-		})
+	// Forward/backward
+	direction = c.Query("direction")
+	if direction == "back" {
+		pts.Direction(direction)
+	} else {
+		pts.Direction("next")
 	}
-	return gin.HandlerFunc(fn)
+
+	var products []wrapper.Product
+
+	// Maju/Mundur
+	if direction == "next" {
+		pts.Where("ORDER BY id ASC")
+	} else if direction == "back" {
+		pts.Where("ORDER BY id DESC")
+	}
+	p, err := pts.Show(db)
+	if err != nil {
+		errMess = err.Error()
+		httpStatus = http.StatusInternalServerError
+	}
+	products = p
+
+	if len(products) > 0 && direction == "back" {
+		// Reverse urutan array produk
+		temp := make([]wrapper.Product, len(products))
+		in := 0
+		for i := len(products) - 1; i >= 0; i-- {
+			temp[in] = products[i]
+			in++
+		}
+		products = temp
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"products": products,
+		"error":    errMess,
+	})
 }
 
 // ProductShowByID mengambil data produk berdasarkan ID
