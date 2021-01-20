@@ -30,7 +30,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var db = dbquery.DB
 var log = misc.Log
 
 func init() {

@@ -6,8 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageDashboard ...
-// Halaman dashboard utama
+// PageDashboard Halaman dashboard utama
 func PageDashboard(c *gin.Context) {
 	gh := gin.H{
 		"site_title": "Halaman Dashboard",
