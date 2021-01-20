@@ -43,7 +43,6 @@ func init() {
 	if err != nil {
 		log.Info("Gagal membuat koneksi ke database ")
 		log.Fatal(err)
-		os.Exit(1)
 	}
 
 	// Set global database
