@@ -38,7 +38,7 @@ func PageProductDetail(db *sqlx.DB) gin.HandlerFunc {
 		}
 
 		// Ambil konfigurasi default
-		df := c.MustGet("config").(wrapper.DefaultConfig).Site
+		df := c.MustGet("config").(wrapper.DefaultConfig).Info
 
 		gh := gin.H{
 			"title":   "Halaman Produk",

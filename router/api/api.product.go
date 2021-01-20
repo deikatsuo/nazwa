@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"

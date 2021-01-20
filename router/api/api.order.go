@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"log"
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"

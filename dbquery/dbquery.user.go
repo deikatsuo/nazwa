@@ -2,7 +2,6 @@ package dbquery
 
 import (
 	"fmt"
-	"log"
 	"nazwa/misc"
 	"nazwa/wrapper"
 	"strconv"

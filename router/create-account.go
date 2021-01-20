@@ -40,6 +40,6 @@ func PageCreateAccount(c *gin.Context) {
 		"l_c_have": "Sudah punya akun? Masuk",
 	}
 
-	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 	c.HTML(200, "create-account.html", misc.Mete(df, gh))
 }

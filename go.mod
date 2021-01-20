@@ -29,6 +29,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/semihalev/gin-stats v0.0.0-20180505163755-30fdcbbd3533
+	github.com/sirupsen/logrus v1.7.0
 	github.com/ugorji/go v1.2.2 // indirect
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 	golang.org/x/image v0.0.0-20201208152932-35266b937fa6 // indirect

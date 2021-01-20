@@ -27,6 +27,6 @@ func PageForgot(c *gin.Context) {
 		"l_forgot_login":       "Masuk",
 	}
 
-	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 	c.HTML(200, "forgot-password.html", misc.Mete(df, gh))
 }

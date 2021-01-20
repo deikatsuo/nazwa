@@ -5,7 +5,6 @@ import (
 	"image"
 	"image/color"
 	"io"
-	"log"
 	"os"
 	"strings"
 

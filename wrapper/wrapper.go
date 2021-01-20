@@ -2,7 +2,7 @@ package wrapper
 
 // DefaultConfig - untuk menyimpan konfigurasi bawaan
 type DefaultConfig struct {
-	Site map[string]interface{}
+	Info map[string]interface{}
 }
 
 // NameID menampilkan nama dan id

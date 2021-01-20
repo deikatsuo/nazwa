@@ -1,14 +1,15 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
-	"log"
 	"nazwa/middleware"
 	"nazwa/misc"
 	"nazwa/misc/validation"
 	"nazwa/router"
 	"nazwa/router/api"
 	"nazwa/setup"
+	"nazwa/wrapper"
 	"net/http"
 	"os"
 
@@ -28,19 +29,22 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var log = misc.Log
+
 func init() {
 	if err := godotenv.Load(); err != nil {
-		log.Print("Tidak ada file .env")
+		log.Fatal("Tidak ada file .env")
 	}
+	gob.Register(wrapper.User{})
 }
 
 func main() {
 	// Membuat koneksi database
-	fmt.Println("Mencoba membuat koneksi ke database...")
+	log.Info("Mencoba membuat koneksi ke database...")
 	db, err := sqlx.Connect(misc.SetupDBType(), misc.SetupDBSource())
 	if err != nil {
-		fmt.Println("Gagal membuat koneksi ke database ")
-		fmt.Println(err)
+		log.Info("Gagal membuat koneksi ke database ")
+		log.Fatal(err)
 		os.Exit(1)
 	}
 	// Ambil argumen CLI
@@ -48,16 +52,16 @@ func main() {
 		arg := os.Args[1]
 		switch arg {
 		case "run":
-			fmt.Println("Menjalankan server...")
+			log.Info("Menjalankan server...")
 			runServer(db)
 		case "setup":
-			fmt.Println("Menjalankan konfigurasi database...")
+			log.Info("Menjalankan konfigurasi database...")
 			setup.RunSetup(db)
 		case "version":
 			fmt.Println("Authored by", misc.AUTHOR)
 			fmt.Println("Version ", misc.VERSION)
 		default:
-			fmt.Println("Argument salah...")
+			log.Warning("Argument salah...")
 		}
 	}
 }
@@ -89,7 +93,7 @@ func runServer(db *sqlx.DB) {
 
 	// Buat session
 	server.Use(sessions.Sessions("NAZWA_SESSION", sessions.NewCookieStore([]byte("deri and rika"))))
-	server.Use(middleware.NewDefaultConfig())
+	server.Use(middleware.NewDefaultConfig(db))
 
 	// Daftarkan aset statik
 	// misal css, js, dan beragam file gambar
@@ -118,7 +122,7 @@ func runServer(db *sqlx.DB) {
 	// Gunakan permision
 	dashboard.Use(middleware.RoutePermission(db, e))
 	// Middleware untuk mengambil pengaturan default untuk dashboard
-	dashboard.Use(middleware.NewDashboardDefaultConfig(db))
+	dashboard.Use(middleware.NewDashboardDefaultConfig())
 
 	// PProf
 	pprof.RouteRegister(dashboard, "pprof")

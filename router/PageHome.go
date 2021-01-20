@@ -11,7 +11,7 @@ import (
 func PageHome(c *gin.Context) {
 
 	// Ambil konfigurasi default
-	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 
 	gh := gin.H{
 		"site_title": "Homepage",

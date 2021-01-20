@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"log"
 	"nazwa/dbquery"
 	"nazwa/router"
 

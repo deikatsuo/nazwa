@@ -3,7 +3,6 @@ package dbquery
 import (
 	"errors"
 	"fmt"
-	"log"
 	"math"
 	"nazwa/misc"
 	"nazwa/wrapper"

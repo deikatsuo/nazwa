@@ -9,7 +9,7 @@ import (
 
 // PageLogin Halaman login
 func PageLogin(c *gin.Context) {
-	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 
 	// Larang akses untuk user login
 	if df["login"] != false {

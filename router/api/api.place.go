@@ -1,7 +1,6 @@
 package api
 
 import (
-	"log"
 	"nazwa/dbquery"
 	"nazwa/router"
 	"net/http"

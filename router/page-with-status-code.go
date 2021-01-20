@@ -19,7 +19,7 @@ func Page404(c *gin.Context) {
 		"l_description": "Mohon maaf, halaman yang anda tuju tidak tersedia. Mungkin salah mengetikan alamat, atau halaman tersebut sudah dipindahkan/dihapus",
 	}
 
-	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 
 	met := misc.Mete(df, gh)
 
@@ -38,7 +38,7 @@ func Page403(c *gin.Context) {
 		"l_description": "Mohon maaf, anda tidak memiliki ijin untuk mengakses halaman ini",
 	}
 
-	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 
 	met := misc.Mete(df, gh)
 
@@ -56,7 +56,7 @@ func Page500(c *gin.Context) {
 		"l_description": "Kami mohon maaf, sepertinya telah terjadi kesalahan pada server kami. Mungkin data ",
 	}
 
-	df := c.MustGet("config").(wrapper.DefaultConfig).Site
+	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 
 	met := misc.Mete(df, gh)
 
