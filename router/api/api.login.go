@@ -4,19 +4,13 @@ import (
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"
+	"nazwa/wrapper"
 	"net/http"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
-
-// Login struk formulir login
-// menyimpan data login
-type Login struct {
-	Loginid  string `json:"loginid" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
 
 // UserLogin gerbang user login
 func UserLogin(db *sqlx.DB) gin.HandlerFunc {
@@ -33,7 +27,7 @@ func UserLogin(db *sqlx.DB) gin.HandlerFunc {
 		var role string
 		var userExist bool
 		// Variabel untuk di bind ke Login
-		var json Login
+		var json wrapper.Login
 		if err := c.ShouldBindJSON(&json); err != nil {
 			// Sederhanakan pesan error
 			simpleErrMap = validation.SimpleValErrMap(err)

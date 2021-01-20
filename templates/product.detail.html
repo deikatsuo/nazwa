@@ -165,7 +165,7 @@
                 </div>
               </dl>
 
-							{{ if .login }}
+							{{ if and (.login) (ne .user.Role "Customer") }}
               <!-- Harga produk -->
               <dl class="w-full whitespace-no-wrap">
                 <div

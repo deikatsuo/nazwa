@@ -20,7 +20,6 @@ VALUES  (0, 'dev'),
         (4, 'surveyor'),
         (5, 'sales'),
         (6, 'customer'),
-        (7, 'substitute');
 
 -- Buat gender
 CREATE TYPE "gender" AS ENUM ('f', 'm');

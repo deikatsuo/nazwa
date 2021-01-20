@@ -42,8 +42,8 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 		var files []string
 
 		if err := c.ShouldBindJSON(&json); err != nil {
-			log.Println("ERROR: api.product.go ProductCreate() bind json")
-			log.Println(err)
+			log.Warn("api.product.go ProductCreate() bind json")
+			log.Error(err)
 			if fmt.Sprintf("%T", err) == "validator.ValidationErrors" {
 				simpleErrMap = validation.SimpleValErrMap(err)
 			}
@@ -65,7 +65,8 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 						if f, err := misc.Base64ToFileWithData("../data/upload/product/", p.Photo, p.PhotoType); err == nil {
 							files = append(files, f)
 						} else {
-							log.Println("ERROR: api.product.go ProductCreate() Konversi base64 ke dalam bentuk file")
+							log.Warn("api.product.go ProductCreate() Konversi base64 ke dalam bentuk file")
+							log.Error(err)
 							message = err.Error()
 						}
 					}
@@ -76,6 +77,8 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 			if len(files) > 0 {
 				err := misc.FileGenerateThumb(files[0], "../data/upload/product/")
 				if err != nil {
+					log.Warn("Gagal membuat thumbnail")
+					log.Error(err)
 					message = err.Error()
 				}
 			}
@@ -101,22 +104,22 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				ReturnID(&pid).
 				Save(db)
 			if err != nil {
-				log.Println("ERROR: api.product.go ProductCreate() Gagal menambahkan produk baru")
-				log.Print(err)
+				log.Warn("api.product.go ProductCreate() Gagal menambahkan produk baru")
+				log.Error(err)
 				status = "error"
 				message = "Gagal menambahkan produk baru"
 
 				if len(files) > 0 {
 					for _, s := range files {
 						if err := os.Remove("../data/upload/product/" + s); err != nil {
-							log.Println("ERROR: api.product.go ProductCreate() Gagal menghapus file")
-							log.Println(err)
+							log.Warn("api.product.go ProductCreate() Gagal menghapus file")
+							log.Error(err)
 						}
 					}
 					// Hapus thumbnail
 					if err := os.Remove("../data/upload/product/thumbnail/" + files[0]); err != nil {
-						log.Println("ERROR: api.product.go ProductCreate() Gagal menghapus file thumbnail")
-						log.Println(err)
+						log.Warn("api.product.go ProductCreate() Gagal menghapus file thumbnail")
+						log.Error(err)
 					}
 				}
 			} else {
@@ -127,6 +130,8 @@ func ProductCreate(db *sqlx.DB) gin.HandlerFunc {
 				if p, err := dbquery.ProductGetProductByID(db, pid); err == nil {
 					retProduct = p
 				} else {
+					log.Warn("Gagal mengambil data produk by ID")
+					log.Error(err)
 					httpStatus = http.StatusInternalServerError
 					message = "Sepertinya telah terjadi kesalahan saat memuat data"
 				}
@@ -156,6 +161,9 @@ func ProductAddCreditPrice(db *sqlx.DB) gin.HandlerFunc {
 		// User id yang merequest
 		pid, err := strconv.Atoi(c.Param("id"))
 		if err != nil || nowID == nil {
+			log.Warn("api.product.go ProductAddCreditPrice() parameter id tidak valid")
+			log.Error(err)
+
 			router.Page404(c)
 			return
 		}
@@ -167,8 +175,8 @@ func ProductAddCreditPrice(db *sqlx.DB) gin.HandlerFunc {
 
 		var creditPrice wrapper.ProductCreditPriceForm
 		if err := c.ShouldBindJSON(&creditPrice); err != nil {
-			log.Println("ERROR: api.product.go ProductAddCreditPrice() gagal bind json")
-			log.Println(err)
+			log.Warn("api.product.go ProductAddCreditPrice() gagal bind json")
+			log.Error(err)
 			next = false
 		}
 
@@ -192,6 +200,9 @@ func ProductAddCreditPrice(db *sqlx.DB) gin.HandlerFunc {
 				Price:     creditPrice.Price,
 			})
 			if err := dbquery.ProductInsertCreditPrice(db, insertCreditPrice); err != nil {
+				log.Warn("api.product.go ProductAddCreditPrice() Gagal menyimpan harga kredit")
+				log.Error(err)
+
 				errMess = "Gagal menambahkan harga kredit"
 				next = false
 			}
@@ -203,6 +214,9 @@ func ProductAddCreditPrice(db *sqlx.DB) gin.HandlerFunc {
 		if next {
 			pp, err := dbquery.ProductGetProductCreditPrice(db, pid)
 			if err != nil {
+				log.Warn("api.product.go ProductAddCreditPrice() gagal mengambil harga barang dari database")
+				log.Error(err)
+
 				errMess = "Gagal memuat harga kredit barang"
 			} else {
 				retCreditPrices = pp
@@ -230,6 +244,9 @@ func ProductDeleteCreditPrice(db *sqlx.DB) gin.HandlerFunc {
 		// User id yang merequest
 		pid, err := strconv.Atoi(c.Param("id"))
 		if err != nil || nowID == nil {
+			log.Warn("api.product.go ProductDeleteCreditPrice() parameter id tidak valid")
+			log.Error(err)
+
 			router.Page404(c)
 			return
 		}
@@ -241,6 +258,9 @@ func ProductDeleteCreditPrice(db *sqlx.DB) gin.HandlerFunc {
 
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
+			log.Warn("api.product.go ProductDeleteCreditPrice() gagal membaca body")
+			log.Error(err)
+
 			errMess = "Data tidak benar"
 			next = false
 		}

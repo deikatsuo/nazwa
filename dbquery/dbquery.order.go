@@ -221,7 +221,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 
 	// Jika tidak ada barang yang di order
 	if len(c.orderItems) == 0 {
-		return errors.New("ERROR: dbuery.order.go (CreateOrder) Save() Item order kosong")
+		return errors.New("dbuery.order.go (CreateOrder) Save() Item order kosong")
 	}
 
 	// Jika tanggal pengiriman kosong
@@ -254,7 +254,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 				}
 			}
 			if tmpcp <= 0 {
-				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Harga kredit tidak ada")
+				log.Warn("dbquery.order.go (CreateOrder) Save() Harga kredit tidak ada")
 				return fmt.Errorf("Tidak ditemukan harga kredit untuk durasi %d bulan", c.duration)
 			}
 
@@ -268,7 +268,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 		} else {
 			p, err := ProductGetProductPrice(db, item.ProductID)
 			if err != nil {
-				log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item price")
+				log.Warn("dbquery.order.go (CreateOrder) Save() Get item price")
 				return err
 			}
 
@@ -283,7 +283,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 
 		bp, err := ProductGetProductBasePrice(db, item.ProductID)
 		if err != nil {
-			log.Println("ERROR: dbquery.order.go (CreateOrder) Save() Get item base price")
+			log.Warn("dbquery.order.go (CreateOrder) Save() Get item base price")
 			return err
 		}
 		basePriceTotal += bp * item.Quantity
@@ -333,7 +333,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 			return err
 		}
 	} else {
-		log.Println("ERROR: dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert order")
+		log.Warn("dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert order")
 		tx.Rollback()
 		return err
 	}
@@ -356,11 +356,11 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 
 	if rows, err := tx.NamedQuery(itemInsertQuery, itemInsert); err == nil {
 		if err := rows.Close(); err != nil {
-			log.Println("ERROR: dbquery.order.go Save() Insert item closing row")
+			log.Warn("dbquery.order.go Save() Insert item closing row")
 			return err
 		}
 	} else {
-		log.Println("ERROR: dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert item ")
+		log.Warn("dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert item ")
 		tx.Rollback()
 		return err
 	}
@@ -408,12 +408,11 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 
 			if rows, err := tx.NamedQuery(gev, uosd); err == nil {
 				if err := rows.Close(); err != nil {
-					log.Println("ERROR: dbquery.order.go Save() Insert substitute closing row")
+					log.Warn("dbquery.order.go Save() Insert substitute closing row")
 					return err
 				}
 			} else {
 				tx.Rollback()
-				log.Println("Oh error ", err)
 				return err
 			}
 
@@ -423,7 +422,7 @@ func (c *CreateOrder) Save(db *sqlx.DB) error {
 	// Simpan credit detail
 	if c.Credit {
 		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, monthly, duration, due, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6)`, tempReturnID, monthly, c.duration, c.due, remaining, luckyDiscount); err != nil {
-			log.Println("ERROR: dbquery.order.go Save() Insert product detail")
+			log.Warn("dbquery.order.go Save() Insert product detail")
 			return err
 		}
 	}
@@ -525,8 +524,7 @@ func (p *GetOrders) Show(db *sqlx.DB) ([]wrapper.Order, error) {
 
 	err := db.Select(&order, query, limit)
 	if err != nil {
-		log.Println("Error: order.go Select all product")
-		log.Println(err)
+		log.Warn("Error: order.go Select all product")
 		return []wrapper.Order{}, err
 	}
 
@@ -614,8 +612,7 @@ func OrderGetOrderByID(db *sqlx.DB, oid int) (wrapper.Order, error) {
 
 	err := db.Get(&o, query, oid)
 	if err != nil {
-		log.Println("dbquery.order.go OrderGetOrderByID() Select order berdasarkan ID")
-		log.Println(err)
+		log.Warn("dbquery.order.go OrderGetOrderByID() Select order berdasarkan ID")
 		return wrapper.Order{}, err
 	}
 

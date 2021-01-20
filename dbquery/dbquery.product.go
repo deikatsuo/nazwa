@@ -88,8 +88,7 @@ func (p *GetProducts) Show(db *sqlx.DB) ([]wrapper.Product, error) {
 
 	err := db.Select(&product, query)
 	if err != nil {
-		log.Println("Error: product.go Select all product")
-		log.Println(err)
+		log.Warn("dbquery.product.go (p *GetProducts) Show() Select all product")
 		return []wrapper.Product{}, err
 	}
 
@@ -152,8 +151,7 @@ func ProductGetProductByID(db *sqlx.DB, pid int) (wrapper.Product, error) {
 
 	err := db.Get(&p, query, pid)
 	if err != nil {
-		log.Println("product.go Select product berdasarkan ID")
-		log.Println(err)
+		log.Warn("dbquery.product.go ProductGetProductByID() Select product berdasarkan ID")
 		return wrapper.Product{}, err
 	}
 
@@ -208,7 +206,7 @@ func ProductGetProductPrice(db *sqlx.DB, pid int) (int, error) {
 		LIMIT 1`
 	err := db.Get(&price, query, pid)
 	if err != nil {
-		log.Println("ERROR: dbquery.product.go ProductGetProductPrice() error saat mengambil data harga jual")
+		log.Warn("dbquery.product.go ProductGetProductPrice() error saat mengambil data harga jual")
 		return 0, err
 	}
 
@@ -225,7 +223,7 @@ func ProductGetProductBasePrice(db *sqlx.DB, pid int) (int, error) {
 		LIMIT 1`
 	err := db.Get(&price, query, pid)
 	if err != nil {
-		log.Println("ERROR: dbquery.product.go ProductGetProductBasePrice() error saat mengambil data harga beli")
+		log.Warn("dbquery.product.go ProductGetProductBasePrice() error saat mengambil data harga beli")
 		return 0, err
 	}
 
@@ -388,13 +386,13 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 		for id, s := range c.photos {
 			// Set foto produk
 			if _, err := tx.Exec(`INSERT INTO "product_photo" (product_id, photo) VALUES ($1, $2)`, tempReturnID, s); err != nil {
-				log.Println("ERROR: product.go Save() Insert photo ID: ", id)
+				log.Warn("dbquery.product.go (c *CreateProduct) Save() Insert photo ID: ", id)
 				return err
 			}
 		}
 
 		if _, err := tx.Exec(`UPDATE "product" SET thumbnail=$1	WHERE id=$2`, c.photos[0], tempReturnID); err != nil {
-			log.Println("ERROR: product.go Save() Update thumbnail")
+			log.Warn("dbquery.product.go (c *CreateProduct) Save() Update thumbnail")
 			return err
 		}
 	}
@@ -403,7 +401,7 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 		for _, cp := range c.creditPrice {
 			// Set harga kredit untuk produk
 			if _, err := tx.Exec(`INSERT INTO "product_credit_price" (product_id, duration, price) VALUES ($1, $2, $3)`, tempReturnID, cp.Duration, cp.Price); err != nil {
-				log.Println("ERROR: product.go Save() Menambahkan harga produk")
+				log.Warn("dbquery.product.go (c *CreateProduct) Save() Menambahkan harga produk")
 				return err
 			}
 		}
@@ -418,7 +416,7 @@ func (c *CreateProduct) Save(db *sqlx.DB) error {
 func ProductInsertCreditPrice(db *sqlx.DB, cps []wrapper.ProductCreditPriceInsert) error {
 	query := `INSERT INTO "product_credit_price" (product_id, duration, price) VALUES (:product_id, :duration, :price)`
 	if _, err := db.NamedQuery(query, cps); err != nil {
-		log.Println("ERROR: dbquery.product.go ProductInsertCreditPrice() Gagal menambahkan harga kredit")
+		log.Warn("dbquery.product.go ProductInsertCreditPrice() Gagal menambahkan harga kredit")
 		return err
 	}
 

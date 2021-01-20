@@ -80,8 +80,7 @@ func (u *GetUsers) Show(db *sqlx.DB) ([]wrapper.User, error) {
 
 	err := db.Select(&user, query, limit)
 	if err != nil {
-		log.Println("Error: user.go Select all user")
-		log.Println(err)
+		log.Warn("dbquery.user.go Select all user")
 		return []wrapper.User{}, err
 	}
 
@@ -291,12 +290,12 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 					rows.Scan(&fcid)
 				}
 				if err := rows.Close(); err != nil {
-					log.Println("ERROR: user.go Save() fcid closing rows")
+					log.Warn("dbquery.user.go (u *CreateUser) Save() fcid closing rows")
 					return err
 				}
 			} else {
 				tx.Rollback()
-				log.Println("ERROR: user.go Save() Insert family card rollback")
+				log.Warn("dbquery.user.go (u *CreateUser) Save() Insert family card rollback")
 				return err
 			}
 		}
@@ -305,7 +304,7 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 	// Set family
 	if fcid != 0 {
 		if _, err := tx.Exec(`INSERT INTO "family" (family_card_id, user_id) VALUES ($1, $2)`, fcid, tempReturnID); err != nil {
-			log.Println("ERROR: user.go Save() Insert set family")
+			log.Warn("dbquery.user.go (u *CreateUser) Save() Insert set family")
 			return err
 		}
 	}
@@ -334,27 +333,27 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 				username = "NE-" + base36.Encode(iui)
 			}
 		} else {
-			log.Println("ERROR: user.go Save() ParseUint username/kode pelanggan")
+			log.Warn("dbquery.user.go (u *CreateUser) Save() ParseUint username/kode pelanggan")
 			return err
 		}
 	}
 
 	// Simpan username
 	if _, err := tx.Exec(`UPDATE "user"	SET username=$1	WHERE id=$2`, username, tempReturnID); err != nil {
-		log.Println("ERROR: user.go Save() Insert username/kode pelanggan")
+		log.Warn("dbquery.user.go (u *CreateUser) Save() Insert username/kode pelanggan")
 		return err
 	}
 
 	// Set role user
 	if _, err := tx.Exec(`INSERT INTO "user_role" (role_id, user_id) VALUES ($1, $2)`, u.role, tempReturnID); err != nil {
-		log.Println("ERROR: user.go Save() Insert user role")
+		log.Warn("dbquery.user.go (u *CreateUser) Save() Insert user role")
 		return err
 	}
 
 	// Simpan nomor hp user jika tersedia
 	if len(u.phone) >= 6 && len(u.phone) <= 15 {
 		if _, err := tx.Exec(`INSERT INTO "phone" (user_id, phone) VALUES ($1, $2)`, tempReturnID, u.phone); err != nil {
-			log.Println("ERROR: user.go Save() Insert phone number")
+			log.Warn("dbquery.user.go (u *CreateUser) Save() Insert phone number")
 			return err
 		}
 	}
@@ -362,7 +361,7 @@ func (u *CreateUser) Save(db *sqlx.DB) error {
 	// Simpan email user jika ada
 	if u.email != "" {
 		if _, err := tx.Exec(`INSERT INTO "email" (user_id, email) VALUES ($1, $2)`, tempReturnID, u.email); err != nil {
-			log.Println("ERROR: user.go Save() Insert email")
+			log.Warn("dbquery.user.go (u *CreateUser) Save() Insert email")
 			return err
 		}
 	}
@@ -515,8 +514,7 @@ func UserGetByID(db *sqlx.DB, uid int) (wrapper.User, error) {
 
 	err := db.Get(&u, query, uid)
 	if err != nil {
-		log.Println("user.go GetUserByID() Select user berdasarkan ID")
-		log.Println(err)
+		log.Warn("dbquery.user.go GetUserByID() Select user berdasarkan ID")
 		return wrapper.User{}, err
 	}
 
@@ -607,8 +605,7 @@ func UserGetAddress(db *sqlx.DB, userid int) ([]wrapper.UserAddress, error) {
 	WHERE user_id=$1`
 	err := db.Select(&addresses, query, userid)
 	if err != nil {
-		log.Println("Warning: user.go GetAddress() Tidak ada alamat ditemukan")
-		log.Println(err)
+		log.Warn("dbquery.user.go GetAddress() Tidak ada alamat ditemukan")
 		return []wrapper.UserAddress{}, err
 	}
 	return addresses, err
@@ -693,8 +690,7 @@ func UserAddAddress(db *sqlx.DB, address wrapper.UserAddress) error {
 	VALUES (:user_id, :name, :description, :one, :two, :zip, :province_id, :city_id, :district_id, :village_id)`
 	_, err := db.NamedExec(query, address)
 	if err != nil {
-		log.Println("ERROR: user.go AddAddress() Gagal menambahkan alamat")
-		log.Println(err)
+		log.Warn("dbquery.user.go AddAddress() Gagal menambahkan alamat")
 		return err
 	}
 	return nil
@@ -714,8 +710,7 @@ func UserFamilyCardExist(db *sqlx.DB, fc string) (bool, int) {
 			return true, f
 		}
 	} else {
-		log.Println("Warning: user.go FamilyCardExist() KK tidak ditemukan")
-		log.Println(err)
+		log.Warn("dbquery.user.go FamilyCardExist() KK tidak ditemukan")
 	}
 	return false, f
 }
@@ -730,7 +725,7 @@ func UserRICExist(db *sqlx.DB, ric string) bool {
 			return true
 		}
 	} else {
-		log.Println("Warning: NIK KTP tidak ditemukan")
+		log.Warn("dbquery.user.go UserRICExist() NIK KTP tidak ditemukan")
 		log.Println(err)
 	}
 	return false
@@ -746,8 +741,7 @@ func UserPhoneExist(db *sqlx.DB, phone string) bool {
 			return true
 		}
 	} else {
-		log.Println("Warning: Nomor hp tidak ditemukan")
-		log.Println(err)
+		log.Warn("dbquery.user.go UserPhoneExist() Nomor hp tidak ditemukan")
 	}
 	return false
 }
@@ -762,8 +756,7 @@ func UserEmailExist(db *sqlx.DB, email string) bool {
 			return true
 		}
 	} else {
-		log.Println("Warning: Email tidak ditemukan")
-		log.Println(err)
+		log.Warn("dbquery.user.go UserEmailExist() Email tidak ditemukan")
 	}
 	return false
 }
@@ -842,8 +835,7 @@ func UserMatchPassword(db *sqlx.DB, uid int, pwd string) bool {
 			next = true
 		}
 	} else {
-		log.Println("Warning: user.go MatchPassword() password tidak cocok")
-		log.Println(err)
+		log.Warn("dbquery.user.go MatchPassword() password tidak cocok")
 	}
 	if next {
 		err = matchPassword(inpwd, pwd)

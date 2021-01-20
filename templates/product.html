@@ -63,11 +63,13 @@
                       class="absolute z-30 bg-gray-500 opacity-50 inset-0"
                     ></div>
                     <div class="rounded relative overflow-hidden shadow-lg">
+                      {{ if and (.login) (ne .user.Role "Customer") }}
                       <div
                         class="absolute bg-blue-200 text-blue-500 font-bold text-xs top-0 right-0 px-1"
                       >
                         <p x-text="toRupiah(product.Price)"></p>
                       </div>
+                      {{ end }}
                       <img
                         class="object-cover w-full"
                         :src="'/file/product/'+product.Thumbnail"
@@ -109,10 +111,12 @@
                           x-text="'#Stok: ' + product.Stock"
                           :class="{}"
                         ></span>
+                        {{ if and (.login) (ne .user.Role "Customer") }}
                         <span
                           class="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-500 mr-2 mb-2"
                           x-text="'#Beli: ' + toRupiah(product.BasePrice)"
                         ></span>
+                        {{ end }}
                       </div>
                     </div>
                   </a>
@@ -134,7 +138,7 @@
               return {
                 products: [],
                 product_instant_search: "",
-                count: 12,
+                count: 15,
                 initProduct($dispatch) {
                   this.fetchProduct($dispatch);
                 },
