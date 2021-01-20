@@ -83,6 +83,8 @@ func runServer() {
 		log.Fatal(err)
 	}
 
+	// gin.SetMode(gin.ReleaseMode)
+
 	// Buat server
 	server := gin.Default()
 
