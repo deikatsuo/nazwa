@@ -104,9 +104,14 @@
               {{ block "dashboard_orders_add_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "orders_zones" }}
+              {{ block "dashboard_orders_zones_content" .}} {{ end }}
+            {{ end }}
+
             {{ if eq .page "blank" }}
               {{ block "dashboard_blank_content" .}}{{ end }}
             {{ end }}
+            
           </div>
         </main>
       </div>

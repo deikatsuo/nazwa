@@ -289,6 +289,7 @@ func (c *CreateOrder) Save() error {
 	}
 
 	remaining := priceTotal
+	total := priceTotal
 	var monthly int
 	var luckyDiscount int
 
@@ -297,6 +298,7 @@ func (c *CreateOrder) Save() error {
 
 		if c.Deposit > 0 {
 			remaining = priceTotal - c.Deposit
+			total = priceTotal - c.Deposit
 			monthly = (priceTotal - c.Deposit) / c.duration
 			monthly = int(math.Floor(float64(monthly)/1000)) * 1000
 			luckyDiscount = (priceTotal - c.Deposit) - (monthly * c.duration)
@@ -419,7 +421,7 @@ func (c *CreateOrder) Save() error {
 
 	// Simpan credit detail
 	if c.Credit {
-		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, monthly, duration, due, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6)`, tempReturnID, monthly, c.duration, c.due, remaining, luckyDiscount); err != nil {
+		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, monthly, duration, due, total, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6, $7)`, tempReturnID, monthly, c.duration, c.due, total, remaining, luckyDiscount); err != nil {
 			log.Warn("dbquery.order.go Save() Insert product detail")
 			return err
 		}

@@ -163,12 +163,36 @@ type OrderItem struct {
 	Discount  int
 }
 
-// OrderCreditDetail detail order kredit
-type OrderCreditDetail struct {
+// OrderCreditDetailInsert detail order kredit
+type OrderCreditDetailInsert struct {
+	OrderID       int `db:"order_id"`
+	ZoneID        int `db:"zone_id"`
+	Monthly       int `db:"monthly"`
+	Duration      int `db:"duration"`
+	Due           int `db:"due"`
+	Total         int `db:"total"`
+	Remaining     int `db:"remaining"`
+	LuckyDiscount int `db:"lucky_discount"`
+}
+
+// OrderCreditDetailSelect detail order kredit
+type OrderCreditDetailSelect struct {
 	ID            int `db:"id"`
 	Monthly       int `db:"monthly"`
 	Duration      int `db:"duration"`
 	Due           int `db:"due"`
+	Total         int `db:"total"`
 	Remaining     int `db:"remaining"`
 	LuckyDiscount int `db:"lucky_discount"`
+}
+
+// OrderCreditDetail detail order kredit
+type OrderCreditDetail struct {
+	ID            int
+	Monthly       int
+	Duration      int
+	Due           int
+	Total         int
+	Remaining     int
+	LuckyDiscount int
 }
