@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS "product_photo";
 DROP TABLE IF EXISTS "product_credit_price";
 DROP TABLE IF EXISTS "product";
 DROP TABLE IF EXISTS "address";
+DROP TABLE IF EXISTS "zone";
 DROP TABLE IF EXISTS "village";
 DROP TABLE IF EXISTS "district";
 DROP TABLE IF EXISTS "city";

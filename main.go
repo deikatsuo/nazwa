@@ -180,6 +180,10 @@ func runServer() {
 	v1address.GET("/districts/:id", api.PlaceDistricts)
 	v1address.GET("/villages/:id", api.PlaceVillages)
 
+	// /api/v1/local/zone
+	v1zone := v1local.Group("/zone")
+	v1zone.GET("/list", api.ZoneGetList)
+
 	// /api/v1/local/product
 	v1product := v1local.Group("/product")
 	v1product.GET("/id/:id", api.ProductShowByID)
