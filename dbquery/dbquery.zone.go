@@ -25,12 +25,17 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 			log.Error(err)
 		}
 
-		zones = append(zones, wrapper.Zone{
-			ID:     z.ID,
-			CityID: z.CityID,
-			Name:   z.Name,
-			List:   list,
-		})
+		merge := wrapper.Zone{
+			ID:   z.ID,
+			Name: z.Name,
+			List: list,
+		}
+
+		if z.CollectorID.Valid {
+			merge.CollectorID = int(z.CollectorID.Int32)
+		}
+
+		zones = append(zones, merge)
 	}
 
 	return zones, nil
