@@ -1,6 +1,70 @@
-{{ template "base" .}}
-{{ define "dashboard_orders_zones_content" }}
-<h2 class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+{{ template "base" .}} {{ define "dashboard_orders_zones_content" }}
+<h2
+  class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+>
   Zona Wilayah
 </h2>
+
+<!-- Zona Wilayah -->
+<div class="w-full mb-8">
+  <div x-data="zone()" x-init="fetchZones($dispatch)" id="zone">
+    <div class="flex flex-wrap">
+      <template x-for="zone in zones" :key="zone.ID">
+        <div class="w-full pb-2 sm:w-2/4 lg:w-2/6 sm:p-2">
+          <div class="bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2">
+            <h4
+              class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
+              x-text="zone.Name"
+            ></h4>
+            <div>
+              <dl class="w-full whitespace-no-wrap">
+                <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                  <dt class="text-sm leading-5 font-medium text-gray-500">
+                    Kolektor:
+                  </dt>
+                  <dd
+                    class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                    x-show="zone.Collector.ID > 0"
+                    x-text="zone.Collector.Name"
+                  ></dd>
+                  <dd
+                    class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                    x-show="zone.Collector.ID == 0"
+                  >-</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+  <script>
+    function zone() {
+      return {
+        zones: [],
+        fetchZones($dispatch) {
+          fetch(`/api/v1/local/zone/list`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.message != "") {
+                $dispatch("notif", {
+                  type: data.status,
+                  message: data.message,
+                });
+              }
+              if (data.zones) {
+                this.zones = data.zones;
+              }
+            })
+            .catch(() => {
+              console.log("Telah terjadi kesalahan saat memuat data produk");
+            });
+        },
+      };
+    }
+  </script>
+</div>
 {{ end }}

@@ -1,6 +1,9 @@
 package dbquery
 
-import "nazwa/wrapper"
+import (
+	"fmt"
+	"nazwa/wrapper"
+)
 
 // ZoneShowAll Ambil data zona wilayah dari database
 func ZoneShowAll() ([]wrapper.Zone, error) {
@@ -31,8 +34,24 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 			List: list,
 		}
 
+		var user wrapper.User
+		isNE := false
 		if z.CollectorID.Valid {
-			merge.CollectorID = int(z.CollectorID.Int32)
+			if zl, err := UserGetByID(int(z.CollectorID.Int32)); err == nil {
+				user = zl
+				isNE = true
+			} else {
+				log.Warn("Gagal mengambil data id kolektor")
+				log.Error(err)
+			}
+		}
+
+		if isNE {
+			merge.Collector = wrapper.NameID{
+				ID:        user.ID,
+				Name:      fmt.Sprintf("%s %s", user.Firstname, user.Lastname),
+				Thumbnail: user.Avatar,
+			}
 		}
 
 		zones = append(zones, merge)

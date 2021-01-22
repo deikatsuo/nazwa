@@ -4,10 +4,10 @@ import "database/sql"
 
 // Zone wilayah dalam zona
 type Zone struct {
-	ID          int
-	CollectorID int
-	Name        string
-	List        []ZoneListSelect
+	ID        int
+	Collector NameID
+	Name      string
+	List      []ZoneListSelect
 }
 
 // ZoneSelect mengambil data zona wilayah
