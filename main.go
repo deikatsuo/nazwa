@@ -184,6 +184,10 @@ func runServer() {
 	v1zone := v1local.Group("/zone")
 	v1zone.GET("/list", api.ZoneGetList)
 
+	// /api/v1/local/zone/edit
+	v1zEdit := v1zone.Group("/edit")
+	v1zEdit.PATCH("/:id/update/collector", api.ZoneUpdateCollector)
+
 	// /api/v1/local/product
 	v1product := v1local.Group("/product")
 	v1product.GET("/id/:id", api.ProductShowByID)

@@ -18,19 +18,76 @@
             ></h4>
             <div>
               <dl class="w-full whitespace-no-wrap">
-                <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-                  <dt class="text-sm leading-5 font-medium text-gray-500">
+                <div class="w-full relative px-4 py-1 flex flex-wrap">
+                  <dt class="w-2/6 text-sm leading-5 font-medium text-gray-500">
                     Kolektor:
                   </dt>
                   <dd
-                    class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                    x-show="zone.Collector.ID > 0"
+                    class="w-4/6 mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                    x-show="zone.Collector.ID > 0 && editCollector != zone.ID"
                     x-text="zone.Collector.Name"
+                    @dblclick="toggleEditCollector(zone.ID)"
                   ></dd>
                   <dd
-                    class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                    x-show="zone.Collector.ID == 0"
-                  >-</dd>
+                    class="w-4/6 mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                    x-show="zone.Collector.ID == 0 && editCollector != zone.ID"
+                    @dblclick="toggleEditCollector(zone.ID)"
+                  >
+                    -
+                  </dd>
+                  <dd class="w-4/6" x-show="editCollector == zone.ID">
+                    <input
+                      class="w-full appearance-none outline-none"
+                      x-model="instantData"
+                      @keyup="if (instantData.length >= 3 && instantData.length <= 25) { openIS = zone.ID; searchCollector(); } else { openIS = null; }"
+                      @click="if (instantData.length >= 3 && instantData.length <= 25) { openIS = null; } else { openIS = zone.ID; }"
+                      @keydown.tab="toggleEditCollector(zone.ID); openIS = null;"
+                      @click.away="toggleEditCollector(zone.ID); openIS = null;"
+                      @keydown.enter="toggleEditCollector(zone.ID)"
+                      @keydown.escape="toggleEditCollector(zone.ID)"
+                      :id="`input-collector-${zone.ID}`"
+                    />
+                    <ul
+                      x-transition:leave="transition ease-in duration-150"
+                      x-transition:leave-start="opacity-100"
+                      x-transition:leave-end="opacity-0"
+                      x-show="openIS == zone.ID"
+                      class="absolute z-30 left-0 right-0 -mt-1 md:mr-1 md:ml-1 text-gray-600 bg-white border-none border-r border-l border-b border-gray-100 rounded-br-md rounded-bl-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                      aria-label="submenu"
+                    >
+                      <div x-show="collectorIS.length > 0 && openIS == zone.ID">
+                        <template
+                          x-for="(collector, index) in collectorIS"
+                          :key="index"
+                        >
+                          <li class="flex">
+                            <a
+                              class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                              href="#"
+                              tabindex="-1"
+                              @click="updateCollector($dispatch ,zone.ID, collector.ID);"
+                            >
+                              <img
+                                class="object-cover w-5 h-5 rounded-full mr-3"
+                                :src="'/file/profile/thumbnail/'+collector.Avatar"
+                                alt=""
+                                loading="lazy"
+                              />
+                              <span
+                                x-text="collector.Firstname +' '+ collector.Lastname"
+                              ></span>
+                            </a>
+                          </li>
+                        </template>
+                      </div>
+                      <div x-show="collectorIS.length == 0">
+                        <span
+                          class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                          >Tidak ada data</span
+                        >
+                      </div>
+                    </ul>
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -43,6 +100,10 @@
     function zone() {
       return {
         zones: [],
+        collectorIS: [],
+        editCollector: null,
+        instantData: "",
+        openIS: null,
         fetchZones($dispatch) {
           fetch(`/api/v1/local/zone/list`, {
             method: "GET",
@@ -61,6 +122,68 @@
             })
             .catch(() => {
               console.log("Telah terjadi kesalahan saat memuat data produk");
+            });
+        },
+        toggleEditCollector(index) {
+          this.instantData = "";
+          if (this.editCollector == index) {
+            this.editCollector = null;
+          } else {
+            this.editCollector = index;
+
+            this.$nextTick(() => {
+              document.getElementById(`input-collector-${index}`).select();
+            });
+          }
+        },
+        searchCollector() {
+          fetch(
+            `/api/v1/local/user/search/collector/10?search=${this.instantData}`,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.error) {
+                $dispatch("notif", {
+                  type: "error",
+                  message: data.error,
+                });
+              }
+              if (data.users) {
+                this.collectorIS = data.users;
+              } else {
+                this.collectorIS = [];
+              }
+            })
+            .catch(() => {
+              console.log("Telah terjadi kesalahan saat memuat data collector");
+            });
+        },
+        updateCollector($dispatch, zid, uid) {
+          fetch(`/api/v1/local/zone/edit/${zid}/update/collector?set=${uid}`, {
+            method: "PATCH",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.status == "success") {
+                $dispatch("notif", {
+                  type: "success",
+                  message: "Peran pengguna berhasil diubah",
+                });
+                this.fetchZones($dispatch);
+              }
+            })
+            .catch((err) => {
+              console.log("Error: updateCollector() " + err);
             });
         },
       };

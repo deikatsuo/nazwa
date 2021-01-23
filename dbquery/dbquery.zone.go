@@ -77,3 +77,14 @@ func ZoneShowZoneList(zid int) ([]wrapper.ZoneListSelect, error) {
 
 	return zl, nil
 }
+
+// ZoneUpdateCollector mengubah kolektor pada zona
+func ZoneUpdateCollector(zid, uid int) error {
+	db := DB
+	query := `UPDATE "zone"
+	SET collector_id=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, uid, zid)
+
+	return err
+}
