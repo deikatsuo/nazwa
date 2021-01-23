@@ -7,7 +7,7 @@
 
 <!-- Zona Wilayah -->
 <div class="w-full mb-8">
-  <div x-data="zone()" x-init="fetchZones($dispatch)" id="zone">
+  <div x-data="zone()" x-init="fetchZones($dispatch, $watch);" id="zone">
     <div class="flex flex-wrap">
       <template x-for="zone in zones" :key="zone.ID">
         <div class="w-full pb-2 sm:w-2/4 lg:w-2/6 sm:p-2">
@@ -104,6 +104,10 @@
                 </div>
               </dl>
             </div>
+
+            <!-- Tambah list -->
+            {{ template "dashboard_orders_zones_select_list" .}}
+
             <div>
               <span class="text-sm text-gray-500">Daftar Wilayah</span>
               <template x-if="zone.List !== null">
@@ -132,12 +136,48 @@
     function zone() {
       return {
         zones: [],
+        activeZone: null,
         selectedZoneList: "",
         collectorIS: [],
         editCollector: null,
         instantData: "",
         openIS: null,
-        fetchZones($dispatch) {
+        address: {
+          province: "",
+          city: "",
+          district: "",
+        },
+        addressData: {
+          provinces: [],
+          cities: [],
+          districts: [],
+        },
+        initPlaces($watch) {
+          $watch("address.province", (value) => {
+            this.address.city = "";
+            this.addressData.cities = [];
+            if (value != "") {
+              this.fetchCities();
+            }
+          });
+          $watch("address.city", (value) => {
+            this.address.district = "";
+            this.districts = [];
+            if (value != "") {
+              this.fetchDistricts();
+            }
+          });
+          $watch("address.district", (value) => {
+            //this.address.village = "";
+            //this.villages = [];
+            if (value != "") {
+              //this.fetchVillages();
+              alert("ok");
+            }
+          });
+          this.fetchProvinces();
+        },
+        fetchZones($dispatch, $watch) {
           fetch(`/api/v1/local/zone/list`, {
             method: "GET",
           })
@@ -156,6 +196,8 @@
             .catch(() => {
               console.log("Telah terjadi kesalahan saat memuat data produk");
             });
+
+          this.initPlaces($watch);
         },
         toggleEditCollector(index) {
           this.instantData = "";
@@ -253,6 +295,45 @@
             })
             .catch((err) => {
               console.log("Error: deleteCollectorFromZone() " + err);
+            });
+        },
+        fetchProvinces() {
+          fetch("/api/v1/local/address/provinces", {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              this.addressData.provinces = json.province;
+            })
+            .catch((err) => {
+              console.log("fetchProvinces() " + err);
+            });
+        },
+        fetchCities() {
+          fetch(
+            "/api/v1/local/address/cities/" + this.address.province,
+            {
+              method: "GET",
+            }
+          )
+            .then((res) => res.json())
+            .then((json) => {
+              this.addressData.cities = json.cities;
+            })
+            .catch((err) => {
+              console.log("fetchCities() " + err);
+            });
+        },
+        fetchDistricts() {
+          fetch("/api/v1/local/address/districts/" + this.address.city, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              this.addressData.districts = json.districts;
+            })
+            .catch((err) => {
+              console.log("fetchDistricts() " + err);
             });
         },
       };

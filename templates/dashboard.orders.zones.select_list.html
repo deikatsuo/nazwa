@@ -1,0 +1,84 @@
+{{ define "dashboard_orders_zones_select_list" }}
+
+<span
+  class="text-sm cursor-pointer text-blue-500"
+  @click="activeZone = zone.ID;"
+  x-show="activeZone !== zone.ID"
+>tambah wilayah</span>
+<span
+  class="text-sm cursor-pointer text-red-500"
+  @click="activeZone = null;"
+  x-show="activeZone == zone.ID"
+>batal</span>
+
+<template x-if="activeZone == zone.ID">
+  <div>
+    <!-- Provinsi -->
+    <label class="block mt-4 text-sm">
+      <div class="relative">
+        <select
+          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+          x-model="address.province"
+        >
+          <option value="">Pilih provinsi</option>
+          <template
+            x-for="(province, index) in addressData.provinces"
+            :key="index"
+          >
+            <option :value="province.ID" x-text="province.Name"></option>
+          </template>
+        </select>
+        <div
+          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+        >
+          {{ template "_svg_icon_arrow_bottom" }}
+        </div>
+      </div>
+    </label>
+
+    <!-- Kota/Kabupaten -->
+    <label class="block mt-4 text-sm" x-show="addressData.cities.length > 0">
+      <div class="relative">
+        <select
+          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+          x-model="address.city"
+        >
+          <option value="">Pilih kota/kabupaten</option>
+          <template x-for="(city, index) in addressData.cities" :key="index">
+            <option :value="city.ID" x-text="city.Name"></option>
+          </template>
+        </select>
+        <div
+          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+        >
+          {{ template "_svg_icon_arrow_bottom" }}
+        </div>
+      </div>
+    </label>
+
+    <!-- Distrik/Kecamatan -->
+    <label class="block mt-4 text-sm" x-show="addressData.districts.length > 0">
+      <div class="relative">
+        <select
+          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+          x-model="address.district"
+        >
+          <option value="">Pilih distrik/kecamatan</option>
+          <template
+            x-for="(district, index) in addressData.districts"
+            :key="index"
+          >
+            <option :value="district.ID" x-text="district.Name"></option>
+          </template>
+        </select>
+        <div
+          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+        >
+          {{ template "_svg_icon_arrow_bottom" }}
+        </div>
+      </div>
+    </label>
+  </div>
+</template>
+
+{{ end }}
