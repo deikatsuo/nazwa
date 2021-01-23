@@ -61,10 +61,10 @@ func ZoneUpdateCollector(c *gin.Context) {
 		next = false
 	}
 
-	// Update role
+	// Update collector
 	if next {
 		if err := dbquery.ZoneUpdateCollector(zid, newCollectorID); err != nil {
-			message = "Gagal mengubah role"
+			message = "Gagal mengubah kolektor"
 			status = "error"
 			next = false
 		}
@@ -74,6 +74,47 @@ func ZoneUpdateCollector(c *gin.Context) {
 	if next {
 		httpStatus = http.StatusOK
 		message = "Kolektor berhasil disimpan"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
+// ZoneDeleteCollector api untuk menghapus/mengosongkan kolektor pada zone
+func ZoneDeleteCollector(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	zid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	// Delete collector
+	if next {
+		if err := dbquery.ZoneDeleteCollector(zid); err != nil {
+			message = "Gagal mengosongkan kolektor"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Kolektor berhasil dikosongkan"
 		status = "success"
 	}
 

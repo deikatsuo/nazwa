@@ -5,7 +5,7 @@ import "database/sql"
 // Zone wilayah dalam zona
 type Zone struct {
 	ID        int
-	Collector NameID
+	Collector NameIDCode
 	Name      string
 	List      []ZoneListSelect
 }
@@ -19,6 +19,7 @@ type ZoneSelect struct {
 
 // ZoneListSelect list dalam zona
 type ZoneListSelect struct {
-	ID   int    `db:"id"`
-	Name string `db:"name"`
+	ID         int    `db:"id"`
+	DistrictID int    `db:"district_id"`
+	Name       string `db:"name"`
 }

@@ -47,10 +47,11 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 		}
 
 		if isNE {
-			merge.Collector = wrapper.NameID{
+			merge.Collector = wrapper.NameIDCode{
 				ID:        user.ID,
 				Name:      fmt.Sprintf("%s %s", user.Firstname, user.Lastname),
 				Thumbnail: user.Avatar,
+				Code:      user.Username,
 			}
 		}
 
@@ -64,7 +65,7 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 func ZoneShowZoneList(zid int) ([]wrapper.ZoneListSelect, error) {
 	db := DB
 	var zl []wrapper.ZoneListSelect
-	query := `SELECT zl.id, d.name 
+	query := `SELECT zl.id, zl.district_id, d.name 
 	FROM "zone_list" zl
 	LEFT JOIN "district" d ON d.id=zl.district_id
 	WHERE zl.zone_id=$1`
@@ -85,6 +86,17 @@ func ZoneUpdateCollector(zid, uid int) error {
 	SET collector_id=$1
 	WHERE id=$2`
 	_, err := db.Exec(query, uid, zid)
+
+	return err
+}
+
+// ZoneDeleteCollector mengosongkan kolektor pada zona
+func ZoneDeleteCollector(zid int) error {
+	db := DB
+	query := `UPDATE "zone"
+	SET collector_id=null
+	WHERE id=$1`
+	_, err := db.Exec(query, zid)
 
 	return err
 }

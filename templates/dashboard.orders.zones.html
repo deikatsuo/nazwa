@@ -25,9 +25,22 @@
                   <dd
                     class="w-4/6 mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
                     x-show="zone.Collector.ID > 0 && editCollector != zone.ID"
-                    x-text="zone.Collector.Name"
                     @dblclick="toggleEditCollector(zone.ID)"
-                  ></dd>
+                  >
+                    <div
+                      class="relative whitespace-normal break-words bg-orange-200 text-orange-400 bg-opacity-50 text-sm inline-block pl-1 pr-6 shadow-xs"
+                    >
+                      <i x-text="zone.Collector.Name"></i>
+                      (<b x-text="zone.Collector.Code"></b>)
+                      <p
+                        style="margin-top: 0.2rem"
+                        class="cursor-pointer absolute right-0 top-0 mr-1"
+                        @click="deleteCollector($dispatch, zone.ID);"
+                      >
+                        {{ template "_svg_icon_close" }}
+                      </p>
+                    </div>
+                  </dd>
                   <dd
                     class="w-4/6 mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
                     x-show="zone.Collector.ID == 0 && editCollector != zone.ID"
@@ -90,6 +103,22 @@
                   </dd>
                 </div>
               </dl>
+            </div>
+            <div>
+              <span class="text-sm text-gray-500">Daftar Wilayah</span>
+              <template x-if="zone.List !== null">
+                <div class="px-2 pt-2 pb-2">
+                  <template
+                    x-for="district in zone.List"
+                    :key="district.DistrictID"
+                  >
+                    <span
+                      class="inline-block bg-green-200 rounded-full lowercase px-2 text-xs font-semibold text-green-500 mr-1 mb-1"
+                      x-text="district.Name"
+                    ></span>
+                  </template>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -175,15 +204,31 @@
                 });
               }
               if (json.status == "success") {
-                $dispatch("notif", {
-                  type: "success",
-                  message: "Peran pengguna berhasil diubah",
-                });
                 this.fetchZones($dispatch);
               }
             })
             .catch((err) => {
               console.log("Error: updateCollector() " + err);
+            });
+        },
+        deleteCollector($dispatch, zid) {
+          fetch(`/api/v1/local/zone/edit/${zid}/delete/collector`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.status == "success") {
+                this.fetchZones($dispatch);
+              }
+            })
+            .catch((err) => {
+              console.log("Error: deleteCollector() " + err);
             });
         },
       };
