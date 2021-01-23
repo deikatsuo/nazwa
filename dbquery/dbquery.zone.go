@@ -11,7 +11,7 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 	var zones []wrapper.Zone
 	var zs []wrapper.ZoneSelect
 
-	query := `SELECT * FROM "zone"`
+	query := `SELECT * FROM "zone" ORDER BY id`
 	err := db.Select(&zs, query)
 	if err != nil {
 		log.Warn("dbquery.zone.go ZoneShowAll() telah terjadi kesalahan saat memuat data")
