@@ -188,6 +188,7 @@ func runServer() {
 	v1zEdit := v1zone.Group("/edit")
 	v1zEdit.PATCH("/:id/update/collector", api.ZoneUpdateCollector)
 	v1zEdit.DELETE("/:id/delete/collector", api.ZoneDeleteCollector)
+	v1zEdit.DELETE("/:id/delete/list", api.ZoneDeleteList)
 
 	// /api/v1/local/product
 	v1product := v1local.Group("/product")

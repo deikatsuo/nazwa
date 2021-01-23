@@ -35,7 +35,7 @@
                       <p
                         style="margin-top: 0.2rem"
                         class="cursor-pointer absolute right-0 top-0 mr-1"
-                        @click="deleteCollector($dispatch, zone.ID);"
+                        @click="deleteCollectorFromZone($dispatch, zone.ID);"
                       >
                         {{ template "_svg_icon_close" }}
                       </p>
@@ -113,8 +113,11 @@
                     :key="district.DistrictID"
                   >
                     <span
-                      class="inline-block bg-green-200 rounded-full lowercase px-2 text-xs font-semibold text-green-500 mr-1 mb-1"
+                      class="inline-block cursor-pointer rounded-full lowercase px-2 text-xs font-semibold mr-1 mb-1"
                       x-text="district.Name"
+                      @contextmenu.prevent="selectedZoneList = district.ID;"
+                      @dblclick="if (selectedZoneList == district.ID) { deleteListFromZone($dispatch, zone.ID, district.ID); }"
+                      :class="{'bg-red-200 text-red-400': selectedZoneList == district.ID, 'bg-green-200 text-green-500': selectedZoneList != district.ID }"
                     ></span>
                   </template>
                 </div>
@@ -129,6 +132,7 @@
     function zone() {
       return {
         zones: [],
+        selectedZoneList: "",
         collectorIS: [],
         editCollector: null,
         instantData: "",
@@ -211,7 +215,7 @@
               console.log("Error: updateCollector() " + err);
             });
         },
-        deleteCollector($dispatch, zid) {
+        deleteCollectorFromZone($dispatch, zid) {
           fetch(`/api/v1/local/zone/edit/${zid}/delete/collector`, {
             method: "DELETE",
           })
@@ -228,7 +232,27 @@
               }
             })
             .catch((err) => {
-              console.log("Error: deleteCollector() " + err);
+              console.log("Error: deleteCollectorFromZone() " + err);
+            });
+        },
+        deleteListFromZone($dispatch, zid, lid) {
+          fetch(`/api/v1/local/zone/edit/${zid}/delete/list?lid=${lid}`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.status == "success") {
+                this.fetchZones($dispatch);
+              }
+            })
+            .catch((err) => {
+              console.log("Error: deleteCollectorFromZone() " + err);
             });
         },
       };

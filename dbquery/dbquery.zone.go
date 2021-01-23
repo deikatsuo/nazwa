@@ -100,3 +100,13 @@ func ZoneDeleteCollector(zid int) error {
 
 	return err
 }
+
+// ZoneDeleteList menghapus list dari zona
+func ZoneDeleteList(zid, lid int) error {
+	db := DB
+	query := `DELETE FROM "zone_list"
+	WHERE id=$1 AND zone_id=$2`
+	_, err := db.Exec(query, lid, zid)
+
+	return err
+}
