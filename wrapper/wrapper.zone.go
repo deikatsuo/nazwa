@@ -7,7 +7,7 @@ type Zone struct {
 	ID        int
 	Collector NameIDCode
 	Name      string
-	List      []ZoneListSelect
+	List      []ZoneListsSelect
 }
 
 // ZoneSelect mengambil data zona wilayah
@@ -17,8 +17,8 @@ type ZoneSelect struct {
 	Name        string        `db:"name"`
 }
 
-// ZoneListSelect list dalam zona
-type ZoneListSelect struct {
+// ZoneListsSelect list dalam zona
+type ZoneListsSelect struct {
 	ID         int    `db:"id"`
 	DistrictID int    `db:"district_id"`
 	Name       string `db:"name"`

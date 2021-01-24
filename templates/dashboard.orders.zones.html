@@ -9,7 +9,7 @@
 <div class="w-full mb-8">
   <div x-data="zone()" x-init="fetchZones($dispatch, $watch);" id="zone">
     <div class="flex flex-wrap">
-      <template x-for="zone in zones" :key="zone.ID">
+      <template x-for="(zone, index) in zones" :key="zone.ID">
         <div class="w-full pb-2 sm:w-2/4 lg:w-2/6 sm:p-2">
           <div class="bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2">
             <h4
@@ -28,7 +28,7 @@
                     @dblclick="toggleEditCollector(zone.ID)"
                   >
                     <div
-                      class="relative whitespace-normal break-words bg-orange-200 text-orange-400 bg-opacity-50 text-sm inline-block pl-1 pr-6 shadow-xs"
+                      class="relative whitespace-normal break-words rounded-sm bg-orange-200 text-orange-400 bg-opacity-50 text-sm inline-block pl-1 pr-6 shadow-xs"
                     >
                       <i x-text="zone.Collector.Name"></i>
                       (<b x-text="zone.Collector.Code"></b>)
@@ -147,6 +147,7 @@
       return {
         zones: [],
         activeZone: null,
+        listIndex: null,
         selectedZoneList: "",
         collectorIS: [],
         editCollector: null,
@@ -354,12 +355,18 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
           })
-            .then((res) => {
-              console.log(res);
-              return res.json();
-            })
+            .then((res) => res.json())
             .then((json) => {
-              alert(json);
+              if (json.message != "") {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+
+              if (json.lists !== null) {
+                this.zones[this.listIndex].List = json.lists;
+              }
             })
             .catch((err) => {
               console.log("Error addToZone " + err);

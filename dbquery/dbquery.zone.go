@@ -1,9 +1,12 @@
 package dbquery
 
 import (
+	"errors"
 	"fmt"
 	"nazwa/wrapper"
 )
+
+///////////////////////////////////////// SHOW //
 
 // ZoneShowAll Ambil data zona wilayah dari database
 func ZoneShowAll() ([]wrapper.Zone, error) {
@@ -20,7 +23,7 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 	}
 
 	for _, z := range zs {
-		var list []wrapper.ZoneListSelect
+		var list []wrapper.ZoneListsSelect
 		if zl, err := ZoneShowZoneList(z.ID); err == nil {
 			list = zl
 		} else {
@@ -62,13 +65,13 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 }
 
 // ZoneShowZoneList wilayah
-func ZoneShowZoneList(zid int) ([]wrapper.ZoneListSelect, error) {
+func ZoneShowZoneList(zid int) ([]wrapper.ZoneListsSelect, error) {
 	db := DB
-	var zl []wrapper.ZoneListSelect
+	var zl []wrapper.ZoneListsSelect
 	query := `SELECT zl.id, zl.district_id, d.name 
 	FROM "zone_list" zl
 	LEFT JOIN "district" d ON d.id=zl.district_id
-	WHERE zl.zone_id=$1`
+	WHERE zl.zone_id=$1 ORDER BY d.name`
 	err := db.Select(&zl, query, zid)
 	if err != nil {
 		log.Warn("dbquery.zone.go ZoneShowZoneList() telah terjadi kesalahan saat memuat data")
@@ -78,6 +81,8 @@ func ZoneShowZoneList(zid int) ([]wrapper.ZoneListSelect, error) {
 
 	return zl, nil
 }
+
+////////////////////////////////////// UPDATE //
 
 // ZoneUpdateCollector mengubah kolektor pada zona
 func ZoneUpdateCollector(zid, uid int) error {
@@ -89,6 +94,8 @@ func ZoneUpdateCollector(zid, uid int) error {
 
 	return err
 }
+
+////////////////////////////////////// DELETE //
 
 // ZoneDeleteCollector mengosongkan kolektor pada zona
 func ZoneDeleteCollector(zid int) error {
@@ -109,4 +116,46 @@ func ZoneDeleteList(zid, lid int) error {
 	_, err := db.Exec(query, lid, zid)
 
 	return err
+}
+
+//////////////////////////////////////////// ADD //
+
+// ZoneAddList menambahkan list wilayah ke zona
+func ZoneAddList(zid int, lists wrapper.ZoneAddListForm) error {
+	db := DB
+	if len(lists.Lists) > 0 {
+		for _, lid := range lists.Lists {
+			// Insert id wilayah
+			if _, err := db.Exec(`INSERT INTO "zone_list" (zone_id, district_id) VALUES ($1, $2)`, zid, lid); err != nil {
+				log.Warn("dbquery.zone.go ZoneAddList() gagal insert id wilayah")
+				log.Error(err)
+				return err
+			}
+		}
+	} else {
+		return errors.New("Tidak ada wilayah untuk dimasukan ke zona")
+	}
+
+	return nil
+}
+
+/////////////////////////////////////// CHECK //
+
+// ZoneListExistsAndRet check nomor telepon
+func ZoneListExistsAndRet(lid int, ret *wrapper.NameName) bool {
+	db := DB
+	var list wrapper.NameName
+	query := `SELECT d.name as name_one, z.name as name_two
+	FROM "zone_list" zl
+	LEFT JOIN "district" d ON d.id=zl.district_id
+	LEFT JOIN "zone" z ON z.id=zl.zone_id
+	WHERE zl.district_id=$1`
+	err := db.Get(&list, query, lid)
+
+	if err == nil {
+		*ret = list
+		return true
+	}
+
+	return false
 }

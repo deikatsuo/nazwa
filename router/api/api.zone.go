@@ -1,8 +1,8 @@
 package api
 
 import (
+	"fmt"
 	"nazwa/dbquery"
-	"nazwa/misc/validation"
 	"nazwa/router"
 	"nazwa/wrapper"
 	"net/http"
@@ -195,26 +195,36 @@ func ZoneAddList(c *gin.Context) {
 		return
 	}
 
-	log.Warn(zid)
-
 	message := ""
-	//next := true
+	next := true
 	httpStatus := http.StatusBadRequest
 	status := ""
 
 	var lists wrapper.ZoneAddListForm
 	if err := c.ShouldBindJSON(&lists); err != nil {
-		log.Warn(err)
-		simpleErr := validation.SimpleValErrMap(err)
+		log.Warn("Gagal unmarshal json")
+		log.Error(err)
 
-		message = simpleErr["lists"].(string)
+		message = "Request tidak valid"
 		status = "error"
-		//next = false
+		next = false
+	}
+
+	var ret wrapper.NameName
+	if next {
+		for _, lid := range lists.Lists {
+			if dbquery.ZoneListExistsAndRet(lid, &ret) {
+				message = fmt.Sprintf("%s Sudah ada di %s", ret.NameOne, ret.NameTwo)
+				status = "error"
+				next = false
+				break
+			}
+		}
 	}
 
 	// Tambahkan list
-	/*if next {
-		if err := dbquery.ZoneAddList(newPhone.Phone, uid); err != nil {
+	if next {
+		if err := dbquery.ZoneAddList(zid, lists); err != nil {
 			message = "Gagal menambahkan wilayah"
 			status = "error"
 			next = false
@@ -224,23 +234,20 @@ func ZoneAddList(c *gin.Context) {
 			next = true
 			httpStatus = http.StatusOK
 		}
-	}*/
+	}
 
-	/*// Ambil nomor HP dari database
-	var phones []wrapper.UserPhone
-	if next {
-		ph, err := dbquery.UserGetPhone(uid)
-		if err != nil {
-			errMess = "Gagal memuat nomor HP"
-		} else {
-			phones = ph
-			httpStatus = http.StatusOK
-			success = "Nomor HP berhasil ditambahkan"
-		}
-	}*/
+	// Ambil list wilayah
+	var newLists []wrapper.ZoneListsSelect
+	if zl, err := dbquery.ZoneShowZoneList(zid); err == nil {
+		newLists = zl
+	} else {
+		log.Warn("api.zone.go ZoneAddList() ambil data list zona")
+		log.Error(err)
+	}
+
 	c.JSON(httpStatus, gin.H{
 		"message": message,
 		"status":  status,
-		//"lists":   newLists,
+		"lists":   newLists,
 	})
 }

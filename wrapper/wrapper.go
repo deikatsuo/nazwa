@@ -19,3 +19,9 @@ type NameIDCode struct {
 	Code      string `db:"code"`
 	Thumbnail string `db:"thumbnail"`
 }
+
+// NameName membandingkan dua nama
+type NameName struct {
+	NameOne string `db:"name_one"`
+	NameTwo string `db:"name_two"`
+}
