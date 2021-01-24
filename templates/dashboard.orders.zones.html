@@ -108,9 +108,9 @@
             <!-- Tambah list -->
             {{ template "dashboard_orders_zones_select_list" .}}
 
-            <div>
-              <span class="text-sm text-gray-500">Daftar Wilayah</span>
-              <template x-if="zone.List !== null">
+            <div class="mt-4">
+              <template x-if="zone.List !== null"
+                ><span class="text-sm font-semibold">Wilayah Terdaftar:</span>
                 <div class="px-2 pt-2 pb-2">
                   <template
                     x-for="district in zone.List"
@@ -124,6 +124,13 @@
                       :class="{'bg-red-200 text-red-400': selectedZoneList == district.ID, 'bg-green-200 text-green-500': selectedZoneList != district.ID }"
                     ></span>
                   </template>
+                </div>
+              </template>
+              <template x-if="zone.List === null">
+                <div class="w-full text-center">
+                  <span class="px-2 text-xs text-gray-500 font-semibold mr-1 mb-1"
+                    >Belum ada wilayah terdaftar di zona ini</span
+                  >
                 </div>
               </template>
             </div>
@@ -145,7 +152,7 @@
         address: {
           province: "",
           city: "",
-          district: "",
+          districts: "",
         },
         addressData: {
           provinces: [],
@@ -156,25 +163,20 @@
           $watch("address.province", (value) => {
             this.address.city = "";
             this.addressData.cities = [];
+            this.address.districts = "";
+            this.addressData.districts = [];
             if (value != "") {
               this.fetchCities();
             }
           });
           $watch("address.city", (value) => {
-            this.address.district = "";
-            this.districts = [];
+            this.address.districts = "";
+            this.addressData.districts = [];
             if (value != "") {
               this.fetchDistricts();
             }
           });
-          $watch("address.district", (value) => {
-            //this.address.village = "";
-            //this.villages = [];
-            if (value != "") {
-              //this.fetchVillages();
-              alert("ok");
-            }
-          });
+          
           this.fetchProvinces();
         },
         fetchZones($dispatch, $watch) {
@@ -310,12 +312,9 @@
             });
         },
         fetchCities() {
-          fetch(
-            "/api/v1/local/address/cities/" + this.address.province,
-            {
-              method: "GET",
-            }
-          )
+          fetch("/api/v1/local/address/cities/" + this.address.province, {
+            method: "GET",
+          })
             .then((res) => res.json())
             .then((json) => {
               this.addressData.cities = json.cities;
@@ -335,6 +334,9 @@
             .catch((err) => {
               console.log("fetchDistricts() " + err);
             });
+        },
+        addToZone($dispatch, zid) {
+          alert(zid);
         },
       };
     }
