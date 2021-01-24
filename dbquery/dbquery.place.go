@@ -10,7 +10,7 @@ type Place struct {
 func PlaceGetProvinces() ([]Place, error) {
 	db := DB
 	var p []Place
-	query := `SELECT id, INITCAP(name) AS name FROM "province"`
+	query := `SELECT id, INITCAP(name) AS name FROM "province" ORDER BY name`
 	err := db.Select(&p, query)
 	if err != nil {
 		return []Place{}, err
@@ -22,7 +22,7 @@ func PlaceGetProvinces() ([]Place, error) {
 func PlaceGetCities(pid int) ([]Place, error) {
 	db := DB
 	var p []Place
-	query := `SELECT id, INITCAP(name) AS name FROM "city" WHERE parent=$1`
+	query := `SELECT id, INITCAP(name) AS name FROM "city" WHERE parent=$1 ORDER BY name`
 	err := db.Select(&p, query, pid)
 	if err != nil {
 		return []Place{}, err
@@ -34,7 +34,7 @@ func PlaceGetCities(pid int) ([]Place, error) {
 func PlaceGetDistricts(pid int) ([]Place, error) {
 	db := DB
 	var p []Place
-	query := `SELECT id, INITCAP(name) AS name FROM "district" WHERE parent=$1`
+	query := `SELECT id, INITCAP(name) AS name FROM "district" WHERE parent=$1 ORDER BY name`
 	err := db.Select(&p, query, pid)
 	if err != nil {
 		return []Place{}, err
@@ -46,7 +46,7 @@ func PlaceGetDistricts(pid int) ([]Place, error) {
 func PlaceGetVillages(pid int) ([]Place, error) {
 	db := DB
 	var p []Place
-	query := `SELECT id, INITCAP(name) AS name FROM "village" WHERE parent=$1`
+	query := `SELECT id, INITCAP(name) AS name FROM "village" WHERE parent=$1 ORDER BY name`
 	err := db.Select(&p, query, pid)
 	if err != nil {
 		return []Place{}, err
