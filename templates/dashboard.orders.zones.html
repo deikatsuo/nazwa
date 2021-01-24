@@ -109,26 +109,29 @@
             {{ template "dashboard_orders_zones_select_list" .}}
 
             <div class="mt-4">
-              <template x-if="zone.List !== null"
-                ><span class="text-sm font-semibold">Wilayah Terdaftar:</span>
-                <div class="px-2 pt-2 pb-2">
-                  <template
-                    x-for="district in zone.List"
-                    :key="district.DistrictID"
-                  >
-                    <span
-                      class="inline-block cursor-pointer rounded-full lowercase px-2 text-xs font-semibold mr-1 mb-1"
-                      x-text="district.Name"
-                      @contextmenu.prevent="selectedZoneList = district.ID;"
-                      @dblclick="if (selectedZoneList == district.ID) { deleteListFromZone($dispatch, zone.ID, district.ID); }"
-                      :class="{'bg-red-200 text-red-400': selectedZoneList == district.ID, 'bg-green-200 text-green-500': selectedZoneList != district.ID }"
-                    ></span>
-                  </template>
+              <template x-if="zone.List !== null">
+                <div>
+                  <span class="text-sm font-semibold">Wilayah Terdaftar:</span>
+                  <div class="px-2 pt-2 pb-2">
+                    <template
+                      x-for="district in zone.List"
+                      :key="district.DistrictID"
+                    >
+                      <span
+                        class="inline-block cursor-pointer rounded-full lowercase px-2 text-xs font-semibold mr-1 mb-1"
+                        x-text="district.Name"
+                        @contextmenu.prevent="selectedZoneList = district.ID;"
+                        @dblclick="if (selectedZoneList == district.ID) { deleteListFromZone($dispatch, zone.ID, district.ID); }"
+                        :class="{'bg-red-200 text-red-400': selectedZoneList == district.ID, 'bg-green-200 text-green-500': selectedZoneList != district.ID }"
+                      ></span>
+                    </template>
+                  </div>
                 </div>
               </template>
               <template x-if="zone.List === null">
                 <div class="w-full text-center">
-                  <span class="px-2 text-xs text-gray-500 font-semibold mr-1 mb-1"
+                  <span
+                    class="px-2 text-xs text-gray-500 font-semibold mr-1 mb-1"
                     >Belum ada wilayah terdaftar di zona ini</span
                   >
                 </div>
@@ -152,12 +155,15 @@
         address: {
           province: "",
           city: "",
-          districts: "",
+          districts: [],
         },
         addressData: {
           provinces: [],
           cities: [],
           districts: [],
+        },
+        data: {
+          lists: [],
         },
         initPlaces($watch) {
           $watch("address.province", (value) => {
@@ -176,7 +182,7 @@
               this.fetchDistricts();
             }
           });
-          
+
           this.fetchProvinces();
         },
         fetchZones($dispatch, $watch) {
@@ -336,7 +342,28 @@
             });
         },
         addToZone($dispatch, zid) {
-          alert(zid);
+          var data = {
+            lists: [],
+          };
+          for (i = 0; i < this.address.districts.length; i++) {
+            data.lists.push(Number(this.address.districts[i]));
+          }
+
+          fetch(`/api/v1/local/zone/edit/${zid}/add/list`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          })
+            .then((res) => {
+              console.log(res);
+              return res.json();
+            })
+            .then((json) => {
+              alert(json);
+            })
+            .catch((err) => {
+              console.log("Error addToZone " + err);
+            });
         },
       };
     }

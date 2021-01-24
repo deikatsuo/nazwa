@@ -2,6 +2,7 @@ package api
 
 import (
 	"nazwa/dbquery"
+	"nazwa/misc/validation"
 	"nazwa/router"
 	"nazwa/wrapper"
 	"net/http"
@@ -179,4 +180,67 @@ func ZoneDeleteList(c *gin.Context) {
 	}
 
 	c.JSON(httpStatus, gh)
+}
+
+// ZoneAddList api untuk menambah list ke zona
+func ZoneAddList(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	// id zone
+	zid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	log.Warn(zid)
+
+	message := ""
+	//next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var lists wrapper.ZoneAddListForm
+	if err := c.ShouldBindJSON(&lists); err != nil {
+		log.Warn(err)
+		simpleErr := validation.SimpleValErrMap(err)
+
+		message = simpleErr["lists"].(string)
+		status = "error"
+		//next = false
+	}
+
+	// Tambahkan list
+	/*if next {
+		if err := dbquery.ZoneAddList(newPhone.Phone, uid); err != nil {
+			message = "Gagal menambahkan wilayah"
+			status = "error"
+			next = false
+		} else {
+			message = "Berhasil menambahkan wilayah"
+			status = "success"
+			next = true
+			httpStatus = http.StatusOK
+		}
+	}*/
+
+	/*// Ambil nomor HP dari database
+	var phones []wrapper.UserPhone
+	if next {
+		ph, err := dbquery.UserGetPhone(uid)
+		if err != nil {
+			errMess = "Gagal memuat nomor HP"
+		} else {
+			phones = ph
+			httpStatus = http.StatusOK
+			success = "Nomor HP berhasil ditambahkan"
+		}
+	}*/
+	c.JSON(httpStatus, gin.H{
+		"message": message,
+		"status":  status,
+		//"lists":   newLists,
+	})
 }

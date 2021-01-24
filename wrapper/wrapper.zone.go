@@ -23,3 +23,8 @@ type ZoneListSelect struct {
 	DistrictID int    `db:"district_id"`
 	Name       string `db:"name"`
 }
+
+// ZoneAddListForm tambahkan list wilayah ke zona
+type ZoneAddListForm struct {
+	Lists []int `json:"lists" binding:"dive,numeric"`
+}
