@@ -151,6 +151,7 @@ func runServer() {
 	dashboard.GET("/products/add", router.PageDashboardProductsAdd)
 	dashboard.GET("/orders", router.PageDashboardOrders)
 	dashboard.GET("/orders/add", router.PageDashboardOrdersAdd)
+	dashboard.GET("/locations", router.PageDashboardLocations)
 	dashboard.GET("/locations/zones", router.PageDashboardLocationsZones)
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
