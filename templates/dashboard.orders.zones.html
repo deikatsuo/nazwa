@@ -14,7 +14,7 @@
 
       <div class="w-full flex flex-wrap">
         <template x-for="(zone, index) in zones" :key="zone.ID">
-          <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
+          <div class="w-full p-2 sm:w-2/4 lg:w-2/6" @click.away="if (activeZone == zone.ID) { activeZone = null; }">
             <div
               class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
             >
