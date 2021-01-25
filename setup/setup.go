@@ -330,7 +330,7 @@ func setupDaerah() error {
 	split := 20000
 	start := 0
 	vilen := len(village)
-	query = `INSERT INTO "village" (id, parent, name) VALUES (:id, :parent, :name)`
+	query = `INSERT INTO "village" (parent, name) VALUES (:parent, :name)`
 	count := 5
 	bar := pb.Simple.Start(count)
 	for {
