@@ -47,6 +47,42 @@
                   ></option>
                 </template>
               </select>
+              <a
+                href="#"
+                class="py-2 text-sm text-blue-500"
+                @click="showAddProvince = !showAddProvince;"
+              >
+                Tambahkan provinsi baru
+              </a>
+              <template x-if="showAddProvince">
+                <div class="block">
+                  <label class="block mt-4 text-sm">
+                    <span class="text-gray-700 dark:text-gray-400"
+                      >Nama Provinsi</span
+                    >
+                    <input
+                      class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                      x-model="addNew.province"
+                      @keydown.enter="addProvince($dispatch)"
+                      placeholder="provinsi"
+                      :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errProvince }"
+                    />
+                  </label>
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmProvince"
+                    :class="{'invisible': errProvince == false}"
+                  >
+                  </span>
+                  <button
+                    class="block shadow bg-yellow-700 hover:bg-yellow-500 focus:shadow-outline focus:outline-none text-white font-bold py-1 px-4 mt-2 rounded"
+                    type="button"
+                    @click="addProvince($dispatch);"
+                  >
+                    tambah
+                  </button>
+                </div>
+              </template>
             </div>
           </div>
         </template>
@@ -134,6 +170,13 @@
   <script>
     function loc() {
       return {
+        addNew: {
+          country: "",
+          province: "",
+          city: "",
+          district: "",
+          village: "",
+        },
         inputData: {
           country: null,
           province: null,
@@ -148,6 +191,10 @@
         cities: [],
         districts: [],
         villages: [],
+        showAddProvince: false,
+        showAddCity: false,
+        showAddDistrict: false,
+        showAddVillage: false,
         watchMe($watch) {
           $watch("inputData.province", (value) => {
             this.inputData.city = null;
@@ -223,6 +270,39 @@
             })
             .catch((err) => {
               console.log(err);
+            });
+        },
+				errProvince: false,
+				errmProvince: "",
+        addProvince($dispatch) {
+          fetch(`/api/v1/local/address/edit/province/add`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+							province: this.addNew.province,
+						}),
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.province) {
+                this.errProvince = true;
+                this.errmProvince = json.province;
+              } else {
+                this.errProvince = false;
+                this.errmProvince = "";
+              }
+              if (json.provinces != null) {
+                this.provinces = json.provinces;
+              }
+            })
+            .catch((err) => {
+              console.log("addProvince() " + err);
             });
         },
       };
