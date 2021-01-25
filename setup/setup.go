@@ -263,6 +263,7 @@ type Daerah struct {
 }
 
 func setupDaerah() error {
+	db := dbquery.DB
 	tx := db.MustBegin()
 	var err error
 	var query string

@@ -53,7 +53,7 @@ func PlaceGetVillages(pid int) ([]wrapper.Place, error) {
 // PlaceNewProvince tambah provinsi baru
 func PlaceNewProvince(name string, uid int) error {
 	db := DB
-	if _, err := db.Exec(`INSERT INTO "province" (parent, name, default, created_by) VALUES ($1, $2, $3, $4)`, 62, name, false, uid); err != nil {
+	if _, err := db.Exec(`INSERT INTO "province" (parent, name, original, created_by) VALUES ($1, $2, $3, $4)`, 62, name, false, uid); err != nil {
 		log.Warn("dbquery.zone.go ZoneNew() Gagal menambahkan provinsi")
 		log.Error(err)
 		return err
