@@ -7,4 +7,226 @@
 >
   Lokasi
 </h2>
+
+<!-- Lokasi -->
+<div class="w-full mb-8">
+  <div x-data="loc()" x-init="watchMe($watch)" id="location">
+    <div class="w-full">
+      <!-- Pilih negara -->
+      <div class="w-full flex flex-wrap">
+        <div class="w-full p-2 lg:w-4/6">
+          <div class="px-2 pt-2 pb-2">
+            <span
+              class="bg-teal-100 text-teal-300 inline-block cursor-pointer rounded-lg px-4 font-semibold"
+              @click="inputData.country = 62; fetchProvinces();"
+              >Indonesia</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full flex flex-wrap">
+        <!-- Provinsi -->
+        <template x-if="provinces.length > 0">
+          <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
+            <div
+              class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
+            >
+              <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
+                Seluruh Provinsi di Indonesia
+              </h4>
+              <select
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
+                multiple
+              >
+                <template x-for="(province, index) in provinces" :key="index">
+                  <option
+                    :value="province.ID"
+                    x-text="province.Name"
+                    @click="inputData.province = province.ID; inputData.provinceName = province.Name;"
+                  ></option>
+                </template>
+              </select>
+            </div>
+          </div>
+        </template>
+
+        <!-- Kota/Kabupaten -->
+        <template x-if="cities.length > 0">
+          <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
+            <div
+              class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
+            >
+              <h4
+                class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
+                x-text="`Seluruh Kota/Kabupaten di ${inputData.provinceName}`"
+              ></h4>
+              <select
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
+                multiple
+              >
+                <template x-for="(city, index) in cities" :key="index">
+                  <option
+                    :value="city.ID"
+                    x-text="city.Name"
+                    @click="inputData.city = city.ID; inputData.cityName = city.Name;"
+                  ></option>
+                </template>
+              </select>
+            </div>
+          </div>
+        </template>
+
+        <!-- Distrik/Kecamatan -->
+        <template x-if="districts.length > 0">
+          <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
+            <div
+              class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
+            >
+              <h4
+                class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
+                x-text="`Seluruh Distrik/Kecamatan di ${inputData.cityName}`"
+              ></h4>
+              <select
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
+                multiple
+              >
+                <template x-for="(district, index) in districts" :key="index">
+                  <option
+                    :value="district.ID"
+                    x-text="district.Name"
+                    @click="inputData.district = district.ID; inputData.districtName = district.Name;"
+                  ></option>
+                </template>
+              </select>
+            </div>
+          </div>
+        </template>
+
+        <!-- Desa/Kelurahan -->
+        <template x-if="villages.length > 0">
+          <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
+            <div
+              class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
+            >
+              <h4
+                class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
+                x-text="`Seluruh Desa/Kelurahan di ${inputData.districtName}`"
+              ></h4>
+              <select
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
+                multiple
+              >
+                <template x-for="(village, index) in villages" :key="index">
+                  <option
+                    :value="village.ID"
+                    x-text="village.Name"
+                    @click="inputData.village = village.ID;"
+                  ></option>
+                </template>
+              </select>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+  <script>
+    function loc() {
+      return {
+        inputData: {
+          country: null,
+          province: null,
+          provinceName: "",
+          city: null,
+          cityName: "",
+          district: null,
+          districtName: "",
+          village: null,
+        },
+        provinces: [],
+        cities: [],
+        districts: [],
+        villages: [],
+        watchMe($watch) {
+          $watch("inputData.province", (value) => {
+            this.inputData.city = null;
+            this.inputData.provinceName = "";
+            this.cities = [];
+            if (value != "") {
+              this.fetchCities();
+            }
+          });
+          $watch("inputData.city", (value) => {
+            this.inputData.district = null;
+            this.inputData.cityName = "";
+            this.districts = [];
+            if (value != "") {
+              this.fetchDistricts();
+            }
+          });
+          $watch("inputData.district", (value) => {
+            this.inputData.village = null;
+            this.inputData.districtName = "";
+            this.villages = [];
+            if (value != "") {
+              this.fetchVillages();
+            }
+          });
+        },
+        fetchProvinces() {
+          fetch("/api/v1/local/address/provinces", {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              this.provinces = json.province;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+
+        fetchCities() {
+          fetch(`/api/v1/local/address/cities/${this.inputData.province}`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              this.cities = json.cities;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+
+        fetchDistricts() {
+          fetch(`/api/v1/local/address/districts/${this.inputData.city}`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              this.districts = json.districts;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+
+        fetchVillages() {
+          fetch(`/api/v1/local/address/villages/${this.inputData.district}`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              this.villages = json.villages;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+      };
+    }
+  </script>
+</div>
 {{ end }}
