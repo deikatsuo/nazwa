@@ -191,6 +191,7 @@ func runServer() {
 	v1zEdit.DELETE("/:id/delete/collector", api.ZoneDeleteCollector)
 	v1zEdit.DELETE("/:id/delete/list", api.ZoneDeleteList)
 	v1zEdit.POST("/:id/add/list", api.ZoneAddList)
+	v1zEdit.DELETE("/:id/delete", api.ZoneDelete)
 
 	// /api/v1/local/product
 	v1product := v1local.Group("/product")

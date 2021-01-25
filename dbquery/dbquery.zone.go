@@ -118,6 +118,16 @@ func ZoneDeleteList(zid, lid int) error {
 	return err
 }
 
+// ZoneDelete Hapus zona
+func ZoneDelete(zid int) error {
+	db := DB
+	query := `DELETE FROM "zone"
+	WHERE id=$1`
+	_, err := db.Exec(query, zid)
+
+	return err
+}
+
 //////////////////////////////////////////// ADD //
 
 // ZoneAddList menambahkan list wilayah ke zona

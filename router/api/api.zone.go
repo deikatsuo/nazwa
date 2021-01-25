@@ -78,7 +78,7 @@ func ZoneUpdateCollector(c *gin.Context) {
 	// Berhasil update data
 	if next {
 		httpStatus = http.StatusOK
-		message = "Kolektor berhasil disimpan"
+		message = "Kolektor berhasil dirubah"
 		status = "success"
 	}
 
@@ -179,6 +179,62 @@ func ZoneDeleteList(c *gin.Context) {
 	gh := gin.H{
 		"message": message,
 		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
+// ZoneDelete hapus zona
+func ZoneDelete(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	zid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	// Delete collector
+	if next {
+		if err := dbquery.ZoneDelete(zid); err != nil {
+			log.Warn("api.zone.go ZoneDelete() Gagal menghapus Zona")
+			log.Error(err)
+			message = "Gagal menghapus zona"
+			status = "error"
+			next = false
+		} else {
+			httpStatus = http.StatusOK
+			message = "Zona telah dihapus"
+			status = "success"
+		}
+	}
+
+	// Ambil zone
+	var zones []wrapper.Zone
+	if next {
+		if z, err := dbquery.ZoneShowAll(); err == nil {
+			zones = z
+		} else {
+			log.Warn("Terjadi kesalahan saat memuat data zona")
+			log.Error(err)
+			httpStatus = http.StatusInternalServerError
+			message = "Tidak dapat memuat zona/Tidak ada zona"
+			status = "error"
+		}
+
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+		"zones":   zones,
 	}
 
 	c.JSON(httpStatus, gh)

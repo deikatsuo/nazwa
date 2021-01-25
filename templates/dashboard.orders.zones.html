@@ -14,12 +14,42 @@
 
       <div class="w-full flex flex-wrap">
         <template x-for="(zone, index) in zones" :key="zone.ID">
-          <div class="w-full pb-2 sm:w-2/4 lg:w-2/6 sm:p-2">
-            <div class="bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2">
+          <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
+            <div
+              class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
+            >
               <h4
                 class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
                 x-text="zone.Name"
               ></h4>
+              <div
+                class="absolute cursor-pointer p-2 top-0 right-0 hover:text-blue-500"
+                @click="if (zoneMenuOpen !== zone.ID) { zoneMenuOpen = zone.ID; } else { zoneMenuOpen = null; }"
+                @click.away="if (zoneMenuOpen == zone.ID) { zoneMenuOpen = null; }"
+                @keydown.escape="if (zoneMenuOpen == zone.ID) { zoneMenuOpen = null; }"
+              >
+                <span>{{ template "_svg_icon_dots_vertical" }}</span>
+                <template x-if="zoneMenuOpen == zone.ID">
+                  <ul
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="absolute z-10 right-0 w-48 p-2 mt-2 mr-1 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:text-gray-300 dark:border-gray-700 dark:bg-gray-700"
+                  >                   
+                    <li class="flex">
+                      <a
+                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                        href="#"
+                        @click="deleteZone($dispatch, zone.ID)"
+                      >
+                        <!-- Ikon -->
+                        {{ template "_svg_icon_trash" }}
+                        <span class="ml-3">Hapus zona</span>
+                      </a>
+                    </li>
+                  </ul>
+                </template>
+              </div>
               <div>
                 <dl class="w-full whitespace-no-wrap">
                   <div class="w-full relative px-4 py-1 flex flex-wrap">
@@ -158,6 +188,7 @@
       return {
         zones: [],
         activeZone: null,
+        zoneMenuOpen: null,
         listIndex: null,
         selectedZoneList: "",
         collectorIS: [],
@@ -329,6 +360,26 @@
             })
             .catch((err) => {
               console.log("Error: deleteCollectorFromZone() " + err);
+            });
+        },
+        deleteZone($dispatch, zid) {
+          fetch(`/api/v1/local/zone/edit/${zid}/delete`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.zones !== null) {
+                this.zones = json.zones;
+              }
+            })
+            .catch((err) => {
+              console.log("Error: deleteZone() " + err);
             });
         },
         deleteListFromZone($dispatch, zid, lid) {
