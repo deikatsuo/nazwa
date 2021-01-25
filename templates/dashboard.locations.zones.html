@@ -1,4 +1,4 @@
-{{ template "base" .}} {{ define "dashboard_orders_zones_content" }}
+{{ template "base" .}} {{ define "dashboard_locations_zones_content" }}
 <h2
   class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
 >
@@ -10,7 +10,7 @@
   <div x-data="zone()" x-init="fetchZones($dispatch, $watch);" id="zone">
     <div class="w-full">
       <!-- Tambah zona -->
-      {{ template "dashboard_orders_zones_add_zone" .}}
+      {{ template "dashboard_locations_zones_add_zone" .}}
 
       <div class="w-full flex flex-wrap">
         <template x-for="(zone, index) in zones" :key="zone.ID">
@@ -144,7 +144,7 @@
               </div>
 
               <!-- Tambah list -->
-              {{ template "dashboard_orders_zones_select_list" .}}
+              {{ template "dashboard_locations_zones_select_list" .}}
 
               <div class="mt-4">
                 <template x-if="zone.List !== null">
