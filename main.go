@@ -183,6 +183,7 @@ func runServer() {
 	// /api/v1/local/zone
 	v1zone := v1local.Group("/zone")
 	v1zone.GET("/list", api.ZoneGetList)
+	v1zone.POST("/new", api.ZoneNewZone)
 
 	// /api/v1/local/zone/edit
 	v1zEdit := v1zone.Group("/edit")

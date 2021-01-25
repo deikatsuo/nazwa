@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"nazwa/dbquery"
+	"nazwa/misc"
+	"nazwa/misc/validation"
 	"nazwa/router"
 	"nazwa/wrapper"
 	"net/http"
@@ -26,7 +28,7 @@ func ZoneGetList(c *gin.Context) {
 		log.Warn("Terjadi kesalahan saat memuat data zona")
 		log.Error(err)
 		httpStatus = http.StatusInternalServerError
-		message = "Sepertinya telah terjadi kesalahan saat memuat data"
+		message = "Tidak dapat memuat zona/Tidak ada zona"
 		status = "error"
 	}
 
@@ -210,11 +212,11 @@ func ZoneAddList(c *gin.Context) {
 		next = false
 	}
 
-	var ret wrapper.NameName
+	var ret wrapper.NameIDNameID
 	if next {
 		for _, lid := range lists.Lists {
 			if dbquery.ZoneListExistsAndRet(lid, &ret) {
-				message = fmt.Sprintf("%s Sudah ada di %s", ret.NameOne, ret.NameTwo)
+				message = fmt.Sprintf("%s Sudah terdaftar di %s", ret.NameOne, ret.NameTwo)
 				status = "error"
 				next = false
 				break
@@ -225,11 +227,11 @@ func ZoneAddList(c *gin.Context) {
 	// Tambahkan list
 	if next {
 		if err := dbquery.ZoneAddList(zid, lists); err != nil {
-			message = "Gagal menambahkan wilayah"
+			message = "Gagal menambahkan wilayah kedalam zona"
 			status = "error"
 			next = false
 		} else {
-			message = "Berhasil menambahkan wilayah"
+			message = "Wilayah ditambahkan kedalam zona"
 			status = "success"
 			next = true
 			httpStatus = http.StatusOK
@@ -250,4 +252,58 @@ func ZoneAddList(c *gin.Context) {
 		"status":  status,
 		"lists":   newLists,
 	})
+}
+
+// ZoneNewZone buat zona baru
+func ZoneNewZone(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+	var simpleErrMap map[string]interface{}
+
+	var newZone wrapper.ZoneNewForm
+	if err := c.ShouldBindJSON(&newZone); err != nil {
+		simpleErrMap = validation.SimpleValErrMap(err)
+		next = false
+	}
+
+	// Buat Zone
+	if next {
+		if err := dbquery.ZoneNew(newZone.Zone, nowID.(int)); err != nil {
+			message = "Gagal membuat zona baru"
+			status = "error"
+			next = false
+		} else {
+			message = fmt.Sprintf("Zona %s berhasil dibuat", newZone.Zone)
+			status = "success"
+			next = true
+		}
+	}
+
+	// Ambil zone
+	var zones []wrapper.Zone
+	if next {
+		if z, err := dbquery.ZoneShowAll(); err == nil {
+			zones = z
+		} else {
+			log.Warn("Terjadi kesalahan saat memuat data zona")
+			log.Error(err)
+			httpStatus = http.StatusInternalServerError
+			message = "Tidak dapat memuat zona/Tidak ada zona"
+			status = "error"
+		}
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+		"zones":   zones,
+	}
+
+	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
 }

@@ -8,6 +8,7 @@ type Zone struct {
 	Collector NameIDCode
 	Name      string
 	List      []ZoneListsSelect
+	CreatedBy NameIDCode
 }
 
 // ZoneSelect mengambil data zona wilayah
@@ -15,6 +16,7 @@ type ZoneSelect struct {
 	ID          int           `db:"id"`
 	CollectorID sql.NullInt32 `db:"collector_id"`
 	Name        string        `db:"name"`
+	CreatedBy   sql.NullInt32 `db:"created_by"`
 }
 
 // ZoneListsSelect list dalam zona
@@ -24,7 +26,12 @@ type ZoneListsSelect struct {
 	Name       string `db:"name"`
 }
 
-// ZoneAddListForm tambahkan list wilayah ke zona
+// ZoneAddListForm list wilayah pada zona
 type ZoneAddListForm struct {
 	Lists []int `json:"lists" binding:"dive,numeric"`
+}
+
+// ZoneNewForm zona baru
+type ZoneNewForm struct {
+	Zone string `json:"zone" binding:"required,min=4,max=10"`
 }

@@ -44,7 +44,7 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 				user = zl
 				isNE = true
 			} else {
-				log.Warn("Gagal mengambil data id kolektor")
+				log.Warn("dbquery.zone.go ZoneShowAll() Gagal mengambil data id kolektor")
 				log.Error(err)
 			}
 		}
@@ -142,10 +142,10 @@ func ZoneAddList(zid int, lists wrapper.ZoneAddListForm) error {
 /////////////////////////////////////// CHECK //
 
 // ZoneListExistsAndRet check nomor telepon
-func ZoneListExistsAndRet(lid int, ret *wrapper.NameName) bool {
+func ZoneListExistsAndRet(lid int, ret *wrapper.NameIDNameID) bool {
 	db := DB
-	var list wrapper.NameName
-	query := `SELECT d.name as name_one, z.name as name_two
+	var list wrapper.NameIDNameID
+	query := `SELECT INITCAP(d.name) as name_one, d.id as name_one_id, INITCAP(z.name) as name_two, z.id as name_two_id
 	FROM "zone_list" zl
 	LEFT JOIN "district" d ON d.id=zl.district_id
 	LEFT JOIN "zone" z ON z.id=zl.zone_id
@@ -158,4 +158,17 @@ func ZoneListExistsAndRet(lid int, ret *wrapper.NameName) bool {
 	}
 
 	return false
+}
+
+/////////////////////////////////////// NEW //
+
+// ZoneNew buat zona baru
+func ZoneNew(name string, uid int) error {
+	db := DB
+	if _, err := db.Exec(`INSERT INTO "zone" (name, created_by) VALUES ($1, $2)`, name, uid); err != nil {
+		log.Warn("dbquery.zone.go ZoneNew() Gagal menambahkan zona")
+		log.Error(err)
+		return err
+	}
+	return nil
 }

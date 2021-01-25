@@ -8,138 +8,149 @@
 <!-- Zona Wilayah -->
 <div class="w-full mb-8">
   <div x-data="zone()" x-init="fetchZones($dispatch, $watch);" id="zone">
-    <div class="flex flex-wrap">
-      <template x-for="(zone, index) in zones" :key="zone.ID">
-        <div class="w-full pb-2 sm:w-2/4 lg:w-2/6 sm:p-2">
-          <div class="bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2">
-            <h4
-              class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
-              x-text="zone.Name"
-            ></h4>
-            <div>
-              <dl class="w-full whitespace-no-wrap">
-                <div class="w-full relative px-4 py-1 flex flex-wrap">
-                  <dt class="w-2/6 text-sm leading-5 font-medium text-gray-500">
-                    Kolektor:
-                  </dt>
-                  <dd
-                    class="w-4/6 mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                    x-show="zone.Collector.ID > 0 && editCollector != zone.ID"
-                    @dblclick="toggleEditCollector(zone.ID)"
-                  >
-                    <div
-                      class="relative whitespace-normal break-words rounded-sm bg-orange-200 text-orange-400 bg-opacity-50 text-sm inline-block pl-1 pr-6 shadow-xs"
+    <div class="w-full">
+      <!-- Tambah zona -->
+      {{ template "dashboard_orders_zones_add_zone" .}}
+
+      <div class="w-full flex flex-wrap">
+        <template x-for="(zone, index) in zones" :key="zone.ID">
+          <div class="w-full pb-2 sm:w-2/4 lg:w-2/6 sm:p-2">
+            <div class="bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2">
+              <h4
+                class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
+                x-text="zone.Name"
+              ></h4>
+              <div>
+                <dl class="w-full whitespace-no-wrap">
+                  <div class="w-full relative px-4 py-1 flex flex-wrap">
+                    <dt
+                      class="w-2/6 text-sm leading-5 font-medium text-gray-500"
                     >
-                      <i x-text="zone.Collector.Name"></i>
-                      (<b x-text="zone.Collector.Code"></b>)
-                      <p
-                        style="margin-top: 0.2rem"
-                        class="cursor-pointer absolute right-0 top-0 mr-1"
-                        @click="deleteCollectorFromZone($dispatch, zone.ID);"
+                      Kolektor:
+                    </dt>
+                    <dd
+                      class="w-4/6 mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                      x-show="zone.Collector.ID > 0 && editCollector != zone.ID"
+                      @dblclick="toggleEditCollector(zone.ID)"
+                    >
+                      <div
+                        class="relative whitespace-normal break-words rounded-sm bg-orange-200 text-orange-400 bg-opacity-50 text-sm inline-block pl-1 pr-6 shadow-xs"
                       >
-                        {{ template "_svg_icon_close" }}
-                      </p>
-                    </div>
-                  </dd>
-                  <dd
-                    class="w-4/6 mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                    x-show="zone.Collector.ID == 0 && editCollector != zone.ID"
-                    @dblclick="toggleEditCollector(zone.ID)"
-                  >
-                    -
-                  </dd>
-                  <dd class="w-4/6" x-show="editCollector == zone.ID">
-                    <input
-                      class="w-full appearance-none outline-none"
-                      x-model="instantData"
-                      @keyup="if (instantData.length >= 3 && instantData.length <= 25) { openIS = zone.ID; searchCollector(); } else { openIS = null; }"
-                      @click="if (instantData.length >= 3 && instantData.length <= 25) { openIS = null; } else { openIS = zone.ID; }"
-                      @keydown.tab="toggleEditCollector(zone.ID); openIS = null;"
-                      @click.away="toggleEditCollector(zone.ID); openIS = null;"
-                      @keydown.enter="toggleEditCollector(zone.ID)"
-                      @keydown.escape="toggleEditCollector(zone.ID)"
-                      :id="`input-collector-${zone.ID}`"
-                    />
-                    <ul
-                      x-transition:leave="transition ease-in duration-150"
-                      x-transition:leave-start="opacity-100"
-                      x-transition:leave-end="opacity-0"
-                      x-show="openIS == zone.ID"
-                      class="absolute z-30 left-0 right-0 -mt-1 md:mr-1 md:ml-1 text-gray-600 bg-white border-none border-r border-l border-b border-gray-100 rounded-br-md rounded-bl-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                      aria-label="submenu"
-                    >
-                      <div x-show="collectorIS.length > 0 && openIS == zone.ID">
-                        <template
-                          x-for="(collector, index) in collectorIS"
-                          :key="index"
+                        <i x-text="zone.Collector.Name"></i>
+                        (<b x-text="zone.Collector.Code"></b>)
+                        <p
+                          style="margin-top: 0.2rem"
+                          class="cursor-pointer absolute right-0 top-0 mr-1"
+                          @click="deleteCollectorFromZone($dispatch, zone.ID);"
                         >
-                          <li class="flex">
-                            <a
-                              class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                              href="#"
-                              tabindex="-1"
-                              @click="updateCollector($dispatch ,zone.ID, collector.ID);"
-                            >
-                              <img
-                                class="object-cover w-5 h-5 rounded-full mr-3"
-                                :src="'/file/profile/thumbnail/'+collector.Avatar"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <span
-                                x-text="collector.Firstname +' '+ collector.Lastname"
-                              ></span>
-                            </a>
-                          </li>
-                        </template>
+                          {{ template "_svg_icon_close" }}
+                        </p>
                       </div>
-                      <div x-show="collectorIS.length == 0">
-                        <span
-                          class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                          >Tidak ada data</span
-                        >
-                      </div>
-                    </ul>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- Tambah list -->
-            {{ template "dashboard_orders_zones_select_list" .}}
-
-            <div class="mt-4">
-              <template x-if="zone.List !== null">
-                <div>
-                  <span class="text-sm font-semibold">Wilayah Terdaftar:</span>
-                  <div class="px-2 pt-2 pb-2">
-                    <template
-                      x-for="district in zone.List"
-                      :key="district.DistrictID"
+                    </dd>
+                    <dd
+                      class="w-4/6 mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+                      x-show="zone.Collector.ID == 0 && editCollector != zone.ID"
+                      @dblclick="toggleEditCollector(zone.ID)"
                     >
-                      <span
-                        class="inline-block cursor-pointer rounded-full lowercase px-2 text-xs font-semibold mr-1 mb-1"
-                        x-text="district.Name"
-                        @contextmenu.prevent="selectedZoneList = district.ID;"
-                        @dblclick="if (selectedZoneList == district.ID) { deleteListFromZone($dispatch, zone.ID, district.ID); }"
-                        :class="{'bg-red-200 text-red-400': selectedZoneList == district.ID, 'bg-green-200 text-green-500': selectedZoneList != district.ID }"
-                      ></span>
-                    </template>
+                      -
+                    </dd>
+                    <dd class="w-4/6" x-show="editCollector == zone.ID">
+                      <input
+                        class="w-full appearance-none outline-none"
+                        x-model="instantData"
+                        @keyup="if (instantData.length >= 3 && instantData.length <= 25) { openIS = zone.ID; searchCollector(); } else { openIS = null; }"
+                        @click="if (instantData.length >= 3 && instantData.length <= 25) { openIS = null; } else { openIS = zone.ID; }"
+                        @keydown.tab="toggleEditCollector(zone.ID); openIS = null;"
+                        @click.away="toggleEditCollector(zone.ID); openIS = null;"
+                        @keydown.enter="toggleEditCollector(zone.ID)"
+                        @keydown.escape="toggleEditCollector(zone.ID)"
+                        :id="`input-collector-${zone.ID}`"
+                      />
+                      <ul
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        x-show="openIS == zone.ID"
+                        class="absolute z-30 left-0 right-0 -mt-1 md:mr-1 md:ml-1 text-gray-600 bg-white border-none border-r border-l border-b border-gray-100 rounded-br-md rounded-bl-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                        aria-label="submenu"
+                      >
+                        <div
+                          x-show="collectorIS.length > 0 && openIS == zone.ID"
+                        >
+                          <template
+                            x-for="(collector, index) in collectorIS"
+                            :key="index"
+                          >
+                            <li class="flex">
+                              <a
+                                class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                                href="#"
+                                tabindex="-1"
+                                @click="updateCollector($dispatch ,zone.ID, collector.ID);"
+                              >
+                                <img
+                                  class="object-cover w-5 h-5 rounded-full mr-3"
+                                  :src="'/file/profile/thumbnail/'+collector.Avatar"
+                                  alt=""
+                                  loading="lazy"
+                                />
+                                <span
+                                  x-text="collector.Firstname +' '+ collector.Lastname"
+                                ></span>
+                              </a>
+                            </li>
+                          </template>
+                        </div>
+                        <div x-show="collectorIS.length == 0">
+                          <span
+                            class="inline-flex items-center w-full px-3 py-1 text-sm transition-colors duration-150 hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                            >Tidak ada data</span
+                          >
+                        </div>
+                      </ul>
+                    </dd>
                   </div>
-                </div>
-              </template>
-              <template x-if="zone.List === null">
-                <div class="w-full text-center">
-                  <span
-                    class="px-2 text-xs text-gray-500 font-semibold mr-1 mb-1"
-                    >Belum ada wilayah terdaftar di zona ini</span
-                  >
-                </div>
-              </template>
+                </dl>
+              </div>
+
+              <!-- Tambah list -->
+              {{ template "dashboard_orders_zones_select_list" .}}
+
+              <div class="mt-4">
+                <template x-if="zone.List !== null">
+                  <div>
+                    <span class="text-sm font-semibold"
+                      >Wilayah Terdaftar:</span
+                    >
+                    <div class="px-2 pt-2 pb-2">
+                      <template
+                        x-for="district in zone.List"
+                        :key="district.DistrictID"
+                      >
+                        <span
+                          class="inline-block cursor-pointer rounded-full lowercase px-2 text-xs font-semibold mr-1 mb-1"
+                          x-text="district.Name"
+                          @contextmenu.prevent="selectedZoneList = district.ID;"
+                          @dblclick="if (selectedZoneList == district.ID) { deleteListFromZone($dispatch, zone.ID, district.ID); }"
+                          :class="{'bg-red-200 text-red-400': selectedZoneList == district.ID, 'bg-green-200 text-green-500': selectedZoneList != district.ID }"
+                        ></span>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+                <template x-if="zone.List === null">
+                  <div class="w-full text-center">
+                    <span
+                      class="px-2 text-xs text-gray-500 font-semibold mr-1 mb-1"
+                      >Belum ada wilayah terdaftar di zona ini</span
+                    >
+                  </div>
+                </template>
+              </div>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
   </div>
   <script>
@@ -166,6 +177,11 @@
         data: {
           lists: [],
         },
+        addZone: {
+          zone: null,
+        },
+        errAddZone: false,
+        errmAddZone: "",
         initPlaces($watch) {
           $watch("address.province", (value) => {
             this.address.city = "";
@@ -185,6 +201,35 @@
           });
 
           this.fetchProvinces();
+        },
+        newZone($dispatch) {
+          fetch("/api/v1/local/zone/new", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(this.addZone),
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.zone) {
+                this.errAddZone = true;
+                this.errmAddZone = json.zone;
+              } else {
+                this.errAddZone = false;
+                this.errmAddZone = "";
+              }
+              if (json.zones != null) {
+                this.zones = json.zones;
+              }
+            })
+            .catch((err) => {
+              console.log("addZone() " + err);
+            });
         },
         fetchZones($dispatch, $watch) {
           fetch(`/api/v1/local/zone/list`, {

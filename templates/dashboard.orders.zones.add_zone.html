@@ -1,0 +1,36 @@
+{{ define "dashboard_orders_zones_add_zone" }}
+
+<div class="w-full flex flex-wrap">
+  <div class="w-full pb-2 lg:w-4/6 sm:p-2">
+    <div class="w-full">
+      <label class="block mt-4 text-sm">
+        <span class="text-gray-700 dark:text-gray-400">Tambah Zona</span>
+        <div class="relative">
+          <input
+            class="block w-full mt-1 pr-10 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+            x-model="addZone.zone"
+            @keydown.enter="newZone($dispatch)"
+            :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errAddZone }"
+          />
+          <div class="absolute inset-y-0 right-0 flex">
+            <button
+              class="px-4 text-xl font-black leading-5 text-blue-500 transition-colors duration-150 hover:text-blue-700 focus:text-blue-600 focus:outline-none focus:shadow-outline-none"
+              @click="newZone($dispatch)"
+            >
+              <!-- {{ template "_svg_icon_close" }} -->
+              +
+            </button>
+          </div>
+        </div>
+      </label>
+      <span
+        class="text-xs text-red-600 dark:text-red-400"
+        x-text="errmAddZone"
+        :class="{'invisible': errAddZone == false}"
+      >
+      </span>
+    </div>
+  </div>
+</div>
+
+{{ end }}
