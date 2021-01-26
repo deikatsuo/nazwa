@@ -321,7 +321,11 @@
           })
             .then((res) => res.json())
             .then((json) => {
-              this.provinces = json.provinces.original;
+              if (json.provinces.original !== null) {
+                this.provinces = json.provinces.original;
+              } else {
+                this.provinces = [];
+              }
               if (json.provinces.manual !== null) {
                 this.manualProvinces = json.provinces.manual;
               } else {
@@ -348,7 +352,11 @@
                   message: json.message,
                 });
               }
-              this.cities = json.cities.original;
+              if (json.cities.original !== null) {
+                this.cities = json.cities.original;
+              } else {
+                this.cities = [];
+              }
               if (json.cities.manual !== null) {
                 this.manualCities = json.cities.manual;
               } else {
@@ -375,7 +383,11 @@
                   message: json.message,
                 });
               }
-              this.districts = json.districts.original;
+              if (json.districts.original !== null) {
+                this.districts = json.districts.original;
+              } else {
+                this.districts = [];
+              }
               if (json.districts.manual !== null) {
                 this.manualDistricts = json.districts.manual;
               } else {
@@ -402,7 +414,11 @@
                   message: json.message,
                 });
               }
-              this.villages = json.villages.original;
+              if (json.villages.original !== null) {
+                this.villages = json.villages.original;
+              } else {
+                this.villages = [];
+              }
               if (json.villages.manual !== null) {
                 this.manualVillages = json.villages.manual;
               } else {
@@ -415,6 +431,12 @@
         },
         errProvince: false,
         errmProvince: "",
+        errCity: false,
+        errmCity: "",
+        errDistrict: false,
+        errmDistrict: "",
+        errVillage: false,
+        errmVillage: "",
         addProvince($dispatch) {
           fetch(`/api/v1/local/address/edit/province/add`, {
             method: "POST",
@@ -438,8 +460,15 @@
                 this.errProvince = false;
                 this.errmProvince = "";
               }
-              if (json.provinces != null) {
-                this.provinces = json.provinces;
+              if (json.provinces.original != null) {
+                this.provinces = json.provinces.original;
+              } else {
+                this.provinces = [];
+              }
+              if (json.provinces.manual != null) {
+                this.manualProvinces = json.provinces.manual;
+              } else {
+                this.manualProvinces = [];
               }
             })
             .catch((err) => {

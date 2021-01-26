@@ -288,6 +288,13 @@ func setupDaerah() error {
 		return err
 	}
 
+	// Fix nomor serial squence
+	query = `SELECT setval(pg_get_serial_sequence('province', 'id'), coalesce((select max(id)+1 from "province"), 1), false)`
+	if _, err := tx.Exec(query); err != nil {
+		log.Warn("Gagal merubah urutan nomor sequence pada tabel province")
+		return err
+	}
+
 	// KOTA/KABUPATEN
 	log.Info(">>Membuat data kota/kabupaten")
 	// Load data kota/kabupaten dari csv

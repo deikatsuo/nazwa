@@ -332,21 +332,33 @@ func PlaceAddProvince(c *gin.Context) {
 	}
 
 	// Ambil provinsi
-	var provinces []wrapper.Place
+	po, err := dbquery.PlaceGetProvinces(true)
+	if err != nil {
+		message = "Gagal mengambil data provinsi original"
+		status = "error"
+		httpStatus = http.StatusBadRequest
+		next = false
+	}
+
+	var provincesNotOri []wrapper.Place
 	if next {
-		p, err := dbquery.PlaceGetProvinces()
+		pno, err := dbquery.PlaceGetProvinces(false)
 		if err != nil {
-			message = "Gagal mengambil data provinsi"
+			message = "Gagal mengambil data provinsi manual"
 			status = "error"
+			httpStatus = http.StatusBadRequest
 		} else {
-			provinces = p
+			provincesNotOri = pno
 		}
 	}
 
 	m := gin.H{
-		"message":   message,
-		"status":    status,
-		"provinces": provinces,
+		"message": message,
+		"status":  status,
+		"provinces": map[string]interface{}{
+			"original": po,
+			"manual":   provincesNotOri,
+		},
 	}
 
 	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))

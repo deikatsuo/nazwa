@@ -21,6 +21,13 @@ VALUES  (0, 'dev'),
         (5, 'sales'),
         (6, 'customer');
 
+-- Susun ulang nomor sequence untuk tabel role
+SELECT setval(pg_get_serial_sequence('role', 'id'), coalesce((select max(id)+1 from "role"), 1), false);
+
+-- SELECT MAX(id) FROM "role";
+-- SELECT pg_get_serial_sequence('role', 'id');
+-- SELECT nextval('public.role_id_seq');
+
 -- Buat gender
 CREATE TYPE "gender" AS ENUM ('f', 'm');
 
@@ -148,6 +155,9 @@ INSERT INTO "zone" ("name")
 VALUES  ('Zona 1'),
         ('Zona 2'),
         ('Zona 3');
+
+-- Susun serial sequence
+SELECT setval(pg_get_serial_sequence('zone', 'id'), coalesce((select max(id)+1 from "zone"), 1), false);
 
 -- Tabel list tempat yang termasuk dalam zona
 CREATE TABLE "zone_list" (
