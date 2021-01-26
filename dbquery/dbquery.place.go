@@ -3,48 +3,100 @@ package dbquery
 import "nazwa/wrapper"
 
 // PlaceGetProvinces mengambil data provinsi dari database
-func PlaceGetProvinces() ([]wrapper.Place, error) {
+// Secara default akan mengambil seluruh data provinsi
+// @param: 	true | akan mengambil data provinsi original
+//			false | data yang ditambahkan manual
+func PlaceGetProvinces(conf ...bool) ([]wrapper.Place, error) {
 	db := DB
 	var p []wrapper.Place
-	query := `SELECT id, INITCAP(name) AS name FROM "province" ORDER BY name`
+	var query string
+
+	if conf == nil {
+		query = `SELECT id, INITCAP(name) AS name FROM "province" ORDER BY name`
+	} else {
+		if conf[0] {
+			query = `SELECT id, INITCAP(name) AS name FROM "province" WHERE original=true ORDER BY name`
+		} else {
+			query = `SELECT id, INITCAP(name) AS name FROM "province" WHERE original=false ORDER BY name`
+		}
+	}
 	err := db.Select(&p, query)
 	if err != nil {
+		log.Warn("dbquery.place.go PlaceGetProvinces() Kesalahan saat memuat data")
+		log.Error(err)
 		return []wrapper.Place{}, err
 	}
 	return p, nil
 }
 
 // PlaceGetCities mengambil data kota/kabupaten dari database
-func PlaceGetCities(pid int) ([]wrapper.Place, error) {
+func PlaceGetCities(pid int, conf ...bool) ([]wrapper.Place, error) {
 	db := DB
 	var p []wrapper.Place
-	query := `SELECT id, INITCAP(name) AS name FROM "city" WHERE parent=$1 ORDER BY name`
+	var query string
+
+	if conf == nil {
+		query = `SELECT id, INITCAP(name) AS name FROM "city" WHERE parent=$1 ORDER BY name`
+	} else {
+		if conf[0] {
+			query = `SELECT id, INITCAP(name) AS name FROM "city" WHERE parent=$1 AND original=true ORDER BY name`
+		} else {
+			query = `SELECT id, INITCAP(name) AS name FROM "city" WHERE parent=$1 AND original=false ORDER BY name`
+		}
+	}
 	err := db.Select(&p, query, pid)
 	if err != nil {
+		log.Warn("dbquery.place.go PlaceGetCities() Kesalahan saat memuat data")
+		log.Error(err)
 		return []wrapper.Place{}, err
 	}
 	return p, nil
 }
 
 // PlaceGetDistricts mengambil data distrik/kecamatan dari database
-func PlaceGetDistricts(pid int) ([]wrapper.Place, error) {
+func PlaceGetDistricts(pid int, conf ...bool) ([]wrapper.Place, error) {
 	db := DB
 	var p []wrapper.Place
-	query := `SELECT id, INITCAP(name) AS name FROM "district" WHERE parent=$1 ORDER BY name`
+	var query string
+
+	if conf == nil {
+		query = `SELECT id, INITCAP(name) AS name FROM "district" WHERE parent=$1 ORDER BY name`
+	} else {
+		if conf[0] {
+			query = `SELECT id, INITCAP(name) AS name FROM "district" WHERE parent=$1 AND original=true ORDER BY name`
+		} else {
+			query = `SELECT id, INITCAP(name) AS name FROM "district" WHERE parent=$1 AND original=false ORDER BY name`
+		}
+	}
 	err := db.Select(&p, query, pid)
 	if err != nil {
+		log.Warn("dbquery.place.go PlaceGetDistricts() Kesalahan saat memuat data")
+		log.Error(err)
 		return []wrapper.Place{}, err
 	}
 	return p, nil
 }
 
 // PlaceGetVillages mengambil data kelurahan/desa dari database
-func PlaceGetVillages(pid int) ([]wrapper.Place, error) {
+func PlaceGetVillages(pid int, conf ...bool) ([]wrapper.Place, error) {
 	db := DB
 	var p []wrapper.Place
-	query := `SELECT id, INITCAP(name) AS name FROM "village" WHERE parent=$1 ORDER BY name`
+	var query string
+
+	if conf == nil {
+		query = `SELECT id, INITCAP(name) AS name FROM "village" WHERE parent=$1 ORDER BY name`
+	} else {
+		if conf[0] {
+			query = `SELECT id, INITCAP(name) AS name FROM "village" WHERE parent=$1 AND original=true ORDER BY name`
+		} else {
+			query = `SELECT id, INITCAP(name) AS name FROM "village" WHERE parent=$1 AND original=false ORDER BY name`
+		}
+	}
+
 	err := db.Select(&p, query, pid)
 	if err != nil {
+		log.Warn("dbquery.place.go PlaceGetVillages() Kesalahan saat memuat data")
+		log.Error(err)
 		return []wrapper.Place{}, err
 	}
 	return p, nil

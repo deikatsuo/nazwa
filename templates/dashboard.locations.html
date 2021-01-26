@@ -10,7 +10,7 @@
 
 <!-- Lokasi -->
 <div class="w-full mb-8">
-  <div x-data="loc()" x-init="watchMe($watch)" id="location">
+  <div x-data="loc()" x-init="watchMe($watch, $dispatch)" id="location">
     <div class="w-full">
       <!-- Pilih negara -->
       <div class="w-full flex flex-wrap">
@@ -18,7 +18,7 @@
           <div class="px-2 pt-2 pb-2">
             <span
               class="bg-teal-100 text-teal-300 inline-block cursor-pointer rounded-lg px-4 font-semibold"
-              @click="inputData.country = 62; fetchProvinces();"
+              @click="inputData.country = 62; fetchProvinces($dispatch);"
               >Indonesia</span
             >
           </div>
@@ -47,9 +47,11 @@
                   ></option>
                 </template>
               </select>
+
+              <!-- Tambah provinsi baru -->
               <a
                 href="#"
-                class="py-2 text-sm text-blue-500"
+                class="block mt-4 text-sm text-blue-500"
                 @click="showAddProvince = !showAddProvince;"
               >
                 Tambahkan provinsi baru
@@ -83,12 +85,37 @@
                   </button>
                 </div>
               </template>
+
+              <!-- Provinsi manual -->
+              <label class="block">
+                <span class="font-semibold text-gray-700 dark:text-gray-400"
+                  >Provinsi manual</span
+                >
+              </label>
+              <p class="py-2 text-sm text-gray-600">
+                List provinsi yang ditambahkan manual
+              </p>
+              <select
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
+                multiple
+              >
+                <template
+                  x-for="(province, index) in manualProvinces"
+                  :key="index"
+                >
+                  <option
+                    :value="province.ID"
+                    x-text="province.Name"
+                    @click="inputData.province = province.ID; inputData.provinceName = province.Name;"
+                  ></option>
+                </template>
+              </select>
             </div>
           </div>
         </template>
 
         <!-- Kota/Kabupaten -->
-        <template x-if="cities.length > 0">
+        <template x-if="cities !== null && cities.length > 0">
           <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
             <div
               class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
@@ -102,6 +129,66 @@
                 multiple
               >
                 <template x-for="(city, index) in cities" :key="index">
+                  <option
+                    :value="city.ID"
+                    x-text="city.Name"
+                    @click="inputData.city = city.ID; inputData.cityName = city.Name;"
+                  ></option>
+                </template>
+              </select>
+
+              <!-- Tambah kota baru -->
+              <a
+                href="#"
+                class="block mt-4 text-sm text-blue-500"
+                @click="showAddCity = !showAddCity;"
+              >
+                Tambahkan Kota/Kabupaten
+              </a>
+              <template x-if="showAddCity">
+                <div class="block">
+                  <label class="block mt-4 text-sm">
+                    <span class="text-gray-700 dark:text-gray-400"
+                      >Nama Kota/Kabupaten</span
+                    >
+                    <input
+                      class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                      x-model="addNew.city"
+                      @keydown.enter="addCity($dispatch)"
+                      placeholder="kota/kabupaten"
+                      :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errCity }"
+                    />
+                  </label>
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmCity"
+                    :class="{'invisible': errCity == false}"
+                  >
+                  </span>
+                  <button
+                    class="block shadow bg-yellow-700 hover:bg-yellow-500 focus:shadow-outline focus:outline-none text-white font-bold py-1 px-4 mt-2 rounded"
+                    type="button"
+                    @click="addCity($dispatch);"
+                  >
+                    tambah
+                  </button>
+                </div>
+              </template>
+
+              <!-- Kota/Kabupaten manual -->
+              <label class="block">
+                <span class="font-semibold text-gray-700 dark:text-gray-400"
+                  >Kabupaten manual</span
+                >
+              </label>
+              <p class="py-2 text-sm text-gray-600">
+                List provinsi yang ditambahkan manual
+              </p>
+              <select
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
+                multiple
+              >
+                <template x-for="(city, index) in manualCities" :key="index">
                   <option
                     :value="city.ID"
                     x-text="city.Name"
@@ -188,99 +275,153 @@
           village: null,
         },
         provinces: [],
+        manualProvinces: [],
         cities: [],
+        manualCities: [],
         districts: [],
+        manualDistricts: [],
         villages: [],
+        manualVillages: [],
         showAddProvince: false,
         showAddCity: false,
         showAddDistrict: false,
         showAddVillage: false,
-        watchMe($watch) {
+        watchMe($watch, $dispatch) {
           $watch("inputData.province", (value) => {
-            this.inputData.city = null;
+            this.inputData.city = "";
             this.inputData.provinceName = "";
             this.cities = [];
+            this.manualCities = [];
             if (value != "") {
-              this.fetchCities();
+              this.fetchCities($dispatch);
             }
           });
           $watch("inputData.city", (value) => {
-            this.inputData.district = null;
+            this.inputData.district = "";
             this.inputData.cityName = "";
             this.districts = [];
+            this.manualDistricts = [];
             if (value != "") {
-              this.fetchDistricts();
+              this.fetchDistricts($dispatch);
             }
           });
           $watch("inputData.district", (value) => {
-            this.inputData.village = null;
+            this.inputData.village = "";
             this.inputData.districtName = "";
             this.villages = [];
+            this.manualVillages;
             if (value != "") {
-              this.fetchVillages();
+              this.fetchVillages($dispatch);
             }
           });
         },
-        fetchProvinces() {
-          fetch("/api/v1/local/address/provinces", {
+        fetchProvinces($dispatch) {
+          fetch(`/api/v1/local/address/provinces?mode=split`, {
             method: "GET",
           })
             .then((res) => res.json())
             .then((json) => {
-              this.provinces = json.province;
+              this.provinces = json.provinces.original;
+              if (json.provinces.manual !== null) {
+                this.manualProvinces = json.provinces.manual;
+              } else {
+                this.manualProvinces = [];
+              }
             })
             .catch((err) => {
               console.log(err);
             });
         },
 
-        fetchCities() {
-          fetch(`/api/v1/local/address/cities/${this.inputData.province}`, {
-            method: "GET",
-          })
+        fetchCities($dispatch) {
+          fetch(
+            `/api/v1/local/address/cities/${this.inputData.province}?mode=split`,
+            {
+              method: "GET",
+            }
+          )
             .then((res) => res.json())
             .then((json) => {
-              this.cities = json.cities;
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              this.cities = json.cities.original;
+              if (json.cities.manual !== null) {
+                this.manualCities = json.cities.manual;
+              } else {
+                this.manualCities = [];
+              }
             })
             .catch((err) => {
               console.log(err);
             });
         },
 
-        fetchDistricts() {
-          fetch(`/api/v1/local/address/districts/${this.inputData.city}`, {
-            method: "GET",
-          })
+        fetchDistricts($dispatch) {
+          fetch(
+            `/api/v1/local/address/districts/${this.inputData.city}?mode=split`,
+            {
+              method: "GET",
+            }
+          )
             .then((res) => res.json())
             .then((json) => {
-              this.districts = json.districts;
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              this.districts = json.districts.original;
+              if (json.districts.manual !== null) {
+                this.manualDistricts = json.districts.manual;
+              } else {
+                this.manualDistricts = [];
+              }
             })
             .catch((err) => {
               console.log(err);
             });
         },
 
-        fetchVillages() {
-          fetch(`/api/v1/local/address/villages/${this.inputData.district}`, {
-            method: "GET",
-          })
+        fetchVillages($dispatch) {
+          fetch(
+            `/api/v1/local/address/villages/${this.inputData.district}?mode=split`,
+            {
+              method: "GET",
+            }
+          )
             .then((res) => res.json())
             .then((json) => {
-              this.villages = json.villages;
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              this.villages = json.villages.original;
+              if (json.villages.manual !== null) {
+                this.manualVillages = json.villages.manual;
+              } else {
+                this.manualVillages = [];
+              }
             })
             .catch((err) => {
               console.log(err);
             });
         },
-				errProvince: false,
-				errmProvince: "",
+        errProvince: false,
+        errmProvince: "",
         addProvince($dispatch) {
           fetch(`/api/v1/local/address/edit/province/add`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-							province: this.addNew.province,
-						}),
+              province: this.addNew.province,
+            }),
           })
             .then((res) => res.json())
             .then((json) => {
