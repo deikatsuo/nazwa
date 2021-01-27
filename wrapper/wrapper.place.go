@@ -10,3 +10,8 @@ type Place struct {
 type PlaceNewProvince struct {
 	Province string `json:"province" binding:"required,min=4,max=50"`
 }
+
+// PlaceNewCity kota/kabupaten baru
+type PlaceNewCity struct {
+	City string `json:"city" binding:"required,min=4,max=50"`
+}

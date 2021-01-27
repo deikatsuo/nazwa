@@ -115,8 +115,10 @@ CREATE TABLE "city" (
     "parent" INT NOT NULL,
     "name" VARCHAR (50) NOT NULL,
     "original" BOOLEAN DEFAULT 'true' NOT NULL,
+    "created_by" INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (parent) REFERENCES "province"("id")
+    FOREIGN KEY (parent) REFERENCES "province"("id"),
+    FOREIGN KEY (created_by) REFERENCES "user"("id")
 );
 
 -- Tabel distrik/kecamatan

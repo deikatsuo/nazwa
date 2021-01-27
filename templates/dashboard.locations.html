@@ -27,7 +27,7 @@
 
       <div class="w-full flex flex-wrap">
         <!-- Provinsi -->
-        <template x-if="provinces.length > 0">
+        <template x-if="inputData.country !== null">
           <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
             <div
               class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
@@ -115,7 +115,7 @@
         </template>
 
         <!-- Kota/Kabupaten -->
-        <template x-if="cities !== null && cities.length > 0">
+        <template x-if="inputData.city !== null">
           <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
             <div
               class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
@@ -438,7 +438,7 @@
         errVillage: false,
         errmVillage: "",
         addProvince($dispatch) {
-          fetch(`/api/v1/local/address/edit/province/add`, {
+          fetch(`/api/v1/local/address/edit/country/${this.inputData.country}/province/add`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -473,6 +473,44 @@
             })
             .catch((err) => {
               console.log("addProvince() " + err);
+            });
+        },
+        addCity($dispatch) {
+          fetch(`/api/v1/local/address/edit/province/${this.inputData.province}/city/add`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              city: this.addNew.city,
+            }),
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.city) {
+                this.errCity = true;
+                this.errmCity = json.city;
+              } else {
+                this.errCity = false;
+                this.errmCity = "";
+              }
+              if (json.cities.original != null) {
+                this.cities = json.cities.original;
+              } else {
+                this.cities = [];
+              }
+              if (json.cities.manual != null) {
+                this.manualCities = json.cities.manual;
+              } else {
+                this.manualCities = [];
+              }
+            })
+            .catch((err) => {
+              console.log("addCity() " + err);
             });
         },
       };

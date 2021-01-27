@@ -183,7 +183,8 @@ func runServer() {
 
 	// /api/v1/local/address/edit
 	v1aEdit := v1address.Group("/edit")
-	v1aEdit.POST("/province/add", api.PlaceAddProvince)
+	v1aEdit.POST("/country/:id/province/add", api.PlaceCountryAddProvince)
+	v1aEdit.POST("/province/:id/city/add", api.PlaceProvinceAddCity)
 
 	// /api/v1/local/zone
 	v1zone := v1local.Group("/zone")

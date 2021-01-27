@@ -1,6 +1,12 @@
 package dbquery
 
-import "nazwa/wrapper"
+import (
+	"errors"
+	"fmt"
+	"nazwa/misc"
+	"nazwa/wrapper"
+	"strconv"
+)
 
 // PlaceGetProvinces mengambil data provinsi dari database
 // Secara default akan mengambil seluruh data provinsi
@@ -102,13 +108,68 @@ func PlaceGetVillages(pid int, conf ...bool) ([]wrapper.Place, error) {
 	return p, nil
 }
 
+////////////////////////////////// ADD //
+
 // PlaceNewProvince tambah provinsi baru
-func PlaceNewProvince(name string, uid int) error {
+func PlaceNewProvince(countryID int, name string, uid int) error {
 	db := DB
-	if _, err := db.Exec(`INSERT INTO "province" (parent, name, original, created_by) VALUES ($1, $2, $3, $4)`, 62, name, false, uid); err != nil {
-		log.Warn("dbquery.zone.go ZoneNew() Gagal menambahkan provinsi")
+	if _, err := db.Exec(`INSERT INTO "province" (parent, name, original, created_by) VALUES ($1, $2, $3, $4)`, countryID, name, false, uid); err != nil {
+		log.Warn("dbquery.place.go PlaceNewProvince() Gagal menambahkan provinsi")
 		log.Error(err)
 		return err
 	}
 	return nil
+}
+
+// PlaceNewCity insert kota ke provinsi
+func PlaceNewCity(provinceID int, name string, uid int) error {
+	db := DB
+	var id int
+	if max, err := CityMaxID(provinceID); err == nil {
+		// Convert ke string agar dapat di slice
+		fid := strconv.Itoa(max)
+
+		if misc.CountDigits(max) > misc.CountDigits(provinceID) {
+			fid = fid[misc.CountDigits(provinceID):]
+
+			// Kembalikan ke integer
+			nfid, err := strconv.Atoi(fid)
+			if err != nil {
+				log.Warn("dbquery.place.go PlaceNewCity() gagal konversi string number ke integer")
+				log.Error(err)
+				return err
+			}
+
+			// Harus ditambah satu agar tidak konflik
+			id = nfid + 1
+		} else {
+			log.Warn("dbquery.place.go PlaceNewCity() digit ID kota tidak valid")
+			return errors.New("dbquery.place.go PlaceNewCity() digit ID kota tidak valid")
+		}
+	} else {
+		id = +1
+	}
+
+	sid := fmt.Sprintf("%d%02d", provinceID, id)
+
+	if _, err := db.Exec(`INSERT INTO "city" (id, parent, name, original, created_by) VALUES ($1, $2, $3, $4, $5)`, sid, provinceID, name, false, uid); err != nil {
+		log.Warn("dbquery.place.go PlaceNewCity() Gagal menambahkan kota")
+		log.Error(err)
+		return err
+	}
+	return nil
+}
+
+///////////////////////////////////// MAXID //
+
+// CityMaxID kode produk sudah digunakan
+func CityMaxID(provinceID int) (int, error) {
+	db := DB
+
+	// Check bila sku sudah ada di database
+	var indb int
+	query := `SELECT MAX(id) FROM "city" WHERE parent=$1`
+	err := db.Get(&indb, query, provinceID)
+
+	return indb, err
 }

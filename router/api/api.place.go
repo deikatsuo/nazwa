@@ -300,8 +300,8 @@ func PlaceVillages(c *gin.Context) {
 
 ///////////////////////////////// ADD //
 
-// PlaceAddProvince tambah provinsi
-func PlaceAddProvince(c *gin.Context) {
+// PlaceCountryAddProvince tambah provinsi
+func PlaceCountryAddProvince(c *gin.Context) {
 	session := sessions.Default(c)
 	// User session saat ini
 	nowID := session.Get("userid")
@@ -312,6 +312,14 @@ func PlaceAddProvince(c *gin.Context) {
 	status := ""
 	var simpleErrMap map[string]interface{}
 
+	// ID country
+	countryID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		message = "ID negara tidak valid"
+		status = "error"
+		next = false
+	}
+
 	var newProvince wrapper.PlaceNewProvince
 	if err := c.ShouldBindJSON(&newProvince); err != nil {
 		simpleErrMap = validation.SimpleValErrMap(err)
@@ -320,13 +328,15 @@ func PlaceAddProvince(c *gin.Context) {
 
 	// Provinsi baru
 	if next {
-		if err := dbquery.PlaceNewProvince(newProvince.Province, nowID.(int)); err != nil {
+		if err := dbquery.PlaceNewProvince(countryID, newProvince.Province, nowID.(int)); err != nil {
 			message = "Gagal menambahkan provinsi"
 			status = "error"
+			httpStatus = http.StatusInternalServerError
 			next = false
 		} else {
 			message = fmt.Sprintf("Provinsi %s berhasil ditambahkan", newProvince.Province)
 			status = "success"
+			httpStatus = http.StatusOK
 			next = true
 		}
 	}
@@ -358,6 +368,80 @@ func PlaceAddProvince(c *gin.Context) {
 		"provinces": map[string]interface{}{
 			"original": po,
 			"manual":   provincesNotOri,
+		},
+	}
+
+	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
+}
+
+// PlaceProvinceAddCity API untuk menambahkan kota
+func PlaceProvinceAddCity(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+	var simpleErrMap map[string]interface{}
+
+	// ID provinsi
+	provinceID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		message = "ID provinsi tidak valid"
+		status = "error"
+		next = false
+	}
+
+	var newCity wrapper.PlaceNewCity
+	if err := c.ShouldBindJSON(&newCity); err != nil {
+		simpleErrMap = validation.SimpleValErrMap(err)
+		next = false
+	}
+
+	// Provinsi baru
+	if next {
+		if err := dbquery.PlaceNewCity(provinceID, newCity.City, nowID.(int)); err != nil {
+			message = "Gagal menambahkan kota/kabupaten"
+			status = "error"
+			httpStatus = http.StatusInternalServerError
+			next = false
+		} else {
+			message = fmt.Sprintf("Kota/Kabupaten %s berhasil ditambahkan", newCity.City)
+			status = "success"
+			httpStatus = http.StatusOK
+			next = true
+		}
+	}
+
+	// Ambil data kota/kabupaten
+	co, err := dbquery.PlaceGetCities(provinceID, true)
+	if err != nil {
+		message = "Gagal mengambil data kota/kabupaten original"
+		status = "error"
+		httpStatus = http.StatusBadRequest
+		next = false
+	}
+
+	var citiesNotOri []wrapper.Place
+	if next {
+		cno, err := dbquery.PlaceGetCities(provinceID, false)
+		if err != nil {
+			message = "Gagal mengambil data kota/kabupaten manual"
+			status = "error"
+			httpStatus = http.StatusBadRequest
+		} else {
+			citiesNotOri = cno
+		}
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+		"cities": map[string]interface{}{
+			"original": co,
+			"manual":   citiesNotOri,
 		},
 	}
 

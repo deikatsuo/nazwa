@@ -310,6 +310,7 @@ func (u *CreateUser) Save() error {
 		username = u.Username
 	} else {
 		// Set username/kode pelanggan
+		// Jika id kurang dari 10 digit, maka isi sisanya denga spasi " "
 		num := fmt.Sprintf("% 10d", tempReturnID)
 
 		if misc.CountDigits(tempReturnID) < 10 {
