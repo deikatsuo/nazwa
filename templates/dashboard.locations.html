@@ -115,7 +115,7 @@
         </template>
 
         <!-- Kota/Kabupaten -->
-        <template x-if="inputData.city !== null">
+        <template x-if="inputData.province !== null">
           <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
             <div
               class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
@@ -143,13 +143,13 @@
                 class="block mt-4 text-sm text-blue-500"
                 @click="showAddCity = !showAddCity;"
               >
-                Tambahkan Kota/Kabupaten
+                Tambahkan kota/kabupaten
               </a>
               <template x-if="showAddCity">
                 <div class="block">
                   <label class="block mt-4 text-sm">
                     <span class="text-gray-700 dark:text-gray-400"
-                      >Nama Kota/Kabupaten</span
+                      >Nama kota/kabupaten</span
                     >
                     <input
                       class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
@@ -182,7 +182,7 @@
                 >
               </label>
               <p class="py-2 text-sm text-gray-600">
-                List provinsi yang ditambahkan manual
+                List kota/kabupaten yang ditambahkan manual
               </p>
               <select
                 class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
@@ -201,7 +201,7 @@
         </template>
 
         <!-- Distrik/Kecamatan -->
-        <template x-if="districts.length > 0">
+        <template x-if="inputData.city !== null">
           <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
             <div
               class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
@@ -222,12 +222,75 @@
                   ></option>
                 </template>
               </select>
+
+              <!-- Tambah distrik -->
+              <a
+                href="#"
+                class="block mt-4 text-sm text-blue-500"
+                @click="showAddDistrict = !showAddDistrict;"
+              >
+                Tambahkan distrik/kecamatan
+              </a>
+              <template x-if="showAddDistrict">
+                <div class="block">
+                  <label class="block mt-4 text-sm">
+                    <span class="text-gray-700 dark:text-gray-400"
+                      >Nama distrik/kecamatan</span
+                    >
+                    <input
+                      class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                      x-model="addNew.district"
+                      @keydown.enter="addDistrict($dispatch)"
+                      placeholder="distrik/kecamatan"
+                      :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDistrict }"
+                    />
+                  </label>
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmDistrict"
+                    :class="{'invisible': errDistrict == false}"
+                  >
+                  </span>
+                  <button
+                    class="block shadow bg-yellow-700 hover:bg-yellow-500 focus:shadow-outline focus:outline-none text-white font-bold py-1 px-4 mt-2 rounded"
+                    type="button"
+                    @click="addDistrict($dispatch);"
+                  >
+                    tambah
+                  </button>
+                </div>
+              </template>
+
+              <!-- Distrik/Kecamatan manual -->
+              <label class="block">
+                <span class="font-semibold text-gray-700 dark:text-gray-400"
+                  >Distrik/Kecamatan manual</span
+                >
+              </label>
+              <p class="py-2 text-sm text-gray-600">
+                List distrik/kecamatan yang ditambahkan manual
+              </p>
+              <select
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
+                multiple
+              >
+                <template
+                  x-for="(district, index) in manualDistricts"
+                  :key="index"
+                >
+                  <option
+                    :value="district.ID"
+                    x-text="district.Name"
+                    @click="inputData.district = district.ID; inputData.districtName = district.Name;"
+                  ></option>
+                </template>
+              </select>
             </div>
           </div>
         </template>
 
         <!-- Desa/Kelurahan -->
-        <template x-if="villages.length > 0">
+        <template x-if="inputData.district !== null">
           <div class="w-full p-2 sm:w-2/4 lg:w-2/6">
             <div
               class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
@@ -245,6 +308,69 @@
                     :value="village.ID"
                     x-text="village.Name"
                     @click="inputData.village = village.ID;"
+                  ></option>
+                </template>
+              </select>
+
+              <!-- Tambah kelurahan -->
+              <a
+                href="#"
+                class="block mt-4 text-sm text-blue-500"
+                @click="showAddVillage = !showAddVillage;"
+              >
+                Tambahkan kelurahan/desa
+              </a>
+              <template x-if="showAddVillage">
+                <div class="block">
+                  <label class="block mt-4 text-sm">
+                    <span class="text-gray-700 dark:text-gray-400"
+                      >Nama kelurahan/desa</span
+                    >
+                    <input
+                      class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                      x-model="addNew.village"
+                      @keydown.enter="addVillage($dispatch)"
+                      placeholder="kelurahan/desa"
+                      :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errVillage }"
+                    />
+                  </label>
+                  <span
+                    class="text-xs text-red-600 dark:text-red-400"
+                    x-text="errmVillage"
+                    :class="{'invisible': errVillage == false}"
+                  >
+                  </span>
+                  <button
+                    class="block shadow bg-yellow-700 hover:bg-yellow-500 focus:shadow-outline focus:outline-none text-white font-bold py-1 px-4 mt-2 rounded"
+                    type="button"
+                    @click="addVillage($dispatch);"
+                  >
+                    tambah
+                  </button>
+                </div>
+              </template>
+
+              <!-- Kelurahan/Desa manual -->
+              <label class="block">
+                <span class="font-semibold text-gray-700 dark:text-gray-400"
+                  >Kelurahan/Desa manual</span
+                >
+              </label>
+              <p class="py-2 text-sm text-gray-600">
+                List kelurahan/desa yang ditambahkan manual
+              </p>
+              <select
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
+                multiple
+              >
+                <template
+                  x-for="(village, index) in manualVillages"
+                  :key="index"
+                >
+                  <option
+                    :value="village.ID"
+                    x-text="village.Name"
+                    @click="inputData.village = village.ID; inputData.villageName = village.Name;"
                   ></option>
                 </template>
               </select>
@@ -288,29 +414,29 @@
         showAddVillage: false,
         watchMe($watch, $dispatch) {
           $watch("inputData.province", (value) => {
-            this.inputData.city = "";
+            this.inputData.city = null;
             this.inputData.provinceName = "";
             this.cities = [];
             this.manualCities = [];
-            if (value != "") {
+            if (value !== null) {
               this.fetchCities($dispatch);
             }
           });
           $watch("inputData.city", (value) => {
-            this.inputData.district = "";
+            this.inputData.district = null;
             this.inputData.cityName = "";
             this.districts = [];
             this.manualDistricts = [];
-            if (value != "") {
+            if (value !== null) {
               this.fetchDistricts($dispatch);
             }
           });
           $watch("inputData.district", (value) => {
-            this.inputData.village = "";
+            this.inputData.village = null;
             this.inputData.districtName = "";
             this.villages = [];
             this.manualVillages;
-            if (value != "") {
+            if (value !== null) {
               this.fetchVillages($dispatch);
             }
           });
@@ -438,13 +564,16 @@
         errVillage: false,
         errmVillage: "",
         addProvince($dispatch) {
-          fetch(`/api/v1/local/address/edit/country/${this.inputData.country}/province/add`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              province: this.addNew.province,
-            }),
-          })
+          fetch(
+            `/api/v1/local/address/edit/country/${this.inputData.country}/province/add`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                province: this.addNew.province,
+              }),
+            }
+          )
             .then((res) => res.json())
             .then((json) => {
               if (json.message) {
@@ -476,13 +605,16 @@
             });
         },
         addCity($dispatch) {
-          fetch(`/api/v1/local/address/edit/province/${this.inputData.province}/city/add`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              city: this.addNew.city,
-            }),
-          })
+          fetch(
+            `/api/v1/local/address/edit/province/${this.inputData.province}/city/add`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                city: this.addNew.city,
+              }),
+            }
+          )
             .then((res) => res.json())
             .then((json) => {
               if (json.message) {
@@ -511,6 +643,90 @@
             })
             .catch((err) => {
               console.log("addCity() " + err);
+            });
+        },
+        addDistrict($dispatch) {
+          fetch(
+            `/api/v1/local/address/edit/city/${this.inputData.city}/district/add`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                district: this.addNew.district,
+              }),
+            }
+          )
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+
+              if (json.district) {
+                this.errDistrict = true;
+                this.errmDistrict = json.district;
+              } else {
+                this.errDistrict = false;
+                this.errmDistrict = "";
+              }
+              if (json.districts.original != null) {
+                this.districts = json.districts.original;
+              } else {
+                this.districts = [];
+              }
+              if (json.districts.manual != null) {
+                this.manualDistricts = json.districts.manual;
+              } else {
+                this.manualDistricts = [];
+              }
+            })
+            .catch((err) => {
+              console.log("addDistrict() " + err);
+            });
+        },
+        addVillage($dispatch) {
+          fetch(
+            `/api/v1/local/address/edit/district/${this.inputData.district}/village/add`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                village: this.addNew.village,
+              }),
+            }
+          )
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+
+              if (json.village) {
+                this.errVillage = true;
+                this.errmVillage = json.village;
+              } else {
+                this.errVillage = false;
+                this.errmVillage = "";
+              }
+              if (json.villages.original != null) {
+                this.villages = json.villages.original;
+              } else {
+                this.villages = [];
+              }
+              if (json.villages.manual != null) {
+                this.manualVillages = json.villages.manual;
+              } else {
+                this.manualVillages = [];
+              }
+            })
+            .catch((err) => {
+              console.log("addVillage() " + err);
             });
         },
       };

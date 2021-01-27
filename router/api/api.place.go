@@ -400,7 +400,7 @@ func PlaceProvinceAddCity(c *gin.Context) {
 		next = false
 	}
 
-	// Provinsi baru
+	// Kota baru
 	if next {
 		if err := dbquery.PlaceNewCity(provinceID, newCity.City, nowID.(int)); err != nil {
 			message = "Gagal menambahkan kota/kabupaten"
@@ -442,6 +442,154 @@ func PlaceProvinceAddCity(c *gin.Context) {
 		"cities": map[string]interface{}{
 			"original": co,
 			"manual":   citiesNotOri,
+		},
+	}
+
+	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
+}
+
+// PlaceCityAddDistrict API untuk menambahkan distrik
+func PlaceCityAddDistrict(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+	var simpleErrMap map[string]interface{}
+
+	// ID kota
+	cityID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		message = "ID kota/kabupaten tidak valid"
+		status = "error"
+		next = false
+	}
+
+	var newDistrict wrapper.PlaceNewDistrict
+	if err := c.ShouldBindJSON(&newDistrict); err != nil {
+		simpleErrMap = validation.SimpleValErrMap(err)
+		next = false
+	}
+
+	// Distrik baru
+	if next {
+		if err := dbquery.PlaceNewDistrict(cityID, newDistrict.District, nowID.(int)); err != nil {
+			message = "Gagal menambahkan distrik/kecamatan"
+			status = "error"
+			httpStatus = http.StatusInternalServerError
+			next = false
+		} else {
+			message = fmt.Sprintf("Distrik/Kecamatan %s berhasil ditambahkan", newDistrict.District)
+			status = "success"
+			httpStatus = http.StatusOK
+			next = true
+		}
+	}
+
+	// Ambil data distrik/kecamatan
+	do, err := dbquery.PlaceGetDistricts(cityID, true)
+	if err != nil {
+		message = "Gagal mengambil data distrik/kecamatan original"
+		status = "error"
+		httpStatus = http.StatusBadRequest
+		next = false
+	}
+
+	var districtsNotOri []wrapper.Place
+	if next {
+		dno, err := dbquery.PlaceGetDistricts(cityID, false)
+		if err != nil {
+			message = "Gagal mengambil data distrik/kecamatan manual"
+			status = "error"
+			httpStatus = http.StatusBadRequest
+		} else {
+			districtsNotOri = dno
+		}
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+		"districts": map[string]interface{}{
+			"original": do,
+			"manual":   districtsNotOri,
+		},
+	}
+
+	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
+}
+
+// PlaceDistrictAddVillage API untuk menambahkan kelurahan/desa
+func PlaceDistrictAddVillage(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+	var simpleErrMap map[string]interface{}
+
+	// ID distrik
+	districtID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		message = "ID distrik/kecamatan tidak valid"
+		status = "error"
+		next = false
+	}
+
+	var newVillage wrapper.PlaceNewVillage
+	if err := c.ShouldBindJSON(&newVillage); err != nil {
+		simpleErrMap = validation.SimpleValErrMap(err)
+		next = false
+	}
+
+	// Kelurahan/desa baru
+	if next {
+		if err := dbquery.PlaceNewVillage(districtID, newVillage.Village, nowID.(int)); err != nil {
+			message = "Gagal menambahkan kelurahan/desa"
+			status = "error"
+			httpStatus = http.StatusInternalServerError
+			next = false
+		} else {
+			message = fmt.Sprintf("Kelurahan/Desa %s berhasil ditambahkan", newVillage.Village)
+			status = "success"
+			httpStatus = http.StatusOK
+			next = true
+		}
+	}
+
+	// Ambil data kelurahan/desa
+	vo, err := dbquery.PlaceGetVillages(districtID, true)
+	if err != nil {
+		message = "Gagal mengambil data kelurahan/desa original"
+		status = "error"
+		httpStatus = http.StatusBadRequest
+		next = false
+	}
+
+	var villagesNotOri []wrapper.Place
+	if next {
+		vno, err := dbquery.PlaceGetVillages(districtID, false)
+		if err != nil {
+			message = "Gagal mengambil data kelurahan/desa manual"
+			status = "error"
+			httpStatus = http.StatusBadRequest
+		} else {
+			villagesNotOri = vno
+		}
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+		"villages": map[string]interface{}{
+			"original": vo,
+			"manual":   villagesNotOri,
 		},
 	}
 

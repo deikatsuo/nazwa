@@ -15,3 +15,13 @@ type PlaceNewProvince struct {
 type PlaceNewCity struct {
 	City string `json:"city" binding:"required,min=4,max=50"`
 }
+
+// PlaceNewDistrict distrik/kecamatan baru
+type PlaceNewDistrict struct {
+	District string `json:"district" binding:"required,min=4,max=50"`
+}
+
+// PlaceNewVillage kelurahan/desa baru
+type PlaceNewVillage struct {
+	Village string `json:"village" binding:"required,min=4,max=50"`
+}
