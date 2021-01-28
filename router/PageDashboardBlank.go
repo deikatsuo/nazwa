@@ -6,8 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageDashboardBlank ...
-// Contoh halaman dashboard kosong
+// PageDashboardBlank Contoh halaman dashboard kosong
 func PageDashboardBlank(c *gin.Context) {
 	gh := gin.H{
 		"site_title": "Halaman Kosong Dashboad",

@@ -112,6 +112,14 @@
               {{ block "dashboard_locations_zones_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "developer" }}
+              {{ block "dashboard_developer_content" .}}{{ end }}
+            {{ end }}
+
+            {{ if eq .page "developer_upgrade" }}
+              {{ block "dashboard_developer_upgrade_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "blank" }}
               {{ block "dashboard_blank_content" .}}{{ end }}
             {{ end }}
