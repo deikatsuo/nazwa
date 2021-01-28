@@ -595,3 +595,219 @@ func PlaceDistrictAddVillage(c *gin.Context) {
 
 	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
 }
+
+// PlaceCountryDeleteProvinceByID API untuk menghapus provinsi
+func PlaceCountryDeleteProvinceByID(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	// id negara
+	countryID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		message = "ID negara tidak valid"
+		status = "error"
+		next = false
+	}
+
+	// id provinsi
+	pid, err := strconv.Atoi(c.Param("pid"))
+	if err != nil {
+		message = "Data tidak valid, tidak bisa menghapus provinsi"
+		status = "error"
+		next = false
+	}
+
+	// Delete provinsi
+	if next {
+		if err := dbquery.PlaceProvinceDeleteByID(countryID, pid); err != nil {
+			message = "Gagal menghapus provinsi"
+			status = "error"
+		} else {
+			httpStatus = http.StatusOK
+			message = "Provinsi berhasil dihapus"
+			status = "success"
+		}
+	}
+
+	var provincesNotOri []wrapper.Place
+	pno, err := dbquery.PlaceGetProvinces(false)
+	if err != nil {
+		message = "Gagal mengambil data provinsi manual"
+		status = "error"
+		httpStatus = http.StatusBadRequest
+	} else {
+		provincesNotOri = pno
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"status":  status,
+		"message": message,
+		"provinces": map[string]interface{}{
+			"manual": provincesNotOri,
+		},
+	})
+}
+
+// PlaceProvinceDeleteCityByID API untuk menghapus provinsi
+func PlaceProvinceDeleteCityByID(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	// id provinsi
+	provinceID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		message = "ID provinsi tidak valid"
+		status = "error"
+		next = false
+	}
+
+	// id kota
+	cid, err := strconv.Atoi(c.Param("cid"))
+	if err != nil {
+		message = "Data tidak valid, tidak bisa menghapus kota/kabupaten"
+		status = "error"
+		next = false
+	}
+
+	// Delete kota
+	if next {
+		if err := dbquery.PlaceCityDeleteByID(provinceID, cid); err != nil {
+			message = "Gagal menghapus kota/kabupaten"
+			status = "error"
+		} else {
+			httpStatus = http.StatusOK
+			message = "Kota/Kabupaten berhasil dihapus"
+			status = "success"
+		}
+	}
+
+	var citiesNotOri []wrapper.Place
+	cno, err := dbquery.PlaceGetCities(provinceID, false)
+	if err != nil {
+		message = "Gagal mengambil data kota/kabupaten manual"
+		status = "error"
+		httpStatus = http.StatusBadRequest
+	} else {
+		citiesNotOri = cno
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"status":  status,
+		"message": message,
+		"cities": map[string]interface{}{
+			"manual": citiesNotOri,
+		},
+	})
+}
+
+// PlaceCityDeleteDistrictByID API delete distrik
+func PlaceCityDeleteDistrictByID(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	// id kota
+	cityID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		message = "ID kota tidak valid"
+		status = "error"
+		next = false
+	}
+
+	// id distrik
+	did, err := strconv.Atoi(c.Param("did"))
+	if err != nil {
+		message = "Data tidak valid, tidak bisa menghapus distrik/kecamatan"
+		status = "error"
+		next = false
+	}
+
+	// Delete distrik
+	if next {
+		if err := dbquery.PlaceDistrictDeleteByID(cityID, did); err != nil {
+			message = "Gagal menghapus distrik/kecamatan"
+			status = "error"
+		} else {
+			httpStatus = http.StatusOK
+			message = "Distrik/Kecamatan berhasil dihapus"
+			status = "success"
+		}
+	}
+
+	var districtsNotOri []wrapper.Place
+	dno, err := dbquery.PlaceGetDistricts(cityID, false)
+	if err != nil {
+		message = "Gagal mengambil data distrik/kecamatan manual"
+		status = "error"
+		httpStatus = http.StatusBadRequest
+	} else {
+		districtsNotOri = dno
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"status":  status,
+		"message": message,
+		"districts": map[string]interface{}{
+			"manual": districtsNotOri,
+		},
+	})
+}
+
+// PlaceDistrictDeleteVillageByID API delete vilage
+func PlaceDistrictDeleteVillageByID(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	// id distrik
+	districtID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		message = "ID distrik tidak valid"
+		status = "error"
+		next = false
+	}
+
+	// id kelurahan
+	vid, err := strconv.Atoi(c.Param("vid"))
+	if err != nil {
+		message = "Data tidak valid, tidak bisa menghapus kelurahan/desa"
+		status = "error"
+		next = false
+	}
+
+	// Delete kelurahan
+	if next {
+		if err := dbquery.PlaceVillageDeleteByID(districtID, vid); err != nil {
+			message = "Gagal menghapus kelurahan/desa"
+			status = "error"
+		} else {
+			httpStatus = http.StatusOK
+			message = "Kelurahan/Desa berhasil dihapus"
+			status = "success"
+		}
+	}
+
+	var villagesNotOri []wrapper.Place
+	vno, err := dbquery.PlaceGetVillages(districtID, false)
+	if err != nil {
+		message = "Gagal mengambil data kelurahan/desa manual"
+		status = "error"
+		httpStatus = http.StatusBadRequest
+	} else {
+		villagesNotOri = vno
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"status":  status,
+		"message": message,
+		"villages": map[string]interface{}{
+			"manual": villagesNotOri,
+		},
+	})
+}

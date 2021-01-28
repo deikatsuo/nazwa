@@ -248,3 +248,45 @@ func DistrictMaxID(cityID int) (int, error) {
 //
 //	return indb, err
 //}
+
+/////////////////////////////////// DELETE //
+
+// PlaceProvinceDeleteByID hapus provinsi dari database
+func PlaceProvinceDeleteByID(countryID, pid int) error {
+	db := DB
+	query := `DELETE FROM "province"
+	WHERE id=$1 AND parent=$2 AND original=false`
+	_, err := db.Exec(query, pid, countryID)
+
+	return err
+}
+
+// PlaceCityDeleteByID hapus kota dari database
+func PlaceCityDeleteByID(provinceID, cid int) error {
+	db := DB
+	query := `DELETE FROM "city"
+	WHERE id=$1 AND parent=$2 AND original=false`
+	_, err := db.Exec(query, cid, provinceID)
+
+	return err
+}
+
+// PlaceDistrictDeleteByID hapus distrik dari database
+func PlaceDistrictDeleteByID(cityID, did int) error {
+	db := DB
+	query := `DELETE FROM "district"
+	WHERE id=$1 AND parent=$2 AND original=false`
+	_, err := db.Exec(query, did, cityID)
+
+	return err
+}
+
+// PlaceVillageDeleteByID hapus village dari database
+func PlaceVillageDeleteByID(districtID, vid int) error {
+	db := DB
+	query := `DELETE FROM "village"
+	WHERE id=$1 AND parent=$2 AND original=false`
+	_, err := db.Exec(query, vid, districtID)
+
+	return err
+}

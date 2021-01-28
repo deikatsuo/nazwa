@@ -187,6 +187,10 @@ func runServer() {
 	v1aEdit.POST("/province/:id/city/add", api.PlaceProvinceAddCity)
 	v1aEdit.POST("/city/:id/district/add", api.PlaceCityAddDistrict)
 	v1aEdit.POST("/district/:id/village/add", api.PlaceDistrictAddVillage)
+	v1aEdit.DELETE("/country/:id/province/:pid/delete", api.PlaceCountryDeleteProvinceByID)
+	v1aEdit.DELETE("/province/:id/city/:cid/delete", api.PlaceProvinceDeleteCityByID)
+	v1aEdit.DELETE("/city/:id/district/:did/delete", api.PlaceCityDeleteDistrictByID)
+	v1aEdit.DELETE("/district/:id/village/:vid/delete", api.PlaceDistrictDeleteVillageByID)
 
 	// /api/v1/local/zone
 	v1zone := v1local.Group("/zone")

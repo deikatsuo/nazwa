@@ -121,14 +121,16 @@
                           :key="index"
                         >
                           <tr
-                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
-                            :class="{'bg-blue-500': inputData.province == province.ID }"
+                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-opacity-25"
+                            :class="{'bg-blue-500 hover:bg-blue-500': inputData.province == province.ID && toDelete.province !== province.ID, 'select-none bg-red-500 hover:bg-red-500': toDelete.province == province.ID }"
                           >
                             <td class="px-2 py-1 whitespace-no-wrap">
                               <div
                                 class="leading-5 text-gray-900"
                                 x-text="province.Name"
                                 @click="inputData.province = province.ID; inputData.provinceName = province.Name;"
+                                @dblclick="if (toDelete.province == province.ID) { deleteProvince($dispatch, province.ID); }"
+                                @contextmenu.prevent="if (toDelete.province !== province.ID) { toDelete.province = province.ID; } else { toDelete.province = null; }"
                               ></div>
                             </td>
                           </tr>
@@ -157,10 +159,7 @@
                   <div class="w-full h-full overflow-auto bg-white">
                     <table class="w-full h-full">
                       <tbody>
-                        <template
-                          x-for="(city, index) in cities"
-                          :key="index"
-                        >
+                        <template x-for="(city, index) in cities" :key="index">
                           <tr
                             class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
                             :class="{'bg-blue-500': inputData.city == city.ID }"
@@ -238,13 +237,15 @@
                         >
                           <tr
                             class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
-                            :class="{'bg-blue-500': inputData.city == city.ID }"
+                            :class="{'bg-blue-500 hover:bg-blue-500': inputData.city == city.ID && toDelete.city !== city.ID, 'select-none bg-red-500 hover:bg-red-500': toDelete.city == city.ID }"
                           >
                             <td class="px-2 py-1 whitespace-no-wrap">
                               <div
                                 class="leading-5 text-gray-900"
                                 x-text="city.Name"
                                 @click="inputData.city = city.ID; inputData.cityName = city.Name;"
+                                @dblclick="if (toDelete.city == city.ID) { deleteCity($dispatch, city.ID); }"
+                                @contextmenu.prevent="if (toDelete.city !== city.ID) { toDelete.city = city.ID; } else { toDelete.city = null; }"
                               ></div>
                             </td>
                           </tr>
@@ -354,13 +355,15 @@
                         >
                           <tr
                             class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
-                            :class="{'bg-blue-500': inputData.district == district.ID }"
+                            :class="{'bg-blue-500 hover:bg-blue-500': inputData.district == district.ID && toDelete.district !== district.ID, 'select-none bg-red-500 hover:bg-red-500': toDelete.district == district.ID }"
                           >
                             <td class="px-2 py-1 whitespace-no-wrap">
                               <div
                                 class="leading-5 text-gray-900"
                                 x-text="district.Name"
                                 @click="inputData.district = district.ID; inputData.districtName = district.Name;"
+                                @dblclick="if (toDelete.district == district.ID) { deleteDistrict($dispatch, district.ID); }"
+                                @contextmenu.prevent="if (toDelete.district !== district.ID) { toDelete.district = district.ID; } else { toDelete.district = null; }"
                               ></div>
                             </td>
                           </tr>
@@ -470,13 +473,15 @@
                         >
                           <tr
                             class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
-                            :class="{'bg-blue-500': inputData.village == village.ID }"
+                            :class="{'bg-blue-500 hover:bg-blue-500': inputData.village == village.ID && toDelete.village !== village.ID, 'select-none bg-red-500 hover:bg-red-500': toDelete.village == village.ID }"
                           >
                             <td class="px-2 py-1 whitespace-no-wrap">
                               <div
                                 class="leading-5 text-gray-900"
                                 x-text="village.Name"
                                 @click="inputData.village = village.ID; inputData.villageName = village.Name;"
+                                @dblclick="if (toDelete.village == village.ID) { deleteVillage($dispatch, village.ID); }"
+                                @contextmenu.prevent="if (toDelete.village !== village.ID) { toDelete.village = village.ID; } else { toDelete.village = null; }"
                               ></div>
                             </td>
                           </tr>
@@ -501,6 +506,13 @@
           city: "",
           district: "",
           village: "",
+        },
+        toDelete: {
+          country: null,
+          province: null,
+          city: null,
+          district: null,
+          village: null,
         },
         inputData: {
           country: null,
@@ -839,6 +851,98 @@
             })
             .catch((err) => {
               console.log("addVillage() " + err);
+            });
+        },
+        deleteProvince($dispatch, provinceID) {
+          (this.toDelete.province = null), (this.inputData.province = null);
+          this.inputData.provinceName = "";
+          fetch(`/api/v1/local/address/edit/country/${this.inputData.country}/province/${provinceID}/delete`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+
+              if (json.provinces.manual != null) {
+                this.manualProvinces = json.provinces.manual;
+              } else {
+                this.manualProvinces = [];
+              }
+            })
+            .catch((err) => {
+              console.log("Error deleteProvince() " + err);
+            });
+        },
+        deleteCity($dispatch, cityID) {
+          (this.toDelete.city = null), (this.inputData.city = null);
+          this.inputData.cityName = "";
+          fetch(`/api/v1/local/address/edit/province/${this.inputData.province}/city/${cityID}/delete`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+
+              if (json.cities.manual != null) {
+                this.manualCities = json.cities.manual;
+              } else {
+                this.manualCities = [];
+              }
+            })
+            .catch((err) => {
+              console.log("Error deleteCity() " + err);
+            });
+        },
+        deleteDistrict($dispatch, districtID) {
+          (this.toDelete.district = null), (this.inputData.district = null);
+          this.inputData.cityName = "";
+          fetch(`/api/v1/local/address/edit/city/${this.inputData.city}/district/${districtID}/delete`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+
+              if (json.districts.manual != null) {
+                this.manualDistricts = json.districts.manual;
+              } else {
+                this.manualDistricts = [];
+              }
+            })
+            .catch((err) => {
+              console.log("Error deleteDistricts() " + err);
+            });
+        },
+        deleteVillage($dispatch, villageID) {
+          (this.toDelete.village = null), (this.inputData.village = null);
+          this.inputData.villageName = "";
+          fetch(`/api/v1/local/address/edit/district/${this.inputData.district}/village/${villageID}/delete`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+
+              if (json.villages.manual != null) {
+                this.manualVillages = json.villages.manual;
+              } else {
+                this.manualVillages = [];
+              }
+            })
+            .catch((err) => {
+              console.log("Error deleteVillages() " + err);
             });
         },
       };
