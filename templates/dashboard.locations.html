@@ -35,18 +35,34 @@
               <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
                 Seluruh Provinsi di Indonesia
               </h4>
-              <select
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
-                multiple
-              >
-                <template x-for="(province, index) in provinces" :key="index">
-                  <option
-                    :value="province.ID"
-                    x-text="province.Name"
-                    @click="inputData.province = province.ID; inputData.provinceName = province.Name;"
-                  ></option>
-                </template>
-              </select>
+
+              <div class="mx-auto flex justify-center">
+                <div class="w-full max-h-10 flex flex-col">
+                  <div class="w-full h-full overflow-auto bg-white">
+                    <table class="w-full h-full">
+                      <tbody>
+                        <template
+                          x-for="(province, index) in provinces"
+                          :key="index"
+                        >
+                          <tr
+                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
+                            :class="{'bg-blue-500': inputData.province == province.ID }"
+                          >
+                            <td class="px-2 py-1 whitespace-no-wrap">
+                              <div
+                                class="leading-5 text-gray-900"
+                                x-text="province.Name"
+                                @click="inputData.province = province.ID; inputData.provinceName = province.Name;"
+                              ></div>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
 
               <!-- Tambah provinsi baru -->
               <a
@@ -95,21 +111,33 @@
               <p class="py-2 text-sm text-gray-600">
                 List provinsi yang ditambahkan manual
               </p>
-              <select
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
-                multiple
-              >
-                <template
-                  x-for="(province, index) in manualProvinces"
-                  :key="index"
-                >
-                  <option
-                    :value="province.ID"
-                    x-text="province.Name"
-                    @click="inputData.province = province.ID; inputData.provinceName = province.Name;"
-                  ></option>
-                </template>
-              </select>
+              <div class="mx-auto flex justify-center">
+                <div class="w-full max-h-10 flex flex-col">
+                  <div class="w-full h-full overflow-auto bg-white">
+                    <table class="w-full h-full">
+                      <tbody>
+                        <template
+                          x-for="(province, index) in manualProvinces"
+                          :key="index"
+                        >
+                          <tr
+                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
+                            :class="{'bg-blue-500': inputData.province == province.ID }"
+                          >
+                            <td class="px-2 py-1 whitespace-no-wrap">
+                              <div
+                                class="leading-5 text-gray-900"
+                                x-text="province.Name"
+                                @click="inputData.province = province.ID; inputData.provinceName = province.Name;"
+                              ></div>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </template>
@@ -124,18 +152,33 @@
                 class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
                 x-text="`Seluruh Kota/Kabupaten di ${inputData.provinceName}`"
               ></h4>
-              <select
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
-                multiple
-              >
-                <template x-for="(city, index) in cities" :key="index">
-                  <option
-                    :value="city.ID"
-                    x-text="city.Name"
-                    @click="inputData.city = city.ID; inputData.cityName = city.Name;"
-                  ></option>
-                </template>
-              </select>
+              <div class="mx-auto flex justify-center">
+                <div class="w-full max-h-10 flex flex-col">
+                  <div class="w-full h-full overflow-auto bg-white">
+                    <table class="w-full h-full">
+                      <tbody>
+                        <template
+                          x-for="(city, index) in cities"
+                          :key="index"
+                        >
+                          <tr
+                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
+                            :class="{'bg-blue-500': inputData.city == city.ID }"
+                          >
+                            <td class="px-2 py-1 whitespace-no-wrap">
+                              <div
+                                class="leading-5 text-gray-900"
+                                x-text="city.Name"
+                                @click="inputData.city = city.ID; inputData.cityName = city.Name;"
+                              ></div>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
 
               <!-- Tambah kota baru -->
               <a
@@ -184,18 +227,33 @@
               <p class="py-2 text-sm text-gray-600">
                 List kota/kabupaten yang ditambahkan manual
               </p>
-              <select
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
-                multiple
-              >
-                <template x-for="(city, index) in manualCities" :key="index">
-                  <option
-                    :value="city.ID"
-                    x-text="city.Name"
-                    @click="inputData.city = city.ID; inputData.cityName = city.Name;"
-                  ></option>
-                </template>
-              </select>
+              <div class="mx-auto flex justify-center">
+                <div class="w-full max-h-10 flex flex-col">
+                  <div class="w-full h-full overflow-auto bg-white">
+                    <table class="w-full h-full">
+                      <tbody>
+                        <template
+                          x-for="(city, index) in manualCities"
+                          :key="index"
+                        >
+                          <tr
+                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
+                            :class="{'bg-blue-500': inputData.city == city.ID }"
+                          >
+                            <td class="px-2 py-1 whitespace-no-wrap">
+                              <div
+                                class="leading-5 text-gray-900"
+                                x-text="city.Name"
+                                @click="inputData.city = city.ID; inputData.cityName = city.Name;"
+                              ></div>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </template>
@@ -210,18 +268,33 @@
                 class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
                 x-text="`Seluruh Distrik/Kecamatan di ${inputData.cityName}`"
               ></h4>
-              <select
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
-                multiple
-              >
-                <template x-for="(district, index) in districts" :key="index">
-                  <option
-                    :value="district.ID"
-                    x-text="district.Name"
-                    @click="inputData.district = district.ID; inputData.districtName = district.Name;"
-                  ></option>
-                </template>
-              </select>
+              <div class="mx-auto flex justify-center">
+                <div class="w-full max-h-10 flex flex-col">
+                  <div class="w-full h-full overflow-auto bg-white">
+                    <table class="w-full h-full">
+                      <tbody>
+                        <template
+                          x-for="(district, index) in districts"
+                          :key="index"
+                        >
+                          <tr
+                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
+                            :class="{'bg-blue-500': inputData.district == district.ID }"
+                          >
+                            <td class="px-2 py-1 whitespace-no-wrap">
+                              <div
+                                class="leading-5 text-gray-900"
+                                x-text="district.Name"
+                                @click="inputData.district = district.ID; inputData.districtName = district.Name;"
+                              ></div>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
 
               <!-- Tambah distrik -->
               <a
@@ -270,21 +343,33 @@
               <p class="py-2 text-sm text-gray-600">
                 List distrik/kecamatan yang ditambahkan manual
               </p>
-              <select
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
-                multiple
-              >
-                <template
-                  x-for="(district, index) in manualDistricts"
-                  :key="index"
-                >
-                  <option
-                    :value="district.ID"
-                    x-text="district.Name"
-                    @click="inputData.district = district.ID; inputData.districtName = district.Name;"
-                  ></option>
-                </template>
-              </select>
+              <div class="mx-auto flex justify-center">
+                <div class="w-full max-h-10 flex flex-col">
+                  <div class="w-full h-full overflow-auto bg-white">
+                    <table class="w-full h-full">
+                      <tbody>
+                        <template
+                          x-for="(district, index) in manualDistricts"
+                          :key="index"
+                        >
+                          <tr
+                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
+                            :class="{'bg-blue-500': inputData.district == district.ID }"
+                          >
+                            <td class="px-2 py-1 whitespace-no-wrap">
+                              <div
+                                class="leading-5 text-gray-900"
+                                x-text="district.Name"
+                                @click="inputData.district = district.ID; inputData.districtName = district.Name;"
+                              ></div>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </template>
@@ -299,18 +384,33 @@
                 class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
                 x-text="`Seluruh Desa/Kelurahan di ${inputData.districtName}`"
               ></h4>
-              <select
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
-                multiple
-              >
-                <template x-for="(village, index) in villages" :key="index">
-                  <option
-                    :value="village.ID"
-                    x-text="village.Name"
-                    @click="inputData.village = village.ID;"
-                  ></option>
-                </template>
-              </select>
+              <div class="mx-auto flex justify-center">
+                <div class="w-full max-h-10 flex flex-col">
+                  <div class="w-full h-full overflow-auto bg-white">
+                    <table class="w-full h-full">
+                      <tbody>
+                        <template
+                          x-for="(village, index) in villages"
+                          :key="index"
+                        >
+                          <tr
+                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
+                            :class="{'bg-blue-500': inputData.village == village.ID }"
+                          >
+                            <td class="px-2 py-1 whitespace-no-wrap">
+                              <div
+                                class="leading-5 text-gray-900"
+                                x-text="village.Name"
+                                @click="inputData.village = village.ID; inputData.villageName = village.Name;"
+                              ></div>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
 
               <!-- Tambah kelurahan -->
               <a
@@ -359,21 +459,33 @@
               <p class="py-2 text-sm text-gray-600">
                 List kelurahan/desa yang ditambahkan manual
               </p>
-              <select
-                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray"
-                multiple
-              >
-                <template
-                  x-for="(village, index) in manualVillages"
-                  :key="index"
-                >
-                  <option
-                    :value="village.ID"
-                    x-text="village.Name"
-                    @click="inputData.village = village.ID; inputData.villageName = village.Name;"
-                  ></option>
-                </template>
-              </select>
+              <div class="mx-auto flex justify-center">
+                <div class="w-full max-h-10 flex flex-col">
+                  <div class="w-full h-full overflow-auto bg-white">
+                    <table class="w-full h-full">
+                      <tbody>
+                        <template
+                          x-for="(village, index) in manualVillages"
+                          :key="index"
+                        >
+                          <tr
+                            class="text-xs py-1 hover:border-blue-100 cursor-pointer hover:bg-blue-500 hover:bg-opacity-25"
+                            :class="{'bg-blue-500': inputData.village == village.ID }"
+                          >
+                            <td class="px-2 py-1 whitespace-no-wrap">
+                              <div
+                                class="leading-5 text-gray-900"
+                                x-text="village.Name"
+                                @click="inputData.village = village.ID; inputData.villageName = village.Name;"
+                              ></div>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </template>

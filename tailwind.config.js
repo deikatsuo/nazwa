@@ -164,6 +164,9 @@ module.exports = {
     extend: {
       maxHeight: {
         '0': '0',
+        '10': '10rem',
+        '15': '15rem',
+        '20': '20rem',
         '28': '28rem',
         '30': '30rem',
         '36': '36rem',
