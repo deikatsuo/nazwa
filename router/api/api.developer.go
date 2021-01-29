@@ -1,9 +1,11 @@
 package api
 
 import (
+	"fmt"
 	"nazwa/misc"
 	"net/http"
 	"os"
+	"os/exec"
 
 	"github.com/gin-gonic/gin"
 )
@@ -86,6 +88,15 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 
 // DeveloperUpgradeListAvailable list file upgrade
 func DeveloperUpgradeListAvailable(c *gin.Context) {
+	if misc.GetEnv("REMOTE", "false") == "true" {
+		cmd := exec.Command("systemctl", "stop", "cvnazwa")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%s\n", out)
+	}
+
 	message := ""
 	next := true
 	httpStatus := http.StatusBadRequest

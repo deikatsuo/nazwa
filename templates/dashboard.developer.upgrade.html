@@ -55,13 +55,16 @@
             <span class="text-gray-700 dark:text-gray-400">List Upgrade</span>
           </label>
           <div
-            class="flex flex-wrap p-2 mt-2 space-y-2 overflow-hidden text-sm font-medium text-gray-500 rounded-md shadow-inner bg-gray-50 dark:text-gray-400 dark:bg-gray-900"
+            class="flex flex-wrap p-2 mt-2 overflow-hidden text-sm font-medium text-gray-500 rounded-md shadow-inner bg-gray-50 dark:text-gray-400 dark:bg-gray-900"
           >
             <template x-for="(file, index) in files" :key="index">
-              <ul class="w-full md:w-2/4 lg:w-2/6">
-                <li x-text="`Nama: ${file.Name}`"></li>
-                <li x-text="`Ukuran: ${file.Size}`"></li>
-                <li x-text="`Terakhir diubah: ${file.Edit}`"></li>
+              <ul class="w-full md:w-2/4 lg:w-2/6 p-1 mt-0">
+                <div class="p-1 cursor-pointer rounded-md shadow-inner bg-blue-50 hover:bg-blue-100">
+                  <li x-text="`Nama: ${file.Name}`"></li>
+                  <li x-text="`Ukuran: ${file.Size}`"></li>
+                  <li x-text="`Terakhir diubah: ${file.Edit}`"></li>
+                  <a href="#" class="text-blue-500 hover:text-blue-600">Terapkan</a>
+                </div>
               </ul>
             </template>
           </div>
@@ -99,6 +102,7 @@
                 }
                 this.loading = false;
                 this.formData.file = null;
+                this.fetchUpgradeAvailable($dispatch);
               })
               .catch((err) => {
                 this.loading = false;
