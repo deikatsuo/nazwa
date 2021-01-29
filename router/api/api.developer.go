@@ -88,15 +88,6 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 
 // DeveloperUpgradeListAvailable list file upgrade
 func DeveloperUpgradeListAvailable(c *gin.Context) {
-	if misc.GetEnv("REMOTE", "false") == "true" {
-		cmd := exec.Command("systemctl", "stop", "cvnazwa")
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("%s\n", out)
-	}
-
 	message := ""
 	next := true
 	httpStatus := http.StatusBadRequest
@@ -134,14 +125,45 @@ func DeveloperUpgradeListAvailable(c *gin.Context) {
 	}
 
 	if next {
-		message = "Menampilkan list file upgrade"
-		status = "success"
+		if len(listFile) > 0 {
+			message = "Menampilkan list file upgrade"
+			status = "success"
+			httpStatus = http.StatusOK
+		} else {
+			message = "Tidak ada file upgrade"
+			status = "error"
+			httpStatus = http.StatusOK
+		}
 	}
 
 	m := gin.H{
 		"message": message,
 		"status":  status,
 		"files":   listFile,
+	}
+
+	c.JSON(httpStatus, m)
+}
+
+// DeveloperInstallUpgrade upgrade
+func DeveloperInstallUpgrade(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	if misc.GetEnv("REMOTE", "false") == "true" {
+		cmd := exec.Command("systemctl", "stop", "cvnazwa")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%s\n", out)
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
 	}
 
 	c.JSON(httpStatus, m)
