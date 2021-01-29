@@ -85,37 +85,37 @@ func RunSetup() {
 					}
 
 					// Copy file male.png
-					if err := misc.CopyFile("../data/upload/profile/male.png", "./setup/male.png"); err != nil {
+					if err := misc.FileCopy("../data/upload/profile/male.png", "./setup/male.png"); err != nil {
 						log.Warn("setup.go RunSetup() gagal meng copy file male.png")
 						log.Error(err)
 					}
 
 					// Copy file thumb.male.png
-					if err := misc.CopyFile("../data/upload/profile/thumbnail/male.png", "./setup/thumb.male.png"); err != nil {
+					if err := misc.FileCopy("../data/upload/profile/thumbnail/male.png", "./setup/thumb.male.png"); err != nil {
 						log.Warn("setup.go RunSetup() gagal meng copy file thumb.male.png")
 						log.Error(err)
 					}
 
 					// Copy file female.png
-					if err := misc.CopyFile("../data/upload/profile/female.png", "./setup/female.png"); err != nil {
+					if err := misc.FileCopy("../data/upload/profile/female.png", "./setup/female.png"); err != nil {
 						log.Warn("setup.go RunSetup() gagal meng copy file user")
 						log.Error(err)
 					}
 
 					// Copy file thumb.female.png
-					if err := misc.CopyFile("../data/upload/profile/thumbnail/female.png", "./setup/thumb.female.png"); err != nil {
+					if err := misc.FileCopy("../data/upload/profile/thumbnail/female.png", "./setup/thumb.female.png"); err != nil {
 						log.Warn("setup.go RunSetup() gagal meng copy file user")
 						log.Error(err)
 					}
 
 					// Copy file no-photo.png
-					if err := misc.CopyFile("../data/upload/product/no-photo.png", "./setup/no-photo.png"); err != nil {
+					if err := misc.FileCopy("../data/upload/product/no-photo.png", "./setup/no-photo.png"); err != nil {
 						log.Warn("setup.go RunSetup() gagal meng copy file no-photo.png")
 						log.Error(err)
 					}
 
 					// Copy file thumb.no-photo.png
-					if err := misc.CopyFile("../data/upload/product/thumbnail/no-photo.png", "./setup/thumb.no-photo.png"); err != nil {
+					if err := misc.FileCopy("../data/upload/product/thumbnail/no-photo.png", "./setup/thumb.no-photo.png"); err != nil {
 						log.Warn("setup.go RunSetup() gagal meng copy thumb.no-photo.png")
 						log.Error(err)
 					}

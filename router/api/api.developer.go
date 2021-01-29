@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"nazwa/misc"
 	"net/http"
 	"os"
@@ -101,6 +100,8 @@ func DeveloperUpgradeListAvailable(c *gin.Context) {
 		next = false
 	}
 
+	var listFile []map[string]interface{}
+
 	if next {
 		files, err := f.Readdir(-1)
 		f.Close()
@@ -113,7 +114,11 @@ func DeveloperUpgradeListAvailable(c *gin.Context) {
 		}
 
 		for _, file := range files {
-			fmt.Println(file.Name())
+			listFile = append(listFile, map[string]interface{}{
+				"Name": file.Name(),
+				"Size": misc.FileFormatSize(file),
+				"Edit": file.ModTime(),
+			})
 		}
 	}
 
@@ -125,6 +130,7 @@ func DeveloperUpgradeListAvailable(c *gin.Context) {
 	m := gin.H{
 		"message": message,
 		"status":  status,
+		"files":   listFile,
 	}
 
 	c.JSON(httpStatus, m)

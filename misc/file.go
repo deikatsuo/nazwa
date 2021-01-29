@@ -2,9 +2,11 @@ package misc
 
 import (
 	"encoding/base64"
+	"fmt"
 	"image"
 	"image/color"
 	"io"
+	"math"
 	"os"
 	"strings"
 
@@ -12,12 +14,12 @@ import (
 	"github.com/google/uuid"
 )
 
-// Base64ToFileWithData mengembalikan kembali string base64 kedalam bentuk file
+// FileBase64ToFileWithData mengembalikan kembali string base64 kedalam bentuk file
 // dir: lokasi file
 // b64: string base64
 // info: informasi file
-func Base64ToFileWithData(dir string, b64 string, info string) (string, error) {
-	ext := Base64GetExtensionFromData(info)
+func FileBase64ToFileWithData(dir string, b64 string, info string) (string, error) {
+	ext := FileBase64GetExtensionFromData(info)
 	fileName := uuid.New().String() + "." + ext
 	decode, err := base64.StdEncoding.DecodeString(b64)
 
@@ -47,8 +49,8 @@ func Base64ToFileWithData(dir string, b64 string, info string) (string, error) {
 	return fileName, nil
 }
 
-// Base64GetExtensionFromData mengembalikan extensi dari data
-func Base64GetExtensionFromData(data string) string {
+// FileBase64GetExtensionFromData mengembalikan extensi dari data
+func FileBase64GetExtensionFromData(data string) string {
 	gext := strings.ReplaceAll(data, "data:image/", "")
 	gext = strings.ReplaceAll(gext, ";base64", "")
 	return gext
@@ -82,8 +84,8 @@ func FileGenerateThumb(f string, dir string) error {
 	return nil
 }
 
-// CopyFile copy file ke lokasi baru
-func CopyFile(newfile string, file string) error {
+// FileCopy copy file ke lokasi baru
+func FileCopy(newfile string, file string) error {
 	// Membuka file yang akan di copy
 	original, err := os.Open(file)
 	if err != nil {
@@ -111,4 +113,23 @@ func CopyFile(newfile string, file string) error {
 	}
 
 	return nil
+}
+
+// FileFormatSize dapatkan dalam bentuk b, kb, mb
+func FileFormatSize(file os.FileInfo) string {
+	var size float64
+	var inm string
+
+	if file.Size() > 1048576 {
+		size = math.Round(float64(file.Size() / 1048576))
+		inm = "mb"
+	} else if file.Size() > 1024 {
+		size = math.Round(float64(file.Size() / 1024))
+		inm = "kb"
+	} else {
+		size = float64(file.Size())
+		inm = "b"
+	}
+
+	return fmt.Sprint(size, inm)
 }

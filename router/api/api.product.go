@@ -60,7 +60,7 @@ func ProductCreate(c *gin.Context) {
 		if len(json.Photo) > 0 {
 			for _, p := range json.Photo {
 				if p.PhotoType != "" && p.Photo != "" {
-					if f, err := misc.Base64ToFileWithData("../data/upload/product/", p.Photo, p.PhotoType); err == nil {
+					if f, err := misc.FileBase64ToFileWithData("../data/upload/product/", p.Photo, p.PhotoType); err == nil {
 						files = append(files, f)
 					} else {
 						log.Warn("api.product.go ProductCreate() Konversi base64 ke dalam bentuk file")

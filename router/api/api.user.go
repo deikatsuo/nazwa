@@ -64,7 +64,7 @@ func UserCreate(c *gin.Context) {
 	if json.PhotoType != "" && json.Photo != "" {
 		avatarExt = json.PhotoType
 		avatar = json.Photo
-		if f, err := misc.Base64ToFileWithData("../data/upload/profile/", avatar, avatarExt); err == nil {
+		if f, err := misc.FileBase64ToFileWithData("../data/upload/profile/", avatar, avatarExt); err == nil {
 			file = f
 		} else {
 			log.Println("ERROR: api.user.go UserCreate() Konversi base64 ke file gambar")
