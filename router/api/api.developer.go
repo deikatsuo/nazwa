@@ -46,12 +46,27 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 	if next {
 		// Simpan file
 		path := "../data/upload/upgrade/" + file.Filename
-		if err := c.SaveUploadedFile(file, path); err != nil {
-			log.Warn("api.developer.go DeveloperUpgradeUpload() Gagal menyimpan file")
-			log.Error(err)
-			message = "Terjadi kesalahan saat mencoba menyimpan file"
+
+		if len(file.Filename) > 7 {
+			if file.Filename[len(file.Filename)-7:] != ".tar.gz" {
+				message = "Format file harus berupa .tar.gz"
+				status = "error"
+				next = false
+			}
+		} else {
+			message = "File tidak valid"
 			status = "error"
 			next = false
+		}
+
+		if next {
+			if err := c.SaveUploadedFile(file, path); err != nil {
+				log.Warn("api.developer.go DeveloperUpgradeUpload() Gagal menyimpan file")
+				log.Error(err)
+				message = "Terjadi kesalahan saat mencoba menyimpan file"
+				status = "error"
+				next = false
+			}
 		}
 	}
 
