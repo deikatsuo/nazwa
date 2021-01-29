@@ -7,4 +7,56 @@
 >
   Tingkatkan Sistem
 </h2>
+
+<div class="grid gap-6 mb-8">
+  <!-- Produk baru -->
+  <div class="p-4 bg-white sm:rounded-lg shadow-xs dark:bg-gray-800">
+    <div x-data="upgrade()" id="upgrade">
+      <div class="flex flex-wrap mb-6">
+        <div class="w-full md:w-1/3 md:px-1">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400"
+              >Upload Pembaruan</span
+            >
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              type="file"
+              x-model="formData.file"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errFile }"
+            />
+          </label>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmFile"
+            :class="{'invisible': errFile == false}"
+          >
+          </span>
+          <div class="block">
+            <button
+              type="submit"
+              class="block px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+              @click="submitData($dispatch)"
+              :disabled="loading == true"
+              :class="{'cursor-not-allowed opacity-50': loading == true }"
+            >
+              Upload
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function upgrade() {
+        return {
+          formData: {
+            file: null,
+          },
+          loading: false,
+          errFile: false,
+          errmFile: "",
+        };
+      }
+    </script>
+  </div>
+</div>
 {{ end }}
