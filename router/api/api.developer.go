@@ -29,12 +29,12 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 
 	if next {
 		if err := os.Mkdir("../data/upload/upgrade", 0755); err != nil {
-			log.Warn("api.developer.go DeveloperUpgradeUpload()  gagal membuat direktori upgrade")
-			log.Error(err)
 			if os.IsExist(err) {
 				log.Warn("api.developer.go DeveloperUpgradeUpload() direktori sudah ada")
 				log.Error(err)
 			} else {
+				log.Warn("api.developer.go DeveloperUpgradeUpload()  gagal membuat direktori upgrade")
+				log.Error(err)
 				message = "Terjadi kesalahan saat mencoba membuat direktori"
 				status = "error"
 				next = false
