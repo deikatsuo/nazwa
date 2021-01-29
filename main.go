@@ -167,10 +167,12 @@ func runServer() {
 	v1 := apis.Group("/v1")
 
 	// API khusus developer
+	// /api/v1/developer
 	v1system := v1.Group("/developer")
 	v1system.POST("/upgrade/upload", api.DeveloperUpgradeUpload)
 
 	// API untuk publik
+	// /api/v1/public
 	v1public := v1.Group("/public")
 	v1public.GET("/product/all", api.ProductShowAll)
 
