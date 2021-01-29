@@ -74,8 +74,11 @@
                     message: json.message,
                   });
                 }
+                this.loading = false;
+                this.formData.file = null;
               })
               .catch((err) => {
+                this.loading = false;
                 console.log("Error upload() " + err);
               });
           },
