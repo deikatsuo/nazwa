@@ -49,8 +49,8 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 		path := "../data/upload/upgrade/" + file.Filename
 
 		if len(file.Filename) > 7 {
-			if file.Filename[len(file.Filename)-7:] != ".tar.gz" {
-				message = "Format file harus berupa .tar.gz"
+			if file.Filename[len(file.Filename)-7:] != ".tar.xz" {
+				message = "Format file harus berupa .tar.xz"
 				status = "error"
 				next = false
 			}
