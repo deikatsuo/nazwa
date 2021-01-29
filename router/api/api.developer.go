@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"nazwa/misc"
 	"net/http"
 	"os"
@@ -82,4 +83,49 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 	}
 
 	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
+}
+
+// DeveloperUpgradeListAvailable list file upgrade
+func DeveloperUpgradeListAvailable(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	f, err := os.Open("../data/upload/upgrade")
+	if err != nil {
+		log.Warn("api.developer.go DeveloperUpgradeListAvailable() Gagal membuka folder")
+		log.Error(err)
+		message = "Terjadi kesalahan saat membuka folder"
+		status = "error"
+		next = false
+	}
+
+	if next {
+		files, err := f.Readdir(-1)
+		f.Close()
+		if err != nil {
+			log.Warn("api.developer.go DeveloperUpgradeListAvailable() Gagal membuka membaca file")
+			log.Error(err)
+			message = "Terjadi kesalahan mencoba membaca file"
+			status = "error"
+			next = false
+		}
+
+		for _, file := range files {
+			fmt.Println(file.Name())
+		}
+	}
+
+	if next {
+		message = "Menampilkan list file upgrade"
+		status = "success"
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, m)
 }
