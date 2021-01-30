@@ -120,6 +120,10 @@
               {{ block "dashboard_developer_upgrade_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "developer_cloud"}}
+              {{ block "dashboard_developer_cloud_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "blank" }}
               {{ block "dashboard_blank_content" .}}{{ end }}
             {{ end }}

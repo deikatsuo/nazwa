@@ -225,7 +225,7 @@
     <!-- Menu Developer -->
     <ul>
       <li class="relative px-6 py-3">
-        {{ if eq .page "developer" "developer_upgrade" }}
+        {{ if eq .page "developer" "developer_upgrade" "depelover_cloud" }}
           <span
             class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
             aria-hidden="true"
@@ -238,7 +238,7 @@
         >
           <span class="inline-flex items-center">
             {{ template "_svg_icon_code" }}
-            <span class='ml-4 {{ if eq .page "developer" "developer_upgrade" }}text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100{{ end }}'>Developer</span>
+            <span class='ml-4 {{ if eq .page "developer" "developer_upgrade" "depelover_cloud" }}text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100{{ end }}'>Developer</span>
           </span>
           {{ template "_svg_icon_arrow_bottom" }}
         </button>
@@ -262,6 +262,11 @@
               class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
             >
               <a class='w-full {{ if eq .page "developer_upgrade" }}inline-flex items-center text-sm font-semibold text-gray-600 transition-colors duration-150 hover:text-gray-700 dark:hover:text-gray-200 dark:text-gray-100{{ end }}' href="/dashboard/developer/upgrade"> Upgrade</a>
+            </li>
+            <li
+              class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+            >
+              <a class='w-full {{ if eq .page "developer_cloud" }}inline-flex items-center text-sm font-semibold text-gray-600 transition-colors duration-150 hover:text-gray-700 dark:hover:text-gray-200 dark:text-gray-100{{ end }}' href="/dashboard/developer/cloud"> Penyimpanan Awan</a>
             </li>
           </ul>
         </template>

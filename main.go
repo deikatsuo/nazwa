@@ -155,6 +155,7 @@ func runServer() {
 	dashboard.GET("/locations/zones", router.PageDashboardLocationsZones)
 	dashboard.GET("/developer", router.PageDashboardDeveloper)
 	dashboard.GET("/developer/upgrade", router.PageDashboardDeveloperUpgrade)
+	dashboard.GET("/developer/cloud", router.PageDashboardDeveloperCloud)
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	// API

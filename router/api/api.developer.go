@@ -30,7 +30,7 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 	}
 
 	if next {
-		if err := os.Mkdir("../data/upload/upgrade", 0755); err != nil {
+		if err := os.Mkdir("../data/upgrade", 0755); err != nil {
 			if os.IsExist(err) {
 				log.Warn("api.developer.go DeveloperUpgradeUpload() direktori sudah ada")
 				log.Error(err)
@@ -47,7 +47,7 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 
 	if next {
 		// Simpan file
-		path := "../data/upload/upgrade/" + file.Filename
+		path := "../data/upgrade/" + file.Filename
 
 		if len(file.Filename) > 7 {
 			if file.Filename[len(file.Filename)-7:] != ".tar.xz" {
@@ -93,7 +93,7 @@ func DeveloperUpgradeListAvailable(c *gin.Context) {
 	httpStatus := http.StatusBadRequest
 	status := ""
 
-	f, err := os.Open("../data/upload/upgrade")
+	f, err := os.Open("../data/upgrade")
 	if err != nil {
 		log.Warn("api.developer.go DeveloperUpgradeListAvailable() Gagal membuka folder")
 		log.Error(err)
@@ -116,10 +116,12 @@ func DeveloperUpgradeListAvailable(c *gin.Context) {
 		}
 
 		for _, file := range files {
+			hour, minute, _ := file.ModTime().Clock()
+			year, month, day := file.ModTime().Date()
 			listFile = append(listFile, map[string]interface{}{
 				"Name": file.Name(),
 				"Size": misc.FileFormatSize(file),
-				"Edit": file.ModTime(),
+				"Edit": fmt.Sprintf("%02d-%02d-%d", day, month, year) + " " + fmt.Sprintf("%02d:%02d", hour, minute),
 			})
 		}
 	}
@@ -148,12 +150,12 @@ func DeveloperUpgradeListAvailable(c *gin.Context) {
 // DeveloperInstallUpgrade upgrade
 func DeveloperInstallUpgrade(c *gin.Context) {
 	message := ""
-	next := true
+	//next := true
 	httpStatus := http.StatusBadRequest
 	status := ""
 
 	if misc.GetEnv("REMOTE", "false") == "true" {
-		cmd := exec.Command("systemctl", "stop", "cvnazwa")
+		cmd := exec.Command("systemctl", "restart", "cvnazwa")
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			log.Fatal(err)
