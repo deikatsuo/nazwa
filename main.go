@@ -172,6 +172,8 @@ func runServer() {
 	v1developer := v1.Group("/developer")
 	v1developer.POST("/upgrade/upload", api.DeveloperUpgradeUpload)
 	v1developer.GET("/upgrade/list", api.DeveloperUpgradeListAvailable)
+	v1developer.POST("/cloud/upload", api.DeveloperCloudUpload)
+	v1developer.GET("/cloud/list", api.DeveloperCloudListAvailable)
 
 	// API untuk publik
 	// /api/v1/public

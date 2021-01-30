@@ -59,11 +59,15 @@
           >
             <template x-for="(file, index) in files" :key="index">
               <ul class="w-full md:w-2/4 lg:w-2/6 p-1 mt-0">
-                <div class="p-1 cursor-pointer rounded-md shadow-inner bg-blue-50 hover:bg-blue-100">
+                <div
+                  class="p-1 cursor-pointer rounded-md shadow-inner bg-blue-50 hover:bg-blue-100"
+                >
                   <li x-text="`Nama: ${file.Name}`"></li>
                   <li x-text="`Ukuran: ${file.Size}`"></li>
                   <li x-text="`Diubah pada: ${file.Edit}`"></li>
-                  <a href="#" class="text-blue-500 hover:text-blue-600">Terapkan</a>
+                  <a href="#" class="text-blue-500 hover:text-blue-600"
+                    >Terapkan</a
+                  >
                 </div>
               </ul>
             </template>
@@ -102,7 +106,9 @@
                 }
                 this.loading = false;
                 this.formData.file = null;
-                this.fetchUpgradeAvailable($dispatch);
+                if (json.status == "success") {
+                  this.fetchUpgradeAvailable($dispatch);
+                }
               })
               .catch((err) => {
                 this.loading = false;

@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// DeveloperUpgradeUpload API untuk upload file server
+// DeveloperUpgradeUpload API untuk upload file upgrade
 func DeveloperUpgradeUpload(c *gin.Context) {
 	message := ""
 	next := true
@@ -35,7 +35,7 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 				log.Warn("api.developer.go DeveloperUpgradeUpload() direktori sudah ada")
 				log.Error(err)
 			} else {
-				log.Warn("api.developer.go DeveloperUpgradeUpload()  gagal membuat direktori upgrade")
+				log.Warn("api.developer.go DeveloperUpgradeUpload()  gagal membuat direktori /upgrade")
 				log.Error(err)
 				message = "Terjadi kesalahan saat mencoba membuat direktori"
 				status = "error"
@@ -69,6 +69,68 @@ func DeveloperUpgradeUpload(c *gin.Context) {
 				status = "error"
 				next = false
 			}
+		}
+	}
+
+	if next {
+		message = "File berhasil disimpan"
+		status = "success"
+		httpStatus = http.StatusOK
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
+}
+
+// DeveloperCloudUpload API untuk upload file ke cloud
+func DeveloperCloudUpload(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+	var simpleErrMap map[string]interface{}
+
+	// File
+	file, err := c.FormFile("file")
+
+	if err != nil {
+		log.Warn("api.developer.go DeveloperCloudUpload() File tidak valid")
+		log.Error(err)
+		message = "Tidak ada file, atau format file tidak valid"
+		status = "error"
+		next = false
+	}
+
+	if next {
+		if err := os.Mkdir("../data/cloud", 0755); err != nil {
+			if os.IsExist(err) {
+				log.Warn("api.developer.go DeveloperCloudUpload() direktori sudah ada")
+				log.Error(err)
+			} else {
+				log.Warn("api.developer.go DeveloperCloudUpload()  gagal membuat direktori /cloud")
+				log.Error(err)
+				message = "Terjadi kesalahan saat mencoba membuat direktori"
+				status = "error"
+				next = false
+			}
+		}
+
+	}
+
+	if next {
+		// Simpan file
+		path := "../data/cloud/" + file.Filename
+
+		if err := c.SaveUploadedFile(file, path); err != nil {
+			log.Warn("api.developer.go DeveloperCloudUpload() Gagal menyimpan file")
+			log.Error(err)
+			message = "Terjadi kesalahan saat mencoba menyimpan file"
+			status = "error"
+			next = false
 		}
 	}
 
@@ -133,6 +195,67 @@ func DeveloperUpgradeListAvailable(c *gin.Context) {
 			httpStatus = http.StatusOK
 		} else {
 			message = "Tidak ada file upgrade"
+			status = "error"
+			httpStatus = http.StatusOK
+		}
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+		"files":   listFile,
+	}
+
+	c.JSON(httpStatus, m)
+}
+
+// DeveloperCloudListAvailable list file di cloud
+func DeveloperCloudListAvailable(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	f, err := os.Open("../data/cloud")
+	if err != nil {
+		log.Warn("api.developer.go DeveloperCloudListAvailable() Gagal membuka folder")
+		log.Error(err)
+		message = "Terjadi kesalahan saat membuka folder"
+		status = "error"
+		next = false
+	}
+
+	var listFile []map[string]interface{}
+
+	if next {
+		files, err := f.Readdir(-1)
+		f.Close()
+		if err != nil {
+			log.Warn("api.developer.go DeveloperCloudListAvailable() Gagal membuka membaca file")
+			log.Error(err)
+			message = "Terjadi kesalahan mencoba membaca file"
+			status = "error"
+			next = false
+		}
+
+		for _, file := range files {
+			hour, minute, _ := file.ModTime().Clock()
+			year, month, day := file.ModTime().Date()
+			listFile = append(listFile, map[string]interface{}{
+				"Name": file.Name(),
+				"Size": misc.FileFormatSize(file),
+				"Edit": fmt.Sprintf("%02d-%02d-%d", day, month, year) + " " + fmt.Sprintf("%02d:%02d", hour, minute),
+			})
+		}
+	}
+
+	if next {
+		if len(listFile) > 0 {
+			message = "Menampilkan list file dari awan"
+			status = "success"
+			httpStatus = http.StatusOK
+		} else {
+			message = "Tidak ada file di awan"
 			status = "error"
 			httpStatus = http.StatusOK
 		}
