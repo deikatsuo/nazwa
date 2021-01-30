@@ -39,7 +39,7 @@ func PageProductDetail(c *gin.Context) {
 	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 
 	gh := gin.H{
-		"title":   "Detail Produk " + product.Name,
+		"title":   product.Name,
 		"product": product,
 		"message": message,
 		"status":  status,
