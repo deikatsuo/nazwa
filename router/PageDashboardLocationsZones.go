@@ -9,7 +9,7 @@ import (
 // PageDashboardLocationsZones tampilkan halaman zona wilayah
 func PageDashboardLocationsZones(c *gin.Context) {
 	gh := gin.H{
-		"site_title": "Halaman Zona Wilayah",
+		"site_title": "Zona Wilayah",
 		"page":       "locations_zones",
 	}
 

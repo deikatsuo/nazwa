@@ -9,7 +9,7 @@ import (
 // PageDashboardUsersAdd tampilkan halaman tambah user
 func PageDashboardUsersAdd(c *gin.Context) {
 	gh := gin.H{
-		"site_title": "Tambah Users",
+		"site_title": "Tambah Pengguna",
 		"page":       "users_add",
 
 		"l_account_user_contact": "Informasi Pengguna",

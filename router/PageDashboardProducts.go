@@ -9,7 +9,7 @@ import (
 // PageDashboardProducts tampilkan halaman produk
 func PageDashboardProducts(c *gin.Context) {
 	gh := gin.H{
-		"site_title": "Halaman Produk",
+		"site_title": "Produk",
 		"page":       "products",
 	}
 

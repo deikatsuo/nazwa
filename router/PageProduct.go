@@ -14,7 +14,7 @@ func PageProduct(c *gin.Context) {
 	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 
 	gh := gin.H{
-		"title": "Halaman Produk",
+		"title": "Daftar Produk",
 	}
 
 	met := misc.Mete(df, gh)

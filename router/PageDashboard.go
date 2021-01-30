@@ -9,7 +9,7 @@ import (
 // PageDashboard Halaman dashboard utama
 func PageDashboard(c *gin.Context) {
 	gh := gin.H{
-		"site_title": "Halaman Dashboard",
+		"site_title": "Dashboard",
 		"page":       "dashboard",
 		"chart":      true,
 	}

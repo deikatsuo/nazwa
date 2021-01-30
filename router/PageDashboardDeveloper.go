@@ -9,7 +9,7 @@ import (
 // PageDashboardDeveloper halaman developer
 func PageDashboardDeveloper(c *gin.Context) {
 	gh := gin.H{
-		"site_title": "Halaman Pengembang",
+		"site_title": "Pengembang",
 		"page":       "developer",
 	}
 

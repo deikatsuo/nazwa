@@ -9,7 +9,7 @@ import (
 // PageDashboardBlank Contoh halaman dashboard kosong
 func PageDashboardBlank(c *gin.Context) {
 	gh := gin.H{
-		"site_title": "Halaman Kosong Dashboad",
+		"site_title": "Halaman Kosong",
 		"page":       "blank",
 	}
 

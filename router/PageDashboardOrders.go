@@ -9,7 +9,7 @@ import (
 // PageDashboardOrders tampilkan halaman order
 func PageDashboardOrders(c *gin.Context) {
 	gh := gin.H{
-		"site_title": "Halaman Penjualan",
+		"site_title": "Penjualan",
 		"page":       "orders",
 	}
 
