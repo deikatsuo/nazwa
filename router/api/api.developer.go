@@ -270,6 +270,68 @@ func DeveloperCloudListAvailable(c *gin.Context) {
 	c.JSON(httpStatus, m)
 }
 
+// DeveloperUpgradeRemove API untuk menghapus file upgrade
+func DeveloperUpgradeRemove(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+	var simpleErrMap map[string]interface{}
+
+	// File
+	file := c.Query("file")
+
+	err := os.Remove("../data/upgrade/" + file)
+	if err != nil {
+		message = "Gagal menghapus file"
+		status = "error"
+	}
+
+	if next {
+		message = "File berhasil dihapus"
+		status = "success"
+		httpStatus = http.StatusOK
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
+}
+
+// DeveloperCloudRemove API untuk menghapus file di cloud
+func DeveloperCloudRemove(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+	var simpleErrMap map[string]interface{}
+
+	// File
+	file := c.Query("file")
+
+	err := os.Remove("../data/cloud/" + file)
+	if err != nil {
+		message = "Gagal menghapus file"
+		status = "error"
+	}
+
+	if next {
+		message = "File berhasil dihapus"
+		status = "success"
+		httpStatus = http.StatusOK
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
+}
+
 // DeveloperInstallUpgrade upgrade
 func DeveloperInstallUpgrade(c *gin.Context) {
 	message := ""

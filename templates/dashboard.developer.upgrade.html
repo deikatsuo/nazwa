@@ -60,7 +60,10 @@
             <template x-for="(file, index) in files" :key="index">
               <ul class="w-full md:w-2/4 lg:w-2/6 p-1 mt-0">
                 <div
-                  class="p-1 cursor-pointer rounded-md shadow-inner bg-blue-50 hover:bg-blue-100"
+                  class="p-1 cursor-pointer rounded-md shadow-inner"
+                  @contextmenu.prevent="if (selectedFile == file.Name) { selectedFile == ''; } else { selectedFile = file.Name; }"
+                  :class="{'bg-orange-300 hover:bg-orange-200': selectedFile == file.Name, 'bg-blue-50 hover:bg-blue-100': selectedFile !== file.Name }"
+                  @dblclick="if (selectedFile == file.Name) { removeUpgradeFile($dispatch, file.Name); }"
                 >
                   <li x-text="`Nama: ${file.Name}`"></li>
                   <li x-text="`Ukuran: ${file.Size}`"></li>
@@ -82,6 +85,7 @@
             file: null,
           },
           files: [],
+          selectedFile: "",
           loading: false,
           errFile: false,
           errmFile: "",
@@ -131,6 +135,26 @@
                   this.files = json.files;
                 } else {
                   this.files = [];
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          },
+          removeUpgradeFile($dispatch, fileName) {
+            fetch(`/api/v1/developer/upgrade/delete?file=${fileName}`, {
+              method: "DELETE",
+            })
+              .then((res) => res.json())
+              .then((json) => {
+                if (json.message) {
+                  $dispatch("notif", {
+                    type: json.status,
+                    message: json.message,
+                  });
+                }
+                if (json.status == "success") {
+                  this.fetchUpgradeAvailable($dispatch);
                 }
               })
               .catch((err) => {

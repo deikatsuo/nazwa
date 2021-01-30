@@ -8,10 +8,10 @@
   Penyimpanan Awan
 </h2>
 
-<div class="grid gap-6 mb-8">
+<div class="grid gap-6 mb-8 overflow-hidden">
   <!-- Cloud -->
-  <div class="p-4 bg-white sm:rounded-lg shadow-xs dark:bg-gray-800">
-    <div x-data="cloud()" x-init="fetchFileAvailable($dispatch)" id="cloud">
+  <div class="p-4 bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 overflow-x-auto">
+    <div x-data="cloud()" x-init="fetchFileAvailable($dispatch)" id="cloud" class="overflow-hidden">
       <div class="flex flex-wrap mb-6">
         <div class="w-full md:w-1/3 md:px-1">
           <label class="block text-sm">
@@ -43,15 +43,15 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-wrap mb-6">
-        <div class="w-full md:px-1">
+      <div class="w-full overflow-hidden flex flex-wrap mb-6">
+        <div class="w-full overflow-hidden md:px-1">
           <label class="block text-sm">
             <span class="text-gray-700 dark:text-gray-400"
               >List File di Awan</span
             >
           </label>
           <div
-            class="flex flex-wrap p-2 mt-2 overflow-hidden text-sm font-medium text-gray-500 rounded-md shadow-inner bg-blue-50 dark:text-gray-400 dark:bg-gray-900"
+            class="w-full overflow-x-auto flex flex-wrap p-2 mt-2 text-sm font-medium text-gray-500 rounded-md shadow-inner bg-blue-50 dark:text-gray-400 dark:bg-gray-900"
           >
             <table class="w-full whitespace-no-wrap">
               <thead>
@@ -66,7 +66,10 @@
               <tbody class="divide-y dark:divide-gray-700 dark:bg-gray-800">
                 <template x-for="(file, index) in files" :key="index">
                   <tr
-                    class="text-gray-700 dark:text-gray-400 hover:bg-blue-100 cursor-pointer"
+                    class="text-gray-700 dark:text-gray-400 cursor-pointer"
+                    @contextmenu.prevent="if (selectedFile == file.Name) { selectedFile == ''; } else { selectedFile = file.Name; }"
+                    :class="{'bg-orange-300 hover:bg-orange-200': selectedFile == file.Name, 'hover:bg-blue-100': selectedFile !== file.Name }"
+                    @dblclick="if (selectedFile == file.Name) { removeCloudFile($dispatch, file.Name); }"
                   >
                     <td class="px-4 py-3 text-sm" x-text="file.Name"></td>
                     <td class="px-4 py-3 text-sm" x-text="file.Size"></td>
@@ -85,6 +88,7 @@
             file: null,
           },
           files: [],
+          selectedFile: "",
           loading: false,
           errFile: false,
           errmFile: "",
@@ -134,6 +138,26 @@
                   this.files = json.files;
                 } else {
                   this.files = [];
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          },
+          removeCloudFile($dispatch, fileName) {
+            fetch(`/api/v1/developer/cloud/delete?file=${fileName}`, {
+              method: "DELETE",
+            })
+              .then((res) => res.json())
+              .then((json) => {
+                if (json.message) {
+                  $dispatch("notif", {
+                    type: json.status,
+                    message: json.message,
+                  });
+                }
+                if (json.status == "success") {
+                  this.fetchFileAvailable($dispatch);
                 }
               })
               .catch((err) => {

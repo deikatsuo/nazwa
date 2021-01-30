@@ -174,6 +174,8 @@ func runServer() {
 	v1developer.GET("/upgrade/list", api.DeveloperUpgradeListAvailable)
 	v1developer.POST("/cloud/upload", api.DeveloperCloudUpload)
 	v1developer.GET("/cloud/list", api.DeveloperCloudListAvailable)
+	v1developer.DELETE("/upgrade/delete", api.DeveloperUpgradeRemove)
+	v1developer.DELETE("/cloud/delete", api.DeveloperCloudRemove)
 
 	// API untuk publik
 	// /api/v1/public
