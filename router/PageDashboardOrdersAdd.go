@@ -11,9 +11,6 @@ func PageDashboardOrdersAdd(c *gin.Context) {
 	gh := gin.H{
 		"site_title": "Buat Order",
 		"page":       "orders_add",
-		/*"css": []string{
-			"/assets/css/pikaday.css",
-		},*/
 	}
 
 	df := c.MustGet("dashboard").(map[string]interface{})
