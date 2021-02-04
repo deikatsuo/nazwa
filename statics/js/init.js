@@ -135,17 +135,3 @@ function data() {
     errorIcon: `<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2 text-white"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>`,
   }
 }
-
-// Convert nomor ke mata uang rupiah
-function toRupiah(number) {
-  //number = number.toString().replace(/\s+/g, '');
-  if(isNaN(number) || number == '') {
-    number = 0;
-  }
-
-  num = number.toString().split('').reverse().join('');
-  num = num.match(/\d{1,3}/g);
- 
-  num = "Rp " + num.join(',').split('').reverse().join('');
-  return num;
-}

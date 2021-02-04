@@ -9,28 +9,206 @@
       [x-cloak] {
         display: none !important;
       }
+      @font-face {
+        font-family: "Lapica";
+        src: url("/assets/font/otf/LaPica.otf") format("opentype");
+      }
     </style>
     <script src="/assets/js/alpine-magic-helper-component.js"></script>
     <script src="/assets/js/alpine.min.js" defer></script>
-    <script src="/assets/js/init.js"></script>
+    <script src="/assets/js/core.js"></script>
   </head>
   <body>
     <div x-data="card()">
-			<div class="items-center justify-center">
-				<div x-show="order.ID == 0">
-					Tidak dapat membuat kartu angsuran
-				</div>
-				<div x-show="order.ID > 0" class="border m-5" style="width: 210mm; height: 170mm;" :id="order.Code">
-					
-				</div>
-			</div>
+      <div class="items-center justify-center">
+        <div x-show="order.ID == 0">Tidak dapat membuat kartu angsuran</div>
+        <div
+          x-show="order.ID > 0"
+          class="m-5 p-5"
+          style="width: 210mm; height: 170mm"
+          :id="order.Code"
+        >
+          <div class="border w-full h-full">
+            <div class="w-full relative text-center font-semibold">
+              <span
+                class="pt-2 block text-2xl font-extrabold tracking-wider"
+                style="font-family: 'Lapica'"
+                >CV.NAZWA ELEKTRONIK & FURNITURE</span
+              >
+              <div class="leading-4">
+                <p class="text-sm">
+                  Jalan Raya Cihaur - Bojongsari - Jampangkulon 43178
+                </p>
+                <p class="text-sm tracking-tighter">
+                  Telp. 0858-6355-5270 / 0815-6346-5840
+                </p>
+                <p class="text-sm tracking-tighter">
+                  website
+                  <a href="https://cvnazwa.com" class="text-blue-500 underline"
+                    >https://cvnazwa.com</a
+                  >
+                </p>
+                <div class="w-32 h-20 top-0 absolute ml-2">
+                  <img
+                    src="/assets/img/logo.png"
+                    class="object-cover w-full h-full"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="w-full flex flex-row text-left px-4 py-2 text-sm">
+              <div class="w-2/4">
+                <table class="w-full table-auto">
+                  <tr>
+                    <th>Nama</th>
+                    <td
+                      class="capitalize"
+                      x-text="`: ${order.Customer.Name}`"
+                    ></td>
+                  </tr>
+                  <tr>
+                    <th>Kode Transaksi:</th>
+                    <td x-text="`: ${order.Code}`"></td>
+                  </tr>
+                  <tr>
+                    <th>Alamat</th>
+                    <td x-text="`: ${order.BillingAddress.Name}`"></td>
+                  </tr>
+                  <tr>
+                    <th>Tanggal Kirim</th>
+                    <td class="text-xs" x-text="`: ${order.ShippingDate}`"></td>
+                  </tr>
+                </table>
+              </div>
+              <div class="w-2/4">
+                <table class="w-full table-auto">
+                  <tr>
+                    <th>Harga Total</th>
+                    <td
+                      x-text="`: ${toRupiah(order.PriceTotal)} ${deposite()}`"
+                    ></td>
+                  </tr>
+                  <tr>
+                    <th>Lama Angsuran:</th>
+                    <td
+                      x-text="`: ${toRupiah(order.CreditDetail.Monthly)} x ${order.CreditDetail.Duration} bulan`"
+                    ></td>
+                  </tr>
+                  <tr>
+                    <th>Barang</th>
+                    <td>
+                      <template x-if="order.Items !== null">
+                        <template x-for="(item, idx) in order.Items" :key="idx">
+                          <div class="flex item-center text-sm">
+                            :&nbsp;
+                            <p
+                              class="text-sm text-gray-600 dark:text-gray-400"
+                              x-text="`[${item.Quantity}x ${item.Product.Name}]`"
+                            ></p>
+                            <p
+                              class="pr-1"
+                              x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
+                            >
+                              ,
+                            </p>
+                            <p
+                              class="px-1"
+                              x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
+                            >
+                              dan
+                            </p>
+                          </div>
+                        </template>
+                      </template>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div
+              class="w-full flex flex-wrap justify-center p-1"
+              style="height: 50%"
+            >
+              <template x-for="(i, k) in order.CreditDetail.Duration" :key="k">
+                <div class="w-1/5 p-1">
+                  <div
+                    class="w-full border h-full p-1 text-xs text-left items-start justify-start"
+                  >
+                    <table class="w-full">
+                      <tr class="border-b">
+                        <th class="w-1/5">Ke</th>
+                        <td>:</td>
+                      </tr>
+                      <tr class="border-b">
+                        <th>Tgl</th>
+                        <td>:</td>
+                      </tr>
+                      <tr
+                        :class="{'border-b': order.CreditDetail.Duration <= 15}"
+                      >
+                        <th>Uang</th>
+                        <td>:</td>
+                      </tr>
+                      <tr x-show="order.CreditDetail.Duration <= 15">
+                        <th>TTD</th>
+                        <td>:</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </template>
+            </div>
+            <div class="w-full flex flex-wrap pt-1 mt-2">
+              <div class="w-4/5 text-left text-xs pl-2">
+                <table class="w-full">
+                  <tr>
+                    <th>Keterangan</th>
+                    <td>
+                      <ul>
+                        <li>
+                          Angsuran harus tepat pada waktunya sesuai nominal
+                          tertera
+                        </li>
+                        <li>
+                          Kartu dan Kwitansi resmi saat transaksi tidak boleh
+                          hilang
+                        </li>
+                        <li>
+                          Lakukan transaksi kepada petugas resmi Nazwa
+                          Elektronik & Furniture
+                        </li>
+                        <li>
+                          Jika ada pertanyaan silahkan hubungi nomor yang
+                          tertera diatas kartu ini
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="w-1/5 text-center">
+                <span class="block pb-6">Hormat Kami,</span>
+                <span class="block">Upen Supendi</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <script>
-        function card() { 
-        	return {
-						order: {{ .order }},
-					};
-        }
+      function card() {
+				return {
+					order: {{ .order }},
+					deposite() {
+						if (Number(this.order.Deposit) > 0) {
+							return `(-${toRupiah(this.order.Deposit)})`;
+						} else {
+							return "";
+						}
+					},
+				};
+      }
     </script>
   </body>
 </html>
