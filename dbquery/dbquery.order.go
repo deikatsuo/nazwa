@@ -598,6 +598,7 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		o.notes,
 		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
 		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
+		TO_CHAR(o.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
 		o.code,
 		o.deposit,
 		o.price_total,
@@ -629,6 +630,9 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 	var creditDetail wrapper.OrderCreditDetail
 	if cd, err := OrderGetCreditInfo(o.ID); err == nil {
 		creditDetail = cd
+	} else {
+		log.Warn("dbquery.order.go OrderGetOrderByID() select credit detail")
+		log.Error(err)
 	}
 
 	order = wrapper.Order{
@@ -672,6 +676,7 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		Notes:          o.Notes.String,
 		OrderDate:      o.OrderDate,
 		ShippingDate:   o.ShippingDate,
+		CreatedAt:      o.CreatedAt,
 		Deposit:        o.Deposit,
 		PriceTotal:     o.PriceTotal,
 		BasePriceTotal: o.BasePriceTotal,
@@ -747,17 +752,25 @@ func OrderGetSubstituteByRic(ric string) ([]wrapper.NameID, error) {
 // OrderGetCreditInfo mengambil informasi kredit
 func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 	db := DB
-	var creditDetail wrapper.OrderCreditDetail
-	query := `SELECT id, monthly, duration, due, remaining, lucky_discount
+	var cd wrapper.OrderCreditDetailSelect
+	query := `SELECT id, monthly, duration, due, total, remaining, lucky_discount
 	FROM "order_credit_detail"
 	WHERE order_id=$1`
 
-	err := db.Get(&creditDetail, query, oid)
+	err := db.Get(&cd, query, oid)
 	if err != nil {
 		return wrapper.OrderCreditDetail{}, err
 	}
 
-	return creditDetail, nil
+	return wrapper.OrderCreditDetail{
+		ID:            cd.ID,
+		Monthly:       cd.Monthly,
+		Duration:      cd.Duration,
+		Due:           cd.Due,
+		Total:         cd.Total,
+		Remaining:     cd.Remaining,
+		LuckyDiscount: cd.LuckyDiscount,
+	}, nil
 }
 
 // OrderDeleteByID delete order
