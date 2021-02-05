@@ -77,7 +77,7 @@
                   </tr>
                   <tr>
                     <th>Tanggal Kirim</th>
-                    <td class="text-xs" x-text="`: ${order.ShippingDate}`"></td>
+                    <td x-text="`: ${orderDate()}`"></td>
                   </tr>
                 </table>
               </div>
@@ -164,7 +164,7 @@
                 <table class="w-full">
                   <tr>
                     <th>Keterangan</th>
-                    <td>
+                    <td class="text-red-500">
                       <ul>
                         <li>
                           Angsuran harus tepat pada waktunya sesuai nominal
@@ -207,6 +207,9 @@
 							return "";
 						}
 					},
+          orderDate() {
+            return this.order.ShippingDate.split(" ")[0];
+          }
 				};
       }
     </script>
