@@ -25,6 +25,7 @@
           <th class="px-4 py-3">Barang</th>
           <th class="px-4 py-3">Status</th>
           <th class="px-4 py-3">Tanggal</th>
+          <th class="px-1 py-3"></th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
@@ -134,6 +135,14 @@
                     x-text="'Kirim: ' + order.ShippingDate"
                     x-show="order.ShippingDate != ''"
                   ></p>
+                </div>
+              </div>
+            </td>
+
+            <td class="px-1 py-3 text-sm z-10">
+              <div class="flex item-center text-sm">
+                <div>
+                  <a :href="`orders/card/${order.ID}`" target="_blank">{{ template "_svg_icon_paperclip" }}</a>
                 </div>
               </div>
             </td>
