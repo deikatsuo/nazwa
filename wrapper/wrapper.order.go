@@ -80,6 +80,7 @@ type OrderUserSubstituteForm struct {
 type NullableOrder struct {
 	ID                  int            `db:"id"`
 	CustomerID          int            `db:"customer_id"`
+	CustomerCode        sql.NullString `db:"customer_code"`
 	CustomerName        string         `db:"customer_name"`
 	CustomerThumb       string         `db:"customer_thumb"`
 	SalesID             sql.NullInt64  `db:"sales_id"`
@@ -116,7 +117,7 @@ type NullableOrder struct {
 // Order mapping data order
 type Order struct {
 	ID              int
-	Customer        NameID
+	Customer        NameIDCode
 	Sales           NameID
 	Surveyor        NameID
 	Collector       NameID

@@ -543,7 +543,7 @@ func (p *GetOrders) Show() ([]wrapper.Order, error) {
 			Credit:       p.Credit,
 			Code:         p.Code,
 			Status:       strings.Title(p.Status),
-			Customer: wrapper.NameID{
+			Customer: wrapper.NameIDCode{
 				ID:        p.CustomerID,
 				Name:      p.CustomerName,
 				Thumbnail: p.CustomerThumb,
@@ -575,6 +575,7 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 	query := `SELECT
 		o.id,
 		o.customer_id,
+		c.username as customer_code,
 		concat_ws(' ', c.first_name, c.last_name) as customer_name,
 		c.avatar as customer_thumb,
 		o.sales_id,
@@ -637,8 +638,9 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 
 	order = wrapper.Order{
 		ID: o.ID,
-		Customer: wrapper.NameID{
+		Customer: wrapper.NameIDCode{
 			ID:        o.CustomerID,
+			Code:      o.CustomerCode.String,
 			Name:      o.CustomerName,
 			Thumbnail: o.CustomerThumb,
 		},

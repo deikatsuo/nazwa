@@ -24,11 +24,11 @@
         <div x-show="order.ID == 0">Tidak dapat membuat kartu angsuran</div>
         <div
           x-show="order.ID > 0"
-          class="m-5 p-5"
-          style="width: 210mm; height: 170mm"
+          class="m-5 p-5 border"
+          style="width: 210mm; height: 170mm;"
           :id="order.Code"
         >
-          <div class="border w-full h-full">
+          <div class="border w-full">
             <div class="w-full relative text-center font-semibold">
               <span
                 class="pt-2 block text-2xl font-extrabold tracking-wider"
@@ -57,46 +57,81 @@
                 </div>
               </div>
             </div>
-            <div class="w-full flex flex-row text-left px-4 py-2 text-sm">
+            <div class="w-full flex flex-row text-left px-4 py-2 text-sm leading-5">
               <div class="w-2/4">
-                <table class="w-full table-auto">
+                <table class="w-full table-fixed">
                   <tr>
-                    <th>Nama</th>
-                    <td
-                      class="capitalize"
-                      x-text="`: ${order.Customer.Name}`"
-                    ></td>
+                    <th class="w-2/6 align-top">Nama</th>
+                    <td class="capitalize flex flex-wrap">
+                      <span>:</span
+                      ><span
+                        style="width: 98%"
+                        class="pl-1"
+                        x-text="`${order.Customer.Name} (${order.Customer.Code})`"
+                      ></span>
+                    </td>
                   </tr>
                   <tr>
-                    <th>Kode Transaksi:</th>
-                    <td x-text="`: ${order.Code}`"></td>
+                    <th class="align-top">Kode Transaksi</th>
+                    <td>
+                      <span>:</span
+                      ><span
+                        style="width: 98%"
+                        class="pl-1"
+                        x-text="`${order.Code}`"
+                      ></span>
+                    </td>
                   </tr>
                   <tr>
-                    <th>Alamat</th>
-                    <td x-text="`: ${order.BillingAddress.Name}`"></td>
+                    <th class="align-top">Alamat</th>
+                    <td>
+                      <span>:</span
+                      ><span
+                        style="width: 98%"
+                        class="pl-1"
+                        x-text="`${order.BillingAddress.Name}`"
+                      ></span>
+                    </td>
                   </tr>
                   <tr>
-                    <th>Tanggal Kirim</th>
-                    <td x-text="`: ${orderDate()}`"></td>
+                    <th class="align-top">Tanggal Kirim</th>
+                    <td>
+                      <span>:</span
+                      ><span
+                        style="width: 98%"
+                        class="pl-1"
+                        x-text="`${orderDate()}`"
+                      ></span>
+                    </td>
                   </tr>
                 </table>
               </div>
               <div class="w-2/4">
-                <table class="w-full table-auto">
+                <table class="w-full table-fixed">
                   <tr>
-                    <th>Harga Total</th>
-                    <td
-                      x-text="`: ${toRupiah(order.PriceTotal)} ${deposite()}`"
-                    ></td>
+                    <th class="w-2/6 align-top">Harga Total</th>
+                    <td>
+                      <span>:</span
+                      ><span
+                        style="width: 98%"
+                        class="pl-1"
+                        x-text="`${toRupiah(order.PriceTotal)} ${deposite()}`"
+                      ></span>
+                    </td>
                   </tr>
                   <tr>
-                    <th>Lama Angsuran:</th>
-                    <td
-                      x-text="`: ${toRupiah(order.CreditDetail.Monthly)} x ${order.CreditDetail.Duration} bulan`"
-                    ></td>
+                    <th class="w-2/6 align-top">Lama Angsuran</th>
+                    <td>
+                      <span>:</span
+                      ><span
+                        style="width: 98%"
+                        class="pl-1"
+                        x-text="`${toRupiah(order.CreditDetail.Monthly)} x ${order.CreditDetail.Duration} bulan`"
+                      ></span>
+                    </td>
                   </tr>
                   <tr>
-                    <th>Barang</th>
+                    <th class="w-2/6 align-top">Barang</th>
                     <td>
                       <template x-if="order.Items !== null">
                         <template x-for="(item, idx) in order.Items" :key="idx">
@@ -127,7 +162,7 @@
               </div>
             </div>
             <div
-              class="w-full flex flex-wrap justify-center p-1"
+              class="w-full flex flex-wrap justify-center px-1 pt-1"
               style="height: 50%"
             >
               <template x-for="(i, k) in order.CreditDetail.Duration" :key="k">
@@ -159,12 +194,12 @@
                 </div>
               </template>
             </div>
-            <div class="w-full flex flex-wrap pt-1 mt-4">
+            <div class="w-full flex flex-wrap pb-2">
               <div class="w-4/5 text-left text-xs pl-2">
                 <table class="w-full">
                   <tr>
                     <th>Keterangan</th>
-                    <td class="text-red-500">
+                    <td class="text-red-500 font-semibold">
                       <ul>
                         <li>
                           Angsuran harus tepat pada waktunya sesuai nominal
@@ -197,21 +232,21 @@
       </div>
     </div>
     <script>
-      function card() {
-				return {
-					order: {{ .order }},
-					deposite() {
-						if (Number(this.order.Deposit) > 0) {
-							return `(-${toRupiah(this.order.Deposit)})`;
-						} else {
-							return "";
-						}
-					},
-          orderDate() {
-            return this.order.ShippingDate.split(" ")[0];
-          }
-				};
-      }
+        function card() {
+      return {
+      	order: {{ .order }},
+      	deposite() {
+      		if (Number(this.order.Deposit) > 0) {
+      			return `(-${toRupiah(this.order.Deposit)})`;
+      		} else {
+      			return "";
+      		}
+      	},
+            orderDate() {
+              return this.order.ShippingDate.split(" ")[0];
+            }
+      };
+        }
     </script>
   </body>
 </html>
