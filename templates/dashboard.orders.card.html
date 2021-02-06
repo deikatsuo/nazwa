@@ -13,18 +13,54 @@
         font-family: "Lapica";
         src: url("/assets/font/otf/LaPica.otf") format("opentype");
       }
+      .paper {
+  background: #fff;
+  padding: 30px;
+  position: relative;
+}
+
+.paper,
+.paper::before,
+.paper::after {
+  /* Styles to distinguish sheets from one another */
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.25);
+  border: 1px solid #bbb;
+}
+
+.paper::before,
+.paper::after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 99%;
+  background-color: #eee;
+}
+
+.paper::before {
+  right: 15px;
+  top: 0;
+  transform: rotate(-1deg);
+  z-index: -1;
+}
+
+.paper::after {
+  top: 5px;
+  right: -5px;
+  transform: rotate(1deg);
+  z-index: -2;
+}
     </style>
     <script src="/assets/js/alpine-magic-helper-component.js"></script>
     <script src="/assets/js/alpine.min.js" defer></script>
     <script src="/assets/js/core.js"></script>
   </head>
   <body>
-    <div x-data="card()">
-      <div class="items-center justify-center">
+    <div x-data="card()" class="w-full">
+      <div class="w-full lg:flex lg:items-center lg:justify-center">
         <div x-show="order.ID == 0">Tidak dapat membuat kartu angsuran</div>
         <div
           x-show="order.ID > 0"
-          class="m-5 p-5 border"
+          class="m-5 p-5 border flex flex-wrap content-center items-center paper"
           style="width: 210mm; height: 170mm;"
           :id="order.Code"
         >
