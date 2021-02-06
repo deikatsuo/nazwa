@@ -265,7 +265,7 @@
                   <table class="w-full">
                     <tr>
                       <th>Keterangan</th>
-                      <td class="text-red-500 font-semibold">
+                      <td class="text-gray-500 font-semibold">
                         <ul>
                           <li>
                             Angsuran harus tepat pada waktunya sesuai nominal
@@ -363,7 +363,7 @@
                 var imgBase64DataUri = canvas.toDataURL("image/png");
                 var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
 
-                var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `${this.order.Code}-PW=8.26772-PH=6.69291.png`, 1);
+                var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `${this.order.Code.replaceAll('-', '')}-PW=7.50-PH=6.png`, 1);
                 //add file to print job
                 cpj.files.push(myImageFile);
 
