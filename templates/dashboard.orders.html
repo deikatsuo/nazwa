@@ -9,244 +9,260 @@
 </h2>
 
 <!-- Daftar Order -->
-<div
-  x-data="OrderData()"
-  x-init="fetchInit($watch, $dispatch)"
-  class="w-full mb-8 overflow-hidden sm:rounded-lg shadow-xs"
->
-  <div class="w-full overflow-x-auto">
-    <table class="w-full whitespace-no-wrap">
-      <thead>
-        <tr
-          class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-        >
-          <th class="px-1 py-3 text-center">No</th>
-          <th class="px-4 py-3">Konsumen</th>
-          <th class="px-4 py-3">Barang</th>
-          <th class="px-4 py-3">Status</th>
-          <th class="px-4 py-3">Tanggal</th>
-          <th class="px-1 py-3"></th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-        <template x-for="(order, index) in orders" :key="order.Code">
+<div x-data="OrderData()" x-init="fetchInit($watch, $dispatch)">
+  <div class="w-full mb-8 overflow-hidden sm:rounded-lg shadow-xs">
+    <div class="w-full overflow-x-auto">
+      <table class="w-full whitespace-no-wrap">
+        <thead>
           <tr
-            class="text-gray-700 dark:text-gray-400"
-            @contextmenu.prevent="if (selected !== order.Code) { selected = order.Code; } else { selected = null; }"
-            @dblclick="if (selected == order.Code) { deleteOrder($dispatch, order.ID); }"
-            :class="{ 'hover:bg-yellow-50': selected != order.Code ,'bg-orange-300 hover:bg-orange-200': selected == order.Code }"
+            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
           >
-            <td
-              class="px-1 py-3 text-sm text-center"
-              x-text="index + loaded + 1"
-            ></td>
-            <td class="px-4 py-3 text-sm">
-              <div class="flex items-center text-sm">
-                <!-- Tampilkan avatar -->
-                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                  <img
-                    class="object-cover w-full h-full rounded-full border"
-                    :src="'/file/profile/thumbnail/'+order.Customer.Thumbnail"
-                    alt=""
-                    loading="lazy"
-                  />
-                  <div
-                    class="absolute inset-0 rounded-full shadow-inner"
-                    aria-hidden="true"
-                  ></div>
-                </div>
-                <div>
-                  <p
-                    class="text-xs"
-                    x-text="order.Code"
-                    :class="{'px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-r-full dark:bg-green-700 dark:text-green-100': !order.Credit, 'px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600': order.Credit }"
-                  ></p>
-                  <p class="text-xs" x-text="order.Customer.Name"></p>
-                </div>
-              </div>
-            </td>
-
-            <td class="px-4 py-3 text-sm">
-              <div class="flex flex-wrap item-center text-sm">
-                <template x-if="order.Items !== null">
-                  <template x-for="(item, idx) in order.Items" :key="idx">
-                    <div class="flex item-center text-sm">
-                      <p
-                        class="text-xs text-gray-600 dark:text-gray-400"
-                        x-text="`[${item.Quantity}x ${item.Product.Name}]`"
-                      ></p>
-                      <p
-                        class="pr-1"
-                        x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
-                      >
-                        ,
-                      </p>
-                      <p
-                        class="px-1"
-                        x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
-                      >
-                        dan
-                      </p>
-                    </div>
-                  </template>
-                </template>
-                <template x-if="order.Items === null">
-                  <p class="text-xs text-gray-600 dark:text-gray-400">
-                    Tidak ada produk
-                  </p>
-                </template>
-              </div>
-            </td>
-
-            <td class="px-4 py-3 text-xs">
-              <span
-                class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
-                x-show="order.Status == 'Completed'"
-                x-text="order.Status"
-              ></span>
-              <span
-                class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700"
-                x-show="order.Status == 'Pending'"
-                x-text="order.Status"
-              ></span>
-              <span
-                class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600"
-                x-show="order.Status == 'Canceled'"
-                x-text="order.Status"
-              ></span>
-              <span
-                class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-700"
-                x-show="order.Status == 'Denied'"
-                x-text="order.Status"
-              ></span>
-            </td>
-
-            <td class="px-4 py-3 text-sm">
-              <div class="flex item-center text-sm">
-                <div>
-                  <p
-                    class="text-xs text-gray-600 dark:text-gray-400"
-                    x-text="'Pesan: ' + order.OrderDate"
-                    x-show="order.OrderDate != ''"
-                  ></p>
-                  <p
-                    class="text-xs text-gray-600 dark:text-gray-400"
-                    x-text="'Kirim: ' + order.ShippingDate"
-                    x-show="order.ShippingDate != ''"
-                  ></p>
-                </div>
-              </div>
-            </td>
-
-            <td class="pl-1 pr-2 py-3 text-sm z-10">
-              <div class="flex text-sm justify-end">
-                <template x-if="order.Credit">
-                  <div class="cursor-pointer px-1">
-                    <a :href="`orders/card?ids=${order.ID}`" target="_blank"
-                      >{{ template "_svg_icon_bookopen" }}</a
-                    >
-                  </div>
-                </template>
+            <th class="px-1 py-3 text-center">No</th>
+            <th class="px-4 py-3">Konsumen</th>
+            <th class="px-4 py-3">Barang</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Tanggal</th>
+            <th class="pl-1 pr-2 py-3 text-sm">
+              <div class="flex text-sm justify-end" x-show="checked.length > 0">
                 <div class="cursor-pointer px-1">
-                  <a
-                    @click.prevent="if (selected !== order.Code) { $dispatch('modal', { tmp: order.ID, html: $refs.orderDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } }); }"
-                    >{{ template "_svg_icon_eye" }}</a
+                  <p x-text="checked.length"></p>
+                </div>
+                <div class="cursor-pointer px-1">
+                  <a :href="`orders/card?${generateIds()}`" target="_blank"
+                    >{{ template "_svg_icon_bookopen" }}</a
                   >
                 </div>
               </div>
-            </td>
+            </th>
           </tr>
-        </template>
+        </thead>
+        <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+          <template x-for="(order, index) in orders" :key="order.Code">
+            <tr
+              class="text-gray-700 dark:text-gray-400"
+              @contextmenu.prevent="if (selected !== order.Code) { selected = order.Code; } else { selected = null; }"
+              @dblclick="if (selected == order.Code) { deleteOrder($dispatch, order.ID); }"
+              :class="{ 'hover:bg-yellow-50': selected != order.Code ,'bg-orange-300 hover:bg-orange-200 cursor-pointer': selected == order.Code }"
+            >
+              <td
+                class="px-1 py-3 text-sm text-center cursor-pointer"
+                @click="order.checked = !order.checked; if (order.checked) { pushChecked(order.ID); } else { removeChecked(order.ID); }"
+              >
+                <p x-show="!order.checked" x-text="index + loaded + 1"></p>
+                <p x-show="order.checked" class="flex justify-center">
+                  {{ template "_svg_icon_checkcircle" }}
+                </p>
+              </td>
+              <td class="px-4 py-3 text-sm">
+                <div class="flex items-center text-sm">
+                  <!-- Tampilkan avatar -->
+                  <div
+                    class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
+                  >
+                    <img
+                      class="object-cover w-full h-full rounded-full border"
+                      :src="'/file/profile/thumbnail/'+order.Customer.Thumbnail"
+                      alt=""
+                      loading="lazy"
+                    />
+                    <div
+                      class="absolute inset-0 rounded-full shadow-inner"
+                      aria-hidden="true"
+                    ></div>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs"
+                      x-text="order.Code"
+                      :class="{'px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-r-full dark:bg-green-700 dark:text-green-100': !order.Credit, 'px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600': order.Credit }"
+                    ></p>
+                    <p class="text-xs" x-text="order.Customer.Name"></p>
+                  </div>
+                </div>
+              </td>
 
-        <!-- Modal detail order -->
-        {{ template "dashboard_order_detail_modal" .}}
-      </tbody>
-    </table>
-  </div>
-  <div
-    class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
-  >
-    <span
-      class="flex items-center justify-center sm:justify-start col-span-10 sm:col-span-1"
+              <td class="px-4 py-3 text-sm">
+                <div class="flex flex-wrap item-center text-sm">
+                  <template x-if="order.Items !== null">
+                    <template x-for="(item, idx) in order.Items" :key="idx">
+                      <div class="flex item-center text-sm">
+                        <p
+                          class="text-xs text-gray-600 dark:text-gray-400"
+                          x-text="`[${item.Quantity}x ${item.Product.Name}]`"
+                        ></p>
+                        <p
+                          class="pr-1"
+                          x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
+                        >
+                          ,
+                        </p>
+                        <p
+                          class="px-1"
+                          x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
+                        >
+                          dan
+                        </p>
+                      </div>
+                    </template>
+                  </template>
+                  <template x-if="order.Items === null">
+                    <p class="text-xs text-gray-600 dark:text-gray-400">
+                      Tidak ada produk
+                    </p>
+                  </template>
+                </div>
+              </td>
+
+              <td class="px-4 py-3 text-xs">
+                <span
+                  class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
+                  x-show="order.Status == 'Completed'"
+                  x-text="order.Status"
+                ></span>
+                <span
+                  class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700"
+                  x-show="order.Status == 'Pending'"
+                  x-text="order.Status"
+                ></span>
+                <span
+                  class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600"
+                  x-show="order.Status == 'Canceled'"
+                  x-text="order.Status"
+                ></span>
+                <span
+                  class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-700"
+                  x-show="order.Status == 'Denied'"
+                  x-text="order.Status"
+                ></span>
+              </td>
+
+              <td class="px-4 py-3 text-sm">
+                <div class="flex item-center text-sm">
+                  <div>
+                    <p
+                      class="text-xs text-gray-600 dark:text-gray-400"
+                      x-text="'Pesan: ' + order.OrderDate"
+                      x-show="order.OrderDate != ''"
+                    ></p>
+                    <p
+                      class="text-xs text-gray-600 dark:text-gray-400"
+                      x-text="'Kirim: ' + order.ShippingDate"
+                      x-show="order.ShippingDate != ''"
+                    ></p>
+                  </div>
+                </div>
+              </td>
+
+              <td class="pl-1 pr-2 py-3 text-sm">
+                <div class="flex text-sm justify-end">
+                  <template x-if="order.Credit">
+                    <div class="cursor-pointer px-1">
+                      <a :href="`orders/card?ids=${order.ID}`" target="_blank"
+                        >{{ template "_svg_icon_bookopen" }}</a
+                      >
+                    </div>
+                  </template>
+                  <div class="cursor-pointer px-1">
+                    <a
+                      @click.prevent="if (selected !== order.Code) { $dispatch('modal', { tmp: order.ID, html: $refs.orderDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } }); }"
+                      >{{ template "_svg_icon_eye" }}</a
+                    >
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </template>
+
+          <!-- Modal detail order -->
+          {{ template "dashboard_order_detail_modal" .}}
+        </tbody>
+      </table>
+    </div>
+    <div
+      class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
     >
-      <div class="relative">
-        <select
-          class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-          x-model="limit"
-        >
-          <option value="">Jumlah per halaman</option>
-          <option value="10">10</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-        >
-          {{ template "_svg_icon_arrow_bottom" }}
+      <span
+        class="flex items-center justify-center sm:justify-start col-span-10 sm:col-span-1"
+      >
+        <div class="relative">
+          <select
+            class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+            x-model="limit"
+          >
+            <option value="">Jumlah per halaman</option>
+            <option value="10">10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <div
+            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+          >
+            {{ template "_svg_icon_arrow_bottom" }}
+          </div>
         </div>
-      </div>
-    </span>
-    <span class="flex items-center col-span-10 sm:col-span-7 justify-center">
-      Total
-      <div x-text="total" class="px-1"></div>
-      -
-      <div class="px-1"></div>
-      Halaman
-      <div x-text="page" class="px-1"></div>
-    </span>
-    <!-- Pagination -->
-    <span
-      class="flex justify-center col-span-10 sm:col-span-1 mt-2 sm:mt-auto sm:justify-end"
-    >
-      <nav aria-label="Table navigation">
-        <ul class="inline-flex items-center">
-          <!-- Backwaard -->
-          <li>
-            <button
-              class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
-              aria-label="Previous"
-              @click="backW($dispatch)"
-              :class="{'cursor-not-allowed opacity-50': page <= 1 || loading == true}"
-              :disabled="page <= 1 || loading == true"
-            >
-              <svg
-                aria-hidden="true"
-                class="w-4 h-4 fill-current"
-                viewBox="0 0 20 20"
+      </span>
+      <span class="flex items-center col-span-10 sm:col-span-7 justify-center">
+        Total
+        <div x-text="total" class="px-1"></div>
+        -
+        <div class="px-1"></div>
+        Halaman
+        <div x-text="page" class="px-1"></div>
+      </span>
+      <!-- Pagination -->
+      <span
+        class="flex justify-center col-span-10 sm:col-span-1 mt-2 sm:mt-auto sm:justify-end"
+      >
+        <nav aria-label="Table navigation">
+          <ul class="inline-flex items-center">
+            <!-- Backwaard -->
+            <li>
+              <button
+                class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                aria-label="Previous"
+                @click="backW($dispatch)"
+                :class="{'cursor-not-allowed opacity-50': page <= 1 || loading == true}"
+                :disabled="page <= 1 || loading == true"
               >
-                <path
-                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                  fill-rule="evenodd"
-                ></path>
-              </svg>
-            </button>
-          </li>
-          <!-- Forward -->
-          <li>
-            <button
-              class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
-              aria-label="Next"
-              @click="forW($dispatch)"
-              :class="{'cursor-not-allowed opacity-50': last == true || loading == true}"
-              :disabled="last == true || loading == true"
-            >
-              <svg
-                class="w-4 h-4 fill-current"
-                aria-hidden="true"
-                viewBox="0 0 20 20"
+                <svg
+                  aria-hidden="true"
+                  class="w-4 h-4 fill-current"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                    fill-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </li>
+            <!-- Forward -->
+            <li>
+              <button
+                class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                aria-label="Next"
+                @click="forW($dispatch)"
+                :class="{'cursor-not-allowed opacity-50': last == true || loading == true}"
+                :disabled="last == true || loading == true"
               >
-                <path
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clip-rule="evenodd"
-                  fill-rule="evenodd"
-                ></path>
-              </svg>
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </span>
+                <svg
+                  class="w-4 h-4 fill-current"
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                    fill-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </span>
+    </div>
   </div>
 </div>
 
@@ -265,6 +281,7 @@
         this.fetchOrdersData($dispatch, true, "init");
       },
       orders: [],
+      checked: [],
       selected: null,
       loading: false,
       lastid: 0,
@@ -275,6 +292,24 @@
       page: 1,
       total: 0,
       lastURL: "",
+      pushChecked(oid) {
+        this.checked.push(oid);
+      },
+      removeChecked(oid) {
+        if (this.checked.length > 0) {
+          var index = this.checked.indexOf(oid);
+          if (index >= 0) {
+            this.checked.splice(index, 1);
+          }
+        }
+      },
+      generateIds() {
+        oids = "";
+        this.checked.map((oid) => {
+          oids = `${oids}&ids=${oid}`
+        });
+        return oids;
+      },
       fetchOrdersData($dispatch, reset, go, reload = false) {
         this.loading = true;
         if (reset) {
