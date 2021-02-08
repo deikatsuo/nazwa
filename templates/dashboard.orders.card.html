@@ -184,7 +184,7 @@
                           ><span
                             style="width: 98%"
                             class="pl-1"
-                            x-text="`${toRupiah(order.PriceTotal)} ${deposite(order.Deposite)}`"
+                            x-text="`${toRupiah(order.PriceTotal)} ${deposit(order.Deposit)}`"
                           ></span>
                         </td>
                       </tr>
@@ -195,7 +195,7 @@
                           ><span
                             style="width: 98%"
                             class="pl-1"
-                            x-text="`${toRupiah(order.CreditDetail.Monthly)} x ${order.CreditDetail.Duration} bulan`"
+                            x-text="`${toRupiah(order.CreditDetail.Monthly)} x ${order.CreditDetail.Duration} bln (${toRupiah(order.CreditDetail.Total)})`"
                           ></span>
                         </td>
                       </tr>
@@ -361,7 +361,7 @@
               window.localStorage.setItem('cardPrinter', printer);
               this.lastPrinter = printer;
           },
-          deposite(depo) {
+          deposit(depo) {
             if (Number(depo) > 0) {
               return `(-${toRupiah(depo)})`;
             } else {
