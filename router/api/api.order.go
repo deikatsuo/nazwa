@@ -229,6 +229,9 @@ func OrderCreate(c *gin.Context) {
 		}
 	}
 
+	var retOrder wrapper.Order
+	var retID int
+
 	if save {
 		deposit, _ := strconv.Atoi(json.Deposit)
 		order := dbquery.NewOrder()
@@ -249,6 +252,7 @@ func OrderCreate(c *gin.Context) {
 			SetOrderItems(json.OrderItems).
 			SetSubstitutes(json.Substitutes).
 			SetCreatedBy(uid.(int)).
+			ReturnID(&retID).
 			Save()
 
 		if err != nil {
@@ -260,12 +264,21 @@ func OrderCreate(c *gin.Context) {
 		} else {
 			status = "success"
 			message = "Berhasil membuat order"
+
+			if o, err := dbquery.OrderGetOrderByID(retID); err == nil {
+				retOrder = o
+			} else {
+				httpStatus = http.StatusInternalServerError
+				message = "Sepertinya telah terjadi kesalahan saat memuat data"
+				status = "error"
+			}
 		}
 	}
 
 	m := gin.H{
 		"message": message,
 		"status":  status,
+		"order":   retOrder,
 	}
 	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
 

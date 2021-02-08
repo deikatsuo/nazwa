@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/wrapper"
@@ -12,21 +13,37 @@ import (
 // PageDashboardOrdersCard kartu angsuran
 func PageDashboardOrdersCard(c *gin.Context) {
 	// id order
-	oid, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		Page404(c)
-		return
-	}
+	//oid, err := strconv.Atoi(c.Param("id"))
+	//if err != nil {
+	//	Page404(c)
+	//	return
+	//}
 
-	var order wrapper.Order
-	if o, err := dbquery.OrderGetOrderByID(oid); err == nil {
-		order = o
+	qid := c.QueryArray("ids")
+	var failsParse []string
+	var failsFetch []string
+
+	var orders []wrapper.Order
+	for _, soid := range qid {
+		if oid, err := strconv.Atoi(soid); err == nil {
+			if o, err := dbquery.OrderGetOrderByID(oid); err == nil {
+				orders = append(orders, o)
+			} else {
+				failsFetch = append(failsFetch, fmt.Sprintf("ID %d %s", oid, err.Error()))
+			}
+		} else {
+			failsParse = append(failsParse, fmt.Sprintf("ID %s %s", soid, err.Error()))
+		}
 	}
 
 	gh := gin.H{
-		"site_title": "Kode " + order.Code,
+		"site_title": "Kartu Tagihan",
 		"page":       "orders_card",
-		"order":      order,
+		"orders":     orders,
+		"fails": map[string]interface{}{
+			"parse": failsParse,
+			"fetch": failsFetch,
+		},
 	}
 
 	df := c.MustGet("dashboard").(map[string]interface{})

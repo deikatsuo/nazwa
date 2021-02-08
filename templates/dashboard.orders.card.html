@@ -61,11 +61,9 @@
   <body>
     <div x-data="card()" class="w-full" x-init="initPrinter()">
       <div style="text-align: center">
-        <div id="installedPrinters">
+        <div>
           <label for="PrinterName">Pilih printer secara manual:</label>
-          <select
-            x-model="selectedPrinter"
-          >
+          <select x-model="selectedPrinter">
             <option>Default</option>
             <template x-if="clientPrinters !== null">
               <template x-for="n in clientPrinters" :key="n">
@@ -73,230 +71,242 @@
               </template>
             </template>
           </select>
+          <span class="block text-gray-500" x-show="lastPrinter != ''">
+            Printer terakhir:
+            <b
+              x-text="lastPrinter"
+              :class="{'text-red-500': removeLastPrinter }"
+              class="cursor-pointer"
+              @contextmenu.prevent="removeLastPrinter = true;"
+              @dblclick="if (removeLastPrinter) { setLastPrinter(''); }"
+            ></b>
+          </span>
         </div>
       </div>
 
-      <div class="w-full relative lg:flex lg:items-center lg:justify-center">
-        <div x-show="order.ID == 0">Tidak dapat membuat kartu angsuran</div>
-        <div
-          x-show="order.ID > 0"
-          class="m-5 flex flex-wrap content-center items-center paper"
-          style="width: 210mm; height: 170mm"
-        >
-          <div class="p-5 w-full" :id="order.Code">
-            <div class="border border-gray-700 w-full">
-              <div class="w-full relative text-center font-semibold">
-                <span
-                  class="pt-2 block text-2xl font-extrabold tracking-wider"
-                  style="font-family: 'Lapica'"
-                  >CV.NAZWA ELEKTRONIK & FURNITURE</span
-                >
-                <div class="leading-4">
-                  <p class="text-sm">
-                    Jalan Raya Cihaur - Bojongsari - Jampangkulon 43178
-                  </p>
-                  <p class="text-sm tracking-tighter">
-                    Telp. 0858-6355-5270 / 0815-6346-5840
-                  </p>
-                  <p class="text-sm tracking-tighter">
-                    website
-                    <a
-                      href="https://cvnazwa.com"
-                      class="text-blue-500 underline"
-                      >https://cvnazwa.com</a
-                    >
-                  </p>
-                  <div class="w-32 h-20 top-0 absolute ml-2">
-                    <img
-                      src="/assets/img/logo.png"
-                      class="object-cover w-full h-full"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div
-                class="w-full flex flex-row text-left px-4 py-2 text-sm leading-5"
-              >
-                <div class="w-2/4">
-                  <table class="w-full table-fixed">
-                    <tr>
-                      <th class="w-2/6 align-top">Nama</th>
-                      <td class="capitalize flex flex-wrap">
-                        <span>:</span
-                        ><span
-                          style="width: 98%"
-                          class="pl-1"
-                          x-text="`${order.Customer.Name} (${order.Customer.Code})`"
-                        ></span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th class="align-top">Kode Transaksi</th>
-                      <td>
-                        <span>:</span
-                        ><span
-                          style="width: 98%"
-                          class="pl-1"
-                          x-text="`${order.Code}`"
-                        ></span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th class="align-top">Alamat</th>
-                      <td>
-                        <span>:</span
-                        ><span
-                          style="width: 98%"
-                          class="pl-1"
-                          x-text="`${order.BillingAddress.Name}`"
-                        ></span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th class="align-top">Tanggal Kirim</th>
-                      <td>
-                        <span>:</span
-                        ><span
-                          style="width: 98%"
-                          class="pl-1"
-                          x-text="`${orderDate()}`"
-                        ></span>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-                <div class="w-2/4">
-                  <table class="w-full table-fixed">
-                    <tr>
-                      <th class="w-2/6 align-top">Harga Total</th>
-                      <td>
-                        <span>:</span
-                        ><span
-                          style="width: 98%"
-                          class="pl-1"
-                          x-text="`${toRupiah(order.PriceTotal)} ${deposite()}`"
-                        ></span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th class="w-2/6 align-top">Lama Angsuran</th>
-                      <td>
-                        <span>:</span
-                        ><span
-                          style="width: 98%"
-                          class="pl-1"
-                          x-text="`${toRupiah(order.CreditDetail.Monthly)} x ${order.CreditDetail.Duration} bulan`"
-                        ></span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th class="w-2/6 align-top">Barang</th>
-                      <td>
-                        <template x-if="order.Items !== null">
-                          <template
-                            x-for="(item, idx) in order.Items"
-                            :key="idx"
-                          >
-                            <div class="flex item-center text-sm">
-                              :&nbsp;
-                              <p
-                                class="text-sm text-gray-600 dark:text-gray-400"
-                                x-text="`[${item.Quantity}x ${item.Product.Name}]`"
-                              ></p>
-                              <p
-                                class="pr-1"
-                                x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
-                              >
-                                ,
-                              </p>
-                              <p
-                                class="px-1"
-                                x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
-                              >
-                                dan
-                              </p>
-                            </div>
-                          </template>
-                        </template>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-              <div
-                class="w-full flex flex-wrap justify-center px-1 pt-1"
-                style="height: 50%"
-              >
-                <template
-                  x-for="(i, k) in order.CreditDetail.Duration"
-                  :key="k"
-                >
-                  <div class="w-1/5 p-1">
-                    <div
-                      class="w-full border border-gray-700 h-full p-1 text-xs text-left items-start justify-start"
-                    >
-                      <table class="w-full">
-                        <tr class="border-b border-gray-700">
-                          <th class="w-1/5">Ke</th>
-                          <td>:</td>
-                        </tr>
-                        <tr class="border-b border-gray-700">
-                          <th>Tgl</th>
-                          <td>:</td>
-                        </tr>
-                        <tr
-                          :class="{'border-b border-gray-700': order.CreditDetail.Duration <= 15}"
-                        >
-                          <th>Uang</th>
-                          <td>:</td>
-                        </tr>
-                        <tr x-show="order.CreditDetail.Duration <= 15">
-                          <th>TTD</th>
-                          <td>:</td>
-                        </tr>
-                      </table>
+      <template x-if="orders !== null" x-for="order in orders" :key="order.ID">
+        <div class="w-full relative lg:flex lg:items-center lg:justify-center">
+          <div x-show="order.ID == 0">Tidak dapat membuat kartu angsuran</div>
+          <div
+            x-show="order.ID > 0"
+            class="m-5 flex flex-wrap content-center items-center paper"
+            style="width: 210mm; height: 170mm"
+          >
+            <div class="p-5 w-full" :id="order.Code">
+              <div class="border border-gray-700 w-full">
+                <div class="w-full relative text-center font-semibold">
+                  <span
+                    class="pt-2 block text-2xl font-extrabold tracking-wider"
+                    style="font-family: 'Lapica'"
+                    >CV.NAZWA ELEKTRONIK & FURNITURE</span
+                  >
+                  <div class="leading-4">
+                    <p class="text-sm">
+                      Jalan Raya Cihaur - Bojongsari - Jampangkulon 43178
+                    </p>
+                    <p class="text-sm tracking-tighter">
+                      Telp. 0858-6355-5270 / 0815-6346-5840
+                    </p>
+                    <p class="text-sm tracking-tighter">
+                      website
+                      <a
+                        href="https://cvnazwa.com"
+                        class="text-blue-500 underline"
+                        >https://cvnazwa.com</a
+                      >
+                    </p>
+                    <div class="w-32 h-20 top-0 absolute ml-2">
+                      <img
+                        src="/assets/img/logo.png"
+                        class="object-cover w-full h-full"
+                        loading="lazy"
+                      />
                     </div>
                   </div>
-                </template>
-              </div>
-              <div class="w-full flex flex-wrap pb-2">
-                <div class="w-4/5 text-left text-xs pl-2">
-                  <table class="w-full">
-                    <tr>
-                      <th>Keterangan</th>
-                      <td class="text-gray-500 font-semibold">
-                        <ul>
-                          <li>
-                            Angsuran harus tepat pada waktunya sesuai nominal
-                            tertera
-                          </li>
-                          <li>
-                            Kartu dan Kwitansi resmi saat transaksi tidak boleh
-                            hilang
-                          </li>
-                          <li>
-                            Lakukan transaksi kepada petugas resmi Nazwa
-                            Elektronik & Furniture
-                          </li>
-                          <li>
-                            Jika ada pertanyaan silahkan hubungi nomor yang
-                            tertera diatas kartu ini
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-                  </table>
                 </div>
-                <div class="w-1/5 text-center">
-                  <span class="block pb-6">Hormat Kami,</span>
-                  <span class="block">Upen Supendi</span>
+                <div
+                  class="w-full flex flex-row text-left px-4 py-2 text-sm leading-5"
+                >
+                  <div class="w-2/4">
+                    <table class="w-full table-fixed">
+                      <tr>
+                        <th class="w-2/6 align-top">Nama</th>
+                        <td class="capitalize flex flex-wrap">
+                          <span>:</span
+                          ><span
+                            style="width: 98%"
+                            class="pl-1"
+                            x-text="`${order.Customer.Name} (${order.Customer.Code})`"
+                          ></span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th class="align-top">Kode Transaksi</th>
+                        <td>
+                          <span>:</span
+                          ><span
+                            style="width: 98%"
+                            class="pl-1"
+                            x-text="`${order.Code}`"
+                          ></span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th class="align-top">Alamat</th>
+                        <td>
+                          <span>:</span
+                          ><span
+                            style="width: 98%"
+                            class="pl-1"
+                            x-text="`${order.BillingAddress.Name}`"
+                          ></span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th class="align-top">Tanggal Kirim</th>
+                        <td>
+                          <span>:</span
+                          ><span
+                            style="width: 98%"
+                            class="pl-1"
+                            x-text="`${orderDate(order.ShippingDate)}`"
+                          ></span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="w-2/4">
+                    <table class="w-full table-fixed">
+                      <tr>
+                        <th class="w-2/6 align-top">Harga Total</th>
+                        <td>
+                          <span>:</span
+                          ><span
+                            style="width: 98%"
+                            class="pl-1"
+                            x-text="`${toRupiah(order.PriceTotal)} ${deposite(order.Deposite)}`"
+                          ></span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th class="w-2/6 align-top">Lama Angsuran</th>
+                        <td>
+                          <span>:</span
+                          ><span
+                            style="width: 98%"
+                            class="pl-1"
+                            x-text="`${toRupiah(order.CreditDetail.Monthly)} x ${order.CreditDetail.Duration} bulan`"
+                          ></span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th class="w-2/6 align-top">Barang</th>
+                        <td>
+                          <template x-if="order.Items !== null">
+                            <template
+                              x-for="(item, idx) in order.Items"
+                              :key="idx"
+                            >
+                              <div class="flex item-center text-sm">
+                                :&nbsp;
+                                <p
+                                  class="text-sm text-gray-600 dark:text-gray-400"
+                                  x-text="`[${item.Quantity}x ${item.Product.Name}]`"
+                                ></p>
+                                <p
+                                  class="pr-1"
+                                  x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
+                                >
+                                  ,
+                                </p>
+                                <p
+                                  class="px-1"
+                                  x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
+                                >
+                                  dan
+                                </p>
+                              </div>
+                            </template>
+                          </template>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div
+                  class="w-full flex flex-wrap justify-center px-1 pt-1"
+                  style="height: 50%"
+                >
+                  <template
+                    x-for="(i, k) in order.CreditDetail.Duration"
+                    :key="k"
+                  >
+                    <div class="w-1/5 p-1">
+                      <div
+                        class="w-full border border-gray-700 h-full p-1 text-xs text-left items-start justify-start"
+                      >
+                        <table class="w-full">
+                          <tr class="border-b border-gray-700">
+                            <th class="w-1/5">Ke</th>
+                            <td>:</td>
+                          </tr>
+                          <tr class="border-b border-gray-700">
+                            <th>Tgl</th>
+                            <td>:</td>
+                          </tr>
+                          <tr
+                            :class="{'border-b border-gray-700': order.CreditDetail.Duration <= 15}"
+                          >
+                            <th>Uang</th>
+                            <td>:</td>
+                          </tr>
+                          <tr x-show="order.CreditDetail.Duration <= 15">
+                            <th>TTD</th>
+                            <td>:</td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+                <div class="w-full flex flex-wrap pb-2">
+                  <div class="w-4/5 text-left text-xs pl-2">
+                    <table class="w-full">
+                      <tr>
+                        <th>Keterangan</th>
+                        <td class="text-gray-500 font-semibold">
+                          <ul>
+                            <li>
+                              Angsuran harus tepat pada waktunya sesuai nominal
+                              tertera
+                            </li>
+                            <li>
+                              Kartu dan Kwitansi resmi saat transaksi tidak
+                              boleh hilang
+                            </li>
+                            <li>
+                              Lakukan transaksi kepada petugas resmi Nazwa
+                              Elektronik & Furniture
+                            </li>
+                            <li>
+                              Jika ada pertanyaan silahkan hubungi nomor yang
+                              tertera diatas kartu ini
+                            </li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="w-1/5 text-center">
+                    <span class="block pb-6">Hormat Kami,</span>
+                    <span class="block">Upen Supendi</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </template>
       <div class="flex pb-5 w-full items-center content-center justify-center">
         <button
           class="inline-flex mx-auto shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
@@ -320,10 +330,17 @@
         }
       }
       function card() {
+        function getLastCardPrinter() {
+          return window.localStorage.getItem('cardPrinter')
+        }
         return {
-          order: {{ .order }},
+          orders: {{ .orders }},
+          fails: {{ .fails }},
           selectedPrinter: "",
+          lastPrinter: getLastCardPrinter(),
+          removeLastPrinter: false,
           clientPrinters: null,
+          cjp: null,
           initPrinter() {
             var _this = this;
             //WebSocket settings
@@ -336,40 +353,77 @@
                 });
               }
             };
+
+            //Create a ClientPrintJob
+            this.cpj = new JSPM.ClientPrintJob();
           },
-          deposite() {
-            if (Number(this.order.Deposit) > 0) {
-              return `(-${toRupiah(this.order.Deposit)})`;
+          setLastPrinter(printer) {
+              window.localStorage.setItem('cardPrinter', printer);
+              this.lastPrinter = printer;
+          },
+          deposite(depo) {
+            if (Number(depo) > 0) {
+              return `(-${toRupiah(depo)})`;
             } else {
               return "";
             }
           },
-          orderDate() {
-            return this.order.ShippingDate.split(" ")[0];
+          orderDate(date) {
+            return date.split(" ")[0];
           },
-          printCard($dispatch) {
-            html2canvas(document.querySelector(`#${this.order.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
-                //document.body.appendChild(canvas)
-                //Create a ClientPrintJob
-                var cpj = new JSPM.ClientPrintJob();
-                //Set Printer type (Refer to the help, there many of them!)
-                if (this.selectedPrinter == "") {
-                  cpj.clientPrinter = new JSPM.DefaultPrinter();
-                } else {
-                  cpj.clientPrinter = new JSPM.InstalledPrinter(this.selectedPrinter);
-                }
-                //Set content to print... 
+          code: null,
+          async printCard($dispatch) {
+             var _this = this;
+
+            //Set Printer type (Refer to the help, there many of them!)
+            if (this.selectedPrinter == "") {
+              if (this.lastPrinter != "") {
+                this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.lastPrinter);
+              } else {
+                this.cpj.clientPrinter = new JSPM.DefaultPrinter();
+              }
+            } else {
+              this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.selectedPrinter);
+              this.setLastPrinter(this.selectedPrinter);
+            }
+
+            /*for (i=0;i<this.orders.length;i++) {
+              html2canvas(document.querySelector(`#${this.orders[i].Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
+                document.body.appendChild(canvas)
+
+                //Set content to print...
                 var b64Prefix = "data:image/png;base64,";
                 var imgBase64DataUri = canvas.toDataURL("image/png");
                 var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
 
-                var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `${this.order.Code.replaceAll('-', '')}-PW=7.50-PH=6.png`, 1);
+                var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `${i}-PW=7.50-PH=6.png`, 1);
                 //add file to print job
-                cpj.files.push(myImageFile);
-
+                this.cpj.files.push(myImageFile);
+                
                 //Send print job to printer!
-                cpj.sendToClient();
-            });
+                this.cpj.sendToClient();
+              });
+            }
+            */
+
+            final = await Promise.all(this.orders.map((order) => {
+              return html2canvas(document.querySelector(`#${order.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
+                document.body.appendChild(canvas)
+
+                //Set content to print...
+                var b64Prefix = "data:image/png;base64,";
+                var imgBase64DataUri = canvas.toDataURL("image/png");
+                var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
+
+                var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `${order.Customer.Code}_${order.ID}_${order.Customer.Name}-PW=7.50-PH=6.png`, 1);
+                //add file to print job
+                this.cpj.files.push(myImageFile);
+              });
+            }))
+              .then(_ => {
+                //Send print job to printer!
+                this.cpj.sendToClient();
+              });
           },
         };
       }

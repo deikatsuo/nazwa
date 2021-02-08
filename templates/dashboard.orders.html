@@ -1,4 +1,4 @@
-{{ template "base" .}} 
+{{ template "base" .}}
 
 <!-- Halaman order -->
 {{ define "dashboard_orders_content" }}
@@ -141,9 +141,13 @@
 
             <td class="px-1 py-3 text-sm z-10">
               <div class="flex item-center text-sm">
-                <div>
-                  <a :href="`orders/card/${order.ID}`" target="_blank">{{ template "_svg_icon_paperclip" }}</a>
-                </div>
+                <template x-if="order.Credit">
+                  <div>
+                    <a :href="`orders/card/${order.ID}`" target="_blank"
+                      >{{ template "_svg_icon_paperclip" }}</a
+                    >
+                  </div>
+                </template>
               </div>
             </td>
           </tr>
