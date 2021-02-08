@@ -126,6 +126,7 @@ type Order struct {
 	BillingAddress  NameID
 	Status          string
 	Code            string
+	QR              []byte
 	Credit          bool
 	Notes           string
 	OrderDate       string

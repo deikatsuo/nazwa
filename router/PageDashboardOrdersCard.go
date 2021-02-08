@@ -8,17 +8,11 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/skip2/go-qrcode"
 )
 
 // PageDashboardOrdersCard kartu angsuran
 func PageDashboardOrdersCard(c *gin.Context) {
-	// id order
-	//oid, err := strconv.Atoi(c.Param("id"))
-	//if err != nil {
-	//	Page404(c)
-	//	return
-	//}
-
 	qid := c.QueryArray("ids")
 	var failsParse []string
 	var failsFetch []string
@@ -30,6 +24,12 @@ func PageDashboardOrdersCard(c *gin.Context) {
 				if !o.Credit {
 					failsFetch = append(failsFetch, fmt.Sprintf("ID %d bukan kredit", oid))
 				} else {
+					// Buat QR
+					var png []byte
+					png, err := qrcode.Encode(fmt.Sprintf("%s/check/card/%s", misc.GetEnv("SITE_URL", "").(string), o.Code), qrcode.Medium, 100)
+					if err == nil {
+						o.QR = png
+					}
 					orders = append(orders, o)
 				}
 			} else {
