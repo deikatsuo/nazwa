@@ -5,6 +5,7 @@ import (
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/wrapper"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/skip2/go-qrcode"
@@ -20,12 +21,13 @@ func PageCheckCard(c *gin.Context) {
 	}
 
 	message := ""
+	df := c.MustGet("config").(wrapper.DefaultConfig).Info
 
 	var order wrapper.Order
 	if o, err := dbquery.OrderGetOrderByCode(code); err == nil {
 		// Generate kode QR
 		var png []byte
-		png, err := qrcode.Encode(fmt.Sprintf("%s/check/card/%s", misc.GetEnv("SITE_URL", "").(string), o.Code), qrcode.Medium, 100)
+		png, err := qrcode.Encode(fmt.Sprintf("%s/check/card/%s", df["site_url"].(string), o.Code), qrcode.Medium, 100)
 		if err == nil {
 			o.QR = png
 		}
@@ -36,10 +38,10 @@ func PageCheckCard(c *gin.Context) {
 	}
 
 	gh := gin.H{
-		"site_title": "Kartu Tagihan",
+		"site_title": "Kartu Tagihan " + strings.Title(order.Customer.Name),
 		"order":      order,
 		"message":    message,
 	}
 
-	c.HTML(200, "check.card.html", gh)
+	c.HTML(200, "check.card.html", misc.Mete(df, gh))
 }
