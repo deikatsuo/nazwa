@@ -31,8 +31,7 @@
       <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
         <template x-for="(order, index) in orders" :key="order.Code">
           <tr
-            class="text-gray-700 dark:text-gray-400 cursor-pointer"
-            @click="if (selected !== order.Code) { $dispatch('modal', { tmp: order.ID, html: $refs.orderDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } }); }"
+            class="text-gray-700 dark:text-gray-400"
             @contextmenu.prevent="if (selected !== order.Code) { selected = order.Code; } else { selected = null; }"
             @dblclick="if (selected == order.Code) { deleteOrder($dispatch, order.ID); }"
             :class="{ 'hover:bg-yellow-50': selected != order.Code ,'bg-orange-300 hover:bg-orange-200': selected == order.Code }"
@@ -139,15 +138,21 @@
               </div>
             </td>
 
-            <td class="px-1 py-3 text-sm z-10">
-              <div class="flex item-center text-sm">
+            <td class="pl-1 pr-2 py-3 text-sm z-10">
+              <div class="flex text-sm justify-end">
                 <template x-if="order.Credit">
-                  <div>
-                    <a :href="`orders/card/${order.ID}`" target="_blank"
-                      >{{ template "_svg_icon_paperclip" }}</a
+                  <div class="cursor-pointer px-1">
+                    <a :href="`orders/card?ids=${order.ID}`" target="_blank"
+                      >{{ template "_svg_icon_bookopen" }}</a
                     >
                   </div>
                 </template>
+                <div class="cursor-pointer px-1">
+                  <a
+                    @click.prevent="if (selected !== order.Code) { $dispatch('modal', { tmp: order.ID, html: $refs.orderDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } }); }"
+                    >{{ template "_svg_icon_eye" }}</a
+                  >
+                </div>
               </div>
             </td>
           </tr>

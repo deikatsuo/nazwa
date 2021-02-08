@@ -27,7 +27,11 @@ func PageDashboardOrdersCard(c *gin.Context) {
 	for _, soid := range qid {
 		if oid, err := strconv.Atoi(soid); err == nil {
 			if o, err := dbquery.OrderGetOrderByID(oid); err == nil {
-				orders = append(orders, o)
+				if !o.Credit {
+					failsFetch = append(failsFetch, fmt.Sprintf("ID %d bukan kredit", oid))
+				} else {
+					orders = append(orders, o)
+				}
 			} else {
 				failsFetch = append(failsFetch, fmt.Sprintf("ID %d %s", oid, err.Error()))
 			}

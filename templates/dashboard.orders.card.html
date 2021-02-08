@@ -373,8 +373,6 @@
           },
           code: null,
           async printCard($dispatch) {
-             var _this = this;
-
             //Set Printer type (Refer to the help, there many of them!)
             if (this.selectedPrinter == "") {
               if (this.lastPrinter != "") {
@@ -387,28 +385,9 @@
               this.setLastPrinter(this.selectedPrinter);
             }
 
-            /*for (i=0;i<this.orders.length;i++) {
-              html2canvas(document.querySelector(`#${this.orders[i].Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
-                document.body.appendChild(canvas)
-
-                //Set content to print...
-                var b64Prefix = "data:image/png;base64,";
-                var imgBase64DataUri = canvas.toDataURL("image/png");
-                var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
-
-                var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `${i}-PW=7.50-PH=6.png`, 1);
-                //add file to print job
-                this.cpj.files.push(myImageFile);
-                
-                //Send print job to printer!
-                this.cpj.sendToClient();
-              });
-            }
-            */
-
             final = await Promise.all(this.orders.map((order) => {
               return html2canvas(document.querySelector(`#${order.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
-                document.body.appendChild(canvas)
+                //document.body.appendChild(canvas)
 
                 //Set content to print...
                 var b64Prefix = "data:image/png;base64,";
