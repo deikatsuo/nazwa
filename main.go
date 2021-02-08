@@ -115,6 +115,7 @@ func runServer() {
 	// Router
 	// Halaman muka
 	server.GET("/", router.PageHome)
+	server.GET("/check/card/:code", router.PageCheckCard)
 	server.GET("/product", router.PageProduct)
 	server.GET("/product/:id", router.PageProductDetail)
 	server.GET("/login", router.PageLogin)
