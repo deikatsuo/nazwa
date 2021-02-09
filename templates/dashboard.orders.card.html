@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ .site_title }} - {{ .site_name }}</title>
     <link rel="stylesheet" href="/assets/css/tailwind.optimized.css" />
+    <link rel="stylesheet" href="/assets/css/loading.css" />
     <style>
       [x-cloak] {
         display: none !important;
@@ -60,6 +61,22 @@
   </head>
   <body>
     <div x-data="card()" class="w-full" x-init="initPrinter()">
+      <template x-if="loading">
+        <div
+          class="w-full h-full fixed block top-0 left-0 bg-black opacity-75 z-50"
+        >
+          <span
+            class="text-green-500 opacity-75 my-0 mx-auto block relative w-0 h-0"
+            style="top: 42%"
+          >
+            <div class="lds-ripple">
+              <div></div>
+              <div></div>
+            </div>
+            <p x-text="loadingText"></p>
+          </span>
+        </div>
+      </template>
       <div style="text-align: center">
         <div>
           <label for="PrinterName">Pilih printer secara manual:</label>
@@ -317,7 +334,7 @@
       <div class="flex pb-5 w-full">
         <button
           class="inline-flex mx-auto shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
-          @click="printCard($dispatch)"
+          @click="loading = true; setTimeout(printCard($dispatch), 10000);"
         >
           {{ template "_svg_icon_printer" }} Print
         </button>
@@ -341,6 +358,8 @@
           return window.localStorage.getItem('cardPrinter')
         }
         return {
+          loading: false,
+          loadingText: "LOADING...",
           orders: {{ .orders }},
           fails: {{ .fails }},
           selectedPrinter: "",
@@ -379,6 +398,7 @@
             return date.split(" ")[0];
           },
           async printCard($dispatch) {
+
             //Set Printer type (Refer to the help, there many of them!)
             if (this.selectedPrinter == "") {
               if (this.lastPrinter != "") {
@@ -394,6 +414,7 @@
             final = await Promise.all(this.orders.map((order) => {
               return html2canvas(document.querySelector(`#${order.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
                 //document.body.appendChild(canvas)
+                this.loadingText = `Membuat Kartu ${order.Code}`;
 
                 //Set content to print...
                 var b64Prefix = "data:image/png;base64,";
@@ -406,8 +427,10 @@
               });
             }))
               .then(_ => {
+                this.loadingText = "LOADING...";
                 //Send print job to printer!
                 this.cpj.sendToClient();
+                this.loading = false;
               });
           },
         };
