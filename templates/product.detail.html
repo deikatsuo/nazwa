@@ -19,6 +19,8 @@
     <script src="/assets/js/alpine-magic-helper-component.js"></script>
     <script src="/assets/js/alpine.min.js" defer></script>
     <script src="/assets/js/init.js"></script>
+    <script src="/assets/js/core.js"></script>
+
     <script src="/assets/js/focus-trap.js"></script>
     {{ range $href := .js }}
     <script src="{{ $href }}"></script>
@@ -26,14 +28,17 @@
   </head>
 
   <body>
-    <div class="flex flex-col flex-1 w-full">
-      <main class="h-full pb-16 overflow-y-auto">
+
+  <!-- Navbar -->
+  {{ template "public_navbar" .}}
+
+    <div class="flex flex-col flex-1 w-full pt-24">
+      <main class="h-full pb-16 overflow-y-auto relative">
         <div class="container m-10 px-2 sm:px-6 lg:px-64 mx-auto grid">
           <!-- Title -->
           <div
             class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
-          >
-          </div>
+          ></div>
           <div>
             <div x-init="init($dispatch)" x-data="fProDetail()">
               <!-- Title -->
@@ -165,7 +170,7 @@
                 </div>
               </dl>
 
-							{{ if and (.login) (ne .user.Role "Customer") }}
+              {{ if and (.login) (ne .user.Role "Customer") }}
               <!-- Harga produk -->
               <dl class="w-full whitespace-no-wrap">
                 <div
@@ -193,7 +198,7 @@
                   ></dd>
                 </div>
               </dl>
-							{{ end }}
+              {{ end }}
 
               <!-- Harga Kredit -->
               <dl class="w-full whitespace-no-wrap">
@@ -249,8 +254,8 @@
         </div>
       </main>
 
-      {{ template "footer" .}}
-      
+      <!-- Footer -->
+      {{ template "public_footer" .}}
     </div>
   </body>
 </html>
