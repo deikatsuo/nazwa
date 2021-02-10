@@ -400,44 +400,6 @@
           orderDate(date) {
             return date.split(" ")[0];
           },
-          /*async printCard($dispatch) {
-
-            //Set Printer type (Refer to the help, there many of them!)
-            if (this.selectedPrinter == "") {
-              if (this.lastPrinter != "") {
-                this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.lastPrinter);
-              } else {
-                this.cpj.clientPrinter = new JSPM.DefaultPrinter();
-              }
-            } else {
-              this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.selectedPrinter);
-              this.setLastPrinter(this.selectedPrinter);
-            }
-
-            final = await Promise.all(this.orders.map((order) => {
-              this.loadingText = `Membuat Kartu ${order.Code}`;
-              return html2canvas(document.querySelector(`#${order.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
-                //document.body.appendChild(canvas)
-
-                //Set content to print...
-                //var b64Prefix = "data:image/png;base64,";
-                //var imgBase64DataUri = canvas.toDataURL("image/png");
-                //var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
-
-                //var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `${order.Customer.Code}_${order.ID}_${order.Customer.Name}-PW=7.50-PH=6.png`, 1);
-                //add file to print job
-                //this.cpj.files.push(myImageFile);
-              });
-            }))
-              .then(_ => {
-                this.loadingText = "LOADING...";
-                //Send print job to printer!
-                // this.cpj.sendToClient();
-                this.loading = false;
-              });
-
-          },*/
-
           async printCard($dispatch) {
             //Set Printer type (Refer to the help, there many of them!)
             if (this.selectedPrinter == "") {
