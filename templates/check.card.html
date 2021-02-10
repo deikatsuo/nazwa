@@ -184,32 +184,35 @@
                       <tr>
                         <th class="w-2/6 align-top">Barang</th>
                         <td>
-                          <template x-if="order.Items !== null">
-                            <template
-                              x-for="(item, idx) in order.Items"
-                              :key="idx"
-                            >
-                              <div class="flex item-center text-sm">
-                                :&nbsp;
-                                <p
-                                  class="text-sm text-gray-600 dark:text-gray-400"
-                                  x-text="`[${item.Quantity}x ${item.Product.Name}]`"
-                                ></p>
-                                <p
-                                  class="pr-1"
-                                  x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
-                                >
-                                  ,
-                                </p>
-                                <p
-                                  class="px-1"
-                                  x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
-                                >
-                                  dan
-                                </p>
-                              </div>
+                          <div class="flex flex-wrap">
+                            :
+                            <template x-if="order.Items !== null">
+                              <template
+                                x-for="(item, idx) in order.Items"
+                                :key="idx"
+                              >
+                                <div class="flex item-center text-sm">
+                                  &nbsp;
+                                  <p
+                                    class="text-sm text-gray-600 dark:text-gray-400"
+                                    x-text="`[${item.Quantity}x ${item.Product.Name}]`"
+                                  ></p>
+                                  <p
+                                    class="pr-1"
+                                    x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
+                                  >
+                                    ,
+                                  </p>
+                                  <p
+                                    class="px-1"
+                                    x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
+                                  >
+                                    dan
+                                  </p>
+                                </div>
+                              </template>
                             </template>
-                          </template>
+                          </div>
                         </td>
                       </tr>
                     </table>

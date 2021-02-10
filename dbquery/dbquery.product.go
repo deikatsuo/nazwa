@@ -474,3 +474,14 @@ func ProductCreditDurationExist(pid int, dur int) bool {
 
 	return false
 }
+
+// ProductCheckStock cek stok produk
+func ProductCheckStock(pid int) (int, error) {
+	db := DB
+	var stock int
+
+	query := `SELECT stock FROM "product" WHERE id=$1 LIMIT 1`
+	err := db.Get(&stock, query, pid)
+
+	return stock, err
+}

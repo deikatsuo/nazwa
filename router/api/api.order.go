@@ -233,6 +233,19 @@ func OrderCreate(c *gin.Context) {
 	var retID int
 
 	if save {
+		for _, oi := range json.OrderItems {
+			if stock, err := dbquery.ProductCheckStock(oi.ProductID); err == nil {
+				if stock < oi.Quantity {
+					message = fmt.Sprintf("stok:%d-%d", oi.ProductID, stock)
+					status = "warning"
+					save = false
+					httpStatus = http.StatusBadRequest
+				}
+			}
+		}
+	}
+
+	if save {
 		deposit, _ := strconv.Atoi(json.Deposit)
 		order := dbquery.NewOrder()
 		err := order.SetCustomer(json.Customer).

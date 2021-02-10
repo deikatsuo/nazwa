@@ -1429,8 +1429,8 @@
               if (data.status == "error") {
                 this.notifStatus = "error";
               }
-              if (data.status == "fail") {
-                this.notifStatus = "fail";
+              if (data.status == "warning") {
+                this.notifStatus = "warning";
               }
               if (data.status == "success") {
                 this.notifStatus = "success";
@@ -1496,15 +1496,31 @@
               }
 
               if (data.message) {
+                message = data.message.split(":");
+                if (message.length > 1) {
+                  minfo = message[1].split("-");
+                  pid = minfo[0];
+                  stock = minfo[1];
+                  this.selectedProducts.map((product) => {
+                    if (product.ID == pid) {
+                      $dispatch("notif", {
+                        type: this.notifStatus,
+                        message: `${product.Name} Stoknya tinggal ${stock}`,
+                      });
+                      
+                    }
+                  });
+                  return;
+                }
                 $dispatch("notif", {
                   type: this.notifStatus,
                   message: data.message,
                 });
               }
             })
-            .catch(() => {
+            .catch((error) => {
               this.loading = false;
-              console.log("Telah terjadi kesalahan");
+              console.log("Telah terjadi kesalahan " + error);
             });
         },
         searchNIK() {
