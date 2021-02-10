@@ -85,8 +85,8 @@
                   </div>
                   <div class="text-right">
                     <span
-                      class="text-xs font-semibold inline-block text-pink-600"
-                      x-text="progress()"
+                      class="text-xs font-bold inline-block text-pink-600"
+                      x-text="`${progress()}%`"
                     >
                     </span>
                   </div>
@@ -426,7 +426,6 @@
             return date.split(" ")[0];
           },
           async printCard($dispatch) {
-            this.progresses = 0;
             // Tentukan printer
             if (this.selectedPrinter == "") {
               if (this.lastPrinter != "") {
@@ -461,6 +460,7 @@
 
             this.loadingText = "LOADING...";
             this.loading = false;
+            this.progresses = 0;
 
             // Kirim signal ke printer untuk melakukan print
             this.cpj.sendToClient();
