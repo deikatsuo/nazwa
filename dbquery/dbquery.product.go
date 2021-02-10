@@ -485,3 +485,14 @@ func ProductCheckStock(pid int) (int, error) {
 
 	return stock, err
 }
+
+// ProductUpdateStock mengubah jumlah stok produk
+func ProductUpdateStock(pid, stock int) error {
+	db := DB
+	query := `UPDATE "product"
+	SET stock=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, stock, pid)
+
+	return err
+}

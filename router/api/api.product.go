@@ -405,9 +405,9 @@ func ProductShowAll(c *gin.Context) {
 
 	// Maju/Mundur
 	if direction == "next" {
-		pts.Where("ORDER BY id ASC")
+		pts.Where("ORDER BY name ASC")
 	} else if direction == "back" {
-		pts.Where("ORDER BY id DESC")
+		pts.Where("ORDER BY name DESC")
 	}
 	p, err := pts.Show()
 	if err != nil {

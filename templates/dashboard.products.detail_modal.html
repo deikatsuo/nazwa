@@ -1,0 +1,402 @@
+{{ define "dashboard_products_detail_modal" }}
+<template x-ref="productDetail">
+  <div x-init="fetchById($dispatch)" x-data="fProDetail($parent)">
+    <!-- Title -->
+    <div
+      class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+      x-text="'Kode #'+product.Code"
+    ></div>
+    <!-- Photo produk -->
+    <div
+      class="w-full h-48 flex flex-col justify-center items-center"
+      :class="{ 'mb-4': photos.length > 1 }"
+    >
+      <div class="w-full relative">
+        <!-- Slide photo -->
+        <template x-for="(photo, index) in photos" :key="index">
+          <div
+            x-show="activeSlide === index + 1"
+            class="h-48 w-full flex items-center rounded-lg"
+          >
+            <div class="relative w-full h-full">
+              <img
+                class="object-scale-down w-full h-full"
+                :src="'/file/product/'+photo.Photo"
+                alt=""
+                loading="lazy"
+              />
+              <div
+                class="absolute inset-0 shadow-inner"
+                aria-hidden="true"
+              ></div>
+            </div>
+          </div>
+        </template>
+        <!-- Prev/Next Arrows -->
+        <div class="absolute inset-0 flex" x-show="photos.length > 1">
+          <div class="flex items-center justify-start w-1/2">
+            <button
+              class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow-lg rounded-full w-12 h-12 -ml-6"
+              x-on:click="activeSlide = activeSlide === 1 ? photos.length : activeSlide - 1"
+            >
+              &#8592;
+            </button>
+          </div>
+          <div class="flex items-center justify-end w-1/2">
+            <button
+              class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow rounded-full w-12 h-12 -mr-6"
+              x-on:click="activeSlide = activeSlide === photos.length ? 1 : activeSlide + 1"
+            >
+              &#8594;
+            </button>
+          </div>
+        </div>
+        <!-- Buttons -->
+        <div
+          class="absolute w-full flex items-center justify-center px-4 mb-4"
+          x-show="photos.length > 1"
+        >
+          <template x-for="(_,index) in photos" :key="index">
+            <button
+              class="flex-1 w-4 h-2 mt-4 mx-2 rounded-full overflow-hidden transition-colors duration-200 ease-out hover:bg-teal-600 hover:shadow-lg"
+              :class="{ 
+                        'bg-orange-600': activeSlide === index + 1,
+                        'bg-teal-300': activeSlide !== index + 1 
+                      }"
+              x-on:click="activeSlide = index + 1"
+            ></button>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informasi Produk -->
+    <dl class="w-full whitespace-no-wrap">
+      <div
+        class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+      >
+        <dt class="px-3 py-3">Informasi Produk</dt>
+        <dd class="px-4 sm:px-0"></dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Nama Barang</dt>
+        <dd
+          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+          x-text="product.Name"
+        ></dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Brand</dt>
+        <dd
+          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+          x-show="product.Brand != ''"
+          x-text="product.Brand"
+        ></dd>
+        <dd
+          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+          x-show="product.Brand == ''"
+        >
+          -
+        </dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Tipe</dt>
+        <dd
+          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+          x-show="product.Type != ''"
+          x-text="product.Type"
+        ></dd>
+        <dd
+          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+          x-show="product.Type == ''"
+        >
+          -
+        </dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">
+          Tanggal Ditambahkan
+        </dt>
+        <dd
+          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+          x-text="product.CreatedAt"
+        ></dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Stok</dt>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <span
+            x-text="`${product.Stock} Unit`"
+            class="inline-block rounded-full px-3 text-xs font-semibold "
+						:class="{'bg-green-200 text-green-500': product.Stock > 100, 'bg-orange-200 text-orange-500': product.Stock > 20, 'bg-red-200 text-red-500': product.Stock < 20 }"
+          ></span>
+        </dd>
+      </div>
+    </dl>
+
+    <!-- Harga produk -->
+    <dl class="w-full whitespace-no-wrap">
+      <div
+        class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+      >
+        <dt class="px-3 py-3">Harga Produk</dt>
+        <dd class="px-4 sm:px-0"></dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Beli</dt>
+        <dd
+          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+          x-text="toRupiah(product.BasePrice)"
+        ></dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Jual</dt>
+        <dd
+          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+          x-text="toRupiah(product.Price)"
+        ></dd>
+      </div>
+    </dl>
+
+    <!-- Harga Kredit -->
+    <dl class="w-full whitespace-no-wrap">
+      <div
+        class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+      >
+        <dt class="px-3 py-3">Harga Kredit</dt>
+        <dd class="px-4 sm:px-0"></dd>
+      </div>
+      <template x-for="(credit, index) in creditPrice" :key="index">
+        <div
+          class="cursor-pointer px-4 py-1 sm:grid sm:grid-cols-2 hover:bg-green-200"
+          @dblclick="deleteCreditPrice($dispatch, credit.ID)"
+        >
+          <dt
+            class="text-sm leading-5 font-medium text-gray-500"
+            x-text="credit.Duration + ' bulan'"
+          ></dt>
+          <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+            <span
+              class="text-sm font-semibold"
+              x-text="`${toRupiah(credit.Price*credit.Duration)}`"
+            ></span>
+            <span
+              class="text-xs text-orange-500"
+              x-text="`(${toRupiah(credit.Price)} / bulan)`"
+            ></span>
+          </dd></div
+      ></template>
+      <span class="text-blue-700 dark:text-blue-400 text-sm px-4 pt-4">
+        <a
+          href="#"
+          @click="Acpo()"
+          x-text="isAcpo ? 'Batal' : 'Tambah harga kredit'"
+          :class="{ 'text-red-500': isAcpo }"
+        ></a
+      ></span>
+      <template x-if="isAcpo == true">
+        <div class="w-full px-4">
+          <label class="block text-sm">
+            <div
+              class="flex flex-wrap mt-1 relative text-gray-500 focus-within:text-purple-600"
+            >
+              <input
+                class="block rounded-none rounded-l-sm w-2/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Tenor"
+                x-model.number="addCreditPrice.duration"
+                @keydown.enter="addCp($dispatch)"
+              />
+              <input
+                class="block rounded-none w-10/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                placeholder="Cicilan per bulan"
+                x-model.number="addCreditPrice.price"
+                @keydown.enter="addCp($dispatch)"
+              />
+              <button
+                class="absolute h-full bottom-0 right-0 px-4 text-sm text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-sm active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                @click="addCp($dispatch)"
+              >
+                tambah
+              </button>
+            </div>
+          </label>
+        </div>
+      </template>
+    </dl>
+  </div>
+</template>
+<script>
+  function fProDetail($parent) {
+    return {
+      id: $parent.modalTmp,
+      addCreditPrice: {
+        duration: null,
+        price: null,
+      },
+      product: [],
+      activeSlide: 1,
+      photos: [
+        {
+          ID: 0,
+          Photo: "no-photo.png",
+        },
+      ],
+      creditPrice: [],
+      fetchById($dispatch) {
+        fetch(`/api/v1/local/product/id/${this.id}`, {
+          method: "GET",
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.error) {
+              $dispatch("notif", {
+                type: "error",
+                message: json.error,
+              });
+            }
+
+            if (json.product == null) {
+              $dispatch("notif", {
+                type: "error",
+                message:
+                  "Sepertinya telah terjadi kesalahan saat memuat data produk",
+              });
+            } else {
+              this.product = json.product;
+              if (json.product.CreditPrice != null) {
+                this.creditPrice = json.product.CreditPrice;
+              } else {
+                this.creditPrice = [];
+              }
+              if (json.product.Photos != null) {
+                this.photos = json.product.Photos;
+              } else {
+                this.photos = [
+                  {
+                    ID: 0,
+                    Photo: "no-photo.png",
+                  },
+                ];
+              }
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      isAcpo: false,
+      Acpo() {
+        this.isAcpo = !this.isAcpo;
+      },
+      addCp($dispatch) {
+        if (
+          this.addCreditPrice.duration === null ||
+          this.addCreditPrice.price === null
+        ) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Tenor atau Tagiahan perbulan tidak boleh kosong",
+          });
+          return;
+        }
+        if (
+          isNaN(this.addCreditPrice.duration) ||
+          isNaN(this.addCreditPrice.price)
+        ) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Tenor atau Tagiahan perbulan harus berupa angka",
+          });
+          return;
+        }
+        if (
+          Number(this.addCreditPrice.duration) < 1 ||
+          Number(this.addCreditPrice.price) < 1
+        ) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Tenor atau Tagiahan perbulan harus berupa angka",
+          });
+          return;
+        }
+
+        for (i = 0; i < this.creditPrice.length; i++) {
+          if (this.creditPrice[i].Duration == this.addCreditPrice.duration) {
+            $dispatch("notif", {
+              type: "error",
+              message: `Harga untuk durasi ${this.addCreditPrice.duration} bulan sudah ditambahkan`,
+            });
+            return;
+          }
+        }
+
+        fetch(`/api/v1/local/product/edit/${this.id}/add/credit_price`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.addCreditPrice),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.error) {
+              $dispatch("notif", {
+                type: "error",
+                message: data.error,
+              });
+            }
+            if (data.success) {
+              $dispatch("notif", {
+                type: "success",
+                message: data.success,
+              });
+            }
+            if (data.credit_price !== null) {
+              this.creditPrice = data.credit_price;
+            } else {
+              this.creditPrice = [];
+            }
+          })
+          .catch(() => {
+            console.log("Telah terjadi kesalahan");
+          });
+
+        this.addCreditPrice.duration = null;
+        this.addCreditPrice.price = null;
+      },
+      deleteCreditPriceData: {
+        id: null,
+      },
+      deleteCreditPrice($dispatch, cpid) {
+        this.deleteCreditPriceData.id = cpid;
+        fetch(`/api/v1/local/product/edit/${this.id}/delete/credit_price`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.deleteCreditPriceData),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.error) {
+              $dispatch("notif", {
+                type: "error",
+                message: data.error,
+              });
+            }
+            if (data.success) {
+              $dispatch("notif", {
+                type: "success",
+                message: data.success,
+              });
+            }
+            if (data.credit_price !== null) {
+              this.creditPrice = data.credit_price;
+            } else {
+              this.creditPrice = [];
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+    };
+  }
+</script>
+{{ end }}

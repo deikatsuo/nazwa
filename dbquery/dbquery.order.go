@@ -343,6 +343,13 @@ func (c *CreateOrder) Save() error {
 
 	itemInsertQuery := `INSERT INTO "order_item" (order_id, product_id, quantity, notes, base_price, price, discount) VALUES (:order_id, :product_id, :quantity, :notes, :base_price, :price, :discount)`
 	for n, i := range c.orderItems {
+		if stock, err := ProductCheckStock(i.ProductID); err == nil {
+			remainingStock := stock - i.Quantity
+			if err := ProductUpdateStock(i.ProductID, remainingStock); err != nil {
+				log.Warn("dbquery.order.go Save() mengubah stok")
+				return err
+			}
+		}
 		itemInsert = append(itemInsert, wrapper.OrderItemInsert{
 			OrderID:   tempReturnID,
 			ProductID: i.ProductID,
