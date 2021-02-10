@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" x-data="card()" x-init="initPrinter()">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -60,20 +60,23 @@
     <script src="/assets/js/html2canvas.min.js"></script>
   </head>
   <body>
-    <div x-data="card()" class="w-full" x-init="initPrinter()">
+    <div class="w-full h-screen" :class="{'overflow-hidden': loading }">
       <template x-if="loading">
         <div
-          class="w-full h-full fixed block top-0 left-0 bg-black opacity-75 z-50"
+          class="w-full h-full overflow-y-hidden overflow-x-hidden fixed block top-0 left-0 bg-black opacity-75 z-50"
         >
           <span
-            class="text-green-500 opacity-75 my-0 mx-auto block relative w-0 h-0"
+            class="w-full flex flex-wrap justify-center content-center items-center text-green-500 opacity-100 relative"
             style="top: 42%"
           >
-            <div class="lds-ripple">
+            <div class="block lds-ripple">
               <div></div>
               <div></div>
             </div>
-            <p x-text="loadingText"></p>
+            <p
+              x-text="loadingText"
+              class="w-full text-center block font-bold"
+            ></p>
           </span>
         </div>
       </template>
@@ -334,7 +337,7 @@
       <div class="flex pb-5 w-full">
         <button
           class="inline-flex mx-auto shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
-          @click="loading = true; setTimeout(printCard($dispatch), 10000);"
+          @click="loading = true; setTimeout(function() { printCard($dispatch); }, 0);"
         >
           {{ template "_svg_icon_printer" }} Print
         </button>
@@ -397,7 +400,7 @@
           orderDate(date) {
             return date.split(" ")[0];
           },
-          async printCard($dispatch) {
+          /*async printCard($dispatch) {
 
             //Set Printer type (Refer to the help, there many of them!)
             if (this.selectedPrinter == "") {
@@ -412,9 +415,56 @@
             }
 
             final = await Promise.all(this.orders.map((order) => {
+              this.loadingText = `Membuat Kartu ${order.Code}`;
               return html2canvas(document.querySelector(`#${order.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
                 //document.body.appendChild(canvas)
-                this.loadingText = `Membuat Kartu ${order.Code}`;
+
+                //Set content to print...
+                //var b64Prefix = "data:image/png;base64,";
+                //var imgBase64DataUri = canvas.toDataURL("image/png");
+                //var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
+
+                //var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `${order.Customer.Code}_${order.ID}_${order.Customer.Name}-PW=7.50-PH=6.png`, 1);
+                //add file to print job
+                //this.cpj.files.push(myImageFile);
+              });
+            }))
+              .then(_ => {
+                this.loadingText = "LOADING...";
+                //Send print job to printer!
+                // this.cpj.sendToClient();
+                this.loading = false;
+              });
+
+          },*/
+
+          async printCard($dispatch) {
+            //Set Printer type (Refer to the help, there many of them!)
+            if (this.selectedPrinter == "") {
+              if (this.lastPrinter != "") {
+                this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.lastPrinter);
+              } else {
+                this.cpj.clientPrinter = new JSPM.DefaultPrinter();
+              }
+            } else {
+              this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.selectedPrinter);
+              this.setLastPrinter(this.selectedPrinter);
+            }
+
+            /*await files.reduce(async (promise, file) => {
+              // This line will wait for the last async function to finish.
+              // The first iteration uses an already resolved Promise
+              // so, it will immediately continue.
+              await promise;
+              const contents = await fs.readFile(file, 'utf8');
+              console.log(contents);
+            }, Promise.resolve());*/
+
+            await this.orders.reduce(async (promise, order) => {
+              await promise;
+              this.loadingText = order.Code;
+              await html2canvas(document.querySelector(`#${order.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
+                //document.body.appendChild(canvas)
 
                 //Set content to print...
                 var b64Prefix = "data:image/png;base64,";
@@ -425,13 +475,14 @@
                 //add file to print job
                 this.cpj.files.push(myImageFile);
               });
-            }))
-              .then(_ => {
-                this.loadingText = "LOADING...";
-                //Send print job to printer!
-                this.cpj.sendToClient();
-                this.loading = false;
-              });
+              
+            }, Promise.resolve());
+            
+            this.loadingText = "LOADING...";
+            this.loading = false;
+            
+            //Send print job to printer!
+            this.cpj.sendToClient();
           },
         };
       }
