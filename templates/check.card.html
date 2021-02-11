@@ -226,7 +226,7 @@
                     x-for="(i, k) in order.CreditDetail.Duration"
                     :key="k"
                   >
-                    <div class="w-1/5 p-1">
+                    <div class="p-1" :class="{'w-1/2': order.CreditDetail.Duration > 4 , 'w-1/3': order.CreditDetail.Duration > 6 , 'w-1/4': order.CreditDetail.Duration > 8 ,'w-1/5': order.CreditDetail.Duration > 10 }">
                       <div
                         class="w-full border border-gray-700 h-full p-1 text-xs text-left items-start justify-start"
                       >
