@@ -198,3 +198,36 @@ type OrderCreditDetail struct {
 	Remaining     int
 	LuckyDiscount int
 }
+
+// OrderMonthlyCreditQuery kredit bulanan
+type OrderMonthlyCreditQuery struct {
+	ID      int    `db:"id"`
+	OrderID int    `db:"order_id"`
+	Code    string `db:"code"`
+	Nth     int    `db:"nth"`
+	DueDate string `db:"due_date"`
+	Notes   string `db:"notes"`
+	Done    bool   `db:"done"`
+}
+
+// OrderMonthlyCredit kredit tagihan bulanan
+type OrderMonthlyCredit struct {
+	ID      int
+	OrderID int
+	Code    string
+	Nth     int
+	DueDate string
+	Notes   string
+	Done    bool
+	Log     []OrderMonthlyCreditLogSelect
+}
+
+// OrderMonthlyCreditLogSelect log kredit bulanan
+type OrderMonthlyCreditLogSelect struct {
+	ID                   int    `db:"id"`
+	OrderMonthlyCreditID int    `db:"order_monthly_credit_id"`
+	MoneyIn              int    `db:"money_in"`
+	CreatedAt            string `db:"created_at"`
+	CreatedBy            int    `db:"created_by"`
+	CollectedBy          int    `db:"collected_by"`
+}

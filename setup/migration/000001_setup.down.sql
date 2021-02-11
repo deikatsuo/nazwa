@@ -3,10 +3,13 @@
  *  Authored by Deri Herdianto
  *  c 2020
  */
- 
 DROP TABLE IF EXISTS "schema_migrations";
 
 -- DROP tabel
+DROP TABLE IF EXISTS "log_order_monthly_credit";
+
+DROP TABLE IF EXISTS "order_monthly_credit";
+
 DROP TABLE IF EXISTS "order_credit_detail";
 
 DROP TABLE IF EXISTS "order_item";
