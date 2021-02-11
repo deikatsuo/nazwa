@@ -312,7 +312,7 @@ CREATE TABLE "order_credit_detail" (
 CREATE TABLE "order_monthly_credit" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
     "order_id" int NOT NULL,
-    "code" varchar(50) NOT NULL UNIQUE,
+    "code" varchar(20) NOT NULL UNIQUE,
     "nth" smallint NOT NULL,
     "due_date" date,
     "notes" varchar(100),

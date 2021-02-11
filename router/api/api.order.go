@@ -269,10 +269,10 @@ func OrderCreate(c *gin.Context) {
 			Save()
 
 		if err != nil {
-			log.Println("ERROR: api.order.go OrderCreate() Gagal membuat order baru")
-			log.Print(err)
+			log.Warn("ERROR: api.order.go OrderCreate() Gagal membuat order baru")
+			log.Error(err)
 			status = "error"
-			message = "Gagal membuat order"
+			message = err.Error()
 			httpStatus = http.StatusBadRequest
 		} else {
 			status = "success"

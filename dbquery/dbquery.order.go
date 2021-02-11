@@ -8,6 +8,9 @@ import (
 	"nazwa/wrapper"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/rs/xid"
 )
 
 // CreateOrder struct untuk menyimpan data order yang akan di insert
@@ -229,6 +232,13 @@ func (c *CreateOrder) Save() error {
 		c.into["shipping_date"] = ":shipping_date"
 	}
 
+	// Jika alamat penagihan kosong
+	// Maka alamat penagihan = alamat pengiriman
+	if c.BillingAddressID == 0 {
+		c.BillingAddressID = c.ShippingAddressID
+		c.into["billing_address_id"] = ":billing_address_id"
+	}
+
 	// Total keseluruhan tagihan
 	var priceTotal int
 	// Total keseluruhan harga awal barang (harga beli) sebelum profit
@@ -302,6 +312,10 @@ func (c *CreateOrder) Save() error {
 			monthly = (priceTotal - c.Deposit) / c.duration
 			monthly = int(math.Floor(float64(monthly)/1000)) * 1000
 			luckyDiscount = (priceTotal - c.Deposit) - (monthly * c.duration)
+		}
+
+		if c.Deposit > priceTotal {
+			return errors.New("Deposit lebih besar dari total harga barang, lebih baik beli cash")
 		}
 	}
 
@@ -430,6 +444,62 @@ func (c *CreateOrder) Save() error {
 	if c.Credit {
 		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, monthly, duration, due, total, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6, $7)`, tempReturnID, monthly, c.duration, c.due, total, remaining, luckyDiscount); err != nil {
 			log.Warn("dbquery.order.go Save() Insert product detail")
+			return err
+		}
+	}
+
+	// Buat kwitansi nth
+	if c.Credit {
+		var monthlyCredit []wrapper.OrderMonthlyCreditQuery
+		tm := time.Now()
+		tm2 := time.Date(tm.Year(), tm.Month(), c.due, 0, 0, 0, 0, tm.Location())
+		tm2 = tm2.AddDate(0, 1, 0)
+		if c.Deposit > 0 {
+			monthlyCredit = append(monthlyCredit, wrapper.OrderMonthlyCreditQuery{
+				OrderID: tempReturnID,
+				Code:    xid.New().String(),
+				Nth:     0,
+				DueDate: c.ShippingDate,
+			})
+		}
+		var dueDate string
+		for i := 0; i < c.duration; i++ {
+
+			if i == 0 {
+				if c.Deposit == 0 {
+					dueDate = c.ShippingDate
+				} else {
+					dueDate = fmt.Sprintf("%d-%d-%d", tm2.Year(), tm2.Month(), tm2.Day())
+				}
+			} else {
+				if c.Deposit > 0 {
+					tm2 = tm2.AddDate(0, 1, 0)
+				} else {
+					if i > 1 {
+						tm2 = tm2.AddDate(0, 1, 0)
+					}
+				}
+				dueDate = fmt.Sprintf("%d-%d-%d", tm2.Year(), tm2.Month(), tm2.Day())
+			}
+
+			monthlyCredit = append(monthlyCredit, wrapper.OrderMonthlyCreditQuery{
+				OrderID: tempReturnID,
+				Code:    xid.New().String(),
+				Nth:     i + 1,
+				DueDate: dueDate,
+			})
+		}
+
+		monthlyQuery := `INSERT INTO "order_monthly_credit" (order_id, code, nth, due_date) VALUES (:order_id, :code, :nth, :due_date)`
+
+		if rows, err := tx.NamedQuery(monthlyQuery, monthlyCredit); err == nil {
+			if err := rows.Close(); err != nil {
+				log.Warn("dbquery.order.go Save() Monthly credit closing row")
+				return err
+			}
+		} else {
+			log.Warn("dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal membuat kwitansi")
+			tx.Rollback()
 			return err
 		}
 	}
