@@ -153,6 +153,7 @@ func runServer() {
 	dashboard.GET("/orders", router.PageDashboardOrders)
 	dashboard.GET("/orders/add", router.PageDashboardOrdersAdd)
 	dashboard.GET("/orders/card", router.PageDashboardOrdersCard)
+	dashboard.GET("/orders/id/:id", router.PageDashboardOrdersID)
 	dashboard.GET("/locations", router.PageDashboardLocations)
 	dashboard.GET("/locations/zones", router.PageDashboardLocationsZones)
 	dashboard.GET("/developer", router.PageDashboardDeveloper)

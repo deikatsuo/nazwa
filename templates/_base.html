@@ -104,6 +104,10 @@
               {{ block "dashboard_orders_add_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "orders_id" }}
+              {{ block "dashboard_orders_id_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "locations" }}
               {{ block "dashboard_locations_content" .}}{{ end }}
             {{ end }}

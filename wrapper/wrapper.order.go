@@ -138,6 +138,7 @@ type Order struct {
 	PriceTotal      int
 	BasePriceTotal  int
 	CreditDetail    OrderCreditDetail
+	MonthlyCredit   []OrderMonthlyCredit
 }
 
 // NullableOrderItem item/produk yang di order
