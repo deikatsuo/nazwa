@@ -14,6 +14,11 @@ import (
 // PageDashboardOrdersCard kartu angsuran
 func PageDashboardOrdersCard(c *gin.Context) {
 	qid := c.QueryArray("ids")
+	if len(qid) == 0 {
+		Page404(c)
+		return
+	}
+
 	var failsParse []string
 	var failsFetch []string
 
