@@ -182,8 +182,10 @@
       </div>
       <template x-for="(credit, index) in creditPrice" :key="index">
         <div
-          class="cursor-pointer px-4 py-1 sm:grid sm:grid-cols-2 hover:bg-green-200"
-          @dblclick="deleteCreditPrice($dispatch, credit.ID)"
+          class="cursor-pointer px-4 py-1 sm:grid sm:grid-cols-2 select-none"
+          :class="{'hover:bg-green-200': selectedCP != credit.ID, 'bg-orange-200 hover:bg-orange-400': selectedCP == credit.ID }"
+          @dblclick="if (selectedCP == credit.ID) { deleteCreditPrice($dispatch, credit.ID) }"
+          @contextmenu.prevent="if (selectedCP != credit.ID) { selectedCP = credit.ID; } else { selectedCP = null; }"
         >
           <dt
             class="text-sm leading-5 font-medium text-gray-500"
@@ -256,6 +258,7 @@
         },
       ],
       creditPrice: [],
+      selectedCP: null,
       mpstock: false,
       vmpstock: null,
       cmpstock($dispatch) {
