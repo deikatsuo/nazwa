@@ -127,11 +127,25 @@
         <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
           <span
             x-text="`${product.Stock} Unit`"
-            class="inline-block rounded-full px-3 text-xs font-semibold "
-						:class="{'bg-green-200 text-green-500': product.Stock > 100, 'bg-orange-200 text-orange-500': product.Stock > 20, 'bg-red-200 text-red-500': product.Stock < 20 }"
+            class="inline-block rounded-full px-3 text-xs font-semibold cursor-pointer"
+            :class="{'bg-red-200 text-red-500': product.Stock <= 20, 'bg-orange-200 text-orange-500': product.Stock > 20, 'bg-green-200 text-green-500': product.Stock > 100 }"
+            @click="mpstock = !mpstock;"
           ></span>
         </dd>
       </div>
+      <template x-if="mpstock">
+        <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+          <dt class="text-sm leading-5 font-medium text-gray-500"></dt>
+          <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+            <input
+              class="block rounded-full w-full text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              placeholder="Tambah/kurangi stock: +100/-100"
+              x-model="vmpstock"
+              @keydown.enter="cmpstock($dispatch)"
+            />
+          </dd>
+        </div>
+      </template>
     </dl>
 
     <!-- Harga produk -->
@@ -242,6 +256,45 @@
         },
       ],
       creditPrice: [],
+      mpstock: false,
+      vmpstock: null,
+      cmpstock($dispatch) {
+        if (this.vmpstock == null) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Tentukan nilai stok",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/product/edit/${this.id}/update/stock?set=${this.vmpstock}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+
+            if (json.status == "success") {
+              if (this.vmpstock.substring(0, 1) == "-") {
+                this.product.Stock -= this.vmpstock.substring(1);
+              } else if (this.vmpstock.substring(0, 1) == "+") {
+                this.product.Stock += Number(this.vmpstock.substring(1));
+              } else {
+                this.product.Stock += Number(this.vmpstock);
+              }
+            }
+          })
+          .catch((err) => {
+            console.log("Error: cmpstock() " + err);
+          });
+      },
       fetchById($dispatch) {
         fetch(`/api/v1/local/product/id/${this.id}`, {
           method: "GET",

@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/contrib/sessions"
@@ -555,4 +556,72 @@ func ProductSearchByName(c *gin.Context) {
 		"error":    errMess,
 		"last":     last,
 	})
+}
+
+// ProductUpdateStock Tambah/Kurangi stok
+func ProductUpdateStock(c *gin.Context) {
+	// ID produk yang akan di update stoknya
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := "error"
+	var simpleErr map[string]interface{}
+
+	// Stock
+	setStock := strings.ReplaceAll(c.Query("set"), " ", "")
+	var newStock int
+
+	if stock, err := dbquery.ProductCheckStock(pid); err == nil {
+		// Tambah/Kurang
+		if setStock[:1] == "-" {
+			if tmpStock, err := strconv.Atoi(setStock[1:]); err == nil {
+				if tmpStock > stock {
+					message = "Tidak bisa mengurangi stok melebihi nilai stok saat ini"
+					next = false
+				} else {
+					newStock = stock - tmpStock
+				}
+			} else {
+				message = "Format pengurangan stok tidak valid"
+				next = false
+			}
+		} else {
+			if tmpStock, err := strconv.Atoi(setStock); err == nil {
+				newStock = stock + tmpStock
+			} else {
+				message = "Format penambahan stok tidak valid"
+				next = false
+			}
+		}
+
+	}
+
+	if next {
+		if err := dbquery.ProductUpdateStock(pid, newStock); err != nil {
+			log.Warn("api.product.go ProductUpdateStock() menambah/mengurangi stock stok")
+			log.Error(err)
+			message = "Gagal menambah/mengurangi stok"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Stok berhasil diperbarui"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, misc.Mete(gh, simpleErr))
 }

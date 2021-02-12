@@ -201,25 +201,31 @@ type OrderCreditDetail struct {
 
 // OrderMonthlyCreditQuery kredit bulanan
 type OrderMonthlyCreditQuery struct {
-	ID      int    `db:"id"`
-	OrderID int    `db:"order_id"`
-	Code    string `db:"code"`
-	Nth     int    `db:"nth"`
-	DueDate string `db:"due_date"`
-	Notes   string `db:"notes"`
-	Done    bool   `db:"done"`
+	ID       int    `db:"id"`
+	OrderID  int    `db:"order_id"`
+	Code     string `db:"code"`
+	Nth      int    `db:"nth"`
+	DueDate  string `db:"due_date"`
+	Paid     int    `db:"paid"`
+	Notes    string `db:"notes"`
+	Position string `db:"position"`
+	Printed  bool   `db:"printed"`
+	Done     bool   `db:"done"`
 }
 
 // OrderMonthlyCredit kredit tagihan bulanan
 type OrderMonthlyCredit struct {
-	ID      int
-	OrderID int
-	Code    string
-	Nth     int
-	DueDate string
-	Notes   string
-	Done    bool
-	Log     []OrderMonthlyCreditLogSelect
+	ID       int
+	OrderID  int
+	Code     string
+	Nth      int
+	DueDate  string
+	Paid     int
+	Notes    string
+	Position string
+	Printed  bool
+	Done     bool
+	Log      []OrderMonthlyCreditLogSelect
 }
 
 // OrderMonthlyCreditLogSelect log kredit bulanan
