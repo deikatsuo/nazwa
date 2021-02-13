@@ -13,10 +13,10 @@ import (
 func PageDashboardAccount(c *gin.Context) {
 	session := sessions.Default(c)
 	userid := session.Get("userid")
-	var addresses []wrapper.UserAddress
+	var addresses []wrapper.Address
 	if userid != nil {
 		if userid.(int) > 0 {
-			if addrs, err := dbquery.UserGetAddress(userid.(int)); err == nil {
+			if addrs, err := dbquery.AddressGetByUserID(userid.(int)); err == nil {
 				addresses = addrs
 			}
 		}

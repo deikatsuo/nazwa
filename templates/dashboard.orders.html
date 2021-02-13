@@ -160,16 +160,18 @@
               <td class="pl-1 pr-2 py-3 text-sm">
                 <div class="flex text-sm justify-end">
                   <template x-if="order.Credit">
-                    <div class="cursor-pointer px-1">
-                      <a :href="`orders/card?ids=${order.ID}`" target="_blank"
-                        >{{ template "_svg_icon_bookopen" }}</a
-                      >
-                    </div>
+                    <div class="flex">
+                      <div class="cursor-pointer px-1">
+                        <a :href="`orders/card?ids=${order.ID}`" target="_blank"
+                          >{{ template "_svg_icon_bookopen" }}</a
+                        >
+                      </div>
 
-                    <div class="cursor-pointer px-1">
-                      <a :href="`orders/receipt/${order.ID}`" target="_blank"
-                        >{{ template "_svg_icon_collection" }}</a
-                      >
+                      <div class="cursor-pointer px-1">
+                        <a :href="`orders/receipt/${order.ID}`" target="_blank"
+                          >{{ template "_svg_icon_collection" }}</a
+                        >
+                      </div>
                     </div>
                   </template>
                   <div class="cursor-pointer px-1">

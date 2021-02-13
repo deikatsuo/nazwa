@@ -443,9 +443,9 @@ func UserDeleteAddress(c *gin.Context) {
 	}
 
 	// Ambil alamat sisa jika masih ada
-	var addresses []wrapper.UserAddress
+	var addresses []wrapper.Address
 	if next {
-		em, err := dbquery.UserGetAddress(uid)
+		em, err := dbquery.AddressGetByUserID(uid)
 		if err == nil {
 			addresses = em
 		}
@@ -606,14 +606,14 @@ func UserAddAddress(c *gin.Context) {
 	success := ""
 	var simpleErr map[string]interface{}
 
-	var newAddress wrapper.UserAddressForm
+	var newAddress wrapper.AddressForm
 	if err := c.ShouldBindJSON(&newAddress); err != nil {
 		simpleErr = validation.SimpleValErrMap(err)
 		next = false
 	}
 
 	// Tambahkan alamat
-	addressInsert := wrapper.UserAddressInsert{
+	addressInsert := wrapper.AddressInsert{
 		UserID:      uid,
 		Description: newAddress.Description,
 		One:         newAddress.One,
@@ -626,7 +626,7 @@ func UserAddAddress(c *gin.Context) {
 	}
 
 	if next {
-		if err := dbquery.UserAddAddress(addressInsert); err != nil {
+		if err := dbquery.AddressAdd(addressInsert); err != nil {
 			log.Warning(err)
 			errMess = "Gagal menambahkan alamat"
 			next = false
@@ -634,9 +634,9 @@ func UserAddAddress(c *gin.Context) {
 	}
 
 	// Ambil data alamat dari database
-	var addresses []wrapper.UserAddress
+	var addresses []wrapper.Address
 	if next {
-		ph, err := dbquery.UserGetAddress(uid)
+		ph, err := dbquery.AddressGetByUserID(uid)
 		if err != nil {
 			errMess = "Gagal memuat alamat"
 		} else {
@@ -790,14 +790,6 @@ func UserShowByID(c *gin.Context) {
 
 // UserShowAddressByUserID mengambil data alamat pengguna berdasarkan ID pengguna
 func UserShowAddressByUserID(c *gin.Context) {
-	session := sessions.Default(c)
-	// User session saat ini
-	// Tolak jika yang request bukan user terdaftar
-	uid := session.Get("userid")
-	if uid == nil {
-		router.Page404(c)
-		return
-	}
 	httpStatus := http.StatusOK
 	errMess := ""
 
@@ -811,8 +803,8 @@ func UserShowAddressByUserID(c *gin.Context) {
 		errMess = "Request tidak valid"
 	}
 
-	var address []wrapper.UserAddress
-	if addr, err := dbquery.UserGetAddress(uid2); err == nil {
+	var address []wrapper.Address
+	if addr, err := dbquery.AddressGetByUserID(uid2); err == nil {
 		address = addr
 	} else {
 		httpStatus = http.StatusInternalServerError

@@ -84,11 +84,11 @@ func (u *GetUsers) Show() ([]wrapper.User, error) {
 		return []wrapper.User{}, err
 	}
 
-	var addresses []wrapper.UserAddress
+	var addresses []wrapper.Address
 	// mapping data user
 	for _, u := range user {
 
-		if addrs, err := UserGetAddress(u.ID); err == nil {
+		if addrs, err := AddressGetByUserID(u.ID); err == nil {
 			addresses = addrs
 		}
 		parse = append(parse, wrapper.User{
@@ -529,8 +529,8 @@ func UserGetByID(uid int) (wrapper.User, error) {
 		log.Println(err)
 	}
 
-	var addresses []wrapper.UserAddress
-	if addrs, err := UserGetAddress(uid); err == nil {
+	var addresses []wrapper.Address
+	if addrs, err := AddressGetByUserID(uid); err == nil {
 		addresses = addrs
 	}
 
@@ -593,47 +593,6 @@ func UserGetEmail(userid int) ([]wrapper.UserEmail, error) {
 		return []wrapper.UserEmail{}, err
 	}
 	return emails, err
-}
-
-// UserGetAddress mengambil data alamat user
-func UserGetAddress(userid int) ([]wrapper.UserAddress, error) {
-	db := DB
-	var addressesSelect []wrapper.UserAddressSelect
-	var addresses []wrapper.UserAddress
-	query := `SELECT a.id, a.user_id, a.name, a.description, a.one, a.two, a.zip, a.village_id, a.district_id, a.city_id, a.province_id, INITCAP(p.name) AS province_name, INITCAP(c.name) AS city_name, INITCAP(d.name) AS district_name, INITCAP(v.name) AS village_name
-	FROM "address" a
-	JOIN "province" p ON p.id=a.province_id
-	JOIN "city" c ON c.id=a.city_id
-	JOIN "district" d ON d.id=a.district_id
-	JOIN "village" v ON v.id=a.village_id
-	WHERE user_id=$1`
-	err := db.Select(&addressesSelect, query, userid)
-	if err != nil {
-		log.Warn("dbquery.user.go GetAddress() Tidak ada alamat ditemukan")
-		return addresses, err
-	}
-
-	for _, tmp := range addressesSelect {
-		addresses = append(addresses, wrapper.UserAddress{
-			ID:           tmp.ID,
-			UserID:       tmp.UserID,
-			Name:         tmp.Name,
-			Description:  tmp.Description.String,
-			One:          tmp.One,
-			Two:          tmp.Two.String,
-			Zip:          tmp.Zip.String,
-			Province:     tmp.Province,
-			City:         tmp.City,
-			District:     tmp.District,
-			Village:      tmp.Village,
-			ProvinceName: tmp.ProvinceName,
-			CityName:     tmp.CityName,
-			DistrictName: tmp.DistrictName,
-			VillageName:  tmp.VillageName,
-		})
-	}
-
-	return addresses, err
 }
 
 // UserGetRole mengambil role berdasarkan id
@@ -714,19 +673,6 @@ func UserAddPhone(phone string, uid int) error {
 	query := `INSERT INTO "phone" (phone, user_id) VALUES ($1, $2)`
 	_, err := db.Exec(query, phone, uid)
 	return err
-}
-
-// UserAddAddress menambahkan alamat baru
-func UserAddAddress(address wrapper.UserAddressInsert) error {
-	db := DB
-	query := `INSERT INTO "address" (user_id, name, description, one, two, zip, province_id, city_id, district_id, village_id)
-	VALUES (:user_id, :name, :description, :one, :two, :zip, :province_id, :city_id, :district_id, :village_id)`
-	_, err := db.NamedExec(query, address)
-	if err != nil {
-		log.Warn("dbquery.user.go AddAddress() Gagal menambahkan alamat")
-		return err
-	}
-	return nil
 }
 
 ///////////
