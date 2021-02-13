@@ -693,6 +693,7 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 	err := db.Get(&o, query, oid)
 	if err != nil {
 		log.Warn("dbquery.order.go OrderGetOrderByID() Select order berdasarkan ID")
+		log.Error(err)
 		return wrapper.Order{}, err
 	}
 
