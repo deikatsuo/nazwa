@@ -668,9 +668,7 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		concat_ws(' ', cb.first_name, cb.last_name) as created_by_name,
 		cb.avatar as created_by_thumb,
 		o.shipping_address_id,
-		concat_ws(', ', sad.one, sad.two) as shipping_address_name,
 		o.billing_address_id,
-		concat_ws(', ', bad.one, bad.two) as billing_address_name,
 		o.status,
 		o.credit,
 		o.notes,
@@ -713,6 +711,17 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		log.Error(err)
 	}
 
+	var shipping string
+	var billing string
+
+	if ship, err := AddressGetByID(o.ShippingAddressID); err == nil {
+		shipping = ship.String()
+	}
+
+	if bill, err := AddressGetByID(o.BillingAddressID); err == nil {
+		billing = bill.String()
+	}
+
 	order = wrapper.Order{
 		ID: o.ID,
 		Customer: wrapper.NameIDCode{
@@ -741,26 +750,20 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 			Name:      o.CreatedByName,
 			Thumbnail: o.CreatedByThumb,
 		},
-		ShippingAddress: wrapper.NameID{
-			ID:   o.ShippingAddressID,
-			Name: o.ShippingAddressName,
-		},
-		BillingAddress: wrapper.NameID{
-			ID:   int(o.BillingAddressID.Int64),
-			Name: string(o.BillingAddressName.String),
-		},
-		Status:         strings.Title(o.Status),
-		Code:           o.Code,
-		Credit:         o.Credit,
-		Notes:          o.Notes.String,
-		OrderDate:      o.OrderDate,
-		ShippingDate:   o.ShippingDate,
-		CreatedAt:      o.CreatedAt,
-		Deposit:        o.Deposit,
-		PriceTotal:     o.PriceTotal,
-		BasePriceTotal: o.BasePriceTotal,
-		Items:          items,
-		CreditDetail:   creditDetail,
+		ShippingAddress: shipping,
+		BillingAddress:  billing,
+		Status:          strings.Title(o.Status),
+		Code:            o.Code,
+		Credit:          o.Credit,
+		Notes:           o.Notes.String,
+		OrderDate:       o.OrderDate,
+		ShippingDate:    o.ShippingDate,
+		CreatedAt:       o.CreatedAt,
+		Deposit:         o.Deposit,
+		PriceTotal:      o.PriceTotal,
+		BasePriceTotal:  o.BasePriceTotal,
+		Items:           items,
+		CreditDetail:    creditDetail,
 	}
 
 	return order, nil
@@ -790,9 +793,7 @@ func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 		concat_ws(' ', cb.first_name, cb.last_name) as created_by_name,
 		cb.avatar as created_by_thumb,
 		o.shipping_address_id,
-		concat_ws(', ', sad.one, sad.two) as shipping_address_name,
 		o.billing_address_id,
-		concat_ws(', ', bad.one, bad.two) as billing_address_name,
 		o.status,
 		o.credit,
 		o.notes,
@@ -836,6 +837,17 @@ func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 		log.Error(err)
 	}
 
+	var shipping string
+	var billing string
+
+	if ship, err := AddressGetByID(o.ShippingAddressID); err == nil {
+		shipping = ship.String()
+	}
+
+	if bill, err := AddressGetByID(o.BillingAddressID); err == nil {
+		billing = bill.String()
+	}
+
 	order = wrapper.Order{
 		ID: o.ID,
 		Customer: wrapper.NameIDCode{
@@ -864,26 +876,20 @@ func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 			Name:      o.CreatedByName,
 			Thumbnail: o.CreatedByThumb,
 		},
-		ShippingAddress: wrapper.NameID{
-			ID:   o.ShippingAddressID,
-			Name: o.ShippingAddressName,
-		},
-		BillingAddress: wrapper.NameID{
-			ID:   int(o.BillingAddressID.Int64),
-			Name: string(o.BillingAddressName.String),
-		},
-		Status:         strings.Title(o.Status),
-		Code:           o.Code,
-		Credit:         o.Credit,
-		Notes:          o.Notes.String,
-		OrderDate:      o.OrderDate,
-		ShippingDate:   o.ShippingDate,
-		CreatedAt:      o.CreatedAt,
-		Deposit:        o.Deposit,
-		PriceTotal:     o.PriceTotal,
-		BasePriceTotal: o.BasePriceTotal,
-		Items:          items,
-		CreditDetail:   creditDetail,
+		ShippingAddress: shipping,
+		BillingAddress:  billing,
+		Status:          strings.Title(o.Status),
+		Code:            o.Code,
+		Credit:          o.Credit,
+		Notes:           o.Notes.String,
+		OrderDate:       o.OrderDate,
+		ShippingDate:    o.ShippingDate,
+		CreatedAt:       o.CreatedAt,
+		Deposit:         o.Deposit,
+		PriceTotal:      o.PriceTotal,
+		BasePriceTotal:  o.BasePriceTotal,
+		Items:           items,
+		CreditDetail:    creditDetail,
 	}
 
 	return order, nil

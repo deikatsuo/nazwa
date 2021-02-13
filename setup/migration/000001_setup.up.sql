@@ -240,7 +240,7 @@ CREATE TABLE "order" (
     "collector_id" int,
     "driver_id" int,
     "shipping_address_id" int NOT NULL,
-    "billing_address_id" int,
+    "billing_address_id" int NOT NULL,
     "code" varchar(50) NOT NULL UNIQUE,
     "status" varchar(25) NOT NULL DEFAULT 'pending',
     "credit" boolean DEFAULT 'false' NOT NULL,

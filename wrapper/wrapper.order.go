@@ -78,40 +78,38 @@ type OrderUserSubstituteForm struct {
 
 // NullableOrder menampilkan data order
 type NullableOrder struct {
-	ID                  int            `db:"id"`
-	CustomerID          int            `db:"customer_id"`
-	CustomerCode        sql.NullString `db:"customer_code"`
-	CustomerName        string         `db:"customer_name"`
-	CustomerThumb       string         `db:"customer_thumb"`
-	SalesID             sql.NullInt64  `db:"sales_id"`
-	SalesName           sql.NullString `db:"sales_name"`
-	SalesThumb          sql.NullString `db:"sales_thumb"`
-	SurveyorID          sql.NullInt64  `db:"surveyor_id"`
-	SurveyorName        sql.NullString `db:"surveyor_name"`
-	SurveyorThumb       sql.NullString `db:"surveyor_thumb"`
-	CollectorID         sql.NullInt64  `db:"collector_id"`
-	CollectorName       sql.NullString `db:"collector_name"`
-	CollectorThumb      sql.NullString `db:"collector_thumb"`
-	DriverID            sql.NullInt64  `db:"driver_id"`
-	DriverName          sql.NullString `db:"driver_name"`
-	DriverThumb         sql.NullString `db:"driver_thumb"`
-	CreatedByID         int            `db:"created_by_id"`
-	CreatedByName       string         `db:"created_by_name"`
-	CreatedByThumb      string         `db:"created_by_thumb"`
-	ShippingAddressID   int            `db:"shipping_address_id"`
-	ShippingAddressName string         `db:"shipping_address_name"`
-	BillingAddressID    sql.NullInt64  `db:"billing_address_id"`
-	BillingAddressName  sql.NullString `db:"billing_address_name"`
-	Status              string         `db:"status"`
-	Code                string         `db:"code"`
-	Credit              bool           `db:"credit"`
-	Notes               sql.NullString `db:"notes"`
-	OrderDate           string         `db:"order_date"`
-	ShippingDate        string         `db:"shipping_date"`
-	CreatedAt           string         `db:"created_at"`
-	Deposit             int            `db:"deposit"`
-	PriceTotal          int            `db:"price_total"`
-	BasePriceTotal      int            `db:"base_price_total"`
+	ID                int            `db:"id"`
+	CustomerID        int            `db:"customer_id"`
+	CustomerCode      sql.NullString `db:"customer_code"`
+	CustomerName      string         `db:"customer_name"`
+	CustomerThumb     string         `db:"customer_thumb"`
+	SalesID           sql.NullInt64  `db:"sales_id"`
+	SalesName         sql.NullString `db:"sales_name"`
+	SalesThumb        sql.NullString `db:"sales_thumb"`
+	SurveyorID        sql.NullInt64  `db:"surveyor_id"`
+	SurveyorName      sql.NullString `db:"surveyor_name"`
+	SurveyorThumb     sql.NullString `db:"surveyor_thumb"`
+	CollectorID       sql.NullInt64  `db:"collector_id"`
+	CollectorName     sql.NullString `db:"collector_name"`
+	CollectorThumb    sql.NullString `db:"collector_thumb"`
+	DriverID          sql.NullInt64  `db:"driver_id"`
+	DriverName        sql.NullString `db:"driver_name"`
+	DriverThumb       sql.NullString `db:"driver_thumb"`
+	CreatedByID       int            `db:"created_by_id"`
+	CreatedByName     string         `db:"created_by_name"`
+	CreatedByThumb    string         `db:"created_by_thumb"`
+	ShippingAddressID int            `db:"shipping_address_id"`
+	BillingAddressID  int            `db:"billing_address_id"`
+	Status            string         `db:"status"`
+	Code              string         `db:"code"`
+	Credit            bool           `db:"credit"`
+	Notes             sql.NullString `db:"notes"`
+	OrderDate         string         `db:"order_date"`
+	ShippingDate      string         `db:"shipping_date"`
+	CreatedAt         string         `db:"created_at"`
+	Deposit           int            `db:"deposit"`
+	PriceTotal        int            `db:"price_total"`
+	BasePriceTotal    int            `db:"base_price_total"`
 }
 
 // Order mapping data order
@@ -122,8 +120,8 @@ type Order struct {
 	Surveyor        NameID
 	Collector       NameID
 	Driver          NameID
-	ShippingAddress NameID
-	BillingAddress  NameID
+	ShippingAddress string
+	BillingAddress  string
 	Status          string
 	Code            string
 	QR              []byte
