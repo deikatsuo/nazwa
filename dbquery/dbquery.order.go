@@ -766,128 +766,6 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 	return order, nil
 }
 
-// OrderGetOrderByIDFull ambil data order lengkap
-func OrderGetOrderByIDFull(oid int) (wrapper.Order, error) {
-	db := DB
-	var order wrapper.Order
-	var o wrapper.NullableOrder
-	query := `SELECT
-		o.id,
-		o.customer_id,
-		c.username as customer_code,
-		concat_ws(' ', c.first_name, c.last_name) as customer_name,
-		c.avatar as customer_thumb,
-		o.sales_id,
-		concat_ws(' ', sa.first_name, sa.last_name) as sales_name,
-		sa.avatar as sales_thumb,
-		o.surveyor_id,
-		concat_ws(' ', su.first_name, su.last_name) as surveyor_name,
-		su.avatar as surveyor_thumb,
-		o.collector_id,
-		concat_ws(' ', co.first_name, co.last_name) as collector_name,
-		co.avatar as collector_thumb,
-		o.created_by as created_by_id,
-		concat_ws(' ', cb.first_name, cb.last_name) as created_by_name,
-		cb.avatar as created_by_thumb,
-		o.shipping_address_id,
-		concat_ws(', ', sad.one, sad.two) as shipping_address_name,
-		o.billing_address_id,
-		concat_ws(', ', bad.one, bad.two) as billing_address_name,
-		o.status,
-		o.credit,
-		o.notes,
-		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
-		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
-		TO_CHAR(o.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
-		o.code,
-		o.deposit,
-		o.price_total,
-		o.base_price_total
-		FROM "order" o
-		LEFT JOIN "user" c ON c.id=o.customer_id
-		LEFT JOIN "user" sa ON sa.id=o.sales_id
-		LEFT JOIN "user" su ON su.id=o.surveyor_id
-		LEFT JOIN "user" co ON co.id=o.collector_id
-		LEFT JOIN "user" cb ON cb.id=o.created_by
-		LEFT JOIN "address" sad ON sad.id=o.shipping_address_id
-		LEFT JOIN "address" bad ON bad.id=o.billing_address_id
-		WHERE o.id=$1
-		LIMIT 1`
-
-	err := db.Get(&o, query, oid)
-	if err != nil {
-		log.Warn("dbquery.order.go OrderGetOrderByID() Select order berdasarkan ID")
-		return wrapper.Order{}, err
-	}
-
-	// Mengambil list item dari transaksi
-	var items []wrapper.OrderItem
-	if oi, err := OrderGetOrderItem(o.ID); err == nil {
-		items = oi
-	}
-
-	// Detail kredit
-	var creditDetail wrapper.OrderCreditDetail
-	if cd, err := OrderGetCreditInfo(o.ID); err == nil {
-		creditDetail = cd
-	} else {
-		log.Warn("dbquery.order.go OrderGetOrderByID() select credit detail")
-		log.Error(err)
-	}
-
-	order = wrapper.Order{
-		ID: o.ID,
-		Customer: wrapper.NameIDCode{
-			ID:        o.CustomerID,
-			Code:      o.CustomerCode.String,
-			Name:      o.CustomerName,
-			Thumbnail: o.CustomerThumb,
-		},
-		Sales: wrapper.NameID{
-			ID:        int(o.SalesID.Int64),
-			Name:      o.SalesName.String,
-			Thumbnail: o.SalesThumb.String,
-		},
-		Surveyor: wrapper.NameID{
-			ID:        int(o.SurveyorID.Int64),
-			Name:      o.SurveyorName.String,
-			Thumbnail: o.SurveyorThumb.String,
-		},
-		Collector: wrapper.NameID{
-			ID:        int(o.CollectorID.Int64),
-			Name:      o.CollectorName.String,
-			Thumbnail: o.CollectorThumb.String,
-		},
-		CreatedBy: wrapper.NameID{
-			ID:        o.CreatedByID,
-			Name:      o.CreatedByName,
-			Thumbnail: o.CreatedByThumb,
-		},
-		ShippingAddress: wrapper.NameID{
-			ID:   o.ShippingAddressID,
-			Name: o.ShippingAddressName,
-		},
-		BillingAddress: wrapper.NameID{
-			ID:   int(o.BillingAddressID.Int64),
-			Name: string(o.BillingAddressName.String),
-		},
-		Status:         strings.Title(o.Status),
-		Code:           o.Code,
-		Credit:         o.Credit,
-		Notes:          o.Notes.String,
-		OrderDate:      o.OrderDate,
-		ShippingDate:   o.ShippingDate,
-		CreatedAt:      o.CreatedAt,
-		Deposit:        o.Deposit,
-		PriceTotal:     o.PriceTotal,
-		BasePriceTotal: o.BasePriceTotal,
-		Items:          items,
-		CreditDetail:   creditDetail,
-	}
-
-	return order, nil
-}
-
 // OrderGetOrderByCode ambil order berdasarkan kode
 func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 	db := DB
@@ -1124,17 +1002,22 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 
 	for _, mon := range monthlyQ {
 		var monLog []wrapper.OrderMonthlyCreditLogSelect
+		if mlog, err := OrderMonthlyCreditLog(oid); err == nil {
+			monLog = mlog
+		}
 
 		monthly = append(monthly, wrapper.OrderMonthlyCredit{
 			ID:       mon.ID,
+			OrderID:  mon.OrderID,
 			Code:     mon.Code,
 			Nth:      mon.Nth,
 			DueDate:  mon.DueDate,
 			Paid:     mon.Paid,
-			Notes:    mon.Notes,
+			Notes:    mon.Notes.String,
 			Position: mon.Position,
 			Printed:  mon.Printed,
 			Done:     mon.Done,
+			Log:      monLog,
 		})
 	}
 
@@ -1142,8 +1025,31 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 }
 
 // OrderMonthlyCreditLog credit log
-func OrderMonthlyCreditLog(mlog int) ([]wrapper.OrderMonthlyCreditLogSelect, error) {
+func OrderMonthlyCreditLog(omc int) ([]wrapper.OrderMonthlyCreditLogSelect, error) {
+	db := DB
 	var loglist []wrapper.OrderMonthlyCreditLogSelect
 
+	query := `SELECT *
+	FROM "log_order_monthly_credit"
+	WHERE order_monthly_credit_id=$1`
+
+	err := db.Select(&loglist, query, omc)
+	if err != nil {
+		return []wrapper.OrderMonthlyCreditLogSelect{}, err
+	}
+
 	return loglist, nil
+}
+
+// OrderGetCodeByID ambil kode berdasarkan ID
+func OrderGetCodeByID(oid int) (string, error) {
+	db := DB
+	var code string
+	query := `SELECT code FROM "order" WHERE id=$1`
+	err := db.Get(&code, query, oid)
+	if err != nil {
+		return code, err
+	}
+
+	return code, nil
 }

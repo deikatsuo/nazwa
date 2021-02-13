@@ -202,16 +202,16 @@ type OrderCreditDetail struct {
 
 // OrderMonthlyCreditQuery kredit bulanan
 type OrderMonthlyCreditQuery struct {
-	ID       int    `db:"id"`
-	OrderID  int    `db:"order_id"`
-	Code     string `db:"code"`
-	Nth      int    `db:"nth"`
-	DueDate  string `db:"due_date"`
-	Paid     int    `db:"paid"`
-	Notes    string `db:"notes"`
-	Position string `db:"position"`
-	Printed  bool   `db:"printed"`
-	Done     bool   `db:"done"`
+	ID       int            `db:"id"`
+	OrderID  int            `db:"order_id"`
+	Code     string         `db:"code"`
+	Nth      int            `db:"nth"`
+	DueDate  string         `db:"due_date"`
+	Paid     int            `db:"paid"`
+	Notes    sql.NullString `db:"notes"`
+	Position string         `db:"position"`
+	Printed  bool           `db:"printed"`
+	Done     bool           `db:"done"`
 }
 
 // OrderMonthlyCredit kredit tagihan bulanan
@@ -219,6 +219,7 @@ type OrderMonthlyCredit struct {
 	ID       int
 	OrderID  int
 	Code     string
+	QR       []byte
 	Nth      int
 	DueDate  string
 	Paid     int

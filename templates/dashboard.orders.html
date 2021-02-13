@@ -9,8 +9,12 @@
 </h2>
 
 <!-- Daftar Order -->
-<div x-data="OrderData()" x-init="fetchInit($watch, $dispatch)">
-  <div class="w-full mb-8 overflow-hidden sm:rounded-lg shadow-xs">
+<div
+  x-data="OrderData()"
+  x-init="fetchInit($watch, $dispatch)"
+  class="w-full mb-8 overflow-hidden sm:rounded-lg shadow-xs"
+>
+  <div>
     <div class="w-full overflow-x-auto">
       <table class="w-full whitespace-no-wrap">
         <thead>
@@ -161,9 +165,9 @@
                         >{{ template "_svg_icon_bookopen" }}</a
                       >
                     </div>
-                    
+
                     <div class="cursor-pointer px-1">
-                      <a :href="`orders/id/${order.ID}`" target="_blank"
+                      <a :href="`orders/receipt/${order.ID}`" target="_blank"
                         >{{ template "_svg_icon_collection" }}</a
                       >
                     </div>
@@ -312,7 +316,7 @@
       generateIds() {
         oids = "";
         this.checked.map((oid) => {
-          oids = `${oids}&ids=${oid}`
+          oids = `${oids}&ids=${oid}`;
         });
         return oids;
       },

@@ -172,6 +172,9 @@ module.exports = {
         '36': '36rem',
         xl: '36rem',
       },
+      padding: {
+        '30': '7.5rem',
+      },
       inset: {
         '10': '10rem',
         '20': '20rem',

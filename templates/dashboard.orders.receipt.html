@@ -1,0 +1,89 @@
+{{ template "base" .}}
+
+<!-- Halaman order id -->
+{{ define "dashboard_orders_receipt_content" }}
+<h2
+  class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-500 dark:text-gray-200"
+>
+  Order ID #{{ .code }}
+</h2>
+
+<!-- Daftar Order -->
+<div x-data="OrderReceipt()" class="w-full mb-8 overflow-hidden">
+  <div>
+    <div class="w-full overflow-x-auto overflow-y-auto">
+      <template
+        x-if="monthlyCredit !== null"
+        x-for="monthly in monthlyCredit"
+        :key="monthly.ID"
+      >
+        <div class="w-full">
+          <div class="w-full relative lg:items-center lg:justify-center">
+            <div
+              class="m-5 flex flex-wrap content-center items-center justify-center paper"
+              style="width: 240mm; height: 140mm"
+            >
+              <div class="w-full px-10" :id="monthly.Code">
+                <div class="shadow-xs">
+                  <div
+                    class="w-full flex flex-row text-left px-4 py-2 text-sm leading-5"
+                  >
+                    <div class="w-3/5 relative">
+                      <span
+                        class="pt-3 block pl-30 text-3xl font-extrabold tracking-wider"
+                        style="font-family: 'Lapica'"
+                        >NAZWA ELEKTRONIK</span
+                      >
+                      <div class="leading-4 pt-6">
+                        <p class="text-sm">
+                          Jalan Raya Cihaur - Bojongsari - Jampangkulon 43178
+                        </p>
+                        <p class="text-sm tracking-tighter">
+                          Telp. 0858-6355-5270 / 0815-6346-5840
+                        </p>
+                        <p class="text-sm tracking-tighter">
+                          website
+                          <a
+                            href="https://cvnazwa.com"
+                            class="text-blue-500 underline"
+                            >https://cvnazwa.com</a
+                          >
+                        </p>
+                        <div class="w-20 h-10 top-0 absolute ml-2 mt-1">
+                          <img
+                            src="/assets/img/logo.svg"
+                            class="object-cover w-full h-full"
+                            loading="lazy"
+                          />
+                        </div>
+                        
+                      </div>
+                    </div>
+                    <div class="w-2/5 relative">
+                      <div class="top-0 right-0 absolute">
+                          <img
+                            :src="`data:image/png;base64,${monthly.QR}`"
+                            class="object-cover w-full h-full"
+                            loading="lazy"
+                          />
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>
+
+<script>
+  function OrderReceipt() {
+    return {
+  	monthlyCredit: {{ .monthly }}
+  };
+  }
+</script>
+{{ end }}
