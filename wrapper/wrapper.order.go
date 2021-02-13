@@ -207,6 +207,7 @@ type OrderMonthlyCreditQuery struct {
 	Code     string         `db:"code"`
 	Nth      int            `db:"nth"`
 	DueDate  string         `db:"due_date"`
+	Promise  sql.NullString `db:"promise"`
 	Paid     int            `db:"paid"`
 	Notes    sql.NullString `db:"notes"`
 	Position string         `db:"position"`
@@ -216,18 +217,20 @@ type OrderMonthlyCreditQuery struct {
 
 // OrderMonthlyCredit kredit tagihan bulanan
 type OrderMonthlyCredit struct {
-	ID       int
-	OrderID  int
-	Code     string
-	QR       []byte
-	Nth      int
-	DueDate  string
-	Paid     int
-	Notes    string
-	Position string
-	Printed  bool
-	Done     bool
-	Log      []OrderMonthlyCreditLogSelect
+	ID        int
+	OrderID   int
+	Code      string
+	QR        []byte
+	Nth       int
+	DueDate   string
+	PrintDate string
+	Promise   string
+	Paid      int
+	Notes     string
+	Position  string
+	Printed   bool
+	Done      bool
+	Log       []OrderMonthlyCreditLogSelect
 }
 
 // OrderMonthlyCreditLogSelect log kredit bulanan

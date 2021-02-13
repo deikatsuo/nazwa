@@ -7,6 +7,7 @@ import (
 	"nazwa/wrapper"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/skip2/go-qrcode"
@@ -42,13 +43,25 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 		}
 	}
 
+	var order wrapper.Order
+	if next {
+		if ord, err := dbquery.OrderGetOrderByID(oid); err == nil {
+			order = ord
+		} else {
+			httpStatus = http.StatusInternalServerError
+			message = "Sepertinya telah terjadi kesalahan saat memuat data order"
+			status = "error"
+			next = false
+		}
+	}
+
 	var monthly []wrapper.OrderMonthlyCredit
 	if next {
 		if mon, err := dbquery.OrderGetMonthlyCredit(oid); err == nil {
 			monthly = mon
 		} else {
 			httpStatus = http.StatusInternalServerError
-			message = "Sepertinya telah terjadi kesalahan saat memuat data"
+			message = "Sepertinya telah terjadi kesalahan saat memuat data kredit"
 			status = "error"
 			next = false
 		}
@@ -58,8 +71,13 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 		// Buat QR
 		var png []byte
 		png, err := qrcode.Encode(fmt.Sprintf("%s/check/receipt/%s", misc.GetEnv("SITE_URL", "").(string), mon.Code), qrcode.Medium, 100)
+
+		// Tanggal sekarang
+		current := time.Now()
+
 		if err == nil {
 			monthly[i].QR = png
+			monthly[i].PrintDate = current.Format("02-01-2006")
 		}
 	}
 
@@ -70,12 +88,16 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 	gh := gin.H{
 		"site_title": "Kwitansi",
 		"monthly":    monthly,
+		"order":      order,
 		"code":       code,
 		"message":    message,
 		"status":     status,
 		"page":       "orders_receipt",
 		"css": []string{
 			"/assets/css/print.css",
+		},
+		"js": []string{
+			"/assets/js/terbilang.js",
 		},
 	}
 

@@ -606,16 +606,28 @@ func UserAddAddress(c *gin.Context) {
 	success := ""
 	var simpleErr map[string]interface{}
 
-	var newAddress wrapper.UserAddress
+	var newAddress wrapper.UserAddressForm
 	if err := c.ShouldBindJSON(&newAddress); err != nil {
 		simpleErr = validation.SimpleValErrMap(err)
 		next = false
 	}
 
 	// Tambahkan alamat
-	newAddress.UserID = uid
+	addressInsert := wrapper.UserAddressInsert{
+		UserID:      uid,
+		Description: newAddress.Description,
+		One:         newAddress.One,
+		Two:         newAddress.Two,
+		Zip:         newAddress.Zip,
+		Province:    newAddress.Province,
+		City:        newAddress.City,
+		District:    newAddress.District,
+		Village:     newAddress.Village,
+	}
+
 	if next {
-		if err := dbquery.UserAddAddress(newAddress); err != nil {
+		if err := dbquery.UserAddAddress(addressInsert); err != nil {
+			log.Warning(err)
 			errMess = "Gagal menambahkan alamat"
 			next = false
 		}

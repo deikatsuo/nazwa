@@ -79,7 +79,7 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 		code,
 		thumbnail,
 		created_by,
-		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at
+		TO_CHAR(created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at
 		FROM "product"
 		%s`
 
@@ -143,7 +143,7 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 		base_price,
 		price,
 		code,
-		TO_CHAR(created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		TO_CHAR(created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at,
 		type,
 		brand
 		FROM "product"

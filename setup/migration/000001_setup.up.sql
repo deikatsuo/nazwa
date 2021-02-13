@@ -315,6 +315,7 @@ CREATE TABLE "order_monthly_credit" (
     "code" varchar(20) NOT NULL UNIQUE,
     "nth" smallint NOT NULL,
     "due_date" date NOT NULL,
+    "promise" date,
     "paid" numeric(15) DEFAULT 0 NOT NULL,
     "notes" varchar(100),
     "position" char(3) DEFAULT 'in' NOT NULL,

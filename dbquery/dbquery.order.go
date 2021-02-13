@@ -588,8 +588,8 @@ func (p *GetOrders) Show() ([]wrapper.Order, error) {
 		o.code,
 		o.status,
 		o.credit,
-		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
-		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
+		TO_CHAR(o.order_date, 'DD/MM/YYYY HH12:MI:SS AM') AS order_date,
+		TO_CHAR(o.shipping_date, 'DD/MM/YYYY HH12:MI:SS AM') AS shipping_date,
 		o.customer_id,
 		concat_ws(' ', c.first_name, c.last_name) as customer_name,
 		c.avatar as customer_thumb
@@ -674,9 +674,9 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		o.status,
 		o.credit,
 		o.notes,
-		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
-		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
-		TO_CHAR(o.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		TO_CHAR(o.order_date, 'DD/MM/YYYY HH12:MI:SS AM') AS order_date,
+		TO_CHAR(o.shipping_date, 'DD/MM/YYYY HH12:MI:SS AM') AS shipping_date,
+		TO_CHAR(o.created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at,
 		o.code,
 		o.deposit,
 		o.price_total,
@@ -796,9 +796,9 @@ func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 		o.status,
 		o.credit,
 		o.notes,
-		TO_CHAR(o.order_date, 'MM/DD/YYYY HH12:MI:SS AM') AS order_date,
-		TO_CHAR(o.shipping_date, 'MM/DD/YYYY HH12:MI:SS AM') AS shipping_date,
-		TO_CHAR(o.created_at, 'MM/DD/YYYY HH12:MI:SS AM') AS created_at,
+		TO_CHAR(o.order_date, 'DD/MM/YYYY HH12:MI:SS AM') AS order_date,
+		TO_CHAR(o.shipping_date, 'DD/MM/YYYY HH12:MI:SS AM') AS shipping_date,
+		TO_CHAR(o.created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at,
 		o.code,
 		o.deposit,
 		o.price_total,
@@ -991,7 +991,7 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 	var monthly []wrapper.OrderMonthlyCredit
 	var monthlyQ []wrapper.OrderMonthlyCreditQuery
 
-	query := `SELECT *
+	query := `SELECT *, TO_CHAR(due_date, 'DD/MM/YYYY') AS due_date
 	FROM "order_monthly_credit"
 	WHERE order_id=$1`
 
@@ -1012,6 +1012,7 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 			Code:     mon.Code,
 			Nth:      mon.Nth,
 			DueDate:  mon.DueDate,
+			Promise:  mon.Promise.String,
 			Paid:     mon.Paid,
 			Notes:    mon.Notes.String,
 			Position: mon.Position,
