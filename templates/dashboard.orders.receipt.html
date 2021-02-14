@@ -22,7 +22,7 @@
         >
           <div
             class="relative m-5 flex flex-wrap content-center items-center paper"
-            style="width: 240mm; height: 140mm;"
+            style="width: 240mm; height: 140mm"
             @contextmenu.prevent="if (selected !== monthly.ID) { selected = monthly.ID; } else { selected = null; }"
             :class="{'bg-green-50': monthly.Done, 'bg-white': !monthly.Done, 'bg-orange-50': monthly.Printed && !monthly.Done, 'opacity-25': future(monthly.DueDate) && !monthly.Done && !monthly.Printed && selected != monthly.ID }"
           >
@@ -40,7 +40,11 @@
                 </div>
               </div>
             </template>
-            <div class="w-full px-10" :id="monthly.Code" :class="{'printed': monthly.Printed }">
+            <div
+              class="w-full px-10"
+              :id="monthly.Code"
+              :class="{'printed': monthly.Printed }"
+            >
               <div>
                 <div
                   class="w-full flex flex-row text-left px-4 py-2 text-sm leading-5"
