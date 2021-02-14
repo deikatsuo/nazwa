@@ -77,7 +77,7 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 
 		if err == nil {
 			monthly[i].QR = png
-			monthly[i].PrintDate = current.Format("02-01-2006")
+			monthly[i].PrintDate = current.Format("02/01/2006")
 		}
 	}
 

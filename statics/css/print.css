@@ -3,7 +3,6 @@
   src: url("/assets/font/otf/LaPica.otf") format("opentype");
 }
 .paper {
-  background: #fff;
   position: relative;
 }
 
@@ -36,4 +35,26 @@
   right: -5px;
   transform: rotate(1deg);
   z-index: -2;
+}
+
+.printed {
+  position: relative;
+}
+
+.printed::after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0.1;
+  background-image: url("/assets/img/printed-bg.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto;
 }

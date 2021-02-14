@@ -1000,7 +1000,7 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 
 	query := `SELECT *, TO_CHAR(due_date, 'DD/MM/YYYY') AS due_date
 	FROM "order_monthly_credit"
-	WHERE order_id=$1`
+	WHERE order_id=$1 ORDER BY nth`
 
 	err := db.Select(&monthlyQ, query, oid)
 	if err != nil {
