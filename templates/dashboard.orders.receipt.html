@@ -125,9 +125,7 @@
               :class="{'printed': monthly.Printed }"
             >
               <div class="tracking-wide font-normal font-sans">
-                <div
-                  class="w-full flex flex-row text-left px-4"
-                >
+                <div class="w-full flex flex-row text-left px-4">
                   <div class="w-3/5 relative">
                     <span
                       class="block pl-30 text-3xl font-extrabold tracking-wider"
@@ -143,9 +141,7 @@
                       </p>
                       <p class="text-base">
                         website
-                        <a
-                          href="https://cvnazwa.com"
-                          class="underline"
+                        <a href="https://cvnazwa.com" class="underline"
                           >https://cvnazwa.com</a
                         >
                       </p>
@@ -381,7 +377,7 @@
                           </tr>
                           <tr>
                             <th class="w-2/6 align-top font-normal">
-                              Sisa Setelah Bayar
+                              Sisa Habis Bayar
                             </th>
                             <td class="flex flex-wrap">
                               <span>:</span>
@@ -411,16 +407,21 @@
                         </div>
                       </template>
                     </div>
-                    <div class="w-1/5 text-center border-l border-r border-black">
+                    <div
+                      class="w-1/5 relative text-center border-l border-r border-black"
+                    >
                       <p>Tanggal Bayar</p>
                       <p>....................</p>
-                      <p>Penagih, TTD</p>
+                      <div class="absolute bottom-0 inset-x-0 mx-auto">
+                        <p>Penagih, TTD</p>
 
-                      <p
-                        x-text="order.Collector.Name"
-                        x-show="order.Collector.Name != ''"
-                      ></p>
-                      <p x-show="order.Collector.Name == ''">-</p>
+                        <p
+                          class="capitalize"
+                          x-text="order.Collector.Name"
+                          x-show="order.Collector.Name != ''"
+                        ></p>
+                        <p x-show="order.Collector.Name == ''">-</p>
+                      </div>
                     </div>
                     <div class="w-1/5 relative text-center">
                       <p class="absolute top-0 inset-x-0 mx-auto">Admin</p>

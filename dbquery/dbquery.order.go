@@ -451,7 +451,10 @@ func (c *CreateOrder) Save() error {
 	// Buat kwitansi nth
 	if c.Credit {
 		var monthlyCredit []wrapper.OrderMonthlyCreditQuery
-		tm := time.Now()
+		var tm time.Time
+		if t, err := time.Parse(time.RFC3339, c.ShippingDate+"T00:00:00.0000Z"); err == nil {
+			tm = t
+		}
 		tm2 := time.Date(tm.Year(), tm.Month(), c.due, 0, 0, 0, 0, tm.Location())
 		tm2 = tm2.AddDate(0, 1, 0)
 		if c.Deposit > 0 {
@@ -503,33 +506,6 @@ func (c *CreateOrder) Save() error {
 			return err
 		}
 	}
-
-	/*
-		if len(c.photos) > 0 {
-			for id, s := range c.photos {
-				// Set role user
-				if _, err := tx.Exec(`INSERT INTO "product_photo" (product_id, photo) VALUES ($1, $2)`, tempReturnID, s); err != nil {
-					log.Println("ERROR: product.go Save() Insert photo ID: ", id)
-					return err
-				}
-			}
-
-			if _, err := tx.Exec(`UPDATE "product" SET thumbnail=$1	WHERE id=$2`, c.photos[0], tempReturnID); err != nil {
-				log.Println("ERROR: product.go Save() Update thumbnail")
-				return err
-			}
-		}
-
-		if len(c.creditPrice) > 0 {
-			for _, cp := range c.creditPrice {
-				// Set role user
-				if _, err := tx.Exec(`INSERT INTO "product_credit_price" (product_id, duration, price) VALUES ($1, $2, $3)`, tempReturnID, cp.Duration, cp.Price); err != nil {
-					log.Println("ERROR: product.go Save() Menambahkan harga produk")
-					return err
-				}
-			}
-		}
-	*/
 
 	// Komit
 	err := tx.Commit()
