@@ -100,7 +100,7 @@
         >
           <div
             class="relative m-5 flex flex-wrap content-center items-center paper"
-            style="width: 22cm; height: 14cm"
+            style="width: 240mm; height: 155mm"
             @contextmenu.prevent="if (selected !== monthly.ID) { selected = monthly.ID; } else { selected = null; }"
             :class="{'bg-green-50': monthly.Done, 'bg-white': !monthly.Done, 'bg-orange-50': monthly.Printed && !monthly.Done, 'opacity-25': future(monthly.DueDate) && !monthly.Done && !monthly.Printed && selected != monthly.ID }"
           >
@@ -120,7 +120,7 @@
               </div>
             </template>
             <div
-              class="w-full px-4"
+              class="w-full h-full p-10 antialiased"
               :id="monthly.Code"
               :class="{'printed': monthly.Printed }"
             >
@@ -303,12 +303,12 @@
                               x-for="(item, idx) in order.Items"
                               :key="idx"
                             >
-                              <div class="inline-flex item-center text-sm">
+                              <div class="inline-flex item-center">
                                 <template x-if="monthly.Nth == 0 && idx == 0">
                                   <p class="pr-1">Deposit</p>
                                 </template>
                                 <p
-                                  class="text-sm text-black dark:text-gray-400"
+                                  class="text-black"
                                   x-text="`[${item.Quantity}x ${item.Product.Name}]`"
                                 ></p>
                                 <p
@@ -510,14 +510,14 @@
 
           this.loadingText = "Membuat kwitansi " + receipt.Code;
           await html2canvas(document.querySelector(`#${receipt.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
-            // document.body.appendChild(canvas)
+            //document.body.appendChild(canvas)
 
             // Buat file (gambar) untuk di print...
             var b64Prefix = "data:image/png;base64,";
             var imgBase64DataUri = canvas.toDataURL("image/png");
             var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
 
-            var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${this.order.Customer.Code} ${this.order.Customer.Name}-PW=8-PH=4.7.png`, 1);
+            var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${this.order.Customer.Code} ${this.order.Customer.Name}-PW=8-PH=5.png`, 1);
             // Tambahkan file ke daftar yang akan di print
             this.cpj.files.push(myImageFile);
           });
