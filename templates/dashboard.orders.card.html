@@ -20,6 +20,7 @@
     <script src="/assets/js/jspm/deflate.js"></script>
     <script src="/assets/js/jspm/JSPrintManager.js"></script>
     <script src="/assets/js/html2canvas.min.js"></script>
+    <script src="/assets/js/print.js"></script>
   </head>
   <body>
     <div class="w-full h-screen" :class="{'overflow-hidden': loading }">
@@ -68,25 +69,32 @@
       </template>
       <div style="text-align: center">
         <div>
-          <label for="PrinterName">Pilih printer secara manual:</label>
-          <select x-model="selectedPrinter">
-            <option>Default</option>
-            <template x-if="clientPrinters !== null">
-              <template x-for="n in clientPrinters" :key="n">
-                <option x-text="n" :value="n"></option>
-              </template>
-            </template>
-          </select>
-          <span class="block text-gray-500" x-show="lastPrinter != ''">
-            Printer terakhir:
-            <b
-              x-text="lastPrinter"
-              :class="{'text-red-500': removeLastPrinter }"
-              class="cursor-pointer"
-              @contextmenu.prevent="removeLastPrinter = true;"
-              @dblclick="if (removeLastPrinter) { setLastPrinter(''); }"
-            ></b>
-          </span>
+          <template x-if="printerReady()">
+            <div>
+              <label for="PrinterName">Pilih printer secara manual:</label>
+              <select x-model="selectedPrinter">
+                <option>Default</option>
+                <template x-if="clientPrinters !== null">
+                  <template x-for="n in clientPrinters" :key="n">
+                    <option x-text="n" :value="n"></option>
+                  </template>
+                </template>
+              </select>
+              <span class="block text-gray-500" x-show="lastPrinter != ''">
+                Printer terakhir:
+                <b
+                  x-text="lastPrinter"
+                  :class="{'text-red-500': removeLastPrinter }"
+                  class="cursor-pointer"
+                  @contextmenu.prevent="removeLastPrinter = true;"
+                  @dblclick="if (removeLastPrinter) { setLastPrinter(''); }"
+                ></b>
+              </span>
+            </div>
+          </template>
+          <template x-if="!printerReady()">
+            <span>Sedang mempersiapkan printer...</span>
+          </template>
         </div>
       </div>
 
@@ -215,35 +223,33 @@
                       <tr>
                         <th class="w-2/6 align-top">Barang</th>
                         <td class="flex flex-wrap">
-                          <div class="flex flex-wrap">
-                            :
-                            <template x-if="order.Items !== null">
-                              <template
-                                x-for="(item, idx) in order.Items"
-                                :key="idx"
-                              >
-                                <div class="flex item-center text-sm">
-                                  &nbsp;
-                                  <p
-                                    class="text-sm text-gray-600 dark:text-gray-400"
-                                    x-text="`[${item.Quantity}x ${item.Product.Name}]`"
-                                  ></p>
-                                  <p
-                                    class="pr-1"
-                                    x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
-                                  >
-                                    ,
-                                  </p>
-                                  <p
-                                    class="px-1"
-                                    x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
-                                  >
-                                    dan
-                                  </p>
-                                </div>
-                              </template>
+                          <span>:</span>
+                          <template x-if="order.Items !== null">
+                            <template
+                              x-for="(item, idx) in order.Items"
+                              :key="idx"
+                            >
+                              <div class="flex item-center text-sm">
+                                &nbsp;
+                                <p
+                                  class="text-sm text-gray-600 dark:text-gray-400"
+                                  x-text="`[${item.Quantity}x ${item.Product.Name}]`"
+                                ></p>
+                                <p
+                                  class="pr-1"
+                                  x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
+                                >
+                                  ,
+                                </p>
+                                <p
+                                  class="px-1"
+                                  x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
+                                >
+                                  dan
+                                </p>
+                              </div>
                             </template>
-                          </div>
+                          </template>
                         </td>
                       </tr>
                     </table>
@@ -257,7 +263,10 @@
                     x-for="(i, k) in order.CreditDetail.Duration"
                     :key="k"
                   >
-                    <div class="p-1" :class="{'w-1/2': order.CreditDetail.Duration > 4 , 'w-1/3': order.CreditDetail.Duration > 6 , 'w-1/4': order.CreditDetail.Duration > 8 ,'w-1/5': order.CreditDetail.Duration > 10 }">
+                    <div
+                      class="p-1"
+                      :class="{'w-1/2': order.CreditDetail.Duration > 4 , 'w-1/3': order.CreditDetail.Duration > 6 , 'w-1/4': order.CreditDetail.Duration > 8 ,'w-1/5': order.CreditDetail.Duration > 10 }"
+                    >
                       <div
                         class="w-full border border-gray-700 h-full p-1 text-xs text-left items-start justify-start"
                       >
@@ -325,26 +334,15 @@
       </template>
       <div class="flex pb-5 w-full">
         <button
-          class="inline-flex mx-auto shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
-          @click="loading = true; setTimeout(function() { printCard($dispatch); }, 0);"
+          class="inline-flex mx-auto shadow text-white text-sm py-2 px-5"
+          @click="if (printerReady()) { loading = true; printCard($dispatch); }"
+          :class="{'cursor-pointer bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none': printerReady(), 'bg-blue-200 cursor-default': !printerReady() }"
         >
           {{ template "_svg_icon_printer" }} Print
         </button>
       </div>
     </div>
     <script>
-      function jspmWSStatus() {
-        //Check JSPM WebSocket status
-        if (JSPM.JSPrintManager.websocket_status == JSPM.WSStatus.Open) {
-          return true;
-        } else if (JSPM.JSPrintManager.websocket_status == JSPM.WSStatus.Closed) {
-          console.warn('JSPrintManager (JSPM) is not installed or not running! Download JSPM Client App from https://neodynamic.com/downloads/jspm');
-          return false;
-        } else if (JSPM.JSPrintManager.websocket_status == JSPM.WSStatus.Blocked) {
-          alert('JSPM has blocked this website!');
-          return false;
-        }
-      }
       function card() {
         function getLastCardPrinter() {
           return window.localStorage.getItem('cardPrinter')
@@ -375,6 +373,13 @@
 
             //Create a ClientPrintJob
             this.cpj = new JSPM.ClientPrintJob();
+          },
+          printerReady() {
+            if (this.clientPrinters !== null) {
+              return true;
+            } else {
+              return false;
+            }
           },
           setLastPrinter(printer) {
               window.localStorage.setItem('cardPrinter', printer);
@@ -409,14 +414,14 @@
               this.loadingText = "Membuat kartu " + order.Code;
               this.progresses += 1;
               await html2canvas(document.querySelector(`#${order.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
-                //document.body.appendChild(canvas)
+                // document.body.appendChild(canvas)
 
                 // Buat file (gambar) untuk di print...
                 var b64Prefix = "data:image/png;base64,";
                 var imgBase64DataUri = canvas.toDataURL("image/png");
                 var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
 
-                var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `${order.Customer.Code}_${order.ID}_${order.Customer.Name}-PW=7.50-PH=6.png`, 1);
+                var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `card#${order.ID} ${order.Customer.Code} ${order.Customer.Name}-PW=7.50-PH=6.png`, 1);
                 // Tambahkan file ke daftar yang akan di print
                 this.cpj.files.push(myImageFile);
               });

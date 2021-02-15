@@ -1014,18 +1014,19 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 		}
 
 		monthly = append(monthly, wrapper.OrderMonthlyCredit{
-			ID:       mon.ID,
-			OrderID:  mon.OrderID,
-			Code:     mon.Code,
-			Nth:      mon.Nth,
-			DueDate:  mon.DueDate,
-			Promise:  mon.Promise.String,
-			Paid:     mon.Paid,
-			Notes:    mon.Notes.String,
-			Position: mon.Position,
-			Printed:  mon.Printed,
-			Done:     mon.Done,
-			Log:      monLog,
+			ID:        mon.ID,
+			OrderID:   mon.OrderID,
+			Code:      mon.Code,
+			Nth:       mon.Nth,
+			DueDate:   mon.DueDate,
+			PrintDate: mon.PrintDate.String,
+			Promise:   mon.Promise.String,
+			Paid:      mon.Paid,
+			Notes:     mon.Notes.String,
+			Position:  mon.Position,
+			Printed:   mon.Printed,
+			Done:      mon.Done,
+			Log:       monLog,
 		})
 	}
 

@@ -200,17 +200,18 @@ type OrderCreditDetail struct {
 
 // OrderMonthlyCreditQuery kredit bulanan
 type OrderMonthlyCreditQuery struct {
-	ID       int            `db:"id"`
-	OrderID  int            `db:"order_id"`
-	Code     string         `db:"code"`
-	Nth      int            `db:"nth"`
-	DueDate  string         `db:"due_date"`
-	Promise  sql.NullString `db:"promise"`
-	Paid     int            `db:"paid"`
-	Notes    sql.NullString `db:"notes"`
-	Position string         `db:"position"`
-	Printed  bool           `db:"printed"`
-	Done     bool           `db:"done"`
+	ID        int            `db:"id"`
+	OrderID   int            `db:"order_id"`
+	Code      string         `db:"code"`
+	Nth       int            `db:"nth"`
+	DueDate   string         `db:"due_date"`
+	PrintDate sql.NullString `db:"print_date"`
+	Promise   sql.NullString `db:"promise"`
+	Paid      int            `db:"paid"`
+	Notes     sql.NullString `db:"notes"`
+	Position  string         `db:"position"`
+	Printed   bool           `db:"printed"`
+	Done      bool           `db:"done"`
 }
 
 // OrderMonthlyCredit kredit tagihan bulanan

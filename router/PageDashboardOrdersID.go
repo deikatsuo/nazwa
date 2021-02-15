@@ -77,7 +77,9 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 
 		if err == nil {
 			monthly[i].QR = png
-			monthly[i].PrintDate = current.Format("02/01/2006")
+			if mon.PrintDate == "" {
+				monthly[i].PrintDate = current.Format("02/01/2006")
+			}
 		}
 	}
 
@@ -95,9 +97,16 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 		"page":       "orders_receipt",
 		"css": []string{
 			"/assets/css/print.css",
+			"/assets/css/loading.css",
 		},
 		"js": []string{
 			"/assets/js/terbilang.js",
+			"/assets/js/jspm/zip.js",
+			"/assets/js/jspm/zip-ext.js",
+			"/assets/js/jspm/deflate.js",
+			"/assets/js/jspm/JSPrintManager.js",
+			"/assets/js/html2canvas.min.js",
+			"/assets/js/print.js",
 		},
 	}
 
