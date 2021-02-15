@@ -246,11 +246,18 @@ func (c *CreateOrder) Save() error {
 
 	var prices []int
 	var basePrices []int
+	var zone int
 
 	// Periksa apakah pembelian kredit atau cash
 	// Lalu kalkulasikan
 	for _, item := range c.orderItems {
 		if c.Credit {
+			if z, err := ZoneGetIDByAddress(c.ShippingAddressID); err == nil {
+				zone = z
+			} else {
+				return errors.New("Kecamatan belum terdaftar dalam zona manapun")
+			}
+
 			// Temporary credit price
 			var tmpcp int
 			p, err := ProductGetProductCreditPrice(item.ProductID)
@@ -442,7 +449,7 @@ func (c *CreateOrder) Save() error {
 
 	// Simpan credit detail
 	if c.Credit {
-		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, monthly, duration, due, total, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6, $7)`, tempReturnID, monthly, c.duration, c.due, total, remaining, luckyDiscount); err != nil {
+		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, zone_id, monthly, duration, due, total, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`, tempReturnID, zone, monthly, c.duration, c.due, total, remaining, luckyDiscount); err != nil {
 			log.Warn("dbquery.order.go Save() Insert product detail")
 			return err
 		}
@@ -656,13 +663,16 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		o.price_total,
 		o.base_price_total
 		FROM "order" o
+		LEFT JOIN "order_credit_detail" ocd ON order_id=o.id
+		LEFT JOIN "zone" z ON z.id=ocd.zone_id
 		LEFT JOIN "user" c ON c.id=o.customer_id
 		LEFT JOIN "user" sa ON sa.id=o.sales_id
 		LEFT JOIN "user" su ON su.id=o.surveyor_id
-		LEFT JOIN "user" co ON co.id=o.collector_id
+		LEFT JOIN "user" co ON co.id=z.collector_id
 		LEFT JOIN "user" cb ON cb.id=o.created_by
 		LEFT JOIN "address" sad ON sad.id=o.shipping_address_id
 		LEFT JOIN "address" bad ON bad.id=o.billing_address_id
+		
 		WHERE o.id=$1
 		LIMIT 1`
 

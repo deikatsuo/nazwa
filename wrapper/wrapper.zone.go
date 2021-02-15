@@ -33,5 +33,5 @@ type ZoneAddListForm struct {
 
 // ZoneNewForm zona baru
 type ZoneNewForm struct {
-	Zone string `json:"zone" binding:"required,min=4,max=10"`
+	Zone string `json:"zone" binding:"required,min=4,max=25"`
 }

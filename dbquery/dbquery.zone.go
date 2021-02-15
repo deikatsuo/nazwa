@@ -151,7 +151,7 @@ func ZoneAddList(zid int, lists wrapper.ZoneAddListForm) error {
 
 /////////////////////////////////////// CHECK //
 
-// ZoneListExistsAndRet check nomor telepon
+// ZoneListExistsAndRet check zona list tersedia
 func ZoneListExistsAndRet(lid int, ret *wrapper.NameIDNameID) bool {
 	db := DB
 	var list wrapper.NameIDNameID
@@ -181,4 +181,40 @@ func ZoneNew(name string, uid int) error {
 		return err
 	}
 	return nil
+}
+
+////////////////////////////////////// GET //
+
+// ZoneGetIDByDistrict ambil id zone berdasarkan ID distrik
+func ZoneGetIDByDistrict(did int) (int, error) {
+	db := DB
+	var zid int
+
+	query := `SELECT zone_id FROM "zone_list" WHERE district_id=$1`
+
+	err := db.Get(&zid, query, did)
+
+	if err != nil {
+		return zid, err
+	}
+
+	return zid, nil
+}
+
+// ZoneGetIDByAddress ambil id zone berdasarkan ID address
+func ZoneGetIDByAddress(aid int) (int, error) {
+	db := DB
+	var zid int
+
+	query := `SELECT zl.zone_id FROM "zone_list" zl
+	LEFT JOIN "address" a ON a.id=$1
+	WHERE zl.district_id=a.district_id`
+
+	err := db.Get(&zid, query, aid)
+
+	if err != nil {
+		return zid, err
+	}
+
+	return zid, nil
 }
