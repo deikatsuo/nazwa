@@ -106,6 +106,7 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 			"/assets/js/jspm/deflate.js",
 			"/assets/js/jspm/JSPrintManager.js",
 			"/assets/js/html2canvas.min.js",
+			"/assets/js/xlsx-populate.min.js",
 			"/assets/js/print.js",
 		},
 	}

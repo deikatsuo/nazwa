@@ -63,25 +63,61 @@
       <div>
         <template x-if="printerReady()">
           <div>
-            <label for="PrinterName">Pilih printer secara manual:</label>
-            <select x-model="selectedPrinter">
-              <option>Default</option>
-              <template x-if="clientPrinters !== null">
-                <template x-for="n in clientPrinters" :key="n">
-                  <option x-text="n" :value="n"></option>
+            <!-- Pilih printer -->
+            <div>
+              <label for="PrinterName">Pilih printer secara manual:</label>
+              <select x-model="selectedPrinter">
+                <option>Default</option>
+                <template x-if="clientPrinters !== null">
+                  <template
+                    x-for="(printer, idx) in clientPrinters"
+                    :key="printer"
+                  >
+                    <option
+                      x-text="printer.name"
+                      :value="printer.name"
+                      @click="printerChange(idx);"
+                    ></option>
+                  </template>
                 </template>
-              </template>
-            </select>
-            <span class="block text-gray-500" x-show="lastPrinter != ''">
-              Printer terakhir:
-              <b
-                x-text="lastPrinter"
-                :class="{'text-red-500': removeLastPrinter }"
-                class="cursor-pointer"
-                @contextmenu.prevent="removeLastPrinter = true;"
-                @dblclick="if (removeLastPrinter) { setLastPrinter(''); }"
-              ></b>
-            </span>
+              </select>
+              <span class="block text-gray-500" x-show="lastPrinter != ''">
+                Printer terakhir:
+                <b
+                  x-text="lastPrinter"
+                  :class="{'text-red-500': removeLastPrinter }"
+                  class="cursor-pointer"
+                  @contextmenu.prevent="removeLastPrinter = true;"
+                  @dblclick="if (removeLastPrinter) { setLastPrinter(''); }"
+                ></b>
+              </span>
+            </div>
+
+            <!-- Pilih kertas -->
+            <template x-if="printerPapers !== null">
+              <div>
+                <label for="PrinterName">Ukuran kertas:</label>
+                <select x-model="selectedPaper">
+                  <option>Default</option>
+                  <template x-for="paper in printerPapers" :key="paper">
+                    <option
+                      x-text="paper"
+                      :value="paper"
+                    ></option>
+                  </template>
+                </select>
+                <span class="block text-gray-500" x-show="lastPrinter != ''">
+                  Kertas terakhir:
+                  <b
+                    x-text="lastPaper"
+                    :class="{'text-red-500': removeLastPaper }"
+                    class="cursor-pointer"
+                    @contextmenu.prevent="removeLastPaper = true;"
+                    @dblclick="if (removeLastPaper) { setLastPaper(''); }"
+                  ></b>
+                </span>
+              </div>
+            </template>
           </div>
         </template>
         <template x-if="!printerReady()">
@@ -457,6 +493,9 @@
     function getLastReceiptPrinter() {
       return window.localStorage.getItem('receiptPrinter')
     }
+    function getLastReceiptPrinterPaper() {
+      return window.localStorage.getItem('receiptPrinterPaper')
+    }
     return {
       monthlyCredit: {{ .monthly }},
       selected: null,
@@ -465,9 +504,14 @@
       order: {{ .order }},
       cjp: null,
       clientPrinters: null,
+      printerPapers: null,
       selectedPrinter: "",
+      selectedPaper: "",
       lastPrinter: getLastReceiptPrinter(),
+      lastPaper: getLastReceiptPrinterPaper(),
+      os: operatingSytem(),
       removeLastPrinter: false,
+      removeLastPaper: false,
       initPrinter() {
         var _this = this;
         //WebSocket settings
@@ -475,7 +519,7 @@
         JSPM.JSPrintManager.start();
         JSPM.JSPrintManager.WS.onStatusChanged = function () {
           if (jspmWSStatus()) {
-            JSPM.JSPrintManager.getPrinters().then(function (printersList) {
+            JSPM.JSPrintManager.getPrintersInfo().then(function (printersList) {
               _this.clientPrinters = printersList;
             });
           }
@@ -495,32 +539,97 @@
         window.localStorage.setItem('receiptPrinter', printer);
         this.lastPrinter = printer;
       },
+      setLastPaper(paper) {
+        window.localStorage.setItem('receiptPrinterPaper', paper);
+        this.lastPaper = paper;
+      },
+      printerChange(idx) {
+        this.printerPapers = this.clientPrinters[idx].papers;
+      },
       async printReceipt(receipt) {
         // Tentukan printer
+        var clientPrinter;
         if (this.selectedPrinter == "") {
           if (this.lastPrinter != "") {
-            this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.lastPrinter);
+            clientPrinter = new JSPM.InstalledPrinter(this.lastPrinter);
           } else {
-            this.cpj.clientPrinter = new JSPM.DefaultPrinter();
+            clientPrinter = new JSPM.DefaultPrinter();
           }
         } else {
-          this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.selectedPrinter);
+          clientPrinter = new JSPM.InstalledPrinter(this.selectedPrinter);
           this.setLastPrinter(this.selectedPrinter);
         }
 
-          this.loadingText = "Membuat kwitansi " + receipt.Code;
-          await html2canvas(document.querySelector(`#${receipt.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
-            //document.body.appendChild(canvas)
+        if (this.selectedPaper == "") {
+          if (this.lastPaper != "") {
+            clientPrinter.paperName = this.lastPaper;
+          }
+        } else {
+          clientPrinter.paperName = this.selectedPaper;
+          this.setLastPaper(this.selectedPaper);
+        }
 
-            // Buat file (gambar) untuk di print...
-            var b64Prefix = "data:image/png;base64,";
-            var imgBase64DataUri = canvas.toDataURL("image/png");
-            var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
+        this.cpj.clientPrinter = clientPrinter;
 
-            var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${this.order.Customer.Code} ${this.order.Customer.Name}-PW=8-PH=5.png`, 1);
-            // Tambahkan file ke daftar yang akan di print
-            this.cpj.files.push(myImageFile);
+        this.loadingText = "Membuat kwitansi " + receipt.Code;
+        /*await html2canvas(document.querySelector(`#${receipt.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
+          //document.body.appendChild(canvas)
+          
+          // Buat file (gambar) untuk di print...
+          var b64Prefix = "data:image/png;base64,";
+          var imgBase64DataUri = canvas.toDataURL("image/png");
+          var imgBase64Content = imgBase64DataUri.substring(b64Prefix.length, imgBase64DataUri.length);
+
+          var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${this.order.Customer.Code} ${this.order.Customer.Name}-PW=7.7-PH=5.5.png`, 1);
+          // Tambahkan file ke daftar yang akan di print
+          //this.cpj.files.push(myImageFile);
+        });
+        */
+
+        var _this = this;
+        await fetch(`/assets/template-receipt.xlsx`, {
+          method: "GET",
+        })
+          .then(res => {
+            console.log("step 1");
+            return res.arrayBuffer();
+          })
+          .then(async (buffer) => {
+            console.log("step 2");
+            await XlsxPopulate.fromDataAsync(buffer).then(async (workbook) => {
+              console.log("step 3");
+              if (receipt.Nth == 0) {
+                workbook.sheet("Sheet1").cell("I3").value("DEPOSIT");
+              } else {
+                workbook.sheet("Sheet1").cell("I3").value(receipt.Nth);
+              }
+              workbook.sheet("Sheet1").cell("I4").value(receipt.DueDate);
+              if (receipt.Promise == "") {
+                workbook.sheet("Sheet1").cell("I5").value("……………………………");
+              } else {
+                workbook.sheet("Sheet1").cell("I5").value(receipt.Promise);
+              }
+              workbook.sheet("Sheet1").cell("I6").value(receipt.PrintDate);
+              workbook.sheet("Sheet1").cell("I7").value(receipt.Code);
+              
+              await workbook.outputAsync("base64").then(function (base64) {
+                if (_this.os == "Windows") {
+                  var printData = new JSPM.PrintFileXLS(base64, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${_this.order.Customer.Code} ${_this.order.Customer.Name}.xlsx`, 1);
+                } else {
+                  var printData = new JSPM.PrintFile(base64, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${_this.order.Customer.Code} ${_this.order.Customer.Name}.xlsx`, 1);
+                }
+
+                //location.href = "data:" + XlsxPopulate.MIME_TYPE + ";base64," + base64;
+
+                // Tambahkan file ke daftar yang akan di print
+                console.log("step 4");
+                _this.cpj.files.push(printData);
+                console.log("step 5");
+              });
+            });
           });
+        
+        console.log("ready");
 
         this.loadingText = "LOADING...";
         this.loading = false;

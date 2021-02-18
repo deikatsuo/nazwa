@@ -164,6 +164,14 @@ SELECT
             SELECT
                 max(id) + 1 FROM "zone"), 1), FALSE);
 
+-- Tabel line/arah zona
+CREATE TABLE "zone_line" (
+    "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "code" varchar(5) UNIQUE NOT NULL,
+    "name" varchar(25) NOT NULL,
+    PRIMARY KEY (id)
+);
+
 -- Tabel list tempat yang termasuk dalam zona
 CREATE TABLE "zone_list" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
