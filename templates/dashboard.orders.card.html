@@ -357,7 +357,6 @@
           lastPrinter: getLastCardPrinter(),
           removeLastPrinter: false,
           clientPrinters: null,
-          cjp: null,
           initPrinter() {
             var _this = this;
             //WebSocket settings
@@ -371,8 +370,6 @@
               }
             };
 
-            //Create a ClientPrintJob
-            this.cpj = new JSPM.ClientPrintJob();
           },
           printerReady() {
             if (this.clientPrinters !== null) {
@@ -396,15 +393,17 @@
             return date.split(" ")[0];
           },
           async printCard($dispatch) {
+            //Create a ClientPrintJob
+            var printer = new JSPM.ClientPrintJob();
             // Tentukan printer
             if (this.selectedPrinter == "") {
               if (this.lastPrinter != "") {
-                this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.lastPrinter);
+                printer.clientPrinter = new JSPM.InstalledPrinter(this.lastPrinter);
               } else {
-                this.cpj.clientPrinter = new JSPM.DefaultPrinter();
+                printer.clientPrinter = new JSPM.DefaultPrinter();
               }
             } else {
-              this.cpj.clientPrinter = new JSPM.InstalledPrinter(this.selectedPrinter);
+              printer.clientPrinter = new JSPM.InstalledPrinter(this.selectedPrinter);
               this.setLastPrinter(this.selectedPrinter);
             }
 
@@ -423,7 +422,7 @@
 
                 var myImageFile = new JSPM.PrintFile(imgBase64Content, JSPM.FileSourceType.Base64, `card#${order.ID} ${order.Customer.Code} ${order.Customer.Name}-PW=7.50-PH=6.png`, 1);
                 // Tambahkan file ke daftar yang akan di print
-                this.cpj.files.push(myImageFile);
+                printer.files.push(myImageFile);
               });
 
             }, Promise.resolve());
@@ -433,7 +432,7 @@
             this.progresses = 0;
 
             // Kirim signal ke printer untuk melakukan print
-            this.cpj.sendToClient();
+            printer.sendToClient();
           },
           progress() {
             return Math.round((this.progresses / this.orders.length) * 100);

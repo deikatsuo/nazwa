@@ -340,9 +340,6 @@
                               :key="idx"
                             >
                               <div class="inline-flex item-center">
-                                <template x-if="monthly.Nth == 0 && idx == 0">
-                                  <p class="pr-1">Deposit</p>
-                                </template>
                                 <p
                                   class="text-black"
                                   x-text="`[${item.Quantity}x ${item.Product.Name}]`"
@@ -585,7 +582,7 @@
         */
 
         var _this = this;
-        await fetch(`/assets/01-receipt.xlsx`, {
+        await fetch(`/assets/receipt.xlsx`, {
           method: "GET",
         })
           .then(res => {
@@ -608,12 +605,19 @@
               workbook.sheet("Sheet1").cell("J7").value(receipt.Code);
               workbook.sheet("Sheet1").cell("F11").value(_this.order.Customer.Name + " (" +_this.order.Customer.Code +")");
               workbook.sheet("Sheet1").cell("F12").value(_this.order.BillingAddress);
+              if (_this.order.BillingAddress.length > 52) {
+                workbook.sheet("Sheet1").row(12).height(32);
+              }
+              
               if (receipt.Nth == 0) {
                 workbook.sheet("Sheet1").cell("F13").value(`${toRupiah(_this.order.Deposit)} ( ${terbilang(_this.order.Deposit)} )`);
               } else {
                 workbook.sheet("Sheet1").cell("F13").value(`${toRupiah(_this.order.CreditDetail.Monthly)} ( ${terbilang(_this.order.CreditDetail.Monthly)} )`);
               }
-              workbook.sheet("Sheet1").cell("F14").value("(terbayar untuk)");
+              workbook.sheet("Sheet1").cell("F14").value(await _this.getItems());
+              if (await _this.getItems().length > 52) {
+                workbook.sheet("Sheet1").row(14).height(32);
+              }
               workbook.sheet("Sheet1").cell("E16").value(`${toRupiah(_this.order.CreditDetail.Total)}`);
               workbook.sheet("Sheet1").cell("E17").value(`${toRupiah(_this.order.CreditDetail.Total-((receipt.Nth-1)*_this.order.CreditDetail.Monthly))}`);
               workbook.sheet("Sheet1").cell("E19").value(`${toRupiah(_this.order.CreditDetail.Total-((receipt.Nth-1)*_this.order.CreditDetail.Monthly)-_this.order.CreditDetail.Monthly)}`);
@@ -628,7 +632,7 @@
                   var printData = new JSPM.PrintFile(base64, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${_this.order.Customer.Code} ${_this.order.Customer.Name}.xlsx`, 1);
                 }
 
-                // location.href = "data:" + XlsxPopulate.MIME_TYPE + ";base64," + base64;
+                location.href = "data:" + XlsxPopulate.MIME_TYPE + ";base64," + base64;
 
                 // Tambahkan file ke daftar yang akan di print
                 printer.files.push(printData);
@@ -642,6 +646,20 @@
 
         // Kirim signal ke printer untuk melakukan print
         printer.sendToClient();
+      },
+      async getItems() {
+        items = "";
+        for (i=0; i<this.order.Items.length; i++) {
+          items = `${items}[${this.order.Items[i].Quantity}x ${this.order.Items[i].Product.Name}]`;
+          if (this.order.Items.length > 1 && i < (this.order.Items.length-2)) {
+            items = `${items}, `;
+          }
+          if (this.order.Items.length > 1 && i == (this.order.Items.length-2)) {
+            items = `${items} dan `;
+          }
+        }
+
+        return items;
       },
       future(due) {
         now = Date.now();
