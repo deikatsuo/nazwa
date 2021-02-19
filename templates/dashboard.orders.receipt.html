@@ -502,7 +502,6 @@
       loading: false,
       loadingText: "LOADING...",
       order: {{ .order }},
-      cjp: null,
       clientPrinters: null,
       printerPapers: null,
       selectedPrinter: "",
@@ -524,9 +523,6 @@
             });
           }
         };
-
-        //Create a ClientPrintJob
-        this.cpj = new JSPM.ClientPrintJob();
       },
       printerReady() {
         if (this.clientPrinters !== null) {
@@ -569,7 +565,9 @@
           this.setLastPaper(this.selectedPaper);
         }
 
-        this.cpj.clientPrinter = clientPrinter;
+        //Create a ClientPrintJob
+        var printer = new JSPM.ClientPrintJob();
+        printer.clientPrinter = clientPrinter;
 
         this.loadingText = "Membuat kwitansi " + receipt.Code;
         /*await html2canvas(document.querySelector(`#${receipt.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
@@ -587,55 +585,63 @@
         */
 
         var _this = this;
-        await fetch(`/assets/template-receipt.xlsx`, {
+        await fetch(`/assets/01-receipt.xlsx`, {
           method: "GET",
         })
           .then(res => {
-            console.log("step 1");
             return res.arrayBuffer();
           })
           .then(async (buffer) => {
-            console.log("step 2");
             await XlsxPopulate.fromDataAsync(buffer).then(async (workbook) => {
-              console.log("step 3");
               if (receipt.Nth == 0) {
-                workbook.sheet("Sheet1").cell("I3").value("DEPOSIT");
+                workbook.sheet("Sheet1").cell("J3").value("DEPOSIT");
               } else {
-                workbook.sheet("Sheet1").cell("I3").value(receipt.Nth);
+                workbook.sheet("Sheet1").cell("J3").value(receipt.Nth);
               }
-              workbook.sheet("Sheet1").cell("I4").value(receipt.DueDate);
+              workbook.sheet("Sheet1").cell("J4").value(receipt.DueDate);
               if (receipt.Promise == "") {
-                workbook.sheet("Sheet1").cell("I5").value("……………………………");
+                workbook.sheet("Sheet1").cell("J5").value("……………………………");
               } else {
-                workbook.sheet("Sheet1").cell("I5").value(receipt.Promise);
+                workbook.sheet("Sheet1").cell("J5").value(receipt.Promise);
               }
-              workbook.sheet("Sheet1").cell("I6").value(receipt.PrintDate);
-              workbook.sheet("Sheet1").cell("I7").value(receipt.Code);
-              
+              workbook.sheet("Sheet1").cell("J6").value(receipt.PrintDate);
+              workbook.sheet("Sheet1").cell("J7").value(receipt.Code);
+              workbook.sheet("Sheet1").cell("F11").value(_this.order.Customer.Name + " (" +_this.order.Customer.Code +")");
+              workbook.sheet("Sheet1").cell("F12").value(_this.order.BillingAddress);
+              if (receipt.Nth == 0) {
+                workbook.sheet("Sheet1").cell("F13").value(`${toRupiah(_this.order.Deposit)} ( ${terbilang(_this.order.Deposit)} )`);
+              } else {
+                workbook.sheet("Sheet1").cell("F13").value(`${toRupiah(_this.order.CreditDetail.Monthly)} ( ${terbilang(_this.order.CreditDetail.Monthly)} )`);
+              }
+              workbook.sheet("Sheet1").cell("F14").value("(terbayar untuk)");
+              workbook.sheet("Sheet1").cell("E16").value(`${toRupiah(_this.order.CreditDetail.Total)}`);
+              workbook.sheet("Sheet1").cell("E17").value(`${toRupiah(_this.order.CreditDetail.Total-((receipt.Nth-1)*_this.order.CreditDetail.Monthly))}`);
+              workbook.sheet("Sheet1").cell("E19").value(`${toRupiah(_this.order.CreditDetail.Total-((receipt.Nth-1)*_this.order.CreditDetail.Monthly)-_this.order.CreditDetail.Monthly)}`);
+              workbook.sheet("Sheet1").cell("H20").value(_this.order.Collector.Name);
+
               await workbook.outputAsync("base64").then(function (base64) {
-                if (_this.os == "Windows") {
+                if (_this.os == "#Windows") {
                   var printData = new JSPM.PrintFileXLS(base64, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${_this.order.Customer.Code} ${_this.order.Customer.Name}.xlsx`, 1);
+                  printData.pageFrom = 1;
+                  printData.pageTo = 1;
                 } else {
                   var printData = new JSPM.PrintFile(base64, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${_this.order.Customer.Code} ${_this.order.Customer.Name}.xlsx`, 1);
                 }
 
-                //location.href = "data:" + XlsxPopulate.MIME_TYPE + ";base64," + base64;
+                // location.href = "data:" + XlsxPopulate.MIME_TYPE + ";base64," + base64;
 
                 // Tambahkan file ke daftar yang akan di print
-                console.log("step 4");
-                _this.cpj.files.push(printData);
-                console.log("step 5");
+                printer.files.push(printData);
               });
             });
           });
         
-        console.log("ready");
 
         this.loadingText = "LOADING...";
         this.loading = false;
 
         // Kirim signal ke printer untuk melakukan print
-        this.cpj.sendToClient();
+        printer.sendToClient();
       },
       future(due) {
         now = Date.now();
