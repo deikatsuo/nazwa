@@ -35,3 +35,24 @@ type LocationZoneAddListForm struct {
 type LocationZoneNewForm struct {
 	Zone string `json:"zone" binding:"required,min=4,max=25"`
 }
+
+// LocationLineNewForm line baru
+type LocationLineNewForm struct {
+	Code string `json:"code" binding:"required,min=1,max=5"`
+	Name string `json:"name" binding:"required,min=5,max=25"`
+}
+
+// LocationLineSelect wrapper select line
+type LocationLineSelect struct {
+	ID   int    `db:"id"`
+	Code string `db:"code"`
+	Name string `db:"name"`
+}
+
+// LocationLine struk arah
+type LocationLine struct {
+	ID    int
+	Code  string
+	Name  string
+	Count int
+}

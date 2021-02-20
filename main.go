@@ -210,6 +210,15 @@ func runServer() {
 	v1aEdit.DELETE("/city/:id/district/:did/delete", api.PlaceCityDeleteDistrictByID)
 	v1aEdit.DELETE("/district/:id/village/:vid/delete", api.PlaceDistrictDeleteVillageByID)
 
+	// /api/v1/local/line
+	v1line := v1local.Group("/line")
+	v1line.POST("/new", api.LineNew)
+	v1line.GET("/list", api.LineShowAll)
+
+	// /api/v1/local/line/edit
+	v1lEdit := v1line.Group("/edit")
+	v1lEdit.DELETE("/:id/delete", api.LineDelete)
+
 	// /api/v1/local/zone
 	v1zone := v1local.Group("/zone")
 	v1zone.GET("/list", api.ZoneGetList)

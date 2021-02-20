@@ -1,6 +1,6 @@
 {{ template "base" .}}
 
-<!-- Halaman zona -->
+<!-- Halaman Arah Tagih -->
 {{ define "dashboard_locations_lines_content" }}
 <h2
   class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
@@ -8,92 +8,143 @@
   Arah Tagih
 </h2>
 
-<!-- Zona Wilayah -->
+<!-- Arah Tagih -->
 <div class="w-full mb-8">
-  <div x-data="line()" x-init="fetchLines($dispatch, $watch);" id="line">
+  <div x-data="line()" x-init="fetchLines($dispatch)" id="line">
     <div class="w-full">
-      
+      <!-- Tambah arah -->
+      <div class="w-full flex flex-wrap">
+        <div class="w-full p-2 lg:w-4/6">
+          <div class="w-full">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Tambah Arah</span>
+              <div class="w-full flex flex-wrap">
+                <div class="w-1/6 pr-1">
+                  <input
+                    class="block w-full mt-1 pr-10 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    x-model="newLine.code"
+                    placeholder="Kode"
+                    @keydown.enter="addLine($dispatch)"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errCode }"
+                  />
+                </div>
+                <div class="w-5/6 relative pl-1">
+                  <input
+                    class="block w-full mt-1 pr-10 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    x-model="newLine.name"
+                    placeholder="Nama arah"
+                    @keydown.enter="addLine($dispatch)"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errName }"
+                  />
+                  <div class="absolute inset-y-0 right-0 flex">
+                    <button
+                      class="px-4 text-xl font-black leading-5 text-blue-500 transition-colors duration-150 hover:text-blue-700 focus:text-blue-600 focus:outline-none focus:shadow-outline-none"
+                      @click="addLine($dispatch)"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </label>
+            <span
+              class="text-xs text-red-600 dark:text-red-400"
+              x-text="errmAddLine"
+              :class="{'invisible': errCode == false && errName == false}"
+            >
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tampilkan list arah -->
+      <template x-if="lines.length > 0">
+        <div class="w-full flex flex-wrap">
+          <div class="p-2">
+            <label class="block text-sm">
+              <span class="block mb-2 text-gray-700 dark:text-gray-400"
+                >Daftar Arah</span
+              >
+              <template x-for="line in lines" :key="line.ID">
+                <span
+                  class="inline-block cursor-pointer rounded-full px-3 py-1 text-xs font-semibold mr-2 mb-2"
+                  :class="{'bg-red-300 text-red-500 select-none': selectedLine == line.ID, 'bg-orange-300 text-orange-500': selectedLine !== line.ID }"
+                  x-text="`${line.Code} - ${line.Name}`"
+                  @dblclick="if (selectedLine == line.ID) { deleteLine($dispatch, line.ID); }"
+                  @contextmenu.prevent="if (selectedLine !== line.ID) { selectedLine = line.ID; } else { selectedLine = null; }"
+                ></span>
+              </template>
+            </label>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
   <script>
     function line() {
       return {
-        zones: [],
-        activeZone: null,
-        zoneMenuOpen: null,
-        listIndex: null,
-        selectedZoneList: "",
-        collectorIS: [],
-        editCollector: null,
-        instantData: "",
-        openIS: null,
-        address: {
-          province: "",
-          city: "",
-          districts: [],
+        lines: [],
+        newLine: {
+          code: "",
+          name: "",
         },
-        addressData: {
-          provinces: [],
-          cities: [],
-          districts: [],
-        },
-        data: {
-          lists: [],
-        },
-        addZone: {
-          zone: null,
-        },
-        errAddZone: false,
-        errmAddZone: "",
-        initPlaces($watch) {
-          $watch("address.province", (value) => {
-            this.address.city = "";
-            this.addressData.cities = [];
-            if (value != "") {
-              this.fetchCities();
+        selectedLine: null,
+        errCode: false,
+        errmCode: "",
+        errName: false,
+        errmName: "",
+        get errmAddLine() {
+          errmess = "";
+          if (this.errCode) {
+            errmess = `Kode ${this.errmCode}`;
+          }
+          if (this.errName) {
+            if (this.errCode) {
+              errmess = `${errmess},`;
             }
-          });
-          $watch("address.city", (value) => {
-            this.address.districts = "";
-            this.addressData.districts = [];
-            if (value != "") {
-              this.fetchDistricts();
-            }
-          });
-
-          this.fetchProvinces();
+            errmess = `${errmess} Nama ${this.errmName}`;
+          }
+          return errmess;
         },
-        newZone($dispatch) {
-          fetch("/api/v1/local/zone/new", {
+        addLine($dispatch) {
+          fetch("/api/v1/local/line/new", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(this.addZone),
+            body: JSON.stringify(this.newLine),
           })
             .then((res) => res.json())
             .then((json) => {
+              if (json.code) {
+                this.errCode = true;
+                this.errmCode = json.code;
+              } else {
+                this.errCode = false;
+                this.errmCode = "";
+              }
+              if (json.name) {
+                this.errName = true;
+                this.errmName = json.name;
+              } else {
+                this.errName = false;
+                this.errmName = "";
+              }
               if (json.message) {
                 $dispatch("notif", {
                   type: json.status,
                   message: json.message,
                 });
               }
-              if (json.zone) {
-                this.errAddZone = true;
-                this.errmAddZone = json.zone;
-              } else {
-                this.errAddZone = false;
-                this.errmAddZone = "";
-              }
-              if (json.zones != null) {
-                this.zones = json.zones;
+
+              if (json.lines != null) {
+                this.lines = json.lines;
               }
             })
             .catch((err) => {
-              console.log("addZone() " + err);
+              console.log("addLine() " + err);
             });
         },
-        fetchZones($dispatch, $watch) {
-          fetch(`/api/v1/local/zone/list`, {
+        fetchLines($dispatch) {
+          fetch(`/api/v1/local/line/list`, {
             method: "GET",
           })
             .then((res) => res.json())
@@ -104,76 +155,17 @@
                   message: data.message,
                 });
               }
-              if (data.zones) {
-                this.zones = data.zones;
-              }
-            })
-            .catch(() => {
-              console.log("Telah terjadi kesalahan saat memuat data produk");
-            });
-
-          this.initPlaces($watch);
-        },
-        toggleEditCollector(index) {
-          this.instantData = "";
-          if (this.editCollector == index) {
-            this.editCollector = null;
-          } else {
-            this.editCollector = index;
-
-            this.$nextTick(() => {
-              document.getElementById(`input-collector-${index}`).select();
-            });
-          }
-        },
-        searchCollector() {
-          fetch(
-            `/api/v1/local/user/search/collector/10?search=${this.instantData}`,
-            {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }
-          )
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.error) {
-                $dispatch("notif", {
-                  type: "error",
-                  message: data.error,
-                });
-              }
-              if (data.users) {
-                this.collectorIS = data.users;
-              } else {
-                this.collectorIS = [];
-              }
-            })
-            .catch(() => {
-              console.log("Telah terjadi kesalahan saat memuat data collector");
-            });
-        },
-        updateCollector($dispatch, zid, uid) {
-          fetch(`/api/v1/local/zone/edit/${zid}/update/collector?set=${uid}`, {
-            method: "PATCH",
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              if (json.message) {
-                $dispatch("notif", {
-                  type: json.status,
-                  message: json.message,
-                });
-              }
-              if (json.status == "success") {
-                this.fetchZones($dispatch);
+              if (data.lines) {
+                this.lines = data.lines;
               }
             })
             .catch((err) => {
-              console.log("Error: updateCollector() " + err);
+              console.log("Telah terjadi kesalahan saat memuat data arah ");
+              console.warn(err);
             });
         },
-        deleteCollectorFromZone($dispatch, zid) {
-          fetch(`/api/v1/local/zone/edit/${zid}/delete/collector`, {
+        deleteLine($dispatch, lid) {
+          fetch(`/api/v1/local/line/edit/${lid}/delete`, {
             method: "DELETE",
           })
             .then((res) => res.json())
@@ -184,118 +176,12 @@
                   message: json.message,
                 });
               }
-              if (json.status == "success") {
-                this.fetchZones($dispatch);
+              if (json.lines !== null) {
+                this.lines = json.lines;
               }
             })
             .catch((err) => {
-              console.log("Error: deleteCollectorFromZone() " + err);
-            });
-        },
-        deleteZone($dispatch, zid) {
-          fetch(`/api/v1/local/zone/edit/${zid}/delete`, {
-            method: "DELETE",
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              if (json.message) {
-                $dispatch("notif", {
-                  type: json.status,
-                  message: json.message,
-                });
-              }
-              if (json.zones !== null) {
-                this.zones = json.zones;
-              }
-            })
-            .catch((err) => {
-              console.log("Error: deleteZone() " + err);
-            });
-        },
-        deleteListFromZone($dispatch, zid, lid) {
-          fetch(`/api/v1/local/zone/edit/${zid}/delete/list?lid=${lid}`, {
-            method: "DELETE",
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              if (json.message) {
-                $dispatch("notif", {
-                  type: json.status,
-                  message: json.message,
-                });
-              }
-              if (json.status == "success") {
-                this.fetchZones($dispatch);
-              }
-            })
-            .catch((err) => {
-              console.log("Error: deleteCollectorFromZone() " + err);
-            });
-        },
-        fetchProvinces() {
-          fetch("/api/v1/local/address/provinces", {
-            method: "GET",
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              this.addressData.provinces = json.province;
-            })
-            .catch((err) => {
-              console.log("fetchProvinces() " + err);
-            });
-        },
-        fetchCities() {
-          fetch("/api/v1/local/address/cities/" + this.address.province, {
-            method: "GET",
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              this.addressData.cities = json.cities;
-            })
-            .catch((err) => {
-              console.log("fetchCities() " + err);
-            });
-        },
-        fetchDistricts() {
-          fetch("/api/v1/local/address/districts/" + this.address.city, {
-            method: "GET",
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              this.addressData.districts = json.districts;
-            })
-            .catch((err) => {
-              console.log("fetchDistricts() " + err);
-            });
-        },
-        addToZone($dispatch, zid) {
-          var data = {
-            lists: [],
-          };
-          for (i = 0; i < this.address.districts.length; i++) {
-            data.lists.push(Number(this.address.districts[i]));
-          }
-
-          fetch(`/api/v1/local/zone/edit/${zid}/add/list`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              if (json.message != "") {
-                $dispatch("notif", {
-                  type: json.status,
-                  message: json.message,
-                });
-              }
-
-              if (json.lists !== null) {
-                this.zones[this.listIndex].List = json.lists;
-              }
-            })
-            .catch((err) => {
-              console.log("Error addToZone " + err);
+              console.log("Error: deleteLine() " + err);
             });
         },
       };
