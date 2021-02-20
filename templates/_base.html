@@ -112,6 +112,10 @@
               {{ block "dashboard_locations_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "locations_lines" }}
+              {{ block "dashboard_locations_lines_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "locations_zones" }}
               {{ block "dashboard_locations_zones_content" .}}{{ end }}
             {{ end }}

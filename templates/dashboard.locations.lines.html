@@ -1,0 +1,305 @@
+{{ template "base" .}}
+
+<!-- Halaman zona -->
+{{ define "dashboard_locations_lines_content" }}
+<h2
+  class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+>
+  Arah Tagih
+</h2>
+
+<!-- Zona Wilayah -->
+<div class="w-full mb-8">
+  <div x-data="line()" x-init="fetchLines($dispatch, $watch);" id="line">
+    <div class="w-full">
+      
+    </div>
+  </div>
+  <script>
+    function line() {
+      return {
+        zones: [],
+        activeZone: null,
+        zoneMenuOpen: null,
+        listIndex: null,
+        selectedZoneList: "",
+        collectorIS: [],
+        editCollector: null,
+        instantData: "",
+        openIS: null,
+        address: {
+          province: "",
+          city: "",
+          districts: [],
+        },
+        addressData: {
+          provinces: [],
+          cities: [],
+          districts: [],
+        },
+        data: {
+          lists: [],
+        },
+        addZone: {
+          zone: null,
+        },
+        errAddZone: false,
+        errmAddZone: "",
+        initPlaces($watch) {
+          $watch("address.province", (value) => {
+            this.address.city = "";
+            this.addressData.cities = [];
+            if (value != "") {
+              this.fetchCities();
+            }
+          });
+          $watch("address.city", (value) => {
+            this.address.districts = "";
+            this.addressData.districts = [];
+            if (value != "") {
+              this.fetchDistricts();
+            }
+          });
+
+          this.fetchProvinces();
+        },
+        newZone($dispatch) {
+          fetch("/api/v1/local/zone/new", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(this.addZone),
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.zone) {
+                this.errAddZone = true;
+                this.errmAddZone = json.zone;
+              } else {
+                this.errAddZone = false;
+                this.errmAddZone = "";
+              }
+              if (json.zones != null) {
+                this.zones = json.zones;
+              }
+            })
+            .catch((err) => {
+              console.log("addZone() " + err);
+            });
+        },
+        fetchZones($dispatch, $watch) {
+          fetch(`/api/v1/local/zone/list`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.message != "") {
+                $dispatch("notif", {
+                  type: data.status,
+                  message: data.message,
+                });
+              }
+              if (data.zones) {
+                this.zones = data.zones;
+              }
+            })
+            .catch(() => {
+              console.log("Telah terjadi kesalahan saat memuat data produk");
+            });
+
+          this.initPlaces($watch);
+        },
+        toggleEditCollector(index) {
+          this.instantData = "";
+          if (this.editCollector == index) {
+            this.editCollector = null;
+          } else {
+            this.editCollector = index;
+
+            this.$nextTick(() => {
+              document.getElementById(`input-collector-${index}`).select();
+            });
+          }
+        },
+        searchCollector() {
+          fetch(
+            `/api/v1/local/user/search/collector/10?search=${this.instantData}`,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.error) {
+                $dispatch("notif", {
+                  type: "error",
+                  message: data.error,
+                });
+              }
+              if (data.users) {
+                this.collectorIS = data.users;
+              } else {
+                this.collectorIS = [];
+              }
+            })
+            .catch(() => {
+              console.log("Telah terjadi kesalahan saat memuat data collector");
+            });
+        },
+        updateCollector($dispatch, zid, uid) {
+          fetch(`/api/v1/local/zone/edit/${zid}/update/collector?set=${uid}`, {
+            method: "PATCH",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.status == "success") {
+                this.fetchZones($dispatch);
+              }
+            })
+            .catch((err) => {
+              console.log("Error: updateCollector() " + err);
+            });
+        },
+        deleteCollectorFromZone($dispatch, zid) {
+          fetch(`/api/v1/local/zone/edit/${zid}/delete/collector`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.status == "success") {
+                this.fetchZones($dispatch);
+              }
+            })
+            .catch((err) => {
+              console.log("Error: deleteCollectorFromZone() " + err);
+            });
+        },
+        deleteZone($dispatch, zid) {
+          fetch(`/api/v1/local/zone/edit/${zid}/delete`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.zones !== null) {
+                this.zones = json.zones;
+              }
+            })
+            .catch((err) => {
+              console.log("Error: deleteZone() " + err);
+            });
+        },
+        deleteListFromZone($dispatch, zid, lid) {
+          fetch(`/api/v1/local/zone/edit/${zid}/delete/list?lid=${lid}`, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.status == "success") {
+                this.fetchZones($dispatch);
+              }
+            })
+            .catch((err) => {
+              console.log("Error: deleteCollectorFromZone() " + err);
+            });
+        },
+        fetchProvinces() {
+          fetch("/api/v1/local/address/provinces", {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              this.addressData.provinces = json.province;
+            })
+            .catch((err) => {
+              console.log("fetchProvinces() " + err);
+            });
+        },
+        fetchCities() {
+          fetch("/api/v1/local/address/cities/" + this.address.province, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              this.addressData.cities = json.cities;
+            })
+            .catch((err) => {
+              console.log("fetchCities() " + err);
+            });
+        },
+        fetchDistricts() {
+          fetch("/api/v1/local/address/districts/" + this.address.city, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              this.addressData.districts = json.districts;
+            })
+            .catch((err) => {
+              console.log("fetchDistricts() " + err);
+            });
+        },
+        addToZone($dispatch, zid) {
+          var data = {
+            lists: [],
+          };
+          for (i = 0; i < this.address.districts.length; i++) {
+            data.lists.push(Number(this.address.districts[i]));
+          }
+
+          fetch(`/api/v1/local/zone/edit/${zid}/add/list`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message != "") {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+
+              if (json.lists !== null) {
+                this.zones[this.listIndex].List = json.lists;
+              }
+            })
+            .catch((err) => {
+              console.log("Error addToZone " + err);
+            });
+        },
+      };
+    }
+  </script>
+</div>
+{{ end }}

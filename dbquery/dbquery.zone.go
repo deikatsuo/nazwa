@@ -9,10 +9,10 @@ import (
 ///////////////////////////////////////// SHOW //
 
 // ZoneShowAll Ambil data zona wilayah dari database
-func ZoneShowAll() ([]wrapper.Zone, error) {
+func ZoneShowAll() ([]wrapper.LocationZone, error) {
 	db := DB
-	var zones []wrapper.Zone
-	var zs []wrapper.ZoneSelect
+	var zones []wrapper.LocationZone
+	var zs []wrapper.LocationZoneSelect
 
 	query := `SELECT * FROM "zone" ORDER BY id`
 	err := db.Select(&zs, query)
@@ -23,7 +23,7 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 	}
 
 	for _, z := range zs {
-		var list []wrapper.ZoneListsSelect
+		var list []wrapper.LocationZoneListsSelect
 		if zl, err := ZoneShowZoneList(z.ID); err == nil {
 			list = zl
 		} else {
@@ -31,7 +31,7 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 			log.Error(err)
 		}
 
-		merge := wrapper.Zone{
+		merge := wrapper.LocationZone{
 			ID:   z.ID,
 			Name: z.Name,
 			List: list,
@@ -65,9 +65,9 @@ func ZoneShowAll() ([]wrapper.Zone, error) {
 }
 
 // ZoneShowZoneList wilayah
-func ZoneShowZoneList(zid int) ([]wrapper.ZoneListsSelect, error) {
+func ZoneShowZoneList(zid int) ([]wrapper.LocationZoneListsSelect, error) {
 	db := DB
-	var zl []wrapper.ZoneListsSelect
+	var zl []wrapper.LocationZoneListsSelect
 	query := `SELECT zl.id, zl.district_id, d.name 
 	FROM "zone_list" zl
 	LEFT JOIN "district" d ON d.id=zl.district_id
@@ -131,7 +131,7 @@ func ZoneDelete(zid int) error {
 //////////////////////////////////////////// ADD //
 
 // ZoneAddList menambahkan list wilayah ke zona
-func ZoneAddList(zid int, lists wrapper.ZoneAddListForm) error {
+func ZoneAddList(zid int, lists wrapper.LocationZoneAddListForm) error {
 	db := DB
 	if len(lists.Lists) > 0 {
 		for _, lid := range lists.Lists {

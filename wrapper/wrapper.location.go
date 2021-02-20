@@ -2,36 +2,36 @@ package wrapper
 
 import "database/sql"
 
-// Zone wilayah dalam zona
-type Zone struct {
+// LocationZone wilayah dalam zona
+type LocationZone struct {
 	ID        int
 	Collector NameIDCode
 	Name      string
-	List      []ZoneListsSelect
+	List      []LocationZoneListsSelect
 	CreatedBy NameIDCode
 }
 
-// ZoneSelect mengambil data zona wilayah
-type ZoneSelect struct {
+// LocationZoneSelect mengambil data zona wilayah
+type LocationZoneSelect struct {
 	ID          int           `db:"id"`
 	CollectorID sql.NullInt32 `db:"collector_id"`
 	Name        string        `db:"name"`
 	CreatedBy   sql.NullInt32 `db:"created_by"`
 }
 
-// ZoneListsSelect list dalam zona
-type ZoneListsSelect struct {
+// LocationZoneListsSelect list dalam zona
+type LocationZoneListsSelect struct {
 	ID         int    `db:"id"`
 	DistrictID int    `db:"district_id"`
 	Name       string `db:"name"`
 }
 
-// ZoneAddListForm list wilayah pada zona
-type ZoneAddListForm struct {
+// LocationZoneAddListForm list wilayah pada zona
+type LocationZoneAddListForm struct {
 	Lists []int `json:"lists" binding:"dive,numeric"`
 }
 
-// ZoneNewForm zona baru
-type ZoneNewForm struct {
+// LocationZoneNewForm zona baru
+type LocationZoneNewForm struct {
 	Zone string `json:"zone" binding:"required,min=4,max=25"`
 }

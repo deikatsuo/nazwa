@@ -20,7 +20,7 @@ func ZoneGetList(c *gin.Context) {
 	message := ""
 	status := "success"
 
-	var zones []wrapper.Zone
+	var zones []wrapper.LocationZone
 
 	if z, err := dbquery.ZoneShowAll(); err == nil {
 		zones = z
@@ -217,7 +217,7 @@ func ZoneDelete(c *gin.Context) {
 	}
 
 	// Ambil zone
-	var zones []wrapper.Zone
+	var zones []wrapper.LocationZone
 	if next {
 		if z, err := dbquery.ZoneShowAll(); err == nil {
 			zones = z
@@ -258,7 +258,7 @@ func ZoneAddList(c *gin.Context) {
 	httpStatus := http.StatusBadRequest
 	status := ""
 
-	var lists wrapper.ZoneAddListForm
+	var lists wrapper.LocationZoneAddListForm
 	if err := c.ShouldBindJSON(&lists); err != nil {
 		log.Warn("Gagal unmarshal json")
 		log.Error(err)
@@ -295,7 +295,7 @@ func ZoneAddList(c *gin.Context) {
 	}
 
 	// Ambil list wilayah
-	var newLists []wrapper.ZoneListsSelect
+	var newLists []wrapper.LocationZoneListsSelect
 	if zl, err := dbquery.ZoneShowZoneList(zid); err == nil {
 		newLists = zl
 	} else {
@@ -322,7 +322,7 @@ func ZoneNewZone(c *gin.Context) {
 	status := ""
 	var simpleErrMap map[string]interface{}
 
-	var newZone wrapper.ZoneNewForm
+	var newZone wrapper.LocationZoneNewForm
 	if err := c.ShouldBindJSON(&newZone); err != nil {
 		simpleErrMap = validation.SimpleValErrMap(err)
 		next = false
@@ -342,7 +342,7 @@ func ZoneNewZone(c *gin.Context) {
 	}
 
 	// Ambil zone
-	var zones []wrapper.Zone
+	var zones []wrapper.LocationZone
 	if next {
 		if z, err := dbquery.ZoneShowAll(); err == nil {
 			zones = z
