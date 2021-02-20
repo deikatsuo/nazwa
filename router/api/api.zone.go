@@ -201,7 +201,7 @@ func ZoneDelete(c *gin.Context) {
 	httpStatus := http.StatusBadRequest
 	status := ""
 
-	// Delete collector
+	// Delete zone
 	if next {
 		if err := dbquery.ZoneDelete(zid); err != nil {
 			log.Warn("api.zone.go ZoneDelete() Gagal menghapus Zona")
