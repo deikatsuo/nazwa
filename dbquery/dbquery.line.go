@@ -22,8 +22,8 @@ func LineShowAll() ([]wrapper.LocationLine, error) {
 	for _, li := range ls {
 		lines = append(lines, wrapper.LocationLine{
 			ID:   li.ID,
-			Code: li.Code,
-			Name: li.Name,
+			Code: strings.ToUpper(li.Code),
+			Name: strings.Title(li.Name),
 		})
 	}
 

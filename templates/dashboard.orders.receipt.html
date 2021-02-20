@@ -203,7 +203,14 @@
                     <div class="font-semibold text-lg">K W I T A N S I</div>
                     <table class="w-full table-fixed">
                       <tr>
-                        <th class="w-2/5 align-top font-normal">Angsuran ke</th>
+                        <th class="w-2/5 align-top font-normal">
+                          <template x-if="monthly.Nth == 0">
+                            <span>Pembayaran<span>
+                          </template>
+                          <template x-if="monthly.Nth > 0">
+                            <span>Angsuran Ke<span>
+                          </template>
+                        </th>
                         <td class="flex flex-wrap">
                           <span>:</span>
                           <template x-if="monthly.Nth > 0">
@@ -223,7 +230,8 @@
                         </td>
                       </tr>
                       <tr>
-                        <th class="w-2/5 align-top font-normal">Jatuh Tempo</th>
+                        <th class="w-2/5 align-top font-normal">Jatuh Tempo
+                        </th>
                         <td class="flex flex-wrap">
                           <span>:</span
                           ><span
@@ -584,7 +592,7 @@
         var _this = this;
         var template = `/assets/receipt.xlsx`;
         if (receipt.Nth == 0) {
-          template = `/assets/receipt-deposite.xlsx`;
+          template = `/assets/receipt-deposit.xlsx`;
         }
         await fetch(template, {
           method: "GET",
@@ -594,9 +602,7 @@
           })
           .then(async (buffer) => {
             await XlsxPopulate.fromDataAsync(buffer).then(async (workbook) => {
-              if (receipt.Nth == 0) {
-                workbook.sheet("Sheet1").cell("J3").value("DEPOSIT");
-              } else {
+              if (receipt.Nth !== 0) {
                 workbook.sheet("Sheet1").cell("J3").value(receipt.Nth);
               }
               workbook.sheet("Sheet1").cell("J4").value(receipt.DueDate);
@@ -636,7 +642,7 @@
                   var printData = new JSPM.PrintFile(base64, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${_this.order.Customer.Code} ${_this.order.Customer.Name}.xlsx`, 1);
                 }
 
-                // location.href = "data:" + XlsxPopulate.MIME_TYPE + ";base64," + base64;
+                location.href = "data:" + XlsxPopulate.MIME_TYPE + ";base64," + base64;
 
                 // Tambahkan file ke daftar yang akan di print
                 printer.files.push(printData);
