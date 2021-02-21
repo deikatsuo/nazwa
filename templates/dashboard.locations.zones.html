@@ -10,7 +10,7 @@
 
 <!-- Zona Wilayah -->
 <div class="w-full mb-8">
-  <div x-data="zone()" x-init="fetchZones($dispatch, $watch);" id="zone">
+  <div x-data="zone()" x-init="fetchZones($dispatch);" id="zone">
     <div class="w-full">
       <!-- Tambah zona -->
       {{ template "dashboard_locations_zones_add_zone" .}}
@@ -153,19 +153,19 @@
                 <template x-if="zone.List !== null">
                   <div>
                     <span class="text-sm font-semibold"
-                      >Wilayah Terdaftar:</span
+                      >Arah Terdaftar:</span
                     >
                     <div class="px-2 pt-2 pb-2">
                       <template
-                        x-for="district in zone.List"
-                        :key="district.DistrictID"
+                        x-for="line in zone.List"
+                        :key="line.ID"
                       >
                         <span
                           class="inline-block cursor-pointer rounded-full lowercase px-2 text-xs font-semibold mr-1 mb-1"
-                          x-text="district.Name"
-                          @contextmenu.prevent="selectedZoneList = district.ID;"
-                          @dblclick="if (selectedZoneList == district.ID) { deleteListFromZone($dispatch, zone.ID, district.ID); }"
-                          :class="{'bg-red-200 text-red-400': selectedZoneList == district.ID, 'bg-green-200 text-green-500': selectedZoneList != district.ID }"
+                          x-text="line.Name"
+                          @contextmenu.prevent="if (selectedZoneList !== line.ID) { selectedZoneList = line.ID; } else { selectedZoneList = null; }"
+                          @dblclick="if (selectedZoneList == line.ID) { deleteListFromZone($dispatch, zone.ID, line.ID); }"
+                          :class="{'bg-red-200 text-red-400 select-none': selectedZoneList == line.ID, 'bg-green-200 text-green-500': selectedZoneList != line.ID }"
                         ></span>
                       </template>
                     </div>
@@ -175,7 +175,7 @@
                   <div class="w-full text-center">
                     <span
                       class="px-2 text-xs text-gray-500 font-semibold mr-1 mb-1"
-                      >Belum ada wilayah terdaftar di zona ini</span
+                      >Belum ada arah terdaftar di zona ini</span
                     >
                   </div>
                 </template>
@@ -198,16 +198,8 @@
         editCollector: null,
         instantData: "",
         openIS: null,
-        address: {
-          province: "",
-          city: "",
-          districts: [],
-        },
-        addressData: {
-          provinces: [],
-          cities: [],
-          districts: [],
-        },
+        lines: null,
+        selected_lines: [],
         data: {
           lists: [],
         },
@@ -216,24 +208,6 @@
         },
         errAddZone: false,
         errmAddZone: "",
-        initPlaces($watch) {
-          $watch("address.province", (value) => {
-            this.address.city = "";
-            this.addressData.cities = [];
-            if (value != "") {
-              this.fetchCities();
-            }
-          });
-          $watch("address.city", (value) => {
-            this.address.districts = "";
-            this.addressData.districts = [];
-            if (value != "") {
-              this.fetchDistricts();
-            }
-          });
-
-          this.fetchProvinces();
-        },
         newZone($dispatch) {
           fetch("/api/v1/local/zone/new", {
             method: "POST",
@@ -263,7 +237,7 @@
               console.log("addZone() " + err);
             });
         },
-        fetchZones($dispatch, $watch) {
+        fetchZones($dispatch) {
           fetch(`/api/v1/local/zone/list`, {
             method: "GET",
           })
@@ -283,7 +257,7 @@
               console.log("Telah terjadi kesalahan saat memuat data produk");
             });
 
-          this.initPlaces($watch);
+          this.fetchLines();
         },
         toggleEditCollector(index) {
           this.instantData = "";
@@ -403,48 +377,29 @@
               console.log("Error: deleteCollectorFromZone() " + err);
             });
         },
-        fetchProvinces() {
-          fetch("/api/v1/local/address/provinces", {
+        fetchLines() {
+          fetch("/api/v1/local/line/list-available", {
             method: "GET",
           })
             .then((res) => res.json())
             .then((json) => {
-              this.addressData.provinces = json.province;
+              if (json.lines !== null) {
+                this.lines = json.lines;
+              } else {
+                this.lines = [];
+              }
             })
             .catch((err) => {
-              console.log("fetchProvinces() " + err);
+              console.log("fetchLines() " + err);
             });
         },
-        fetchCities() {
-          fetch("/api/v1/local/address/cities/" + this.address.province, {
-            method: "GET",
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              this.addressData.cities = json.cities;
-            })
-            .catch((err) => {
-              console.log("fetchCities() " + err);
-            });
-        },
-        fetchDistricts() {
-          fetch("/api/v1/local/address/districts/" + this.address.city, {
-            method: "GET",
-          })
-            .then((res) => res.json())
-            .then((json) => {
-              this.addressData.districts = json.districts;
-            })
-            .catch((err) => {
-              console.log("fetchDistricts() " + err);
-            });
-        },
+        
         addToZone($dispatch, zid) {
           var data = {
             lists: [],
           };
-          for (i = 0; i < this.address.districts.length; i++) {
-            data.lists.push(Number(this.address.districts[i]));
+          for (i = 0; i < this.selected_lines.length; i++) {
+            data.lists.push(Number(this.selected_lines[i]));
           }
 
           fetch(`/api/v1/local/zone/edit/${zid}/add/list`, {
@@ -464,6 +419,11 @@
               if (json.lists !== null) {
                 this.zones[this.listIndex].List = json.lists;
               }
+
+              if (json.status == "success") {
+                this.fetchLines($dispatch);
+              }
+              
             })
             .catch((err) => {
               console.log("Error addToZone " + err);

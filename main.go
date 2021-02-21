@@ -214,6 +214,7 @@ func runServer() {
 	v1line := v1local.Group("/line")
 	v1line.POST("/new", api.LineNew)
 	v1line.GET("/list", api.LineShowAll)
+	v1line.GET("/list-available", api.LineShowAvailable)
 
 	// /api/v1/local/line/edit
 	v1lEdit := v1line.Group("/edit")

@@ -68,10 +68,10 @@ func ZoneShowAll() ([]wrapper.LocationZone, error) {
 func ZoneShowZoneList(zid int) ([]wrapper.LocationZoneListsSelect, error) {
 	db := DB
 	var zl []wrapper.LocationZoneListsSelect
-	query := `SELECT zl.id, zl.district_id, d.name 
-	FROM "zone_list" zl
-	LEFT JOIN "district" d ON d.id=zl.district_id
-	WHERE zl.zone_id=$1 ORDER BY d.name`
+	query := `SELECT zlt.id, zlt.zone_line_id, zln.name 
+	FROM "zone_list" zlt
+	LEFT JOIN "zone_line" zln ON zln.id=zlt.zone_line_id
+	WHERE zlt.zone_id=$1 ORDER BY zln.name`
 	err := db.Select(&zl, query, zid)
 	if err != nil {
 		log.Warn("dbquery.zone.go ZoneShowZoneList() telah terjadi kesalahan saat memuat data")
@@ -136,14 +136,14 @@ func ZoneAddList(zid int, lists wrapper.LocationZoneAddListForm) error {
 	if len(lists.Lists) > 0 {
 		for _, lid := range lists.Lists {
 			// Insert id wilayah
-			if _, err := db.Exec(`INSERT INTO "zone_list" (zone_id, district_id) VALUES ($1, $2)`, zid, lid); err != nil {
-				log.Warn("dbquery.zone.go ZoneAddList() gagal insert id wilayah")
+			if _, err := db.Exec(`INSERT INTO "zone_list" (zone_id, zone_line_id) VALUES ($1, $2)`, zid, lid); err != nil {
+				log.Warn("dbquery.zone.go ZoneAddList() gagal insert id arah/line")
 				log.Error(err)
 				return err
 			}
 		}
 	} else {
-		return errors.New("Tidak ada wilayah untuk dimasukan ke zona")
+		return errors.New("Tidak ada arah untuk dimasukan ke zona")
 	}
 
 	return nil
@@ -185,12 +185,12 @@ func ZoneNew(name string, uid int) error {
 
 ////////////////////////////////////// GET //
 
-// ZoneGetIDByDistrict ambil id zone berdasarkan ID distrik
-func ZoneGetIDByDistrict(did int) (int, error) {
+// ZoneGetIDByLine ambil id zone berdasarkan ID arah/line
+func ZoneGetIDByLine(did int) (int, error) {
 	db := DB
 	var zid int
 
-	query := `SELECT zone_id FROM "zone_list" WHERE district_id=$1`
+	query := `SELECT zone_id FROM "zone_list" WHERE zone_line_id=$1`
 
 	err := db.Get(&zid, query, did)
 
@@ -202,7 +202,7 @@ func ZoneGetIDByDistrict(did int) (int, error) {
 }
 
 // ZoneGetIDByAddress ambil id zone berdasarkan ID address
-func ZoneGetIDByAddress(aid int) (int, error) {
+/*func ZoneGetIDByAddress(aid int) (int, error) {
 	db := DB
 	var zid int
 
@@ -217,4 +217,4 @@ func ZoneGetIDByAddress(aid int) (int, error) {
 	}
 
 	return zid, nil
-}
+}*/

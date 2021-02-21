@@ -99,6 +99,31 @@ func LineShowAll(c *gin.Context) {
 	})
 }
 
+// LineShowAvailable ambil semua data arah yang tersedia/belum terdaftar
+func LineShowAvailable(c *gin.Context) {
+	httpStatus := http.StatusOK
+	message := ""
+	status := "success"
+	// Ambil line
+	var lines []wrapper.LocationLine
+
+	if l, err := dbquery.LineShowAvailable(); err == nil {
+		lines = l
+	} else {
+		log.Warn("Terjadi kesalahan saat memuat data arah")
+		log.Error(err)
+		httpStatus = http.StatusInternalServerError
+		message = "Tidak dapat memuat arah/Tidak ada arah"
+		status = "error"
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"status":  status,
+		"message": message,
+		"lines":   lines,
+	})
+}
+
 // LineDelete hapus line
 func LineDelete(c *gin.Context) {
 	session := sessions.Default(c)

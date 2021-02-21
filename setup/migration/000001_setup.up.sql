@@ -172,14 +172,14 @@ CREATE TABLE "zone_line" (
     PRIMARY KEY (id)
 );
 
--- Tabel list tempat yang termasuk dalam zona
+-- Tabel list arah yang termasuk dalam zona
 CREATE TABLE "zone_list" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
     "zone_id" int NOT NULL,
-    "district_id" int UNIQUE NOT NULL,
+    "zone_line_id" int UNIQUE NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (zone_id) REFERENCES "zone" ("id") ON DELETE CASCADE,
-    FOREIGN KEY (district_id) REFERENCES "district" ("id")
+    FOREIGN KEY (zone_line_id) REFERENCES "zone_line" ("id")
 );
 
 -- Tabel address/alamat
@@ -304,7 +304,7 @@ CREATE TABLE "order_item" (
 CREATE TABLE "order_credit_detail" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
     "order_id" int NOT NULL UNIQUE,
-    "zone_id" int,
+    "zone_line_id" int,
     "monthly" int NOT NULL,
     "duration" smallint NOT NULL,
     "due" smallint NOT NULL,
@@ -313,7 +313,7 @@ CREATE TABLE "order_credit_detail" (
     "lucky_discount" numeric(15) DEFAULT 0,
     PRIMARY KEY (id),
     FOREIGN KEY (order_id) REFERENCES "order" ("id") ON DELETE CASCADE,
-    FOREIGN KEY (zone_id) REFERENCES "zone" ("id") ON DELETE SET NULL
+    FOREIGN KEY (zone_line_id) REFERENCES "zone_line" ("id") ON DELETE SET NULL
 );
 
 -- Tabel kredit bulanan

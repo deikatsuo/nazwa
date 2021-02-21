@@ -4,7 +4,7 @@
   class="text-sm cursor-pointer text-blue-500"
   @click="activeZone = zone.ID; listIndex = index;"
   x-show="activeZone !== zone.ID"
-  >daftarkan wilayah</span
+  >daftarkan arah tagih</span
 >
 <span
   class="text-sm cursor-pointer text-red-500"
@@ -15,74 +15,30 @@
 
 <template x-if="activeZone == zone.ID">
   <div>
-    <!-- Provinsi -->
+    <!-- Arah tagih -->
     <label class="block mt-2 text-sm">
-      <div class="relative">
-        <select
-          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-          x-model="address.province"
-        >
-          <option value="">Pilih provinsi</option>
-          <template
-            x-for="(province, index) in addressData.provinces"
-            :key="index"
-          >
-            <option :value="province.ID" x-text="province.Name"></option>
-          </template>
-        </select>
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-        >
-          {{ template "_svg_icon_arrow_bottom" }}
-        </div>
-      </div>
-    </label>
-
-    <!-- Kota/Kabupaten -->
-    <label class="block mt-2 text-sm" x-show="addressData.cities.length > 0">
-      <div class="relative">
-        <select
-          class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-          x-model="address.city"
-        >
-          <option value="">Pilih kota/kabupaten</option>
-          <template x-for="(city, index) in addressData.cities" :key="index">
-            <option :value="city.ID" x-text="city.Name"></option>
-          </template>
-        </select>
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-        >
-          {{ template "_svg_icon_arrow_bottom" }}
-        </div>
-      </div>
-    </label>
-
-    <!-- Distrik/Kecamatan -->
-    <label class="block mt-2 text-sm" x-show="addressData.districts.length > 0">
       <div class="md:flex">
         <div class="md:w-1/3">
           <label
             class="block text-gray-600 font-bold md:text-left mb-3 md:mb-0 pr-4"
           >
-            Pilih wilayah
+            Pilih arah
           </label>
         </div>
         <div class="md:w-2/3">
           <select
-            x-model="address.districts"
+            x-model="selected_lines"
             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-multiselect"
             multiple
           >
-            <template
-              x-for="(district, index) in addressData.districts"
-              :key="index"
-            >
-              <option :value="district.ID" x-text="district.Name"></option>
+            <template x-if="lines !== null">
+              <template x-for="(line, index) in lines" :key="index">
+                <option :value="line.ID" x-text="line.Name"></option>
+              </template>
             </template>
           </select>
           <p class="py-2 text-sm text-gray-600">
-            pilih lebih dari satu wilayah dengan menekan tombol <b>CTRL</b>
+            pilih lebih dari satu arah dengan menekan tombol <b>CTRL</b>
           </p>
         </div>
       </div>

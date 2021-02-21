@@ -22,7 +22,7 @@ type LocationZoneSelect struct {
 // LocationZoneListsSelect list dalam zona
 type LocationZoneListsSelect struct {
 	ID         int    `db:"id"`
-	DistrictID int    `db:"district_id"`
+	ZoneLineID int    `db:"zone_line_id"`
 	Name       string `db:"name"`
 }
 
