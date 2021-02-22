@@ -10,6 +10,3 @@ CREATE DATABASE mydb;
 CREATE USER myuser WITH PASSWORD 'mypass';
 GRANT ALL PRIVILEGES ON DATABASE mydb TO myuser;
 ```
-
-\
-|
