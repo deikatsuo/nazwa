@@ -11,7 +11,7 @@
 <div class="grid gap-6 mb-8">
   <!-- Produk baru -->
   <div class="p-4 bg-white sm:rounded-lg shadow-xs dark:bg-gray-800">
-    <div x-data="create()" id="create">
+    <div x-data="create()" x-init="init($dispatch)" id="create">
       <div x-show="!orderCreated">
         <div class="flex flex-wrap mb-6">
           <!-- Konsumen -->
@@ -759,6 +759,72 @@
                 </ul>
               </div>
             </div>
+
+            <template x-if="formData.credit">
+              <!-- Pilih arah tagih -->
+              <div class="w-full flex flex-wrap md:px-1">
+                <label
+                  class="block mt-4 text-sm"
+                  title="Jika alamat penagihan tidak ditetapkan maka alamat penagihan sama dengan alamat pengiriman"
+                >
+                  <span class="text-gray-700 dark:text-gray-400"
+                    >Arah Tagih</span
+                  >
+                </label>
+                <!-- Zona -->
+                <div class="w-full flex flex-wrap">
+                  <template x-if="zones.length > 0">
+                    <template x-for="zone in zones" :key="zone.ID">
+                      <div
+                        class="w-1/3 p-1 cursor-pointer rounded-sm hover:bg-green-50"
+                        @click="if (activeZone !== zone.ID) { activeZone = zone.ID; lines = zone.List; } else { activeZone = null; lines = []; }"
+                      >
+                        <div
+                          class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-gray-50 dark:bg-gray-800"
+                        >
+                          <div
+                            class="p-3 mr-4 rounded-full"
+                            :class="{'text-orange-500 bg-orange-100': activeZone == zone.ID, 'text-blue-500 bg-blue-100': activeZone !== zone.ID }"
+                          >
+                            {{ template "_svg_icon_globe" }}
+                          </div>
+                          <div>
+                            <p
+                              class="text-lg font-semibold text-gray-700 dark:text-gray-200"
+                              x-text="`#${zone.Name}`"
+                            ></p>
+                            <p
+                              class="text-xs text-gray-700 dark:text-gray-200"
+                              x-text="zone.Collector.Name"
+                            ></p>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+                <!-- Arah -->
+                <template x-if="lines.length > 0">
+                  <div
+                    class="w-full overflow-x-auto flex flex-wrap p-2 mt-2 text-sm font-medium text-gray-500 rounded-md shadow-inner bg-blue-50 dark:text-gray-400 dark:bg-gray-900"
+                  >
+                    <template x-for="line in lines" :key="line.ID">
+                      <div
+                        class="w-1/3 py-1 px-2 cursor-pointer hover:bg-blue-200 hover:text-blue-500"
+                        :class="{'text-blue-500': formData.line == line.ZoneLineID }"
+                        x-text="line.Name"
+                        @click="formData.line = line.ZoneLineID;"
+                      ></div>
+                    </template>
+                  </div>
+                </template>
+                <span
+                  class="text-xs text-red-600 dark:text-red-400"
+                  x-text="errmLine"
+                  :class="{'invisible': errLine == false}"
+                ></span>
+              </div>
+            </template>
           </div>
 
           <!-- List Item/Produk -->
@@ -992,346 +1058,8 @@
         ></button>
       </div>
 
-      <template x-if="orderCreated">
-        <div>
-          <div
-            class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
-            x-text="'#'+order.Code"
-          ></div>
-          <!-- Yang terlibat -->
-          <table class="w-full whitespace-no-wrap">
-            <thead>
-              <tr
-                class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-              >
-                <th class="px-3 py-3">#Melibatkan</th>
-                <th class="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Nama Pembeli</td>
-                <td class="px-4 py-1 text-sm" x-text="order.Customer.Name"></td>
-              </tr>
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Sales</td>
-                <td class="px-4 py-1 text-sm" x-text="order.Sales.Name"></td>
-              </tr>
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Surveyor</td>
-                <td class="px-4 py-1 text-sm" x-text="order.Surveyor.Name"></td>
-              </tr>
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Collector</td>
-                <td
-                  class="px-4 py-1 text-sm"
-                  x-text="order.Collector.Name"
-                ></td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Alamat -->
-          <table class="w-full whitespace-no-wrap">
-            <thead>
-              <tr
-                class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-              >
-                <th class="px-3 py-3">#Alamat</th>
-                <th class="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Pengiriman</td>
-                <td
-                  class="px-4 py-1 text-sm"
-                  x-text="order.ShippingAddress"
-                ></td>
-              </tr>
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Penagihan</td>
-                <td
-                  class="px-4 py-1 text-sm"
-                  x-text="order.BillingAddress"
-                ></td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Alamat -->
-          <table class="w-full whitespace-no-wrap">
-            <thead>
-              <tr
-                class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-              >
-                <th class="px-3 py-3">#Tanggal</th>
-                <th class="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Pemesanan</td>
-                <td class="px-4 py-1 text-sm" x-text="order.OrderDate"></td>
-              </tr>
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Pengiriman</td>
-                <td class="px-4 py-1 text-sm" x-text="order.ShippingDate"></td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Other -->
-          <table class="w-full whitespace-no-wrap">
-            <thead>
-              <tr
-                class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-              >
-                <th class="px-3 py-3">#Lainnya</th>
-                <th class="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Status</td>
-                <td class="px-4 py-1 text-xs">
-                  <span
-                    class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
-                    x-show="order.Status == 'Completed'"
-                    x-text="order.Status"
-                  ></span>
-                  <span
-                    class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700"
-                    x-show="order.Status == 'Pending'"
-                    x-text="order.Status"
-                  ></span>
-                  <span
-                    class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600"
-                    x-show="order.Status == 'Canceled'"
-                    x-text="order.Status"
-                  ></span>
-                  <span
-                    class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-700"
-                    x-show="order.Status == 'Denied'"
-                    x-text="order.Status"
-                  ></span>
-                </td>
-              </tr>
-
-              <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-1 text-sm">Pembayaran</td>
-                <td class="px-4 py-1 text-xs">
-                  <span
-                    class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:bg-orange-700 dark:text-orange-100"
-                    x-show="order.Credit"
-                    >Kredit</span
-                  ><span
-                    class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
-                    x-show="!order.Credit"
-                    >Cash</span
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="overflow-x-auto mt-4">
-            <!-- Items -->
-            <table class="w-full whitespace-no-wrap">
-              <thead>
-                <tr
-                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-                >
-                  <th class="px-3 py-3">No</th>
-                  <th class="px-4 py-3">Nama</th>
-                  <th class="px-4 py-3">Qty</th>
-
-                  <th class="px-4 py-3">Harga</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-                <template x-for="(item, index) in order.Items" :key="index">
-                  <tr
-                    class="text-gray-700 dark:text-gray-400 hover:bg-green-100 cursor-pointer border-b"
-                  >
-                    <td class="px-3 py-3 text-sm" x-text="index + 1"></td>
-                    <td class="px-1 py-3">
-                      <div class="flex items-center text-sm">
-                        <!-- Tampilkan avatar -->
-                        <div
-                          class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
-                        >
-                          <img
-                            class="object-cover w-full h-full rounded-full"
-                            :src="'/file/product/no-photo.png'"
-                            alt=""
-                            loading="lazy"
-                            x-show="item.Product.Thumbnail == ''"
-                          />
-                          <img
-                            class="object-cover w-full h-full rounded-full"
-                            :src="`/file/product/thumbnail/${item.Product.Thumbnail}`"
-                            alt=""
-                            loading="lazy"
-                            x-show="item.Product.Thumbnail != ''"
-                          />
-                          <div
-                            class="absolute inset-0 rounded-full shadow-inner"
-                            aria-hidden="true"
-                          ></div>
-                        </div>
-                        <div>
-                          <p
-                            class="font-semibold"
-                            x-text="item.Product.Name"
-                          ></p>
-                          <p
-                            class="text-xs text-gray-600 dark:text-gray-400"
-                            x-text="item.Product.Code"
-                          ></p>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="px-4 py-3 text-sm" x-text="item.Quantity"></td>
-                    <td
-                      x-show="item.Discount == 0"
-                      class="px-4 py-3 text-sm"
-                      x-text="toRupiah(item.Price*item.Quantity)"
-                    ></td>
-                    <td x-show="item.Discount > 0" class="px-4 py-3 text-sm">
-                      <div>
-                        <p
-                          class="font-semibold"
-                          x-text="toRupiah(item.Discount*item.Quantity)"
-                          :class="{'text-green-400': item.Discount < item.Price, 'text-orange-400': item.Discount > item.Price }"
-                        ></p>
-                        <p class="text-xs">
-                          <span
-                            class="text-red-400 line-through dark:text-gray-400"
-                            x-text="toRupiah(item.Price*item.Quantity)"
-                          ></span>
-                          <template
-                            x-if="(item.Price*item.Quantity) > (item.Discount*item.Quantity)"
-                          >
-                            <span
-                              class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
-                              x-text="` (-${toRupiah((item.Price*item.Quantity)-(item.Discount*item.Quantity))})`"
-                            ></span>
-                          </template>
-                          <template
-                            x-if="(item.Price*item.Quantity) < (item.Discount*item.Quantity)"
-                          >
-                            <span
-                              class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100"
-                              x-text="` (+${toRupiah((item.Price*item.Quantity)-(item.Discount*item.Quantity))})`"
-                            ></span>
-                          </template>
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                </template>
-
-                <template x-if="order.Credit">
-                  <tr class="text-gray-700 dark:text-gray-400 border-b">
-                    <td class="px-3 py-3 text-sm"></td>
-                    <td class="px-3 py-3 text-sm"></td>
-                    <td class="px-3 py-3 text-sm"></td>
-                    <td
-                      class="px-4 py-3 text-sm font-semibold text-orange-500"
-                      x-text="`${toRupiah(order.PriceTotal/order.CreditDetail.Duration)}/bulan x ${order.CreditDetail.Duration}`"
-                    ></td>
-                  </tr>
-                </template>
-
-                <!-- Total Harga -->
-                <tr class="text-gray-700 dark:text-gray-400">
-                  <td class="px-3 pt-3 text-sm"></td>
-                  <td class="px-3 pt-3 text-sm"></td>
-                  <td class="px-3 pt-3 text-sm">Total</td>
-                  <td
-                    class="px-4 pt-3 text-sm"
-                    x-text="toRupiah(order.PriceTotal)"
-                    :title="`Harga beli total ${toRupiah(order.BasePriceTotal)}`"
-                  ></td>
-                </tr>
-                <!-- Deposit -->
-                <template x-if="order.Credit">
-                  <tr class="text-gray-700 dark:text-gray-400">
-                    <td class="px-3 pb-2 text-sm"></td>
-                    <td class="px-3 pb-2 text-sm"></td>
-                    <td class="px-3 pb-2 text-sm border-b">Deposit</td>
-                    <td
-                      class="px-4 pb-2 text-sm font-semibold text-orange-500 border-b"
-                      x-text="`-${toRupiah(order.Deposit)}`"
-                    ></td>
-                  </tr>
-                </template>
-                <!-- Total sisa kredit -->
-                <template x-if="order.Credit">
-                  <tr class="text-gray-700 dark:text-gray-400 font-bold">
-                    <td class="px-3 text-sm"></td>
-                    <td class="px-3 text-sm"></td>
-                    <td class="px-3 text-sm">Kredit</td>
-                    <td class="px-4 text-sm">
-                      <span
-                        class="text-lg"
-                        x-text="`${toRupiah(order.PriceTotal-order.Deposit)}`"
-                      ></span>
-                    </td>
-                  </tr>
-                </template>
-                <!-- Diskon keberuntungan -->
-                <template
-                  x-if="order.Credit && order.CreditDetail.LuckyDiscount > 0"
-                >
-                  <tr class="text-green-400 font-bold">
-                    <td class="px-3 text-sm"></td>
-                    <td class="px-3 text-sm"></td>
-                    <td class="px-3 text-sm">Diskon ajaib</td>
-                    <td
-                      class="px-4 text-sm"
-                      x-text="`${toRupiah(order.CreditDetail.LuckyDiscount)}`"
-                    ></td>
-                  </tr>
-                </template>
-                <!-- Cicilan per bulan -->
-                <template x-if="order.Credit">
-                  <tr class="text-gray-400 font-bold">
-                    <td class="px-3 text-sm"></td>
-                    <td class="px-3 text-sm"></td>
-                    <td class="px-3 text-sm"></td>
-                    <td
-                      class="px-4 text-sm"
-                      x-text="`${toRupiah(order.CreditDetail.Monthly)}/bulan x ${order.CreditDetail.Duration}`"
-                    ></td>
-                  </tr>
-                </template>
-              </tbody>
-            </table>
-          </div>
-          <template x-if="order.Credit">
-            <div
-              class="flex pb-5 w-full items-center content-center justify-center"
-            >
-              <a
-                class="inline-flex mx-auto shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
-                target="_blank"
-                :href="`card?ids=${order.ID}`"
-              >
-                Lihat kartu tagihan
-              </a>
-              <a
-                class="inline-flex mx-auto shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
-                target="_blank"
-                :href="`receipt/${order.ID}`"
-              >
-                Lihat kwitansi
-              </a>
-            </div>
-          </template>
-        </div>
-      </template>
+      <!-- Order berhasil dibuat -->
+      {{ template "dashboard_orders_add_order_created" .}}
     </div>
   </div>
 
@@ -1347,6 +1075,7 @@
           credit_mask: "",
           duration: 12,
           due: null,
+          line: null,
           notes: "",
           order_date: null,
           shipping_date: null,
@@ -1389,6 +1118,9 @@
         products: [],
         selectedProducts: [],
         editPrice: null,
+        zones: [],
+        activeZone: null,
+        lines: [],
         notifStatus: "",
         errCustomer: false,
         errmCustomer: "",
@@ -1402,6 +1134,8 @@
         errmDuration: "",
         errDue: false,
         errmDue: "",
+        errLine: false,
+        errmLine: "",
         errOrderDate: false,
         errmOrderDate: "",
         errShippingDate: false,
@@ -1414,7 +1148,31 @@
         errmDeposit: "",
         errOrderItems: false,
         errmOrderItems: "",
-
+        init($dispatch) {
+          this.fetchZones($dispatch);
+        },
+        fetchZones($dispatch) {
+          fetch(`/api/v1/local/zone/list`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.status == "error") {
+                $dispatch("notif", {
+                  type: data.status,
+                  message: data.message,
+                });
+              }
+              if (data.zones !== null) {
+                this.zones = data.zones;
+              } else {
+                this.zones = [];
+              }
+            })
+            .catch(() => {
+              console.log("Telah terjadi kesalahan saat memuat data produk");
+            });
+        },
         submitData($dispatch) {
           this.loadingText = "Loading...";
           this.loading = true;
@@ -1464,6 +1222,14 @@
               } else {
                 this.errDue = false;
                 this.errmDue = "";
+              }
+
+              if (data.line) {
+                this.errLine = true;
+                this.errmLine = data.due;
+              } else {
+                this.errLine = false;
+                this.errmLine = "";
               }
 
               if (data.orderdate) {

@@ -22,6 +22,7 @@ type CreateOrder struct {
 	orderItems  []wrapper.OrderItemForm
 	substitutes []wrapper.OrderUserSubstituteForm
 	due         int
+	line        int
 	duration    int
 }
 
@@ -142,6 +143,14 @@ func (c *CreateOrder) SetDuration(o int) *CreateOrder {
 func (c *CreateOrder) SetDue(o int) *CreateOrder {
 	if o > 0 {
 		c.due = o
+	}
+	return c
+}
+
+// SetLine tentukan arah tagih
+func (c *CreateOrder) SetLine(o int) *CreateOrder {
+	if o > 0 {
+		c.line = o
 	}
 	return c
 }

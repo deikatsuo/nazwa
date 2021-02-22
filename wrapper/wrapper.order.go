@@ -50,6 +50,7 @@ type OrderForm struct {
 	CreditMask      string                    `json:"credit_mask"`
 	Duration        int                       `json:"duration" binding:"omitempty,numeric,gte=1,lte=24"`
 	Due             int                       `json:"due" binding:"required_if=CreditMask credit,omitempty,numeric,gte=1,lte=28"`
+	Line            int                       `json:"line" binding:"required_if=CreditMask credit,omitempty,numeric"`
 	Notes           string                    `json:"notes" binding:"omitempty"`
 	OrderDate       string                    `json:"order_date" binding:"required,date"`
 	ShippingDate    string                    `json:"shipping_date" binding:"omitempty,date"`

@@ -258,6 +258,7 @@ func OrderCreate(c *gin.Context) {
 			SetDeposit(deposit).
 			SetDuration(json.Duration).
 			SetDue(json.Due).
+			SetLine(json.Line).
 			SetNotes(json.Notes).
 			SetCode(code).
 			SetOrderDate(json.OrderDate).
