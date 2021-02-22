@@ -84,6 +84,17 @@ func ZoneShowZoneList(zid int) ([]wrapper.LocationZoneListsSelect, error) {
 
 ////////////////////////////////////// UPDATE //
 
+// ZoneUpdateName mengubah nama zona pada tabel
+func ZoneUpdateName(zid int, name string) error {
+	db := DB
+	query := `UPDATE "zone"
+	SET name=$2
+	WHERE id=$1`
+	_, err := db.Exec(query, zid, name)
+
+	return err
+}
+
 // ZoneUpdateCollector mengubah kolektor pada zona
 func ZoneUpdateCollector(zid, uid int) error {
 	db := DB

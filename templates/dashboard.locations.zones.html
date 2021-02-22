@@ -17,14 +17,40 @@
 
       <div class="w-full flex flex-wrap">
         <template x-for="(zone, index) in zones" :key="zone.ID">
-          <div class="w-full p-2 sm:w-2/4 lg:w-2/6" @click.away="if (activeZone == zone.ID) { activeZone = null; }">
+          <div
+            class="w-full p-2 sm:w-2/4 lg:w-2/6"
+            @click.away="if (activeZone == zone.ID) { activeZone = null; }"
+          >
             <div
               class="relative bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 p-2"
             >
-              <h4
-                class="mb-4 font-semibold text-gray-800 dark:text-gray-300"
-                x-text="zone.Name"
-              ></h4>
+              <div class="w-full"
+                @dblclick="editZone = zone.ID; newZoneName = zone.Name; $nextTick(() => {
+                document.getElementById(`zone-edit-${zone.ID}`).select();
+              });"
+              >
+                <h4
+                  class="w-full mb-4 font-semibold select-none text-gray-800 dark:text-gray-300"
+                  x-text="zone.Name"
+                  x-show="editZone !== zone.ID && zone.Name !== ''"
+                ></h4>
+                <h4
+                  class="w-full mb-4 font-semibold select-none text-gray-800 dark:text-gray-300"
+                  x-show="editZone !== zone.ID && zone.Name == ''"
+                >
+                  (tanpa nama)
+                </h4>
+              </div>
+              <input
+                :id="`zone-edit-${zone.ID}`"
+                x-model="newZoneName"
+                x-show="editZone == zone.ID"
+                type="text"
+                class="w-full appearance-none outline-none"
+                @click.away="if (editZone == zone.ID) { editZone = null; }"
+                @keydown.enter="updateZoneName($dispatch, zone.ID); editZone = null;"
+              />
+
               <div
                 class="absolute cursor-pointer p-2 top-0 right-0 hover:text-blue-500"
                 @click="if (zoneMenuOpen !== zone.ID) { zoneMenuOpen = zone.ID; } else { zoneMenuOpen = null; }"
@@ -38,7 +64,7 @@
                     x-transition:leave-start="opacity-100"
                     x-transition:leave-end="opacity-0"
                     class="absolute z-10 right-0 w-48 p-2 mt-2 mr-1 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:text-gray-300 dark:border-gray-700 dark:bg-gray-700"
-                  >                   
+                  >
                     <li class="flex">
                       <a
                         class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
@@ -152,14 +178,9 @@
               <div class="mt-4">
                 <template x-if="zone.List !== null">
                   <div>
-                    <span class="text-sm font-semibold"
-                      >Arah Terdaftar:</span
-                    >
+                    <span class="text-sm font-semibold">Arah Terdaftar:</span>
                     <div class="px-2 pt-2 pb-2">
-                      <template
-                        x-for="line in zone.List"
-                        :key="line.ID"
-                      >
+                      <template x-for="line in zone.List" :key="line.ID">
                         <span
                           class="inline-block cursor-pointer rounded-full lowercase px-2 text-xs font-semibold mr-1 mb-1"
                           x-text="line.Name"
@@ -191,6 +212,8 @@
       return {
         zones: [],
         activeZone: null,
+        editZone: null,
+        newZoneName: "",
         zoneMenuOpen: null,
         listIndex: null,
         selectedZoneList: "",
@@ -235,6 +258,36 @@
             })
             .catch((err) => {
               console.log("addZone() " + err);
+            });
+        },
+        updateZoneName($dispatch, zid) {
+          if (this.newZoneName.length < 1) {
+            $dispatch("notif", {
+              type: "error",
+              message: "Nama zona tidak boleh kosong",
+            });
+            return;
+          }
+          fetch(
+            `/api/v1/local/zone/edit/${zid}/update/name?set=${this.newZoneName}`,
+            {
+              method: "PATCH",
+            }
+          )
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.status == "success") {
+                this.fetchZones($dispatch);
+              }
+            })
+            .catch((err) => {
+              console.log("Error: updateZoneName() " + err);
             });
         },
         fetchZones($dispatch) {
@@ -393,7 +446,7 @@
               console.log("fetchLines() " + err);
             });
         },
-        
+
         addToZone($dispatch, zid) {
           var data = {
             lists: [],
@@ -423,7 +476,6 @@
               if (json.status == "success") {
                 this.fetchLines($dispatch);
               }
-              
             })
             .catch((err) => {
               console.log("Error addToZone " + err);

@@ -39,6 +39,51 @@ func ZoneGetList(c *gin.Context) {
 	})
 }
 
+// ZoneUpdateName ubah nama zona
+func ZoneUpdateName(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	zid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	newName := c.Query("set")
+
+	// Update collector
+	if next {
+		if err := dbquery.ZoneUpdateName(zid, newName); err != nil {
+			log.Warn("api.zone.go ZoneUpdateName() Gagal mengubah nama zona")
+			log.Error(err)
+			message = "Gagal mengubah nama zona"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Nama zona berhasil dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
 // ZoneUpdateCollector api untuk mengupdate kolektor pada zone
 func ZoneUpdateCollector(c *gin.Context) {
 	session := sessions.Default(c)
