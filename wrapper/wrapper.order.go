@@ -8,7 +8,6 @@ import (
 type OrderInsert struct {
 	CustomerID        int    `db:"customer_id"`
 	SalesID           int    `db:"sales_id"`
-	CollectorID       int    `db:"collector_id"`
 	SurveyorID        int    `db:"surveyor_id"`
 	DriverID          int    `db:"driver_id"`
 	ShippingAddressID int    `db:"shipping_address_id"`
@@ -45,7 +44,6 @@ type OrderForm struct {
 	Customer        int                       `json:"customer" binding:"required,numeric"`
 	Sales           int                       `json:"sales" binding:"omitempty,numeric"`
 	Surveyor        int                       `json:"surveyor" binding:"omitempty,numeric"`
-	Collector       int                       `json:"collector" binding:"omitempty,numeric"`
 	Credit          *bool                     `json:"credit" binding:"required"`
 	CreditMask      string                    `json:"credit_mask"`
 	Duration        int                       `json:"duration" binding:"omitempty,numeric,gte=1,lte=24"`

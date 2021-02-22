@@ -250,7 +250,6 @@ func OrderCreate(c *gin.Context) {
 		order := dbquery.NewOrder()
 		err := order.SetCustomer(json.Customer).
 			SetSales(json.Sales).
-			SetCollector(json.Collector).
 			SetSurveyor(json.Surveyor).
 			SetShipping(json.ShippingAddress).
 			SetBilling(json.BillingAddress).

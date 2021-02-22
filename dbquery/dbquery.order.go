@@ -51,15 +51,6 @@ func (c *CreateOrder) SetSales(o int) *CreateOrder {
 	return c
 }
 
-// SetCollector ID kolektor
-func (c *CreateOrder) SetCollector(o int) *CreateOrder {
-	if o > 0 {
-		c.CollectorID = o
-		c.into["collector_id"] = ":collector_id"
-	}
-	return c
-}
-
 // SetSurveyor ID surveyor
 func (c *CreateOrder) SetSurveyor(o int) *CreateOrder {
 	if o > 0 {
