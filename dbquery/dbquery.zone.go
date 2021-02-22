@@ -200,21 +200,3 @@ func ZoneGetIDByLine(did int) (int, error) {
 
 	return zid, nil
 }
-
-// ZoneGetIDByAddress ambil id zone berdasarkan ID address
-/*func ZoneGetIDByAddress(aid int) (int, error) {
-	db := DB
-	var zid int
-
-	query := `SELECT zl.zone_id FROM "zone_list" zl
-	LEFT JOIN "address" a ON a.id=$1
-	WHERE zl.district_id=a.district_id`
-
-	err := db.Get(&zid, query, aid)
-
-	if err != nil {
-		return zid, err
-	}
-
-	return zid, nil
-}*/

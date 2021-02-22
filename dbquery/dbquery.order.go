@@ -255,17 +255,14 @@ func (c *CreateOrder) Save() error {
 
 	var prices []int
 	var basePrices []int
-	//var zone int
 
 	// Periksa apakah pembelian kredit atau cash
 	// Lalu kalkulasikan
 	for _, item := range c.orderItems {
 		if c.Credit {
-			/*if z, err := ZoneGetIDByAddress(c.ShippingAddressID); err == nil {
-				zone = z
-			} else {
-				return errors.New("Kecamatan belum terdaftar dalam zona manapun")
-			}*/
+			if _, err := ZoneGetIDByLine(c.ShippingAddressID); err != nil {
+				return errors.New("Arah belum terdaftar dalam zona manapun")
+			}
 
 			// Temporary credit price
 			var tmpcp int
@@ -458,7 +455,7 @@ func (c *CreateOrder) Save() error {
 
 	// Simpan credit detail
 	if c.Credit {
-		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, monthly, duration, due, total, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6, $7)`, tempReturnID, monthly, c.duration, c.due, total, remaining, luckyDiscount); err != nil {
+		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, zone_line_id, monthly, duration, due, total, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`, tempReturnID, c.line, monthly, c.duration, c.due, total, remaining, luckyDiscount); err != nil {
 			log.Warn("dbquery.order.go Save() Insert product detail")
 			return err
 		}
