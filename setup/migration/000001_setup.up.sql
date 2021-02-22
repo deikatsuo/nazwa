@@ -245,7 +245,6 @@ CREATE TABLE "order" (
     "customer_id" int NOT NULL,
     "sales_id" int,
     "surveyor_id" int,
-    "collector_id" int,
     "driver_id" int,
     "shipping_address_id" int NOT NULL,
     "billing_address_id" int NOT NULL,
@@ -311,6 +310,8 @@ CREATE TABLE "order_credit_detail" (
     "total" numeric(15) NOT NULL,
     "remaining" numeric(15) NOT NULL,
     "lucky_discount" numeric(15) DEFAULT 0,
+    "active" bool NOT NULL DEFAULT 'true',
+    "done" bool NOT NULL DEFAULT 'false',
     PRIMARY KEY (id),
     FOREIGN KEY (order_id) REFERENCES "order" ("id") ON DELETE CASCADE,
     FOREIGN KEY (zone_line_id) REFERENCES "zone_line" ("id") ON DELETE SET NULL

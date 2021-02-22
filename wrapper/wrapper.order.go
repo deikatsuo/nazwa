@@ -186,6 +186,8 @@ type OrderCreditDetailSelect struct {
 	Total         int           `db:"total"`
 	Remaining     int           `db:"remaining"`
 	LuckyDiscount int           `db:"lucky_discount"`
+	Active        bool          `db:"active"`
+	Done          bool          `db:"done"`
 }
 
 // OrderCreditDetail detail order kredit
@@ -199,6 +201,8 @@ type OrderCreditDetail struct {
 	Total         int
 	Remaining     int
 	LuckyDiscount int
+	Active        bool
+	Done          bool
 }
 
 // OrderMonthlyCreditQuery kredit bulanan

@@ -20,14 +20,34 @@ func LineShowAll() ([]wrapper.LocationLine, error) {
 	}
 
 	for _, li := range ls {
+		var count int
+		if ct, err := LineGetTotalCountByID(li.ID); err == nil {
+			count = ct
+		} else {
+			log.Warn("dbquery.line.go LineShowAll() telah terjadi kesalahan saat menghitung total kredit pada arah")
+			log.Error(err)
+		}
 		lines = append(lines, wrapper.LocationLine{
-			ID:   li.ID,
-			Code: strings.ToUpper(li.Code),
-			Name: strings.Title(li.Name),
+			ID:    li.ID,
+			Code:  strings.ToUpper(li.Code),
+			Name:  strings.Title(li.Name),
+			Count: count,
 		})
 	}
 
 	return lines, nil
+}
+
+// LineGetTotalCountByID hitung seluruh order yang termasuk dalam arah ini
+func LineGetTotalCountByID(lid int) (int, error) {
+	db := DB
+	var total int
+	query := `SELECT COUNT(id) FROM "order_credit_detail" WHERE zone_line_id=$1`
+	err := db.Get(&total, query, lid)
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
 }
 
 // LineShowAvailable hanya tampilkan yang tersedia

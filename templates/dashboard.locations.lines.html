@@ -69,7 +69,7 @@
                 <span
                   class="inline-block cursor-pointer rounded-full px-3 py-1 text-xs font-semibold mr-2 mb-2"
                   :class="{'bg-red-300 text-red-500 select-none': selectedLine == line.ID, 'bg-orange-300 text-orange-500': selectedLine !== line.ID }"
-                  x-text="`${line.Code} - ${line.Name}`"
+                  x-text="`${line.Code} - ${line.Name} ${getCount(line.Count)}`"
                   @dblclick="if (selectedLine == line.ID) { deleteLine($dispatch, line.ID); }"
                   @contextmenu.prevent="if (selectedLine !== line.ID) { selectedLine = line.ID; } else { selectedLine = null; }"
                 ></span>
@@ -105,6 +105,14 @@
             errmess = `${errmess} Nama ${this.errmName}`;
           }
           return errmess;
+        },
+        getCount(count) {
+          retc = "";
+          if (count > 0) {
+            retc = `(${count})`;
+          }
+
+          return retc;
         },
         addLine($dispatch) {
           fetch("/api/v1/local/line/new", {
