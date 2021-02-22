@@ -218,6 +218,7 @@ func runServer() {
 
 	// /api/v1/local/line/edit
 	v1lEdit := v1line.Group("/edit")
+	v1lEdit.PATCH("/:id/update/name", api.LineUpdateName)
 	v1lEdit.DELETE("/:id/delete", api.LineDelete)
 
 	// /api/v1/local/zone

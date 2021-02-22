@@ -70,9 +70,21 @@
                   class="inline-block cursor-pointer rounded-full px-3 py-1 text-xs font-semibold mr-2 mb-2"
                   :class="{'bg-red-300 text-red-500 select-none': selectedLine == line.ID, 'bg-orange-300 text-orange-500': selectedLine !== line.ID }"
                   x-text="`${line.Code} - ${line.Name} ${getCount(line.Count)}`"
+                  @click="$dispatch('modal', { footer: true, title: 'Ubah nama arah', html: $refs.editLineForm.innerHTML, tmp: line.Name, callback: function() { updateLineName($dispatch, line.ID) } })"
                   @dblclick="if (selectedLine == line.ID) { deleteLine($dispatch, line.ID); }"
                   @contextmenu.prevent="if (selectedLine !== line.ID) { selectedLine = line.ID; } else { selectedLine = null; }"
                 ></span>
+              </template>
+              <template x-ref="editLineForm">
+                <div id="edit-line" x-data="{ newName: $parent.modalTmp, }">
+                  <input
+                    class="block w-full pr-20 mt-1 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray form-input"
+                    x-model="newName"
+                    type="text"
+                    @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
+                    placeholder="Nama arah..."
+                  />
+                </div>
               </template>
             </label>
           </div>
@@ -170,6 +182,37 @@
             .catch((err) => {
               console.log("Telah terjadi kesalahan saat memuat data arah ");
               console.warn(err);
+            });
+        },
+        updateLineName($dispatch, lid) {
+          newLineName = document.getElementById("edit-line").__x.$data.newName;
+          if (newLineName.length < 1) {
+            $dispatch("notif", {
+              type: "error",
+              message: "Nama arah tidak boleh kosong",
+            });
+            return;
+          }
+          fetch(
+            `/api/v1/local/line/edit/${lid}/update/name?set=${newLineName}`,
+            {
+              method: "PATCH",
+            }
+          )
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+              if (json.status == "success") {
+                this.fetchLines($dispatch);
+              }
+            })
+            .catch((err) => {
+              console.log("Error: updateZoneName() " + err);
             });
         },
         deleteLine($dispatch, lid) {

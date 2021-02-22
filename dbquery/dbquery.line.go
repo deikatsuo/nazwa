@@ -112,3 +112,14 @@ func LineDelete(lid int) error {
 
 	return err
 }
+
+// LineUpdateName update nama arah
+func LineUpdateName(lid int, name string) error {
+	db := DB
+	query := `UPDATE "zone_line"
+	SET name=$2
+	WHERE id=$1`
+	_, err := db.Exec(query, lid, name)
+
+	return err
+}

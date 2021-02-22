@@ -178,3 +178,48 @@ func LineDelete(c *gin.Context) {
 
 	c.JSON(httpStatus, gh)
 }
+
+// LineUpdateName ubah nama arah
+func LineUpdateName(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	lid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	newName := c.Query("set")
+
+	// Update arah
+	if next {
+		if err := dbquery.LineUpdateName(lid, newName); err != nil {
+			log.Warn("api.line.go LineUpdateName() Gagal mengubah nama arah")
+			log.Error(err)
+			message = "Gagal mengubah nama arah"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Nama arah berhasil dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}

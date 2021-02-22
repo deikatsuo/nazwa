@@ -58,7 +58,7 @@ func ZoneUpdateName(c *gin.Context) {
 
 	newName := c.Query("set")
 
-	// Update collector
+	// Update zona
 	if next {
 		if err := dbquery.ZoneUpdateName(zid, newName); err != nil {
 			log.Warn("api.zone.go ZoneUpdateName() Gagal mengubah nama zona")
