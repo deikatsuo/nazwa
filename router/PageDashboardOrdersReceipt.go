@@ -31,18 +31,6 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 		next = false
 	}
 
-	// Kode order
-	var code string
-	if next {
-		if co, err := dbquery.OrderGetCodeByID(oid); err == nil {
-			code = co
-		} else {
-			next = false
-			message = "Sepertinya telah terjadi masalah saat mencoba mengambil kode order"
-			httpStatus = http.StatusInternalServerError
-		}
-	}
-
 	var order wrapper.Order
 	if next {
 		if ord, err := dbquery.OrderGetOrderByID(oid); err == nil {
@@ -91,7 +79,7 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 		"site_title": "Kwitansi",
 		"monthly":    monthly,
 		"order":      order,
-		"code":       code,
+		"code":       order.Code,
 		"message":    message,
 		"status":     status,
 		"page":       "orders_receipt",
