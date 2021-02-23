@@ -210,12 +210,13 @@
         <template x-for="(address, index) in addresses" :key="index">
           <tr
             class="cursor-pointer text-gray-600 dark:text-gray-400"
+            @click="toEditAddress(address)"
             @dblclick="if (selectedAddress == address.ID) { deleteAddr($dispatch, address.ID); }"
             @contextmenu.prevent="if (selectedAddress != address.ID ) { selectedAddress = address.ID; } else { selectedAddress = null; }"
             :class="{ 'hover:bg-yellow-50': selectedAddress != address.ID ,'bg-orange-300 hover:bg-orange-200': selectedAddress == address.ID }"
           >
             <td class="px-4 py-1 align-top">
-              <div class="relative">
+              <div class="relative" :class="{'edit': editAddressMask == address.ID }">
                 <div class="flex items-center text-sm">
                   <div>
                     <p class="font-semibold" x-text="address.Name"></p>
@@ -270,8 +271,8 @@
   function addAddressDetail() {
     return {
       uid: null,
-      showSelected: null,
-      addAddressOpen: false,
+      //showSelected: null,
+      formAddressOpen: false,
       errAddressName: false,
       errAddressDescription: false,
       errAddressOne: false,
@@ -337,13 +338,21 @@
         district: '',
         village: '',
       },
+      editAddress: null,
       addAddressDisable: true,
       addAddressBtn: {{ .l_u_address_add_btn }},
       addAddress($dispatch) {
         this.addAddressBtn = "Loading. . .";
         this.addAddressDisable = true;
-        fetch(`/api/v1/local/user/edit/${this.uid}/add/address`, {
-          method: "POST",
+        if (this.editAddress == null) {
+          link = `/api/v1/local/user/edit/${this.uid}/add/address`;
+          method = "POST";
+        } else {
+          link = `/api/v1/local/user/edit/${this.uid}/update/address/${this.editAddress}`;
+          method = "PATCH";
+        }
+        fetch(link, {
+          method: method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.addAddressData),
         })
@@ -618,13 +627,63 @@
       },
       isAao: false,
       Aao() {
+        document.getElementById("address").__x.$data.addAddressBtn = "Tambah";
+        document.getElementById("address").__x.$data.addAddressData = {
+          name: '',
+          description: '',
+          one: '',
+          two: '',
+          zip: '',
+          province: '',
+          city: '',
+          district: '',
+          village: '',
+        };
         document.getElementById(
           "address"
-        ).__x.$data.addAddressOpen = !document.getElementById("address").__x
-          .$data.addAddressOpen;
+        ).__x.$data.formAddressOpen = !document.getElementById("address").__x
+          .$data.formAddressOpen;
         this.isAao = document.getElementById(
           "address"
-        ).__x.$data.addAddressOpen;
+        ).__x.$data.formAddressOpen;
+      },
+      editAddressMask: null,
+      toEditAddress(address) {
+        document.getElementById("address").__x.$data.addAddressBtn = "Sunting";
+        if (document.getElementById("address").__x.$data.editAddress !== address.ID) {
+          document.getElementById("address").__x.$data.editAddress = address.ID;
+          this.editAddressMask = address.ID;
+          document.getElementById("address").__x.$data.addAddressData = {
+            name: address.Name,
+            description: address.Description,
+            one: address.One,
+            two: address.Two,
+            zip: address.Zip,
+            province: address.Province,
+            city: '',
+            district: '',
+            village: '',
+          };
+          document.getElementById("address").__x.$data.fetchCities();
+          document.getElementById("address").__x.$data.formAddressOpen = true;
+          this.isAao = true;
+        } else {
+          document.getElementById("address").__x.$data.editAddress = null;
+          this.editAddressMask = null;
+          document.getElementById("address").__x.$data.addAddressData = {
+            name: '',
+            description: '',
+            one: '',
+            two: '',
+            zip: '',
+            province: '',
+            city: '',
+            district: '',
+            village: '',
+          };
+          document.getElementById("address").__x.$data.formAddressOpen = false;
+          this.isAao = false;
+        }
       },
     };
   }

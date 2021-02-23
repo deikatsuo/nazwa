@@ -18,6 +18,7 @@ type AddressForm struct {
 // AddressInsert insert data alamat
 type AddressInsert struct {
 	UserID      int    `db:"user_id"`
+	Edit        int    `db:"edit"`
 	Name        string `db:"name"`
 	Description string `db:"description"`
 	One         string `db:"one"`

@@ -55,6 +55,20 @@ func AddressAdd(address wrapper.AddressInsert) error {
 	return nil
 }
 
+// AddressUpdate ubah data alamat
+func AddressUpdate(address wrapper.AddressInsert) error {
+	db := DB
+	query := `UPDATE "address"
+	SET name=:name, description=:description, one=:one, two=:two, zip=:zip, province_id=:province_id, city_id=:city_id, district_id=:district_id, village_id=:village_id
+	WHERE id=:edit`
+	_, err := db.NamedExec(query, address)
+	if err != nil {
+		log.Warn("dbquery.address.go AddressUpdate() Gagal mengubah alamat")
+		return err
+	}
+	return nil
+}
+
 // AddressGetByUserID mengambil alamat berdasarkan id user
 func AddressGetByUserID(userid int) ([]wrapper.Address, error) {
 	db := DB

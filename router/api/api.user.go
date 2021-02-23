@@ -615,6 +615,7 @@ func UserAddAddress(c *gin.Context) {
 	// Tambahkan alamat
 	addressInsert := wrapper.AddressInsert{
 		UserID:      uid,
+		Name:        newAddress.Name,
 		Description: newAddress.Description,
 		One:         newAddress.One,
 		Two:         newAddress.Two,
@@ -643,6 +644,78 @@ func UserAddAddress(c *gin.Context) {
 			addresses = ph
 			httpStatus = http.StatusOK
 			success = "Alamat berhasil ditambahkan"
+		}
+	}
+	gh := gin.H{
+		"error":     errMess,
+		"success":   success,
+		"addresses": addresses,
+	}
+	c.JSON(httpStatus, misc.Mete(gh, simpleErr))
+}
+
+// UserUpdateAddress UPDATE address
+func UserUpdateAddress(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+	// User id yang merequest
+	uid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	aid, err := strconv.Atoi(c.Param("aid"))
+	if err != nil {
+		router.Page404(c)
+		return
+	}
+
+	errMess := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	success := ""
+	var simpleErr map[string]interface{}
+
+	var newAddress wrapper.AddressForm
+	if err := c.ShouldBindJSON(&newAddress); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+	}
+
+	// Tambahkan alamat
+	addressInsert := wrapper.AddressInsert{
+		Edit:        aid,
+		Name:        newAddress.Name,
+		Description: newAddress.Description,
+		One:         newAddress.One,
+		Two:         newAddress.Two,
+		Zip:         newAddress.Zip,
+		Province:    newAddress.Province,
+		City:        newAddress.City,
+		District:    newAddress.District,
+		Village:     newAddress.Village,
+	}
+
+	if next {
+		if err := dbquery.AddressUpdate(addressInsert); err != nil {
+			log.Warning(err)
+			errMess = "Gagal mengubah alamat"
+			next = false
+		}
+	}
+
+	// Ambil data alamat dari database
+	var addresses []wrapper.Address
+	if next {
+		ph, err := dbquery.AddressGetByUserID(uid)
+		if err != nil {
+			errMess = "Gagal memuat alamat"
+		} else {
+			addresses = ph
+			httpStatus = http.StatusOK
+			success = "Alamat berhasil di ubah"
 		}
 	}
 	gh := gin.H{

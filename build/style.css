@@ -12,3 +12,19 @@
   @apply: bg-orange-400;
   background-color: #f59e0b;
 }
+
+.edit::after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  z-index: 1;
+  opacity: 0.5;
+  background-image: url("/assets/img/edit-pencil.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}

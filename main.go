@@ -281,6 +281,7 @@ func runServer() {
 	v1uEdit.DELETE("/:id/delete/phone", api.UserDeletePhone)
 	v1uEdit.POST("/:id/add/phone", api.UserAddPhone)
 	v1uEdit.POST("/:id/add/address", api.UserAddAddress)
+	v1uEdit.PATCH("/:id/update/address/:aid", api.UserUpdateAddress)
 	v1uEdit.DELETE("/:id/delete/address", api.UserDeleteAddress)
 
 	// User API search/pencarian
