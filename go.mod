@@ -4,9 +4,11 @@ go 1.15
 
 require (
 	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff // indirect
+	github.com/boyter/scc v2.12.0+incompatible // indirect
 	github.com/buger/jsonparser v1.1.0
 	github.com/casbin/casbin/v2 v2.19.8
 	github.com/cheggaaa/pb/v3 v3.0.5
+	github.com/dbaggerman/cuba v0.3.2 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/gin-contrib/gzip v0.0.3
@@ -27,17 +29,20 @@ require (
 	github.com/lib/pq v1.9.0
 	github.com/martinlindhe/base36 v1.1.0
 	github.com/mattn/go-runewidth v0.0.9 // indirect
+	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1 // indirect
+	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rs/xid v1.2.1
 	github.com/semihalev/gin-stats v0.0.0-20180505163755-30fdcbbd3533
 	github.com/sirupsen/logrus v1.7.0
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
+	github.com/spf13/cobra v1.1.3 // indirect
 	github.com/ugorji/go v1.2.2 // indirect
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 	golang.org/x/image v0.0.0-20201208152932-35266b937fa6 // indirect
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/sys v0.0.0-20201231184435-2d18734c6014 // indirect
-	golang.org/x/text v0.3.4 // indirect
+	golang.org/x/text v0.3.5 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

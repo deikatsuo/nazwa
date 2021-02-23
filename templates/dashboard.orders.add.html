@@ -806,7 +806,7 @@
                   </template>
                 </div>
                 <!-- Arah -->
-                <template x-if="lines.length > 0">
+                <template x-if="lines !== null">
                   <div
                     class="w-full overflow-x-auto flex flex-wrap p-2 mt-2 text-sm font-medium text-gray-500 rounded-md shadow-inner bg-blue-50 dark:text-gray-400 dark:bg-gray-900"
                   >
@@ -1122,7 +1122,7 @@
         editPrice: null,
         zones: [],
         activeZone: null,
-        lines: [],
+        lines: null,
         notifStatus: "",
         errCustomer: false,
         errmCustomer: "",

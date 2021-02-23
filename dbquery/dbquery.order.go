@@ -641,7 +641,6 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		o.surveyor_id,
 		concat_ws(' ', su.first_name, su.last_name) as surveyor_name,
 		su.avatar as surveyor_thumb,
-		o.collector_id,
 		concat_ws(' ', co.first_name, co.last_name) as collector_name,
 		co.avatar as collector_thumb,
 		o.created_by as created_by_id,
