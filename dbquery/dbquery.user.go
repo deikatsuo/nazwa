@@ -6,7 +6,6 @@ import (
 	"nazwa/wrapper"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/martinlindhe/base36"
 	"golang.org/x/crypto/bcrypt"
@@ -323,12 +322,13 @@ func (u *CreateUser) Save() error {
 		// Hapus semua spasi
 		num = strings.ReplaceAll(num, " ", "")
 		if iui, err := strconv.ParseUint(num, 10, 64); err == nil {
-			nzne := time.Now().Hour()
+			/*nzne := time.Now().Hour()
 			if nzne >= 12 {
 				username = "NZ-" + base36.Encode(iui)
 			} else {
 				username = "NE-" + base36.Encode(iui)
-			}
+			}*/
+			username = base36.Encode(iui)
 		} else {
 			log.Warn("dbquery.user.go (u *CreateUser) Save() ParseUint username/kode pelanggan")
 			return err

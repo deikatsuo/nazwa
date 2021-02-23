@@ -138,87 +138,6 @@ func UserCreate(c *gin.Context) {
 /* UPDATE */
 ////////////
 
-// TODO: Pindahkan ini
-type updateContact struct {
-	Username    string `json:"username" binding:"alphanum,min=4,max=25"`
-	Password    string `json:"password" binding:"omitempty,alphanumunicode,min=8,max=25"`
-	Repassword  string `json:"repassword" binding:"eqfield=Password"`
-	Oldpassword string `json:"oldpassword" binding:"required_with=Password"`
-}
-
-// UserUpdateContact api untuk mengupdate kontak user
-func UserUpdateContact(c *gin.Context) {
-	session := sessions.Default(c)
-	// User session saat ini
-	nowID := session.Get("userid")
-	// User id yang merequest
-	uid, err := strconv.Atoi(c.Param("id"))
-	if err != nil || nowID == nil {
-		router.Page404(c)
-		return
-	}
-
-	errMess := ""
-	next := true
-	httpStatus := http.StatusBadRequest
-	success := ""
-	var simpleErr map[string]interface{}
-
-	var update updateContact
-	if err := c.ShouldBindJSON(&update); err != nil {
-		simpleErr = validation.SimpleValErrMap(err)
-		next = false
-	}
-
-	// Check ketersediaan username
-	if next {
-		if dbquery.UsernameExist(update.Username) {
-			errMess = "Username tidak tersedia"
-			next = false
-		}
-	}
-
-	// Update username
-	if next {
-		if err := dbquery.UserUpdateUsername(uid, update.Username); err != nil {
-			errMess = "Gagal mengubah username"
-			next = false
-		}
-	}
-
-	// Cocokan password lama
-	if next {
-		if update.Password != "" {
-			if !dbquery.UserMatchPassword(uid, update.Oldpassword) {
-				errMess = "Kata sandi lama salah"
-				next = false
-			}
-		}
-	}
-
-	// Update password
-	if next {
-		if update.Password != "" {
-			if err := dbquery.UserUpdatePassword(uid, update.Password); err != nil {
-				errMess = "Gagal merubah kata sandi"
-				next = false
-			}
-		}
-	}
-
-	// Berhasil update data
-	if next {
-		httpStatus = http.StatusOK
-		success = "Data berhasil disimpan"
-	}
-
-	gh := gin.H{
-		"error":   errMess,
-		"success": success,
-	}
-	c.JSON(httpStatus, misc.Mete(gh, simpleErr))
-}
-
 // UserUpdateRole api untuk mengupdate kontak user
 func UserUpdateRole(c *gin.Context) {
 	session := sessions.Default(c)
@@ -280,6 +199,62 @@ func UserUpdateRole(c *gin.Context) {
 	}
 
 	c.JSON(httpStatus, misc.Mete(gh, simpleErr))
+}
+
+// UserUpdateUsername update username
+func UserUpdateUsername(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	uid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	newUsername := c.Query("set")
+
+	// Check ketersediaan username
+	if next {
+		if dbquery.UsernameExist(newUsername) {
+			log.Warn("api.user.go UserUpdateUsername() username tidak tersedia")
+			log.Error(err)
+			message = "Username ini sudah digunakan"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Update username
+	if next {
+		if err := dbquery.UserUpdateUsername(uid, newUsername); err != nil {
+			log.Warn("api.line.go UserUpdateUsername() Gagal mengubah username/kode")
+			log.Error(err)
+			message = "Gagal mengubah username/kode"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Username/kode berhasil dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
 }
 
 ////////////
@@ -401,7 +376,7 @@ func UserDeleteAddress(c *gin.Context) {
 	session := sessions.Default(c)
 	// User session saat ini
 	nowID := session.Get("userid")
-	// User id yang merequest
+	// User id pemilik address
 	uid, err := strconv.Atoi(c.Param("id"))
 	if err != nil || nowID == nil {
 		router.Page404(c)

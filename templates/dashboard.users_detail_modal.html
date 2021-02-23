@@ -92,6 +92,25 @@
         ></dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Kode</dt>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <span
+            x-text="user.Username"
+            @dblclick="openUpdateFor('username', user.Username, $nextTick);"
+            x-show="updateFor !== 'username'"
+          ></span>
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+            type="text"
+            id="edit-username"
+            x-model="updateData.username"
+            x-show="updateFor == 'username'"
+            @click.away="if (updateFor == 'username') { updateFor = ''; }"
+            @keydown.enter="updateUsername($dispatch)"
+          />
+        </dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">
           Jenis Kelamin
         </dt>
@@ -216,7 +235,10 @@
             :class="{ 'hover:bg-yellow-50': selectedAddress != address.ID ,'bg-orange-300 hover:bg-orange-200': selectedAddress == address.ID }"
           >
             <td class="px-4 py-1 align-top">
-              <div class="relative" :class="{'edit': editAddressMask == address.ID }">
+              <div
+                class="relative"
+                :class="{'edit': editAddressMask == address.ID }"
+              >
                 <div class="flex items-center text-sm">
                   <div>
                     <p class="font-semibold" x-text="address.Name"></p>
@@ -531,6 +553,11 @@
       emails: [],
       phones: [],
       addresses: [],
+      // Update
+      updateData: {
+        username: "",
+      },
+      updateFor: "",
       role: [
         "Dev",
         "Admin",
@@ -551,6 +578,46 @@
         address = document.getElementById("address").__x.$data;
         address.deleteAddress($dispatch, addrid);
       },
+
+      openUpdateFor(update, value, $nextTick) {
+        this.updateFor = 'username';
+        this.updateData.username = value;
+        $nextTick(() => {
+          document.getElementById(`edit-username`).select();
+        });
+      },
+
+      updateUsername($dispatch) {
+        if (this.updateData.username.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Username tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/user/edit/${this.id}/update/username?set=${this.updateData.username}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              user = document.getElementById("user_data").__x.$data;
+              user.fetchUsersData($dispatch, false, "reload", true);
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updateUsername() " + err);
+          });
+        },
 
       fetchById($dispatch) {
         fetch(`/api/v1/local/user/id/${this.id}`, {
@@ -629,15 +696,15 @@
       Aao() {
         document.getElementById("address").__x.$data.addAddressBtn = "Tambah";
         document.getElementById("address").__x.$data.addAddressData = {
-          name: '',
-          description: '',
-          one: '',
-          two: '',
-          zip: '',
-          province: '',
-          city: '',
-          district: '',
-          village: '',
+          name: "",
+          description: "",
+          one: "",
+          two: "",
+          zip: "",
+          province: "",
+          city: "",
+          district: "",
+          village: "",
         };
         document.getElementById(
           "address"
@@ -650,7 +717,10 @@
       editAddressMask: null,
       toEditAddress(address) {
         document.getElementById("address").__x.$data.addAddressBtn = "Sunting";
-        if (document.getElementById("address").__x.$data.editAddress !== address.ID) {
+        if (
+          document.getElementById("address").__x.$data.editAddress !==
+          address.ID
+        ) {
           document.getElementById("address").__x.$data.editAddress = address.ID;
           this.editAddressMask = address.ID;
           document.getElementById("address").__x.$data.addAddressData = {
@@ -660,9 +730,9 @@
             two: address.Two,
             zip: address.Zip,
             province: address.Province,
-            city: '',
-            district: '',
-            village: '',
+            city: "",
+            district: "",
+            village: "",
           };
           document.getElementById("address").__x.$data.fetchCities();
           document.getElementById("address").__x.$data.formAddressOpen = true;
@@ -671,15 +741,15 @@
           document.getElementById("address").__x.$data.editAddress = null;
           this.editAddressMask = null;
           document.getElementById("address").__x.$data.addAddressData = {
-            name: '',
-            description: '',
-            one: '',
-            two: '',
-            zip: '',
-            province: '',
-            city: '',
-            district: '',
-            village: '',
+            name: "",
+            description: "",
+            one: "",
+            two: "",
+            zip: "",
+            province: "",
+            city: "",
+            district: "",
+            village: "",
           };
           document.getElementById("address").__x.$data.formAddressOpen = false;
           this.isAao = false;

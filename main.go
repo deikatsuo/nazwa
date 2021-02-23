@@ -274,15 +274,22 @@ func runServer() {
 	// User API edit
 	// /api/v1/local/user/edit
 	v1uEdit := v1user.Group("/edit")
-	v1uEdit.PATCH("/:id/update/contact", api.UserUpdateContact)
-	v1uEdit.PATCH("/:id/update/role", api.UserUpdateRole)
 	v1uEdit.DELETE("/:id/delete/email", api.UserDeleteEmail)
 	v1uEdit.POST("/:id/add/email", api.UserAddEmail)
 	v1uEdit.DELETE("/:id/delete/phone", api.UserDeletePhone)
 	v1uEdit.POST("/:id/add/phone", api.UserAddPhone)
+	v1uEdit.PATCH("/:id/update/username", api.UserUpdateUsername)
+	v1uEdit.PATCH("/:id/update/role", api.UserUpdateRole)
 	v1uEdit.POST("/:id/add/address", api.UserAddAddress)
 	v1uEdit.PATCH("/:id/update/address/:aid", api.UserUpdateAddress)
 	v1uEdit.DELETE("/:id/delete/address", api.UserDeleteAddress)
+
+	// /api/v1/local/account
+	v1account := v1local.Group("/account")
+
+	// /api/v1/local/account/edit
+	v1accEdit := v1account.Group("/edit")
+	v1accEdit.PATCH("/:id/update/contact", api.AccountUpdateContact)
 
 	// User API search/pencarian
 	// /api/v1/local/user/search
