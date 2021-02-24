@@ -45,16 +45,27 @@
         <dt class="text-sm leading-5 font-medium text-gray-500">
           Nomor Kartu Keluarga
         </dt>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="user.FamilyCardNumber != ''"
-          x-text="user.FamilyCardNumber"
-        ></dd>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="user.FamilyCardNumber == ''"
-        >
-          -
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-show="updateFor !== 'familycard'"
+            @dblclick="openUpdateForFamilyCard(user.FamilyCardNumber, $nextTick);"
+          >
+            <span
+              x-text="user.FamilyCardNumber"
+              x-show="user.FamilyCardNumber !== ''"
+            ></span>
+            <span x-show="user.FamilyCardNumber == ''">-</span>
+          </div>
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+            type="text"
+            id="edit-family-card"
+            x-model="updateData.familycard"
+            x-show="updateFor == 'familycard'"
+            @click.away="if (updateFor == 'familycard') { updateFor = ''; }"
+            @keydown.enter="updateFamilyCard($dispatch)"
+          />
         </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
@@ -584,6 +595,7 @@
       // Update
       updateData: {
         username: "",
+        familycard: "",
       },
       updateFor: "",
       role: [
@@ -615,8 +627,48 @@
         });
       },
 
+      openUpdateForFamilyCard(value, $nextTick) {
+        this.updateFor = "familycard";
+        this.updateData.familycard = value;
+        $nextTick(() => {
+          document.getElementById(`edit-family-card`).select();
+        });
+      },
+
       openUpdateForPwd() {
         this.updateFor = "password";
+      },
+
+      updateFamilyCard($dispatch) {
+        if (this.updateData.familycard.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Nomor KK tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/user/edit/${this.id}/update/fc?set=${this.updateData.familycard}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              user = document.getElementById("user_data").__x.$data;
+              user.fetchUsersData($dispatch, false, "reload", true);
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updateFamilyCard() " + err);
+          });
       },
 
       updateUsername($dispatch) {

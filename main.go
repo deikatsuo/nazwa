@@ -279,6 +279,7 @@ func runServer() {
 	v1uEdit.DELETE("/:id/delete/phone", api.UserDeletePhone)
 	v1uEdit.POST("/:id/add/phone", api.UserAddPhone)
 
+	v1uEdit.PATCH("/:id/update/fc", api.UserUpdateFamilyCard)
 	v1uEdit.PATCH("/:id/update/password", api.UserUpdatePassword)
 	v1uEdit.PATCH("/:id/update/username", api.UserUpdateUsername)
 	v1uEdit.PATCH("/:id/update/role", api.UserUpdateRole)

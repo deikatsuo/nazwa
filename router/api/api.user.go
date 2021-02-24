@@ -42,9 +42,7 @@ func UserCreate(c *gin.Context) {
 	if err := c.ShouldBindJSON(&json); err != nil {
 		log.Println("ERROR: api.user.go UserCreate() bind json")
 		log.Println(err)
-		if fmt.Sprintf("%T", err) == "validator.ValidationErrors" {
-			simpleErrMap = validation.SimpleValErrMap(err)
-		}
+		simpleErrMap = validation.SimpleValErrMap(err)
 		httpStatus = http.StatusBadRequest
 		status = "fail"
 		save = false
@@ -234,7 +232,7 @@ func UserUpdateUsername(c *gin.Context) {
 	// Update username
 	if next {
 		if err := dbquery.UserUpdateUsername(uid, newUsername); err != nil {
-			log.Warn("api.line.go UserUpdateUsername() Gagal mengubah username/kode")
+			log.Warn("api.user.go UserUpdateUsername() Gagal mengubah username/kode")
 			log.Error(err)
 			message = "Gagal mengubah username/kode"
 			status = "error"
@@ -246,6 +244,51 @@ func UserUpdateUsername(c *gin.Context) {
 	if next {
 		httpStatus = http.StatusOK
 		message = "Username/kode berhasil dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
+// UserUpdateFamilyCard ubah nomor kartu keluarga
+func UserUpdateFamilyCard(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	uid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	newFc := c.Query("set")
+
+	// Update kk
+	if next {
+		if err := dbquery.UserUpdateFamilyCard(uid, newFc); err != nil {
+			log.Warn("api.user.go UserUpdateFamilyCard() Gagal mengubah nomor kartu keluarga")
+			log.Error(err)
+			message = "Gagal mengubah nomor kartu keluarga"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Nomor kartu keluarga berhasil dirubah"
 		status = "success"
 	}
 

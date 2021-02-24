@@ -43,9 +43,7 @@ func ProductCreate(c *gin.Context) {
 	if err := c.ShouldBindJSON(&json); err != nil {
 		log.Warn("api.product.go ProductCreate() bind json")
 		log.Error(err)
-		if fmt.Sprintf("%T", err) == "validator.ValidationErrors" {
-			simpleErrMap = validation.SimpleValErrMap(err)
-		}
+		simpleErrMap = validation.SimpleValErrMap(err)
 		httpStatus = http.StatusBadRequest
 		status = "fail"
 		save = false

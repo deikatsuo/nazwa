@@ -191,9 +191,7 @@ func OrderCreate(c *gin.Context) {
 	if err := c.ShouldBindJSON(&json); err != nil {
 		log.Println("ERROR: api.order.go OrderCreate() bind json")
 		log.Println(err)
-		if fmt.Sprintf("%T", err) == "validator.ValidationErrors" {
-			simpleErrMap = validation.SimpleValErrMap(err)
-		}
+		simpleErrMap = validation.SimpleValErrMap(err)
 		httpStatus = http.StatusBadRequest
 		status = "fail"
 		save = false

@@ -794,6 +794,64 @@ func UserUpdateUsername(uid int, uname string) error {
 	return err
 }
 
+// UserUpdateFamilyCard mengubah nomor kk
+func UserUpdateFamilyCard(uid int, fc string) error {
+	db := DB
+
+	// Lakukan pengecekan nomor kk/ insert jika belum ada
+	var fcid int
+	if fe, fv := UserFamilyCardExist(fc); fe {
+		fcid = fv
+	} else {
+		if rows, err := db.Query(`INSERT INTO "family_card" (number) VALUES ($1) RETURNING id`, fc); err == nil {
+			// Ambil id dari transaksi terakhir
+			if rows.Next() {
+				rows.Scan(&fcid)
+			}
+			if err := rows.Close(); err != nil {
+				log.Warn("dbquery.user.go UserUpdateFamilyCard() fcid closing rows")
+				return err
+			}
+		} else {
+			log.Warn("dbquery.user.go UserUpdateFamilyCard() Insert family card fail")
+			return err
+		}
+	}
+
+	// Set family
+	if fcid != 0 {
+		if UserHasFamilyCard(uid) {
+			if _, err := db.Exec(`UPDATE "family" SET family_card_id=$1	WHERE user_id=$2`, fcid, uid); err != nil {
+				log.Warn("dbquery.user.go UserUpdateFamilyCard() Update nomor kk")
+				return err
+			}
+		} else {
+			if _, err := db.Exec(`INSERT INTO "family" (family_card_id, user_id) VALUES ($1, $2)`, fcid, uid); err != nil {
+				log.Warn("dbquery.user.go UserUpdateFamilyCard() Insert nomor kk")
+				return err
+			}
+		}
+	}
+
+	return err
+}
+
+// UserHasFamilyCard apakah user ini sudah terdaftar dengan nomor kk
+func UserHasFamilyCard(uid int) bool {
+	db := DB
+	// Check bila user sudah terdaftar nomor kk
+	var indb int
+	query := `SELECT id FROM "family" WHERE user_id=$1`
+	err := db.Get(&indb, query, uid)
+	if err == nil {
+		if indb != 0 {
+			return true
+		}
+	}
+
+	return false
+}
+
 // UserUpdatePassword mengubah password user
 func UserUpdatePassword(uid int, pwd string) error {
 	db := DB
