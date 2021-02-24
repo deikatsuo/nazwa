@@ -14,7 +14,6 @@ import (
 
 // TODO: Pindahkan ini
 type updateContact struct {
-	Username    string `json:"username" binding:"alphanum,min=4,max=25"`
 	Password    string `json:"password" binding:"omitempty,alphanumunicode,min=8,max=25"`
 	Repassword  string `json:"repassword" binding:"eqfield=Password"`
 	Oldpassword string `json:"oldpassword" binding:"required_with=Password"`
@@ -42,22 +41,6 @@ func AccountUpdateContact(c *gin.Context) {
 	if err := c.ShouldBindJSON(&update); err != nil {
 		simpleErr = validation.SimpleValErrMap(err)
 		next = false
-	}
-
-	// Check ketersediaan username
-	if next {
-		if dbquery.UsernameExist(update.Username) {
-			errMess = "Username tidak tersedia"
-			next = false
-		}
-	}
-
-	// Update username
-	if next {
-		if err := dbquery.UserUpdateUsername(uid, update.Username); err != nil {
-			errMess = "Gagal mengubah username"
-			next = false
-		}
 	}
 
 	// Cocokan password lama
