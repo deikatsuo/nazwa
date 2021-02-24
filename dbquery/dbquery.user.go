@@ -833,7 +833,7 @@ func UserUpdateFamilyCard(uid int, fc string) error {
 		}
 	}
 
-	return err
+	return nil
 }
 
 // UserHasFamilyCard apakah user ini sudah terdaftar dengan nomor kk
