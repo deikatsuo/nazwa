@@ -81,6 +81,7 @@ type User struct {
 	ID               int
 	Firstname        string
 	Lastname         string
+	Password         bool
 	RIC              string
 	Username         string
 	Occupation       string

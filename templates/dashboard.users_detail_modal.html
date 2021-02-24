@@ -96,7 +96,7 @@
         <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
           <span
             x-text="user.Username"
-            @dblclick="openUpdateFor('username', user.Username, $nextTick);"
+            @dblclick="openUpdateForUsername(user.Username, $nextTick);"
             x-show="updateFor !== 'username'"
           ></span>
           <input
@@ -108,6 +108,33 @@
             @click.away="if (updateFor == 'username') { updateFor = ''; }"
             @keydown.enter="updateUsername($dispatch)"
           />
+        </dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Kata Sandi</dt>
+        <dd>
+          <div x-show="updateFor == 'password'">
+            <a class="text-blue-500" href="#" @click="updatePassword($dispatch)"
+              >Buat kata sandi</a
+            >
+          </div>
+          <div x-show="updateFor !== 'password'">
+            <div class="w-full" @dblclick.prevent="openUpdateForPwd();">
+              <template x-if="!user.showPwd">
+                <div class="select-none">
+                  <span x-show="user.Password">********</span>
+                  <span x-show="!user.Password">-</span>
+                </div>
+              </template>
+              <template x-if="user.showPwd">
+                <div
+                  class="cursor-pointer"
+                  x-text="user.pwd"
+                  @click="$clipboard(user.pwd);"
+                ></div>
+              </template>
+            </div>
+          </div>
         </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
@@ -151,7 +178,7 @@
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">Peran</dt>
         <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
-          <select x-model="setRole">
+          <select x-model="setRole" class="appearance-none bg-white pl-0 -ml-1">
             <template x-for="(name, index) in role" :key="index">
               <option :value="index" x-text="name"></option>
             </template>
@@ -549,10 +576,11 @@
         });
       },
       id: $parent.modalTmp,
-      user: [],
+      user: {},
       emails: [],
       phones: [],
       addresses: [],
+      loading: false,
       // Update
       updateData: {
         username: "",
@@ -579,12 +607,16 @@
         address.deleteAddress($dispatch, addrid);
       },
 
-      openUpdateFor(update, value, $nextTick) {
-        this.updateFor = 'username';
+      openUpdateForUsername(value, $nextTick) {
+        this.updateFor = "username";
         this.updateData.username = value;
         $nextTick(() => {
           document.getElementById(`edit-username`).select();
         });
+      },
+
+      openUpdateForPwd() {
+        this.updateFor = "password";
       },
 
       updateUsername($dispatch) {
@@ -617,7 +649,31 @@
           .catch((err) => {
             console.log("Error: updateUsername() " + err);
           });
-        },
+      },
+
+      updatePassword($dispatch) {
+        fetch(`/api/v1/local/user/edit/${this.id}/update/password`, {
+          method: "PATCH",
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message != "") {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              this.user.showPwd = true;
+              this.user.pwd = json.pwd;
+              this.updateFor = "";
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            this.loading = false;
+          });
+      },
 
       fetchById($dispatch) {
         fetch(`/api/v1/local/user/id/${this.id}`, {

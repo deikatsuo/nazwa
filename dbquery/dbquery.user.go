@@ -495,6 +495,7 @@ func UserGetByID(uid int) (wrapper.User, error) {
 		u.last_name,
 		u.ric,
 		u.username,
+		u.password,
 		u.avatar,
 		u.gender,
 		u.occupation,
@@ -534,6 +535,11 @@ func UserGetByID(uid int) (wrapper.User, error) {
 		addresses = addrs
 	}
 
+	pwd := false
+	if u.Password.Valid {
+		pwd = true
+	}
+
 	user = wrapper.User{
 		ID:               u.ID,
 		Firstname:        strings.Title(u.Firstname),
@@ -541,6 +547,7 @@ func UserGetByID(uid int) (wrapper.User, error) {
 		RIC:              u.RIC,
 		FamilyCardNumber: string(u.FamilyCardNumber.String),
 		Username:         string(u.Username.String),
+		Password:         pwd,
 		Avatar:           u.Avatar,
 		Gender:           u.Gender,
 		Occupation:       strings.Title(string(u.Occupation.String)),

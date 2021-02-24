@@ -257,6 +257,51 @@ func UserUpdateUsername(c *gin.Context) {
 	c.JSON(httpStatus, gh)
 }
 
+// UserUpdatePassword update password
+func UserUpdatePassword(c *gin.Context) {
+	// User id yang merequest
+	uid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
+	}
+
+	httpStatus := http.StatusBadRequest
+	message := ""
+	status := "error"
+	next := true
+
+	var genPwd string
+
+	// Buat password acak 8 karakter
+	if gen, err := misc.GenerateStringFixedLength(8); err == nil {
+		genPwd = gen
+	} else {
+		next = false
+		message = "Gagal menggenerate kata sandi"
+	}
+
+	if next {
+		if err := dbquery.UserUpdatePassword(uid, genPwd); err != nil {
+			message = "Gagal merubah kata sandi"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Berhasil membuat kata sandi untuk user ini"
+		status = "success"
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"status":  status,
+		"message": message,
+		"pwd":     genPwd,
+	})
+}
+
 ////////////
 /* DELETE */
 ////////////

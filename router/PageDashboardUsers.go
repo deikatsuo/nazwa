@@ -25,6 +25,10 @@ func PageDashboardUsers(c *gin.Context) {
 		"l_u_address_district":    "Distrik/Kecamatan",
 		"l_u_address_village":     "Kelurahan/Desa",
 		"l_u_address_add_btn":     "Tambah",
+
+		"js_start": []string{
+			"/assets/js/alpine-clipboard.js",
+		},
 	}
 
 	df := c.MustGet("dashboard").(map[string]interface{})

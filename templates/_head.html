@@ -15,6 +15,9 @@
     display: none !important;
 }
 </style>
+{{ range $href := .js_start }}
+<script src="{{ $href }}"></script>
+{{ end }}
 <script src="/assets/js/alpine-magic-helper-component.js"></script>
 <script src="/assets/js/alpine.min.js" defer></script>
 <script src="/assets/js/init.js"></script>
