@@ -852,6 +852,19 @@ func UserHasFamilyCard(uid int) bool {
 	return false
 }
 
+// UserUpdateResidentIdentityCard ubah nik
+func UserUpdateResidentIdentityCard(uid int, ric string) error {
+	db := DB
+
+	// Update nik
+	if _, err := db.Exec(`UPDATE "user" SET ric=$1	WHERE id=$2`, ric, uid); err != nil {
+		log.Warn("dbquery.user.go UserUpdateResidentIdentityCard() Update nik")
+		return err
+	}
+
+	return nil
+}
+
 // UserUpdatePassword mengubah password user
 func UserUpdatePassword(uid int, pwd string) error {
 	db := DB

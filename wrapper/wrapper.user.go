@@ -115,6 +115,11 @@ type UserUpdateFamilyCard struct {
 	FC string `form:"set" binding:"numeric,min=16,max=16"`
 }
 
+// UserUpdateRIC update fc wrapper
+type UserUpdateRIC struct {
+	RIC string `form:"set" binding:"numeric,min=16,max=16"`
+}
+
 // UserUpdateUsername update username wrapper
 type UserUpdateUsername struct {
 	Username string `form:"set" binding:"alphanum,min=2,max=25"`

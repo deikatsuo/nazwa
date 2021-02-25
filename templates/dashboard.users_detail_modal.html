@@ -45,7 +45,7 @@
         <dt class="text-sm leading-5 font-medium text-gray-500">
           Nomor Kartu Keluarga
         </dt>
-        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+        <dd>
           <div
             class="w-full"
             x-show="updateFor !== 'familycard'"
@@ -72,16 +72,25 @@
         <dt class="text-sm leading-5 font-medium text-gray-500">
           Nomor Induk Kependudukan
         </dt>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="user.RIC != ''"
-          x-text="user.RIC"
-        ></dd>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="user.RIC == ''"
-        >
-          -
+        <dd>
+          <div
+            class="w-full"
+            x-show="updateFor !== 'residentcard'"
+            @dblclick="openUpdateForResidentCard(user.RIC, $nextTick);"
+          >
+            <span
+              x-text="user.RIC"
+            ></span>
+          </div>
+          <input
+            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+            type="text"
+            id="edit-resident-card"
+            x-model="updateData.residentcard"
+            x-show="updateFor == 'residentcard'"
+            @click.away="if (updateFor == 'residentcard') { updateFor = ''; }"
+            @keydown.enter="updateResidentCard($dispatch)"
+          />
         </dd>
       </div>
     </dl>
@@ -596,6 +605,7 @@
       updateData: {
         username: "",
         familycard: "",
+        residentcard: "",
       },
       updateFor: "",
       role: [
@@ -635,6 +645,14 @@
         });
       },
 
+      openUpdateForResidentCard(value, $nextTick) {
+        this.updateFor = "residentcard";
+        this.updateData.residentcard = value;
+        $nextTick(() => {
+          document.getElementById(`edit-resident-card`).select();
+        });
+      },
+
       openUpdateForPwd() {
         this.updateFor = "password";
       },
@@ -668,6 +686,38 @@
           })
           .catch((err) => {
             console.log("Error: updateFamilyCard() " + err);
+          });
+      },
+
+      updateResidentCard($dispatch) {
+        if (this.updateData.residentcard.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Nomor Induk Kependudukan tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/user/edit/${this.id}/update/ric?set=${this.updateData.residentcard}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              user = document.getElementById("user_data").__x.$data;
+              user.fetchUsersData($dispatch, false, "reload", true);
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updateResidentCard() " + err);
           });
       },
 

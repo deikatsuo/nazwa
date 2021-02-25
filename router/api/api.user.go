@@ -315,6 +315,58 @@ func UserUpdateFamilyCard(c *gin.Context) {
 	c.JSON(httpStatus, gh)
 }
 
+// UserUpdateResidentIdentityCard ubah nomor induk kependudukan/ktp
+func UserUpdateResidentIdentityCard(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	uid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+	var simpleErr map[string]interface{}
+
+	var updateRIC wrapper.UserUpdateRIC
+	if err := c.ShouldBindQuery(&updateRIC); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["ric"].(string)
+		status = "error"
+	}
+
+	// Update nik
+	if next {
+		if err := dbquery.UserUpdateResidentIdentityCard(uid, updateRIC.RIC); err != nil {
+			log.Warn("api.user.go UserUpdateResidentIdentityCard() Gagal mengubah nomor induk kependudukan")
+			log.Error(err)
+			message = "Gagal mengubah NIK"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Nomor Induk Kependudukan berhasil dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
 // UserUpdatePassword update password
 func UserUpdatePassword(c *gin.Context) {
 	// User id yang merequest
