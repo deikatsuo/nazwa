@@ -56,3 +56,8 @@ type LocationLine struct {
 	Name  string
 	Count int
 }
+
+// LocationUpdateZoneName update nama zona
+type LocationUpdateZoneName struct {
+	Name string `form:"set" binding:"min=1,max=25"`
+}

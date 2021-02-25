@@ -56,11 +56,19 @@ func ZoneUpdateName(c *gin.Context) {
 	httpStatus := http.StatusBadRequest
 	status := ""
 
-	newName := c.Query("set")
+	var simpleErr map[string]interface{}
+
+	var updateZone wrapper.LocationUpdateZoneName
+	if err := c.ShouldBindQuery(&updateZone); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["name"].(string)
+		status = "error"
+	}
 
 	// Update zona
 	if next {
-		if err := dbquery.ZoneUpdateName(zid, newName); err != nil {
+		if err := dbquery.ZoneUpdateName(zid, updateZone.Name); err != nil {
 			log.Warn("api.zone.go ZoneUpdateName() Gagal mengubah nama zona")
 			log.Error(err)
 			message = "Gagal mengubah nama zona"
