@@ -216,11 +216,19 @@ func UserUpdateUsername(c *gin.Context) {
 	httpStatus := http.StatusBadRequest
 	status := ""
 
-	newUsername := c.Query("set")
+	var simpleErr map[string]interface{}
+
+	var updateUsername wrapper.UserUpdateUsername
+	if err := c.ShouldBindQuery(&updateUsername); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["username"].(string)
+		status = "error"
+	}
 
 	// Check ketersediaan username
 	if next {
-		if dbquery.UsernameExist(newUsername) {
+		if dbquery.UsernameExist(updateUsername.Username) {
 			log.Warn("api.user.go UserUpdateUsername() username tidak tersedia")
 			log.Error(err)
 			message = "Username ini sudah digunakan"
@@ -231,7 +239,7 @@ func UserUpdateUsername(c *gin.Context) {
 
 	// Update username
 	if next {
-		if err := dbquery.UserUpdateUsername(uid, newUsername); err != nil {
+		if err := dbquery.UserUpdateUsername(uid, updateUsername.Username); err != nil {
 			log.Warn("api.user.go UserUpdateUsername() Gagal mengubah username/kode")
 			log.Error(err)
 			message = "Gagal mengubah username/kode"
@@ -271,12 +279,19 @@ func UserUpdateFamilyCard(c *gin.Context) {
 	next := true
 	httpStatus := http.StatusBadRequest
 	status := ""
+	var simpleErr map[string]interface{}
 
-	newFc := c.Query("set")
+	var updateFc wrapper.UserUpdateFamilyCard
+	if err := c.ShouldBindQuery(&updateFc); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["fc"].(string)
+		status = "error"
+	}
 
 	// Update kk
 	if next {
-		if err := dbquery.UserUpdateFamilyCard(uid, newFc); err != nil {
+		if err := dbquery.UserUpdateFamilyCard(uid, updateFc.FC); err != nil {
 			log.Warn("api.user.go UserUpdateFamilyCard() Gagal mengubah nomor kartu keluarga")
 			log.Error(err)
 			message = "Gagal mengubah nomor kartu keluarga"

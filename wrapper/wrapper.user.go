@@ -109,3 +109,13 @@ type UserPhone struct {
 	Phone    string `db:"phone"`
 	Verified bool   `db:"verified"`
 }
+
+// UserUpdateFamilyCard update fc wrapper
+type UserUpdateFamilyCard struct {
+	FC string `form:"set" binding:"numeric,min=16,max=16"`
+}
+
+// UserUpdateUsername update username wrapper
+type UserUpdateUsername struct {
+	Username string `form:"set" binding:"alphanum,min=2,max=25"`
+}
