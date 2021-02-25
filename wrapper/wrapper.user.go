@@ -124,3 +124,9 @@ type UserUpdateRIC struct {
 type UserUpdateUsername struct {
 	Username string `form:"set" binding:"alphanum,min=2,max=25"`
 }
+
+// UserUpdateName update nama wrapper
+type UserUpdateName struct {
+	Firstname string `form:"firstname" binding:"required,min=3,max=25"`
+	Lastname  string `form:"lastname" binding:"omitempty,min=1,max=25"`
+}

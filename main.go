@@ -281,6 +281,7 @@ func runServer() {
 
 	v1uEdit.PATCH("/:id/update/fc", api.UserUpdateFamilyCard)
 	v1uEdit.PATCH("/:id/update/ric", api.UserUpdateResidentIdentityCard)
+	v1uEdit.PATCH("/:id/update/name", api.UserUpdateName)
 	v1uEdit.PATCH("/:id/update/password", api.UserUpdatePassword)
 	v1uEdit.PATCH("/:id/update/username", api.UserUpdateUsername)
 	v1uEdit.PATCH("/:id/update/role", api.UserUpdateRole)

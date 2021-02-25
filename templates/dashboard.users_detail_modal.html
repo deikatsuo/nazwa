@@ -49,7 +49,7 @@
           <div
             class="w-full"
             x-show="updateFor !== 'familycard'"
-            @dblclick="openUpdateForFamilyCard(user.FamilyCardNumber, $nextTick);"
+            @dblclick="openUpdateForFamilyCard($nextTick);"
           >
             <span
               x-text="user.FamilyCardNumber"
@@ -76,11 +76,9 @@
           <div
             class="w-full"
             x-show="updateFor !== 'residentcard'"
-            @dblclick="openUpdateForResidentCard(user.RIC, $nextTick);"
+            @dblclick="openUpdateForResidentCard($nextTick);"
           >
-            <span
-              x-text="user.RIC"
-            ></span>
+            <span x-text="user.RIC"></span>
           </div>
           <input
             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
@@ -106,19 +104,45 @@
         <dt class="text-sm leading-5 font-medium text-gray-500">
           Nama Lengkap
         </dt>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-text="user.Firstname + ' ' + user.Lastname"
-        ></dd>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-text="user.Firstname + ' ' + user.Lastname"
+            @dblclick="openUpdateForName($nextTick);"
+            x-show="updateFor !== 'name'"
+          ></div>
+          <div
+            x-show="updateFor == 'name'"
+            @click.away="if (updateFor == 'name') { updateFor = ''; }"
+            class="w-full flex flex-wrap"
+          >
+            <input
+              class="w-1/2 mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+              type="text"
+              id="edit-name"
+              x-model="updateData.firstname"
+              @keydown.enter="updateName($dispatch)"
+              placeholder="Nama depan"
+            />
+            <input
+              class="w-1/2 mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+              type="text"
+              x-model="updateData.lastname"
+              @keydown.enter="updateName($dispatch)"
+              placeholder="Nama belakang"
+            />
+          </div>
+        </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">Kode</dt>
         <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
-          <span
+          <div
+            class="w-full"
             x-text="user.Username"
-            @dblclick="openUpdateForUsername(user.Username, $nextTick);"
+            @dblclick="openUpdateForUsername($nextTick);"
             x-show="updateFor !== 'username'"
-          ></span>
+          ></div>
           <input
             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
             type="text"
@@ -132,7 +156,7 @@
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">Kata Sandi</dt>
-        <dd>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
           <div x-show="updateFor == 'password'">
             <a class="text-blue-500" href="#" @click="updatePassword($dispatch)"
               >Buat kata sandi</a
@@ -606,6 +630,8 @@
         username: "",
         familycard: "",
         residentcard: "",
+        firstname: "",
+        lastname: "",
       },
       updateFor: "",
       role: [
@@ -629,27 +655,36 @@
         address.deleteAddress($dispatch, addrid);
       },
 
-      openUpdateForUsername(value, $nextTick) {
+      openUpdateForUsername($nextTick) {
         this.updateFor = "username";
-        this.updateData.username = value;
+        this.updateData.username = this.user.Username;
         $nextTick(() => {
           document.getElementById(`edit-username`).select();
         });
       },
 
-      openUpdateForFamilyCard(value, $nextTick) {
+      openUpdateForFamilyCard($nextTick) {
         this.updateFor = "familycard";
-        this.updateData.familycard = value;
+        this.updateData.familycard = this.user.FamilyCardNumber;
         $nextTick(() => {
           document.getElementById(`edit-family-card`).select();
         });
       },
 
-      openUpdateForResidentCard(value, $nextTick) {
+      openUpdateForResidentCard($nextTick) {
         this.updateFor = "residentcard";
-        this.updateData.residentcard = value;
+        this.updateData.residentcard = this.user.RIC;
         $nextTick(() => {
           document.getElementById(`edit-resident-card`).select();
+        });
+      },
+
+      openUpdateForName($nextTick) {
+        this.updateFor = "name";
+        this.updateData.firstname = this.user.Firstname;
+        this.updateData.lastname = this.user.Lastname;
+        $nextTick(() => {
+          document.getElementById(`edit-name`).select();
         });
       },
 
@@ -680,8 +715,7 @@
               });
             }
             if (json.status == "success") {
-              user = document.getElementById("user_data").__x.$data;
-              user.fetchUsersData($dispatch, false, "reload", true);
+              this.user.FamilyCardNumber = this.updateData.familycard;
             }
           })
           .catch((err) => {
@@ -712,8 +746,7 @@
               });
             }
             if (json.status == "success") {
-              user = document.getElementById("user_data").__x.$data;
-              user.fetchUsersData($dispatch, false, "reload", true);
+              this.user.RIC = this.updateData.residentcard;
             }
           })
           .catch((err) => {
@@ -744,8 +777,41 @@
               });
             }
             if (json.status == "success") {
+              this.user.Username = this.updateData.username;
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updateUsername() " + err);
+          });
+      },
+
+      updateName($dispatch) {
+        if (this.updateData.firstname.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Nama depan tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/user/edit/${this.id}/update/name?firstname=${this.updateData.firstname}&lastname=${this.updateData.lastname}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
               user = document.getElementById("user_data").__x.$data;
               user.fetchUsersData($dispatch, false, "reload", true);
+              this.user.Firstname = this.updateData.firstname;
+              this.user.Lastname = this.updateData.lastname;
             }
           })
           .catch((err) => {

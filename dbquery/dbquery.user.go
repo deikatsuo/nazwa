@@ -865,6 +865,26 @@ func UserUpdateResidentIdentityCard(uid int, ric string) error {
 	return nil
 }
 
+// UserUpdateName ubah nama
+func UserUpdateName(uid int, firstname, lastname string) error {
+	db := DB
+
+	// Update nik
+	if lastname == "" {
+		if _, err := db.Exec(`UPDATE "user" SET first_name=$1, last_name=NULL WHERE id=$2`, firstname, uid); err != nil {
+			log.Warn("dbquery.user.go UserUpdateName() Update nama")
+			return err
+		}
+	} else {
+		if _, err := db.Exec(`UPDATE "user" SET first_name=$1, last_name=$2 WHERE id=$3`, firstname, lastname, uid); err != nil {
+			log.Warn("dbquery.user.go UserUpdateName() Update nama")
+			return err
+		}
+	}
+
+	return nil
+}
+
 // UserUpdatePassword mengubah password user
 func UserUpdatePassword(uid int, pwd string) error {
 	db := DB
