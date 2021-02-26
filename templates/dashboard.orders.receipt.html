@@ -642,7 +642,7 @@
                   var printData = new JSPM.PrintFile(base64, JSPM.FileSourceType.Base64, `receipt#${receipt.ID} ${_this.order.Customer.Code} ${_this.order.Customer.Name}.xlsx`, 1);
                 }
 
-                location.href = "data:" + XlsxPopulate.MIME_TYPE + ";base64," + base64;
+                // location.href = "data:" + XlsxPopulate.MIME_TYPE + ";base64," + base64;
 
                 // Tambahkan file ke daftar yang akan di print
                 printer.files.push(printData);
