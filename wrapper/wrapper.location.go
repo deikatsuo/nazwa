@@ -21,9 +21,10 @@ type LocationZoneSelect struct {
 
 // LocationZoneListsSelect list dalam zona
 type LocationZoneListsSelect struct {
-	ID         int    `db:"id"`
-	ZoneLineID int    `db:"zone_line_id"`
-	Name       string `db:"name"`
+	ID           int    `db:"id"`
+	ZoneLineID   int    `db:"zone_line_id"`
+	ZoneLineName string `db:"name"`
+	ZoneLineCode string `db:"code"`
 }
 
 // LocationZoneAddListForm list wilayah pada zona

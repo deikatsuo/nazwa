@@ -68,7 +68,7 @@ func ZoneShowAll() ([]wrapper.LocationZone, error) {
 func ZoneShowZoneList(zid int) ([]wrapper.LocationZoneListsSelect, error) {
 	db := DB
 	var zl []wrapper.LocationZoneListsSelect
-	query := `SELECT zlt.id, zlt.zone_line_id, zln.name 
+	query := `SELECT zlt.id, zlt.zone_line_id, zln.name, UPPER(zln.code) AS code
 	FROM "zone_list" zlt
 	LEFT JOIN "zone_line" zln ON zln.id=zlt.zone_line_id
 	WHERE zlt.zone_id=$1 ORDER BY zln.name`

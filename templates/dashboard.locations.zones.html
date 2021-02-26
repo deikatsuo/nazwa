@@ -182,8 +182,8 @@
                     <div class="px-2 pt-2 pb-2">
                       <template x-for="line in zone.List" :key="line.ID">
                         <span
-                          class="inline-block cursor-pointer rounded-full lowercase px-2 text-xs font-semibold mr-1 mb-1"
-                          x-text="line.Name"
+                          class="inline-block cursor-pointer rounded-full px-2 text-xs font-semibold mr-1 mb-1"
+                          x-text="`${line.ZoneLineCode} - ${line.ZoneLineName}`"
                           @contextmenu.prevent="if (selectedZoneList !== line.ID) { selectedZoneList = line.ID; } else { selectedZoneList = null; }"
                           @dblclick="if (selectedZoneList == line.ID) { deleteListFromZone($dispatch, zone.ID, line.ID); }"
                           :class="{'bg-red-200 text-red-400 select-none': selectedZoneList == line.ID, 'bg-green-200 text-green-500': selectedZoneList != line.ID }"
