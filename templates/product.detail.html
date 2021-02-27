@@ -28,9 +28,8 @@
   </head>
 
   <body>
-
-  <!-- Navbar -->
-  {{ template "public_navbar" .}}
+    <!-- Navbar -->
+    {{ template "public_navbar" .}}
 
     <div class="flex flex-col flex-1 w-full pt-24">
       <main class="h-full pb-16 overflow-y-auto relative">
@@ -96,16 +95,18 @@
                     class="absolute w-full flex items-center justify-center px-4 mb-4"
                     x-show="photos.length > 1"
                   >
-                    <template x-for="(_,index) in photos" :key="index">
-                      <button
-                        class="flex-1 w-4 h-2 mt-4 mx-2 rounded-full overflow-hidden transition-colors duration-200 ease-out hover:bg-teal-600 hover:shadow-lg"
-                        :class="{ 
+                    <div>
+                      <template x-for="(_,index) in photos" :key="index">
+                        <button
+                          class="flex-1 w-2 h-2 mt-4 mx-2 rounded-full overflow-hidden transition-colors duration-200 ease-out hover:bg-teal-600 hover:shadow-lg"
+                          :class="{ 
                         'bg-orange-600': activeSlide === index + 1,
                         'bg-teal-300': activeSlide !== index + 1 
                       }"
-                        x-on:click="activeSlide = index + 1"
-                      ></button>
-                    </template>
+                          x-on:click="activeSlide = index + 1"
+                        ></button>
+                      </template>
+                    </div>
                   </div>
                 </div>
               </div>
