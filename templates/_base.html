@@ -108,6 +108,10 @@
               {{ block "dashboard_orders_receipt_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "instalments" }}
+              {{ block "dashboard_instalments_content" .}}{{ end }}
+            {{ end }}
+
             {{ if eq .page "locations" }}
               {{ block "dashboard_locations_content" .}}{{ end }}
             {{ end }}
