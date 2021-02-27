@@ -16,6 +16,7 @@ import (
 	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gosimple/slug"
 )
 
 //////////////////////////////////// [POST] //////////////////////////////////////////
@@ -81,6 +82,8 @@ func ProductCreate(c *gin.Context) {
 		}
 	}
 
+	slugURL := slug.Make(json.Name)
+
 	base, _ := strconv.Atoi(json.BasePrice)
 	price, _ := strconv.Atoi(json.Price)
 	stock, _ := strconv.Atoi(json.Stock)
@@ -89,6 +92,7 @@ func ProductCreate(c *gin.Context) {
 	if save {
 		user := dbquery.NewProduct()
 		err := user.SetName(json.Name).
+			SetSlug(slugURL).
 			SetCode(json.Code).
 			SetType(json.Type).
 			SetBrand(json.Brand).

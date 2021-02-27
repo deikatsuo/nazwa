@@ -19,6 +19,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.14.1
 	github.com/google/uuid v1.1.3
 	github.com/gorilla/sessions v1.2.1 // indirect
+	github.com/gosimple/slug v1.9.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/jmoiron/sqlx v1.2.1-0.20200615141059-0794cb1f47ee
 	github.com/joho/godotenv v1.3.0

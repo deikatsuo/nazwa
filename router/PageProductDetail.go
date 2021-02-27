@@ -5,7 +5,6 @@ import (
 	"nazwa/misc"
 	"nazwa/wrapper"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,18 +15,15 @@ func PageProductDetail(c *gin.Context) {
 	message := ""
 	status := ""
 
-	// Mengambil parameter id produk
-	var pid int
-	id, err := strconv.Atoi(c.Param("id"))
-	if err == nil {
-		pid = id
-	} else {
+	// Mengambil parameter slug
+	slug := c.Param("slug")
+	if len(slug) < 4 || len(slug) > 100 {
 		httpStatus = http.StatusBadRequest
 		message = "Request tidak valid"
 	}
 
 	var product wrapper.Product
-	if p, err := dbquery.ProductGetProductByID(pid); err == nil {
+	if p, err := dbquery.ProductGetProductBySlug(slug); err == nil {
 		product = p
 	} else {
 		httpStatus = http.StatusInternalServerError

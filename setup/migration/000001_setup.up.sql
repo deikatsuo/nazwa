@@ -208,6 +208,7 @@ CREATE TABLE "product" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
     "created_by" int NOT NULL,
     "name" varchar(100) NOT NULL,
+    "slug" varchar(100) UNIQUE NOT NULL,
     "stock" int NOT NULL DEFAULT 0,
     "code" varchar(10) UNIQUE NOT NULL,
     "base_price" numeric(15) DEFAULT 0,

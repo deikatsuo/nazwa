@@ -8,6 +8,7 @@ import "database/sql"
 // ProductInsert base struk
 type ProductInsert struct {
 	Name      string `db:"name"`
+	Slug      string `db:"slug"`
 	Stock     int    `db:"stock"`
 	Code      string `db:"code"`
 	BasePrice int    `db:"base_price"`
@@ -31,6 +32,7 @@ type ProductPhotoListSelect struct {
 type NullableProduct struct {
 	ID        int            `db:"id"`
 	Name      string         `db:"name"`
+	Slug      string         `db:"slug"`
 	Stock     int            `db:"stock"`
 	Code      string         `db:"code"`
 	BasePrice int            `db:"base_price"`
@@ -91,6 +93,7 @@ type ProductPhotoForm struct {
 type Product struct {
 	ID          int
 	Name        string
+	Slug        string
 	Code        string
 	Stock       int
 	BasePrice   int

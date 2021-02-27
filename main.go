@@ -117,7 +117,7 @@ func runServer() {
 	server.GET("/", router.PageHome)
 	server.GET("/check/card/:code", router.PageCheckCard)
 	server.GET("/product", router.PageProduct)
-	server.GET("/product/:id", router.PageProductDetail)
+	server.GET("/product/:slug", router.PageProductDetail)
 	server.GET("/login", router.PageLogin)
 	server.GET("/create-account", router.PageCreateAccount)
 	server.GET("/forgot-password", router.PageForgot)

@@ -71,6 +71,7 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 	query := `SELECT
 		id,
 		name,
+		slug,
 		stock,
 		brand,
 		type,
@@ -103,6 +104,7 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 		parse = append(parse, wrapper.Product{
 			ID:          p.ID,
 			Name:        strings.Title(p.Name),
+			Slug:        p.Slug,
 			Stock:       p.Stock,
 			Brand:       p.Brand.String,
 			Type:        p.Type.String,
@@ -153,6 +155,60 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 	err := db.Get(&p, query, pid)
 	if err != nil {
 		log.Warn("dbquery.product.go ProductGetProductByID() Select product berdasarkan ID")
+		return wrapper.Product{}, err
+	}
+
+	var photos []wrapper.ProductPhotoListSelect
+
+	if pp, err := ProductGetProductPhoto(p.ID); err == nil {
+		photos = pp
+	}
+
+	var creditPrice []wrapper.ProductCreditPriceSelect
+	if pr, err := ProductGetProductCreditPrice(p.ID); err == nil {
+		creditPrice = pr
+	}
+
+	product = wrapper.Product{
+		ID:          p.ID,
+		Name:        strings.Title(p.Name),
+		Stock:       p.Stock,
+		CreatedAt:   p.CreatedAt,
+		BasePrice:   p.BasePrice,
+		Price:       p.Price,
+		Code:        p.Code,
+		Type:        strings.Title(p.Type.String),
+		Brand:       strings.Title(p.Brand.String),
+		Photos:      photos,
+		CreditPrice: creditPrice,
+	}
+
+	return product, nil
+}
+
+// ProductGetProductBySlug mengambil data produk berdasarkan ID produk
+func ProductGetProductBySlug(ps string) (wrapper.Product, error) {
+	db := DB
+	var product wrapper.Product
+	var p wrapper.NullableProduct
+	query := `SELECT
+		id,
+		name,
+		stock,
+		base_price,
+		price,
+		code,
+		TO_CHAR(created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at,
+		type,
+		brand
+		FROM "product"
+		WHERE slug=$1
+		LIMIT 1`
+
+	err := db.Get(&p, query, ps)
+	if err != nil {
+		log.Warn("dbquery.product.go ProductGetProductBySlug() Select product berdasarkan slug")
+		log.Error(err)
 		return wrapper.Product{}, err
 	}
 
@@ -286,6 +342,15 @@ func (c *CreateProduct) SetCode(p string) *CreateProduct {
 	return c
 }
 
+// SetSlug slug url
+func (c *CreateProduct) SetSlug(p string) *CreateProduct {
+	if p != "" {
+		c.Slug = p
+		c.into["slug"] = ":slug"
+	}
+	return c
+}
+
 // SetStock Stok produk
 func (c *CreateProduct) SetStock(p int) *CreateProduct {
 	if p >= 0 {
@@ -366,6 +431,7 @@ func (c CreateProduct) generateInsertQuery() string {
 // Save Simpan produk
 func (c *CreateProduct) Save() error {
 	db := DB
+
 	// Mulai transaksi
 	tx := db.MustBegin()
 	var tempReturnID int
