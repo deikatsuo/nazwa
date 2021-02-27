@@ -14,22 +14,33 @@
       <div class="w-full relative">
         <!-- Slide photo -->
         <template x-for="(photo, index) in photos" :key="index">
-          <div
-            x-show="activeSlide === index + 1"
-            class="h-48 w-full flex items-center rounded-lg"
-          >
-            <div class="relative w-full h-full">
-              <img
-                class="object-scale-down w-full h-full"
-                :src="'/file/product/'+photo.Photo"
-                alt=""
-                loading="lazy"
-              />
+          <div>
+            <div
+              x-show="activeSlide === index + 1"
+              class="h-48 w-full flex items-center rounded-lg"
+            >
               <div
-                class="absolute inset-0 shadow-inner"
-                aria-hidden="true"
-              ></div>
+                class="relative w-full h-full cursor-pointer"
+              >
+                <img
+                  class="object-scale-down w-full h-full"
+                  :src="'/file/product/'+photo.Photo"
+                  alt=""
+                  loading="lazy"
+                />
+                <div
+                  class="absolute inset-0 shadow-inner"
+                  aria-hidden="true"
+                ></div>
+              </div>
             </div>
+            <div
+              class="absolute inset-0 z-10 cursor-pointer"
+              x-show="activeSlide === index + 1"
+              @click="$dispatch('preview', {
+                    html: '<img @click=\'closePreview()\' src=\'/file/product/'+photo.Photo+'\' class=\'object-scale-down object w-full h-full lazy\' />',
+                    });"
+            ></div>
           </div>
         </template>
         <!-- Prev/Next Arrows -->
