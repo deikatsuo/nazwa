@@ -264,6 +264,10 @@ func runServer() {
 	v1oEdit := v1order.Group("/edit")
 	v1oEdit.DELETE("/:id/delete", api.OrderDeleteByID)
 
+	// /api/v1/local/instalment
+	v1instalment := v1local.Group("/instalment")
+	v1instalment.GET("/date/:date", api.InstalmentShowByDate)
+
 	// User API
 	// /api/v1/local/user
 	v1user := v1local.Group("/user")

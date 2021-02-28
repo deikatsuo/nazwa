@@ -1,13 +1,118 @@
 {{ template "base" .}}
 
-<!-- Halaman Cicilan -->
+<!-- Halaman Tagihan -->
 {{ define "dashboard_instalments_content" }}
 <h2
   class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
 >
-  Cicilan
+  Tagihan
 </h2>
 
-<!-- Arah Konten -->
-<div class="w-full mb-8"></div>
+<!-- tagihan -->
+<div class="w-full mb-8">
+  <div x-data="instalment()" x-init="initWatch($watch, $dispatch)">
+    <div class="w-full">
+      <!-- Zona -->
+      <div class="w-full">
+        <div class="w-full md:w-1/4 md:px-1">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">Tanggal</span>
+            <input
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              type="date"
+              x-model="date"
+              :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errDate }"
+            />
+          </label>
+          <span
+            class="text-xs text-red-600 dark:text-red-400"
+            x-text="errmDate"
+            :class="{'invisible': errDate == false}"
+          >
+          </span>
+        </div>
+        <div class="w-full flex flex-wrap">
+          <template x-if="zones.length > 0">
+            <template x-for="zone in zones" :key="zone.ID">
+              <div
+                class="w-1/3 p-1 cursor-pointer rounded-sm hover:bg-green-50"
+                @click="if (activeZone !== zone.ID) { activeZone = zone.ID; lines = zone.List; } else { activeZone = null; lines = []; }"
+              >
+                <div
+                  class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-gray-50 dark:bg-gray-800"
+                >
+                  <div
+                    class="p-3 mr-4 rounded-full"
+                    :class="{'text-orange-500 bg-orange-100': activeZone == zone.ID, 'text-blue-500 bg-blue-100': activeZone !== zone.ID }"
+                  >
+                    {{ template "_svg_icon_globe" }}
+                  </div>
+                  <div>
+                    <p
+                      class="text-lg font-semibold text-gray-700 dark:text-gray-200"
+                      x-text="`#${zone.Name}`"
+                    ></p>
+                    <p
+                      class="text-xs text-gray-700 dark:text-gray-200"
+                      x-text="zone.Collector.Name"
+                    ></p>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </template>
+        </div>
+        <!-- Arah -->
+        <template x-if="lines !== null">
+          <div
+            class="w-full overflow-x-auto flex flex-wrap p-2 mt-2 text-sm font-medium text-gray-500 rounded-md shadow-inner bg-blue-50 dark:text-gray-400 dark:bg-gray-900"
+          >
+            <template x-for="line in lines" :key="line.ID">
+              <div
+                class="w-1/3 py-1 px-2 cursor-pointer hover:bg-blue-200 hover:text-blue-500"
+                :class="{'text-blue-500': formData.line == line.ZoneLineID }"
+                x-text="`#${line.ZoneLineCode} - ${line.ZoneLineName}`"
+                @click="if (formData.line !== line.ZoneLineID) { formData.line = line.ZoneLineID; } else { formData.line = null; }"
+              ></div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+  <script>
+    function instalment() {
+      return {
+        date: new Date().toISOString().split("T")[0],
+        zones: [],
+        lines: null,
+        activeZone: null,
+        errDate: false,
+        errmDate: "",
+
+        initWatch($watch, $dispatch) {
+          $watch("date", (value) => {
+            if (value !== null) {
+              this.fetchData($dispatch);
+            }
+          });
+          this.fetchData($dispatch);
+        },
+
+        fetchData($dispatch) {
+          fetch(`/api/v1/local/instalment/date/${this.date}`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((err) => {
+              console.log("fetchData() " + err);
+            });
+        },
+      };
+    }
+  </script>
+</div>
 {{ end }}

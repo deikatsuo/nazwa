@@ -1018,6 +1018,47 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 	return monthly, nil
 }
 
+// OrderGetMonthlyCreditByDate ambil data kredit bulanan
+func OrderGetMonthlyCreditByDate(date string) ([]wrapper.OrderMonthlyCredit, error) {
+	db := DB
+	var monthly []wrapper.OrderMonthlyCredit
+	var monthlyQ []wrapper.OrderMonthlyCreditQuery
+
+	query := `SELECT *, TO_CHAR(due_date, 'DD/MM/YYYY') AS due_date
+	FROM "order_monthly_credit"
+	WHERE TO_CHAR(due_date, 'YYYY-MM-DD')=$1 AND done=false ORDER BY nth`
+
+	err := db.Select(&monthlyQ, query, date)
+	if err != nil {
+		return []wrapper.OrderMonthlyCredit{}, err
+	}
+
+	for _, mon := range monthlyQ {
+		var monLog []wrapper.OrderMonthlyCreditLogSelect
+		if mlog, err := OrderMonthlyCreditLog(mon.OrderID); err == nil {
+			monLog = mlog
+		}
+
+		monthly = append(monthly, wrapper.OrderMonthlyCredit{
+			ID:        mon.ID,
+			OrderID:   mon.OrderID,
+			Code:      mon.Code,
+			Nth:       mon.Nth,
+			DueDate:   mon.DueDate,
+			PrintDate: mon.PrintDate.String,
+			Promise:   mon.Promise.String,
+			Paid:      mon.Paid,
+			Notes:     mon.Notes.String,
+			Position:  mon.Position,
+			Printed:   mon.Printed,
+			Done:      mon.Done,
+			Log:       monLog,
+		})
+	}
+
+	return monthly, nil
+}
+
 // OrderMonthlyCreditLog credit log
 func OrderMonthlyCreditLog(omc int) ([]wrapper.OrderMonthlyCreditLogSelect, error) {
 	db := DB
