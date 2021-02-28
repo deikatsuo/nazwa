@@ -1026,7 +1026,7 @@ func OrderGetMonthlyCreditByDate(date string) ([]wrapper.OrderMonthlyCredit, err
 
 	query := `SELECT *, TO_CHAR(due_date, 'DD/MM/YYYY') AS due_date
 	FROM "order_monthly_credit"
-	WHERE TO_CHAR(due_date, 'YYYY-MM-DD')=$1 AND done=false ORDER BY nth`
+	WHERE TO_CHAR(due_date, 'YYYY-MM-DD')<=$1 AND done=false ORDER BY nth`
 
 	err := db.Select(&monthlyQ, query, date)
 	if err != nil {
