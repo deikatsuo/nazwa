@@ -50,16 +50,33 @@ func InstalmentShowByDate(c *gin.Context) {
 				monthly[i].PrintDate = current.Format("02/01/2006")
 			}
 
+			var orderInfo wrapper.OrderSimple
+			if next {
+				if ord, err := dbquery.OrderGetSimpleOrderByID(mon.OrderID); err == nil {
+					orderInfo = ord
+				} else {
+					httpStatus = http.StatusInternalServerError
+					message = "Sepertinya telah terjadi kesalahan saat memuat info order"
+					status = "error"
+					next = false
+				}
+			}
+
+			exist := false
 			if len(orders) > 1 {
 				for oi, ord := range orders {
 					if ord.OrderID == mon.OrderID {
 						orders[oi].Monthly = append(orders[oi].Monthly, mon)
+						exist = true
 					}
 				}
-			} else {
+			}
+
+			if !exist {
 				orders = append(orders, wrapper.InstalmentOrderReceipt{
-					OrderID: mon.OrderID,
-					Monthly: []wrapper.OrderMonthlyCredit{mon},
+					OrderID:   mon.OrderID,
+					OrderInfo: orderInfo,
+					Monthly:   []wrapper.OrderMonthlyCredit{mon},
 				})
 			}
 		}

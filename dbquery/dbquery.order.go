@@ -753,6 +753,112 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 	return order, nil
 }
 
+// OrderGetSimpleOrderByID mengambil data order sederhana berdasarkan ID order
+func OrderGetSimpleOrderByID(oid int) (wrapper.OrderSimple, error) {
+	db := DB
+	var order wrapper.OrderSimple
+	var o wrapper.NullableOrder
+	query := `SELECT
+		o.id,
+		o.customer_id,
+		c.username as customer_code,
+		concat_ws(' ', c.first_name, c.last_name) as customer_name,
+		c.avatar as customer_thumb,
+		o.sales_id,
+		concat_ws(' ', sa.first_name, sa.last_name) as sales_name,
+		sa.avatar as sales_thumb,
+		o.surveyor_id,
+		concat_ws(' ', su.first_name, su.last_name) as surveyor_name,
+		su.avatar as surveyor_thumb,
+		concat_ws(' ', co.first_name, co.last_name) as collector_name,
+		co.avatar as collector_thumb,
+		o.billing_address_id,
+		o.credit,
+		TO_CHAR(o.shipping_date, 'DD/MM/YYYY HH12:MI:SS AM') AS shipping_date,
+		o.code,
+		o.deposit,
+		o.price_total,
+		o.base_price_total
+		FROM "order" o
+		LEFT JOIN "order_credit_detail" ocd ON order_id=o.id
+		LEFT JOIN "zone_list" zlt ON zlt.zone_line_id=ocd.zone_line_id
+		LEFT JOIN "zone" z ON z.id=zlt.zone_id
+		LEFT JOIN "user" c ON c.id=o.customer_id
+		LEFT JOIN "user" sa ON sa.id=o.sales_id
+		LEFT JOIN "user" su ON su.id=o.surveyor_id
+		LEFT JOIN "user" co ON co.id=z.collector_id
+		LEFT JOIN "user" cb ON cb.id=o.created_by
+		LEFT JOIN "address" sad ON sad.id=o.shipping_address_id
+		LEFT JOIN "address" bad ON bad.id=o.billing_address_id
+		
+		WHERE o.id=$1
+		LIMIT 1`
+
+	err := db.Get(&o, query, oid)
+	if err != nil {
+		log.Warn("dbquery.order.go OrderGetSimpleOrderByID() Select order berdasarkan ID")
+		log.Error(err)
+		return wrapper.OrderSimple{}, err
+	}
+
+	// Mengambil list item dari transaksi
+	var items []wrapper.OrderItem
+	if oi, err := OrderGetOrderItem(o.ID); err == nil {
+		items = oi
+	}
+
+	// Detail kredit
+	var creditDetail wrapper.OrderCreditDetail
+	if cd, err := OrderGetCreditInfo(o.ID); err == nil {
+		creditDetail = cd
+	} else {
+		log.Warn("dbquery.order.go OrderGetSimpleOrderByID() select credit detail")
+		log.Error(err)
+	}
+
+	var billing string
+
+	if bill, err := AddressGetByID(o.BillingAddressID); err == nil {
+		billing = bill.String()
+	}
+
+	order = wrapper.OrderSimple{
+		ID: o.ID,
+		Customer: wrapper.NameIDCode{
+			ID:        o.CustomerID,
+			Code:      o.CustomerCode.String,
+			Name:      o.CustomerName,
+			Thumbnail: o.CustomerThumb,
+		},
+		Sales: wrapper.NameID{
+			ID:        int(o.SalesID.Int64),
+			Name:      o.SalesName.String,
+			Thumbnail: o.SalesThumb.String,
+		},
+		Surveyor: wrapper.NameID{
+			ID:        int(o.SurveyorID.Int64),
+			Name:      o.SurveyorName.String,
+			Thumbnail: o.SurveyorThumb.String,
+		},
+		Collector: wrapper.NameID{
+			ID:        int(o.CollectorID.Int64),
+			Name:      o.CollectorName.String,
+			Thumbnail: o.CollectorThumb.String,
+		},
+		BillingAddress: billing,
+		Code:           o.Code,
+		Credit:         o.Credit,
+		ShippingDate:   o.ShippingDate,
+		Deposit:        o.Deposit,
+		PriceTotal:     o.PriceTotal,
+		BasePriceTotal: o.BasePriceTotal,
+		Items:          items,
+		CreditDetail:   creditDetail,
+	}
+
+	return order, nil
+}
+
 // OrderGetOrderByCode ambil order berdasarkan kode
 func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 	db := DB

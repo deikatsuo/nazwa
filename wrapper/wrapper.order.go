@@ -138,6 +138,24 @@ type Order struct {
 	MonthlyCredit   []OrderMonthlyCredit
 }
 
+// OrderSimple data order sederhana
+type OrderSimple struct {
+	ID             int
+	Customer       NameIDCode
+	Sales          NameID
+	Surveyor       NameID
+	Collector      NameID
+	BillingAddress string
+	Code           string
+	Credit         bool
+	ShippingDate   string
+	Items          []OrderItem
+	Deposit        int
+	PriceTotal     int
+	BasePriceTotal int
+	CreditDetail   OrderCreditDetail
+}
+
 // NullableOrderItem item/produk yang di order
 type NullableOrderItem struct {
 	ID          int            `db:"id"`
