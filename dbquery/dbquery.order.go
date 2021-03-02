@@ -1140,8 +1140,6 @@ func OrderGetMonthlyCreditByDate(zid int, date string) ([]wrapper.OrderMonthlyCr
 		tm = t
 	}
 
-	log.Warn(tm.Day())
-
 	query := `SELECT omc.*, TO_CHAR(omc.due_date, 'DD/MM/YYYY') AS due_date
 	FROM "order_monthly_credit" omc
 	LEFT JOIN "order_credit_detail" ocd ON ocd.order_id=omc.order_id

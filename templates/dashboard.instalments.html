@@ -86,6 +86,7 @@
         date: new Date().toISOString().split("T")[0],
         zones: {{ if not .zones }} [] {{ else }} {{ .zones }} {{ end }},
         lines: null,
+        orders: null,
         loading: false,
         selectedZone: null,
         selectedLine: null,
@@ -116,6 +117,17 @@
           })
             .then((res) => res.json())
             .then((data) => {
+              if (data.status == "error") {
+                $dispatch("notif", {
+                  type: data.status,
+                  message: data.message,
+                });
+              }
+              if (data.orders !== null) {
+                this.orders = data.orders;
+              } else {
+                this.orders = null;
+              }
               if (data.lines !== null) {
                 this.lines = data.lines;
               } else {

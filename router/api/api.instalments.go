@@ -116,6 +116,14 @@ func InstalmentShowByDate(c *gin.Context) {
 	}
 
 	if next {
+		if len(orders) == 0 {
+			message = "Tidak ada tagihan untuk hari ini"
+			status = "error"
+			next = false
+		}
+	}
+
+	if next {
 		status = "success"
 	}
 
