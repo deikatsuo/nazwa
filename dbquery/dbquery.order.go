@@ -1135,13 +1135,20 @@ func OrderGetMonthlyCreditByDate(zid int, date string) ([]wrapper.OrderMonthlyCr
 	var monthly []wrapper.OrderMonthlyCredit
 	var monthlyQ []wrapper.OrderMonthlyCreditQuery
 
+	var tm time.Time
+	if t, err := time.Parse(time.RFC3339, date+"T00:00:00.0000Z"); err == nil {
+		tm = t
+	}
+
+	log.Warn(tm.Day())
+
 	query := `SELECT omc.*, TO_CHAR(omc.due_date, 'DD/MM/YYYY') AS due_date
 	FROM "order_monthly_credit" omc
 	LEFT JOIN "order_credit_detail" ocd ON ocd.order_id=omc.order_id
 	LEFT JOIN "zone_list" zl ON zl.zone_line_id=ocd.zone_line_id
-	WHERE TO_CHAR(omc.due_date, 'YYYY-MM-DD')<=$1 AND omc.done=false AND zl.zone_id=$2 ORDER BY omc.nth`
+	WHERE TO_CHAR(omc.due_date, 'YYYY-MM-DD')<=$1 AND omc.done=false AND ocd.due=$2 AND zl.zone_id=$3 ORDER BY omc.nth`
 
-	err := db.Select(&monthlyQ, query, date, zid)
+	err := db.Select(&monthlyQ, query, date, tm.Day(), zid)
 	if err != nil {
 		log.Warn("dbquery.order.go OrderGetMonthlyCreditByDate() select")
 		log.Error(err)

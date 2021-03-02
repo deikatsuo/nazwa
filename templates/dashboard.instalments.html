@@ -36,7 +36,7 @@
             <template x-for="zone in zones" :key="zone.ID">
               <div
                 class="w-1/3 p-1 cursor-pointer rounded-sm hover:bg-green-50"
-                @click="if (selectedZone !== zone.ID) { selectedZone = zone.ID; } else { selectedZone = null; }"
+                @click="if (selectedZone !== zone.ID) { selectedZone = zone.ID; selectedLine = null; }"
               >
                 <div
                   class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-gray-50 dark:bg-gray-800"
@@ -70,8 +70,8 @@
             <template x-for="line in lines" :key="line.ID">
               <div
                 class="w-1/3 py-1 px-2 cursor-pointer hover:bg-blue-200 hover:text-blue-500"
-                :class="{'text-blue-500': selectedLine == line.ZoneLineID }"
-                x-text="`#${line.ZoneLineCode} - ${line.ZoneLineName}`"
+                :class="{'text-blue-500': selectedLine == line.ID }"
+                x-text="`#${line.Code} - ${line.Name} (${line.Count})`"
                 @click="if (selectedLine !== line.ID) { selectedLine = line.ID; } else { selectedLine = null; }"
               ></div>
             </template>
@@ -116,7 +116,11 @@
           })
             .then((res) => res.json())
             .then((data) => {
-              // console.log(data);
+              if (data.lines !== null) {
+                this.lines = data.lines;
+              } else {
+                this.lines = null;
+              }
             })
             .catch((err) => {
               console.log("fetchData() " + err);

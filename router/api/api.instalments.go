@@ -43,6 +43,8 @@ func InstalmentShowByDate(c *gin.Context) {
 	}
 
 	var orders []wrapper.InstalmentOrderReceipt
+	var tlines []wrapper.LocationLine
+	var lines []wrapper.LocationLine
 	if next {
 		for i, mon := range monthly {
 			// Tanggal sekarang
@@ -80,6 +82,35 @@ func InstalmentShowByDate(c *gin.Context) {
 					OrderInfo: orderInfo,
 					Monthly:   []wrapper.OrderMonthlyCredit{mon},
 				})
+
+				tlines = append(tlines, wrapper.LocationLine{
+					ID:   orderInfo.CreditDetail.ZoneLine.ID,
+					Code: orderInfo.CreditDetail.ZoneLine.Code,
+					Name: orderInfo.CreditDetail.ZoneLine.Name,
+				})
+			}
+		}
+	}
+
+	if next {
+		for _, tln := range tlines {
+			exist := false
+			if len(lines) > 0 {
+				for li, ln := range lines {
+					if ln.ID == tln.ID {
+						lines[li].Count++
+						exist = true
+					}
+				}
+			}
+
+			if !exist {
+				lines = append(lines, wrapper.LocationLine{
+					ID:    tln.ID,
+					Code:  tln.Code,
+					Name:  tln.Name,
+					Count: 1,
+				})
 			}
 		}
 	}
@@ -90,6 +121,7 @@ func InstalmentShowByDate(c *gin.Context) {
 
 	gh := gin.H{
 		"orders":  orders,
+		"lines":   lines,
 		"message": message,
 		"status":  status,
 	}
