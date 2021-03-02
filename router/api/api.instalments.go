@@ -46,12 +46,12 @@ func InstalmentShowByDate(c *gin.Context) {
 	var tlines []wrapper.LocationLine
 	var lines []wrapper.LocationLine
 	if next {
-		for i, mon := range monthly {
+		for _, mon := range monthly {
 			// Tanggal sekarang
 			current := time.Now()
 
 			if mon.PrintDate == "" {
-				monthly[i].PrintDate = current.Format("02/01/2006")
+				mon.PrintDate = current.Format("02/01/2006")
 			}
 
 			var orderInfo wrapper.OrderSimple
