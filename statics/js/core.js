@@ -22,4 +22,19 @@ function operatingSytem() {
 
   // Kembalikan nilai os
   return os;
-}  
+}
+
+function itemsToString(arr) {
+  items = "";
+  for (i = 0; i < arr.length; i++) {
+    items = `${items}[${arr[i].Quantity}x ${arr[i].Product.Name}]`;
+    if (arr.length > 1 && i < (arr.length - 2)) {
+      items = `${items}, `;
+    }
+    if (arr.length > 1 && i == (arr.length - 2)) {
+      items = `${items} dan `;
+    }
+  }
+
+  return items;
+}
