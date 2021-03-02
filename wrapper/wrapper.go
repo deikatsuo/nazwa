@@ -1,8 +1,16 @@
 package wrapper
 
+import "database/sql"
+
 // DefaultConfig - untuk menyimpan konfigurasi bawaan
 type DefaultConfig struct {
 	Info map[string]interface{}
+}
+
+// IntString kadang struk gini dibutuhkan juga hhha
+type IntString struct {
+	Integer sql.NullInt32  `db:"is_int"`
+	String  sql.NullString `db:"is_string"`
 }
 
 // NameID menampilkan nama dan id

@@ -446,7 +446,32 @@ func (c *CreateOrder) Save() error {
 
 	// Simpan credit detail
 	if c.Credit {
-		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, zone_line_id, monthly, duration, due, total, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`, tempReturnID, c.line, monthly, c.duration, c.due, total, remaining, luckyDiscount); err != nil {
+		var lc string
+		var lmax int
+
+		if c, err := LineGetCodeByID(c.line); err == nil {
+			lc = c
+		} else {
+			return err
+		}
+
+		if mx, err := LineGetCodeMaxNumber(lc); err == nil {
+			lmax = mx
+		} else {
+			log.Warn("Error sepertinya belum ada data, skip error")
+		}
+
+		// tambah satu
+		lmax++
+
+		if _, err := tx.Exec(`INSERT INTO "zone_line_list" (zone_line_code, number) VALUES ($1, $2)`, lc, lmax); err != nil {
+			log.Warn("dbquery.order.go Save() insert nomor arah total")
+			return err
+		}
+
+		creditCode := fmt.Sprintf("%s%04d", strings.ToUpper(lc), lmax)
+
+		if _, err := tx.Exec(`INSERT INTO "order_credit_detail" (order_id, zone_line_id, credit_code, monthly, duration, due, total, remaining, lucky_discount) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`, tempReturnID, c.line, creditCode, monthly, c.duration, c.due, total, remaining, luckyDiscount); err != nil {
 			log.Warn("dbquery.order.go Save() Insert product detail")
 			return err
 		}
@@ -1051,7 +1076,7 @@ func OrderGetSubstituteByRic(ric string) ([]wrapper.NameID, error) {
 func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 	db := DB
 	var cd wrapper.OrderCreditDetailSelect
-	query := `SELECT ocd.id, ocd.zone_line_id, ocd.monthly, ocd.duration, ocd.due, ocd.total, ocd.remaining, ocd.lucky_discount, zl.name as zone_line_name, zl.code as zone_line_code
+	query := `SELECT ocd.id, ocd.zone_line_id, ocd.credit_code, ocd.monthly, ocd.duration, ocd.due, ocd.total, ocd.remaining, ocd.lucky_discount, zl.name as zone_line_name, zl.code as zone_line_code
 	FROM "order_credit_detail" ocd
 	LEFT JOIN "zone_line" zl ON zl.id=ocd.zone_line_id
 	WHERE ocd.order_id=$1`
@@ -1069,6 +1094,7 @@ func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 			Code: cd.ZoneLineCode.String,
 			Name: cd.ZoneLineName.String,
 		},
+		CreditCode:    cd.CreditCode,
 		Monthly:       cd.Monthly,
 		Duration:      cd.Duration,
 		Due:           cd.Due,

@@ -87,7 +87,7 @@
               x-show="order.OrderInfo.CreditDetail.ZoneLine.ID == selectedLine"
             >
               <div
-                class="w-full pt-2 px-2 cursor-pointer"
+                class="w-full px-2 cursor-pointer"
                 @contextmenu.prevent="order.showall = !order.showall;"
               >
                 <template
@@ -98,9 +98,26 @@
                     <template
                       x-if="idx == order.Monthly.length - 1 || order.showall"
                     >
-                      <div class="w-full flex flex-wrap">
-                        <div class="px-1" x-text="receipt.Nth"></div>
-                        <div class="px-1" x-text="itemsToString(order.OrderInfo.Items)"></div>
+                      <div class="w-full py-1">
+                        <div class="w-full border">
+                          <div class="w-full flex flex-wrap">
+                            <div class="px-1" x-text="receipt.Nth"></div>
+                            <div
+                              class="px-1"
+                              x-text="itemsToString(order.OrderInfo.Items)"
+                            ></div>
+                            <div
+                              class="px-1"
+                              x-text="order.OrderInfo.Customer.Name"
+                            ></div>
+                          </div>
+                          <div>
+                            <div
+                              class="px-1"
+                              x-text="order.OrderInfo.BillingAddress"
+                            ></div>
+                          </div>
+                        </div>
                       </div>
                     </template>
                   </div>

@@ -200,6 +200,7 @@ type OrderCreditDetailSelect struct {
 	ZoneLineID    sql.NullInt32  `db:"zone_line_id"`
 	ZoneLineCode  sql.NullString `db:"zone_line_code"`
 	ZoneLineName  sql.NullString `db:"zone_line_name"`
+	CreditCode    string         `db:"credit_code"`
 	Monthly       int            `db:"monthly"`
 	Duration      int            `db:"duration"`
 	Due           int            `db:"due"`
@@ -215,6 +216,7 @@ type OrderCreditDetail struct {
 	ID            int
 	OrderID       int
 	ZoneLine      NameIDCode
+	CreditCode    string
 	Monthly       int
 	Duration      int
 	Due           int

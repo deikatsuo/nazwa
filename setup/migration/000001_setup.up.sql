@@ -172,6 +172,14 @@ CREATE TABLE "zone_line" (
     PRIMARY KEY (id)
 );
 
+-- Tabel line list
+CREATE TABLE "zone_line_list" (
+    "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "zone_line_code" varchar(5) NOT NULL,
+    "number" int NOT NULL,
+    PRIMARY KEY (id)
+);
+
 -- Tabel list arah yang termasuk dalam zona
 CREATE TABLE "zone_list" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
@@ -305,6 +313,7 @@ CREATE TABLE "order_credit_detail" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
     "order_id" int NOT NULL UNIQUE,
     "zone_line_id" int,
+    "credit_code" varchar(25) NOT NULL,
     "monthly" int NOT NULL,
     "duration" smallint NOT NULL,
     "due" smallint NOT NULL,

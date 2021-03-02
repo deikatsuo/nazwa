@@ -50,6 +50,31 @@ func LineGetTotalCountByID(lid int) (int, error) {
 	return total, nil
 }
 
+// LineGetCodeByID dapatkan kode dari id arah
+func LineGetCodeByID(lid int) (string, error) {
+	db := DB
+	var code string
+	query := `SELECT code FROM "zone_line" WHERE id=$1`
+	err := db.Get(&code, query, lid)
+	if err != nil {
+		return code, err
+	}
+	return code, nil
+}
+
+// LineGetCodeMaxNumber max berdasarkan kode arah
+func LineGetCodeMaxNumber(lc string) (int, error) {
+	db := DB
+	var max int
+
+	query := `SELECT max(number) FROM "zone_line_list" WHERE zone_line_code=$1`
+	err := db.Get(&max, query, lc)
+	if err != nil {
+		return max, err
+	}
+	return max, nil
+}
+
 // LineShowAvailable hanya tampilkan yang tersedia
 func LineShowAvailable() ([]wrapper.LocationLine, error) {
 	db := DB

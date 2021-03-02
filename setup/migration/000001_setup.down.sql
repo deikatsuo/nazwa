@@ -28,6 +28,8 @@ DROP TABLE IF EXISTS "address";
 
 DROP TABLE IF EXISTS "zone_list";
 
+DROP TABLE IF EXISTS "zone_line_list";
+
 DROP TABLE IF EXISTS "zone_line";
 
 DROP TABLE IF EXISTS "zone";
