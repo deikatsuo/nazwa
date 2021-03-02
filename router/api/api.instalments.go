@@ -23,14 +23,16 @@ func InstalmentShowByDate(c *gin.Context) {
 	if err := c.ShouldBindUri(&byDate); err != nil {
 		simpleErr = validation.SimpleValErrMap(err)
 		next = false
-		message = simpleErr["date"].(string)
+		if simpleErr["date"] != nil {
+			message = simpleErr["date"].(string)
+		}
 		status = "error"
 		httpStatus = http.StatusBadRequest
 	}
 
 	var monthly []wrapper.OrderMonthlyCredit
 	if next {
-		if mon, err := dbquery.OrderGetMonthlyCreditByDate(byDate.Date); err == nil {
+		if mon, err := dbquery.OrderGetMonthlyCreditByDate(byDate.ZoneID, byDate.Date); err == nil {
 			monthly = mon
 		} else {
 			httpStatus = http.StatusInternalServerError
@@ -63,7 +65,7 @@ func InstalmentShowByDate(c *gin.Context) {
 			}
 
 			exist := false
-			if len(orders) > 1 {
+			if len(orders) > 0 {
 				for oi, ord := range orders {
 					if ord.OrderID == mon.OrderID {
 						orders[oi].Monthly = append(orders[oi].Monthly, mon)

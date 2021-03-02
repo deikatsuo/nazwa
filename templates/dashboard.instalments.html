@@ -36,14 +36,14 @@
             <template x-for="zone in zones" :key="zone.ID">
               <div
                 class="w-1/3 p-1 cursor-pointer rounded-sm hover:bg-green-50"
-                @click="if (activeZone !== zone.ID) { activeZone = zone.ID; lines = zone.List; } else { activeZone = null; lines = []; }"
+                @click="if (selectedZone !== zone.ID) { selectedZone = zone.ID; } else { selectedZone = null; }"
               >
                 <div
                   class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-gray-50 dark:bg-gray-800"
                 >
                   <div
                     class="p-3 mr-4 rounded-full"
-                    :class="{'text-orange-500 bg-orange-100': activeZone == zone.ID, 'text-blue-500 bg-blue-100': activeZone !== zone.ID }"
+                    :class="{'text-orange-500 bg-orange-100': selectedZone == zone.ID, 'text-blue-500 bg-blue-100': selectedZone !== zone.ID }"
                   >
                     {{ template "_svg_icon_globe" }}
                   </div>
@@ -70,9 +70,9 @@
             <template x-for="line in lines" :key="line.ID">
               <div
                 class="w-1/3 py-1 px-2 cursor-pointer hover:bg-blue-200 hover:text-blue-500"
-                :class="{'text-blue-500': formData.line == line.ZoneLineID }"
+                :class="{'text-blue-500': selectedLine == line.ZoneLineID }"
                 x-text="`#${line.ZoneLineCode} - ${line.ZoneLineName}`"
-                @click="if (formData.line !== line.ZoneLineID) { formData.line = line.ZoneLineID; } else { formData.line = null; }"
+                @click="if (selectedLine !== line.ID) { selectedLine = line.ID; } else { selectedLine = null; }"
               ></div>
             </template>
           </div>
@@ -84,9 +84,11 @@
     function instalment() {
       return {
         date: new Date().toISOString().split("T")[0],
-        zones: [],
+        zones: {{ if not .zones }} [] {{ else }} {{ .zones }} {{ end }},
         lines: null,
-        activeZone: null,
+        loading: false,
+        selectedZone: null,
+        selectedLine: null,
         errDate: false,
         errmDate: "",
 
@@ -96,11 +98,20 @@
               this.fetchData($dispatch);
             }
           });
+          $watch("selectedZone", (value) => {
+            if (value !== null) {
+              this.fetchData($dispatch);
+            }
+          });
           this.fetchData($dispatch);
         },
 
         fetchData($dispatch) {
-          fetch(`/api/v1/local/instalment/date/${this.date}`, {
+          if (this.selectedZone == null || this.date == "") {
+            return;
+          }
+          this.loading = true;
+          fetch(`/api/v1/local/instalment/z/${this.selectedZone}/date/${this.date}`, {
             method: "GET",
           })
             .then((res) => res.json())

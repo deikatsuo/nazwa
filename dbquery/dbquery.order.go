@@ -1051,9 +1051,10 @@ func OrderGetSubstituteByRic(ric string) ([]wrapper.NameID, error) {
 func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 	db := DB
 	var cd wrapper.OrderCreditDetailSelect
-	query := `SELECT id, zone_line_id, monthly, duration, due, total, remaining, lucky_discount
-	FROM "order_credit_detail"
-	WHERE order_id=$1`
+	query := `SELECT ocd.id, ocd.zone_line_id, ocd.monthly, ocd.duration, ocd.due, ocd.total, ocd.remaining, ocd.lucky_discount, zl.name as zone_line_name, zl.code as zone_line_code
+	FROM "order_credit_detail" ocd
+	LEFT JOIN "zone_line" zl ON zl.id=ocd.zone_line_id
+	WHERE ocd.order_id=$1`
 
 	err := db.Get(&cd, query, oid)
 	if err != nil {
@@ -1061,9 +1062,13 @@ func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 	}
 
 	return wrapper.OrderCreditDetail{
-		ID:            cd.ID,
-		OrderID:       oid,
-		ZoneLineID:    int(cd.ZoneLineID.Int32),
+		ID:      cd.ID,
+		OrderID: oid,
+		ZoneLine: wrapper.NameIDCode{
+			ID:   int(cd.ZoneLineID.Int32),
+			Code: cd.ZoneLineCode.String,
+			Name: cd.ZoneLineName.String,
+		},
 		Monthly:       cd.Monthly,
 		Duration:      cd.Duration,
 		Due:           cd.Due,
@@ -1125,17 +1130,21 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 }
 
 // OrderGetMonthlyCreditByDate ambil data kredit bulanan
-func OrderGetMonthlyCreditByDate(date string) ([]wrapper.OrderMonthlyCredit, error) {
+func OrderGetMonthlyCreditByDate(zid int, date string) ([]wrapper.OrderMonthlyCredit, error) {
 	db := DB
 	var monthly []wrapper.OrderMonthlyCredit
 	var monthlyQ []wrapper.OrderMonthlyCreditQuery
 
-	query := `SELECT *, TO_CHAR(due_date, 'DD/MM/YYYY') AS due_date
-	FROM "order_monthly_credit"
-	WHERE TO_CHAR(due_date, 'YYYY-MM-DD')<=$1 AND done=false ORDER BY nth`
+	query := `SELECT omc.*, TO_CHAR(omc.due_date, 'DD/MM/YYYY') AS due_date
+	FROM "order_monthly_credit" omc
+	LEFT JOIN "order_credit_detail" ocd ON ocd.order_id=omc.order_id
+	LEFT JOIN "zone_list" zl ON zl.zone_line_id=ocd.zone_line_id
+	WHERE TO_CHAR(omc.due_date, 'YYYY-MM-DD')<=$1 AND omc.done=false AND zl.zone_id=$2 ORDER BY omc.nth`
 
-	err := db.Select(&monthlyQ, query, date)
+	err := db.Select(&monthlyQ, query, date, zid)
 	if err != nil {
+		log.Warn("dbquery.order.go OrderGetMonthlyCreditByDate() select")
+		log.Error(err)
 		return []wrapper.OrderMonthlyCredit{}, err
 	}
 

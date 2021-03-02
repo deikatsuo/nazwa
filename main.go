@@ -266,7 +266,7 @@ func runServer() {
 
 	// /api/v1/local/instalment
 	v1instalment := v1local.Group("/instalment")
-	v1instalment.GET("/date/:date", api.InstalmentShowByDate)
+	v1instalment.GET("/z/:zid/date/:date", api.InstalmentShowByDate)
 
 	// User API
 	// /api/v1/local/user

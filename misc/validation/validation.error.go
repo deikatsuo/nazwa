@@ -2,6 +2,7 @@ package validation
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -53,21 +54,27 @@ func SimpleValErr(verr interface{}) string {
 // SimpleValErrMap menyederhanakan error dari validator
 // dan mengembalikannya dalam bentuk map
 func SimpleValErrMap(verr interface{}) map[string]interface{} {
-	ve := verr.(validator.ValidationErrors)
 	errmap := make(map[string]interface{})
-	for _, v := range ve {
-		for mi, mv := range ValidationErrorsMask {
-			if v.Tag() == mi {
-				errmap[strings.ToLower(v.StructField())] = mv
-				if v.Tag() == "min" || v.Tag() == "max" || v.Tag() == "gte" || v.Tag() == "lte" {
-					errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, v.Param())
-				}
-				if v.Tag() == "oneof" {
-					errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, strings.Replace(v.Param(), " ", "' atau '", 1))
+	tp := reflect.TypeOf(verr)
+
+	if tp.String() == "validator.ValidationErrors" {
+		ve := verr.(validator.ValidationErrors)
+
+		for _, v := range ve {
+			for mi, mv := range ValidationErrorsMask {
+				if v.Tag() == mi {
+					errmap[strings.ToLower(v.StructField())] = mv
+					if v.Tag() == "min" || v.Tag() == "max" || v.Tag() == "gte" || v.Tag() == "lte" {
+						errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, v.Param())
+					}
+					if v.Tag() == "oneof" {
+						errmap[strings.ToLower(v.StructField())] = fmt.Sprintf(mv, strings.Replace(v.Param(), " ", "' atau '", 1))
+					}
 				}
 			}
 		}
 	}
+
 	return errmap
 }
 

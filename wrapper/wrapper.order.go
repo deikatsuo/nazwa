@@ -195,24 +195,26 @@ type OrderCreditDetailInsert struct {
 
 // OrderCreditDetailSelect detail order kredit
 type OrderCreditDetailSelect struct {
-	ID            int           `db:"id"`
-	OrderID       int           `db:"order_id"`
-	ZoneLineID    sql.NullInt32 `db:"zone_line_id"`
-	Monthly       int           `db:"monthly"`
-	Duration      int           `db:"duration"`
-	Due           int           `db:"due"`
-	Total         int           `db:"total"`
-	Remaining     int           `db:"remaining"`
-	LuckyDiscount int           `db:"lucky_discount"`
-	Active        bool          `db:"active"`
-	Done          bool          `db:"done"`
+	ID            int            `db:"id"`
+	OrderID       int            `db:"order_id"`
+	ZoneLineID    sql.NullInt32  `db:"zone_line_id"`
+	ZoneLineCode  sql.NullString `db:"zone_line_code"`
+	ZoneLineName  sql.NullString `db:"zone_line_name"`
+	Monthly       int            `db:"monthly"`
+	Duration      int            `db:"duration"`
+	Due           int            `db:"due"`
+	Total         int            `db:"total"`
+	Remaining     int            `db:"remaining"`
+	LuckyDiscount int            `db:"lucky_discount"`
+	Active        bool           `db:"active"`
+	Done          bool           `db:"done"`
 }
 
 // OrderCreditDetail detail order kredit
 type OrderCreditDetail struct {
 	ID            int
 	OrderID       int
-	ZoneLineID    int
+	ZoneLine      NameIDCode
 	Monthly       int
 	Duration      int
 	Due           int
