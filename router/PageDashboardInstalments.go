@@ -23,6 +23,10 @@ func PageDashboardInstalments(c *gin.Context) {
 		"site_title": "Halaman Tagihan",
 		"page":       "instalments",
 		"zones":      zones,
+		"css": []string{
+			"/assets/css/print.css",
+			"/assets/css/loading.css",
+		},
 	}
 
 	df := c.MustGet("dashboard").(map[string]interface{})

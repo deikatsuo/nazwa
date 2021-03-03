@@ -38,3 +38,11 @@ function itemsToString(arr) {
 
   return items;
 }
+
+function future(due) {
+  now = Date.now();
+  ds = due.split("/");
+  td = new Date(`${ds[2]}-${ds[1]}-${ds[0]}`);
+
+  return td > now;
+}

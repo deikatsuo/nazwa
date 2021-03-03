@@ -99,69 +99,80 @@
                       x-if="idx == order.Monthly.length - 1 || order.showall"
                     >
                       <div class="w-full py-1">
-                        <div class="w-full flex flex-wrap border p-1">
-                          <div class="w-full flex flex-wrap">
-                            <div class="w-full md:w-4/6 flex flex-wrap">
-                              <div class="w-full md:w-2/6 flex flex-wrap">
-                                <div
-                                  class="w-1/6 flex items-center justify-center text-2xl"
-                                  x-text="receipt.Nth"
-                                ></div>
-                                <div
-                                  class="w-5/6 flex items-center justify-center px-2"
-                                >
-                                  <div class="w-full text-center">
+                        <div
+                          class="w-full flex flex-wrap border p-1"
+                          :class="{'bg-green-100': receipt.Printed }"
+                        >
+                          <div
+                            class="w-full relative"
+                            style="min-height: 80px"
+                            :class="{'printed': receipt.Printed }"
+                          >
+                            <div class="absolute z-10 inset-0">
+                              <div class="w-full h-full flex items-center flex-wrap">
+                                <div class="w-full md:w-4/6 flex flex-wrap">
+                                  <div class="w-full md:w-2/6 flex flex-wrap">
                                     <div
-                                      class="w-full"
-                                      x-text="order.OrderInfo.CreditDetail.CreditCode"
+                                      class="w-1/6 flex items-center justify-center text-2xl"
+                                      x-text="receipt.Nth"
+                                    ></div>
+                                    <div
+                                      class="w-5/6 flex items-center justify-center px-2"
+                                    >
+                                      <div class="w-full text-center">
+                                        <div
+                                          class="w-full"
+                                          x-text="order.OrderInfo.CreditDetail.CreditCode"
+                                        ></div>
+                                        <hr />
+                                        <div
+                                          class="w-full"
+                                          x-text="`${toRupiah(order.OrderInfo.CreditDetail.Monthly)}`"
+                                        ></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="w-full md:w-4/6 px-2">
+                                    <div
+                                      x-text="`${itemsToString(order.OrderInfo.Items)}`"
                                     ></div>
                                     <hr />
                                     <div
-                                      class="w-full"
-                                      x-text="`${toRupiah(order.OrderInfo.CreditDetail.Monthly)}`"
+                                      x-text="order.OrderInfo.BillingAddress"
                                     ></div>
                                   </div>
                                 </div>
-                              </div>
-                              <div class="w-full md:w-4/6 px-2">
-                                <div
-                                  x-text="`${itemsToString(order.OrderInfo.Items)}`"
-                                ></div>
-                                <hr />
-                                <div
-                                  x-text="order.OrderInfo.BillingAddress"
-                                ></div>
-                              </div>
-                            </div>
-                            <div class="w-full md:w-2/6 flex flex-wrap">
-                              <div
-                                class="w-3/6 flex items-center justify-center"
-                              >
-                                <div class="w-full px-2 text-center">
+                                <div class="w-full md:w-2/6 flex flex-wrap">
                                   <div
-                                    class="w-full"
-                                    x-text="`${toRupiah(receipt.Paid)}`"
-                                  ></div>
-                                  <hr />
+                                    class="w-3/6 flex items-center justify-center"
+                                  >
+                                    <div class="w-full px-2 text-center">
+                                      <div
+                                        class="w-full"
+                                        x-text="`${toRupiah(receipt.Paid)}`"
+                                      ></div>
+                                      <hr />
+                                      <div
+                                        class="w-full"
+                                        x-text="`${toRupiah(order.OrderInfo.CreditDetail.Monthly-receipt.Paid)}`"
+                                      ></div>
+                                    </div>
+                                  </div>
                                   <div
-                                    class="w-full"
-                                    x-text="`${toRupiah(order.OrderInfo.CreditDetail.Monthly-receipt.Paid)}`"
-                                  ></div>
-                                </div>
-                              </div>
-                              <div
-                                class="w-3/6 flex items-center justify-center"
-                              >
-                                <div class="w-full px-2 text-center">
-                                  <div
-                                    class="w-full"
-                                    x-text="receipt.DueDate"
-                                  ></div>
-                                  <hr />
-                                  <div
-                                    class="w-full"
-                                    x-text="receipt.PrintDate"
-                                  ></div>
+                                    class="w-3/6 flex items-center justify-center"
+                                  >
+                                    <div class="w-full px-2 text-center">
+                                      <div
+                                        class="w-full"
+                                        x-text="receipt.DueDate"
+                                      ></div>
+                                      <hr />
+                                      <div
+                                        class="w-full"
+                                        x-text="receipt.PrintDate"
+                                      ></div>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
