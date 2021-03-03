@@ -172,12 +172,16 @@ module.exports = {
         '36': '36rem',
         xl: '36rem',
       },
+      height: {
+        '50': '50%',
+      },
       padding: {
         '30': '7.5rem',
       },
       inset: {
         '10': '10rem',
         '20': '20rem',
+        '-1': '-1rem',
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
