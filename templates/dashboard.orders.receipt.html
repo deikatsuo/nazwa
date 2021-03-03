@@ -100,10 +100,7 @@
                 <select x-model="selectedPaper">
                   <option>Default</option>
                   <template x-for="paper in printerPapers" :key="paper">
-                    <option
-                      x-text="paper"
-                      :value="paper"
-                    ></option>
+                    <option x-text="paper" :value="paper"></option>
                   </template>
                 </select>
                 <span class="block text-gray-500" x-show="lastPrinter != ''">
@@ -156,42 +153,44 @@
               </div>
             </template>
             <div
-              class="w-full p-10 antialiased"
+              class="w-full h-full relative antialiased"
               :id="monthly.Code"
               :class="{'printed': monthly.Printed }"
             >
-              <div class="tracking-wide font-normal font-sans">
-                <div class="w-full flex flex-row text-left px-4">
-                  <div class="w-3/5 relative">
-                    <span
-                      class="block pl-30 text-3xl font-extrabold tracking-wider"
-                      style="font-family: 'Lapica'"
-                      >NAZWA ELEKTRONIK</span
-                    >
-                    <div class="leading-5 pt-2">
-                      <p class="text-base">
-                        Jalan Raya Cihaur - Bojongsari - Jampangkulon 43178
-                      </p>
-                      <p class="text-base">
-                        Telp. 0858-6355-5270 / 0815-6346-5840
-                      </p>
-                      <p class="text-base">
-                        website
-                        <a href="https://cvnazwa.com" class="underline"
-                          >https://cvnazwa.com</a
+              <div class="absolute z-10 inset-0">
+                <div class="w-full h-full p-10">
+                  <div class="w-full h-full tracking-wide items-center font-normal font-sans">
+                    <div class="w-full flex flex-row text-left px-4">
+                      <div class="w-3/5 relative">
+                        <span
+                          class="block pl-30 text-3xl font-extrabold tracking-wider"
+                          style="font-family: 'Lapica'"
+                          >NAZWA ELEKTRONIK</span
                         >
-                      </p>
-                      <div class="w-24 h-12 top-0 absolute ml-2 mt-1">
-                        <img
-                          src="/assets/img/logo.svg"
-                          class="object-cover w-full h-full"
-                          loading="lazy"
-                        />
+                        <div class="leading-5 pt-2">
+                          <p class="text-base">
+                            Jalan Raya Cihaur - Bojongsari - Jampangkulon 43178
+                          </p>
+                          <p class="text-base">
+                            Telp. 0858-6355-5270 / 0815-6346-5840
+                          </p>
+                          <p class="text-base">
+                            website
+                            <a href="https://cvnazwa.com" class="underline"
+                              >https://cvnazwa.com</a
+                            >
+                          </p>
+                          <div class="w-24 h-12 top-0 absolute ml-2 mt-1">
+                            <img
+                              src="/assets/img/logo.svg"
+                              class="object-cover w-full h-full"
+                              loading="lazy"
+                            />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div class="w-2/5 relative">
-                    <!--
+                      <div class="w-2/5 relative">
+                        <!--
                     <div class="top-0 right-0 absolute">
                       <img
                         :src="`data:image/png;base64,${monthly.QR}`"
@@ -200,243 +199,286 @@
                       />
                     </div>
                     -->
-                    <div class="font-semibold text-lg">K W I T A N S I</div>
-                    <table class="w-full table-fixed">
-                      <tr>
-                        <th class="w-2/5 align-top font-normal">
-                          <template x-if="monthly.Nth == 0">
-                            <span>Pembayaran<span>
-                          </template>
-                          <template x-if="monthly.Nth > 0">
-                            <span>Angsuran Ke<span>
-                          </template>
-                        </th>
-                        <td class="flex flex-wrap">
-                          <span>:</span>
-                          <template x-if="monthly.Nth > 0">
-                            <span
-                              style="width: 97%"
-                              class="font-bold pl-8"
-                              x-text="`${monthly.Nth}`"
-                            ></span>
-                          </template>
-                          <template x-if="monthly.Nth == 0">
-                            <span
-                              style="width: 97%"
-                              class="font-bold text-center bg-black text-white"
-                              >DEPOSIT</span
-                            >
-                          </template>
-                        </td>
-                      </tr>
-                      <tr>
-                        <th class="w-2/5 align-top font-normal">Jatuh Tempo
-                        </th>
-                        <td class="flex flex-wrap">
-                          <span>:</span
-                          ><span
-                            style="width: 97%"
-                            class="pl-1"
-                            x-text="`${monthly.DueDate}`"
-                          ></span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <th class="w-2/5 align-top font-normal">Janji Bayar</th>
-                        <td class="flex flex-wrap">
-                          <span>:</span
-                          ><span
-                            style="width: 98%"
-                            class="pl-1"
-                            x-text="`${monthly.Promise}`"
-                            x-show="monthly.Promise != ''"
-                          ></span>
-                          <span
-                            style="width: 97%"
-                            class="pl-1"
-                            x-show="monthly.Promise == ''"
-                            >....................</span
-                          >
-                        </td>
-                      </tr>
-                      <tr>
-                        <th class="w-2/5 align-top font-normal">
-                          Tanggal Cetak
-                        </th>
-                        <td class="flex flex-wrap">
-                          <span>:</span
-                          ><span
-                            style="width: 97%"
-                            class="pl-1"
-                            x-text="`${monthly.PrintDate}`"
-                          ></span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <th class="w-2/5 align-top font-normal">Kode Cetak</th>
-                        <td class="flex flex-wrap">
-                          <span>:</span
-                          ><span
-                            style="width: 97%"
-                            class="pl-1 text-base"
-                            x-text="`${monthly.Code}`"
-                          ></span>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-                <!-- Info Order -->
-                <div class="w-full text-left px-4 py-2">
-                  <table class="w-full table-fixed border border-black">
-                    <tr class="border-b border-black">
-                      <th class="w-2/6 align-top px-2 font-normal">Tertagih</th>
-                      <td class="flex flex-wrap px-2">
-                        <span>:</span>
-                        <span
-                          style="width: 98%"
-                          class="pl-1 capitalize"
-                          x-text="`${order.Customer.Name}`"
-                        ></span>
-                      </td>
-                    </tr>
-                    <tr class="border-b border-black">
-                      <th class="w-2/6 align-top px-2 font-normal">
-                        Alamat Tagih
-                      </th>
-                      <td class="flex flex-wrap px-2">
-                        <span>:</span>
-                        <span
-                          style="width: 98%"
-                          class="pl-1"
-                          x-text="`${order.BillingAddress}`"
-                        ></span>
-                      </td>
-                    </tr>
-                    <tr class="border-b border-black">
-                      <th class="w-2/6 align-top px-2 font-normal">
-                        Besar Tagihan
-                      </th>
-                      <td class="flex flex-wrap px-2">
-                        <span>:</span>
-                        <template x-if="monthly.Nth > 0">
-                          <span
-                            style="width: 98%"
-                            class="pl-1"
-                            x-text="`${toRupiah(order.CreditDetail.Monthly)} ( ${terbilang(order.CreditDetail.Monthly)} )`"
-                          ></span>
-                        </template>
-                        <template x-if="monthly.Nth == 0">
-                          <span
-                            style="width: 98%"
-                            class="pl-1"
-                            x-text="`${toRupiah(order.Deposit)} ( ${terbilang(order.Deposit)} )`"
-                          ></span>
-                        </template>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th class="w-2/6 align-top px-2 font-normal">
-                        Terbayar untuk
-                      </th>
-                      <td class="flex flex-wrap px-2">
-                        <span>:</span>
-                        <span style="width: 98%" class="pl-1">
-                          <template x-if="order.Items !== null">
-                            <template
-                              x-for="(item, idx) in order.Items"
-                              :key="idx"
-                            >
-                              <div class="inline-flex item-center">
-                                <p
-                                  class="text-black"
-                                  x-text="`[${item.Quantity}x ${item.Product.Name}]`"
-                                ></p>
-                                <p
-                                  class="pr-1"
-                                  x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
-                                >
-                                  ,
-                                </p>
-                                <p
-                                  class="px-1"
-                                  x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
-                                >
-                                  dan
-                                </p>
-                              </div>
-                            </template>
-                          </template>
-                        </span>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-                <!-- Info Tagihan -->
-                <div class="w-full text-left px-4 py-2">
-                  <div class="w-full flex flex-row border border-black p-2">
-                    <div class="w-3/5 pr-2">
-                      <template x-if="monthly.Nth > 0">
+                        <div class="font-semibold text-lg">K W I T A N S I</div>
                         <table class="w-full table-fixed">
-                          <tr class="border-b border-black">
-                            <th class="w-2/6 align-top font-normal">
-                              Total Kredit
+                          <tr>
+                            <th class="w-2/5 align-top font-normal">
+                              <template x-if="monthly.Nth == 0">
+                                <span>Pembayaran</span>
+                              </template>
+                              <template x-if="monthly.Nth > 0">
+                                <span>Angsuran Ke</span>
+                              </template>
                             </th>
                             <td class="flex flex-wrap">
                               <span>:</span>
-                              <span
-                                style="width: 98%"
-                                class="pl-1 capitalize"
-                                x-text="`${toRupiah(order.CreditDetail.Total)}`"
-                              ></span>
+                              <template x-if="monthly.Nth > 0">
+                                <span
+                                  style="width: 97%"
+                                  class="font-bold pl-8"
+                                  x-text="`${monthly.Nth}`"
+                                ></span>
+                              </template>
+                              <template x-if="monthly.Nth == 0">
+                                <span
+                                  style="width: 97%"
+                                  class="font-bold text-center bg-black text-white"
+                                  >DEPOSIT</span
+                                >
+                              </template>
                             </td>
                           </tr>
-                          <tr class="border-b border-black">
-                            <th class="w-2/6 align-top font-normal">
-                              Sisa Kredit
+                          <tr>
+                            <th class="w-2/5 align-top font-normal">
+                              Jatuh Tempo
                             </th>
                             <td class="flex flex-wrap">
-                              <span>:</span>
-                              <span
-                                style="width: 98%"
-                                class="pl-1 capitalize"
-                                x-text="`${toRupiah(order.CreditDetail.Total-((monthly.Nth-1)*order.CreditDetail.Monthly))}`"
-                              ></span>
-                            </td>
-                          </tr>
-                          <tr class="border-b border-black">
-                            <th class="w-2/6 align-top font-normal">
-                              Jumlah Bayar
-                            </th>
-                            <td class="flex flex-wrap">
-                              <span>:</span>
-                              <span
-                                style="width: 98%"
-                                class="pl-1 capitalize"
+                              <span>:</span
+                              ><span
+                                style="width: 97%"
+                                class="pl-1"
+                                x-text="`${monthly.DueDate}`"
                               ></span>
                             </td>
                           </tr>
                           <tr>
-                            <th class="w-2/6 align-top font-normal">
-                              Sisa Habis Bayar
+                            <th class="w-2/5 align-top font-normal">
+                              Janji Bayar
                             </th>
                             <td class="flex flex-wrap">
-                              <span>:</span>
-                              <span
+                              <span>:</span
+                              ><span
                                 style="width: 98%"
-                                class="pl-1 capitalize"
-                                x-text="`${toRupiah(order.CreditDetail.Total-((monthly.Nth-1)*order.CreditDetail.Monthly)-order.CreditDetail.Monthly)}`"
+                                class="pl-1"
+                                x-text="`${monthly.Promise}`"
+                                x-show="monthly.Promise != ''"
+                              ></span>
+                              <span
+                                style="width: 97%"
+                                class="pl-1"
+                                x-show="monthly.Promise == ''"
+                                >....................</span
+                              >
+                            </td>
+                          </tr>
+                          <tr>
+                            <th class="w-2/5 align-top font-normal">
+                              Tanggal Cetak
+                            </th>
+                            <td class="flex flex-wrap">
+                              <span>:</span
+                              ><span
+                                style="width: 97%"
+                                class="pl-1"
+                                x-text="`${monthly.PrintDate}`"
+                              ></span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th class="w-2/5 align-top font-normal">
+                              Kode Cetak
+                            </th>
+                            <td class="flex flex-wrap">
+                              <span>:</span
+                              ><span
+                                style="width: 97%"
+                                class="pl-1 text-base"
+                                x-text="`${monthly.Code}`"
                               ></span>
                             </td>
                           </tr>
                         </table>
-                      </template>
-                      <template x-if="monthly.Nth == 0">
-                        <div class="w-full">
-                          <p>
-                            MINTA DAN SIMPANLAH KWITANSI SETIAP SETELAH
-                            MELAKUKAN PEMBAYARAN
+                      </div>
+                    </div>
+                    <!-- Info Order -->
+                    <div class="w-full text-left px-4 py-2">
+                      <table class="w-full table-fixed border border-black">
+                        <tr class="border-b border-black">
+                          <th class="w-2/6 align-top px-2 font-normal">
+                            Tertagih
+                          </th>
+                          <td class="flex flex-wrap px-2">
+                            <span>:</span>
+                            <span
+                              style="width: 98%"
+                              class="pl-1 capitalize"
+                              x-text="`${order.Customer.Name}`"
+                            ></span>
+                          </td>
+                        </tr>
+                        <tr class="border-b border-black">
+                          <th class="w-2/6 align-top px-2 font-normal">
+                            Alamat Tagih
+                          </th>
+                          <td class="flex flex-wrap px-2">
+                            <span>:</span>
+                            <span
+                              style="width: 98%"
+                              class="pl-1"
+                              x-text="`${order.BillingAddress}`"
+                            ></span>
+                          </td>
+                        </tr>
+                        <tr class="border-b border-black">
+                          <th class="w-2/6 align-top px-2 font-normal">
+                            Besar Tagihan
+                          </th>
+                          <td class="flex flex-wrap px-2">
+                            <span>:</span>
+                            <template x-if="monthly.Nth > 0">
+                              <span
+                                style="width: 98%"
+                                class="pl-1"
+                                x-text="`${toRupiah(order.CreditDetail.Monthly)} ( ${terbilang(order.CreditDetail.Monthly)} )`"
+                              ></span>
+                            </template>
+                            <template x-if="monthly.Nth == 0">
+                              <span
+                                style="width: 98%"
+                                class="pl-1"
+                                x-text="`${toRupiah(order.Deposit)} ( ${terbilang(order.Deposit)} )`"
+                              ></span>
+                            </template>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th class="w-2/6 align-top px-2 font-normal">
+                            Terbayar untuk
+                          </th>
+                          <td class="flex flex-wrap px-2">
+                            <span>:</span>
+                            <span style="width: 98%" class="pl-1">
+                              <template x-if="order.Items !== null">
+                                <template
+                                  x-for="(item, idx) in order.Items"
+                                  :key="idx"
+                                >
+                                  <div class="inline-flex item-center">
+                                    <p
+                                      class="text-black"
+                                      x-text="`[${item.Quantity}x ${item.Product.Name}]`"
+                                    ></p>
+                                    <p
+                                      class="pr-1"
+                                      x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
+                                    >
+                                      ,
+                                    </p>
+                                    <p
+                                      class="px-1"
+                                      x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
+                                    >
+                                      dan
+                                    </p>
+                                  </div>
+                                </template>
+                              </template>
+                            </span>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <!-- Info Tagihan -->
+                    <div class="w-full text-left px-4 py-2">
+                      <div class="w-full flex flex-row border border-black p-2">
+                        <div class="w-3/5 pr-2">
+                          <template x-if="monthly.Nth > 0">
+                            <table class="w-full table-fixed">
+                              <tr class="border-b border-black">
+                                <th class="w-2/6 align-top font-normal">
+                                  Total Kredit
+                                </th>
+                                <td class="flex flex-wrap">
+                                  <span>:</span>
+                                  <span
+                                    style="width: 98%"
+                                    class="pl-1 capitalize"
+                                    x-text="`${toRupiah(order.CreditDetail.Total)}`"
+                                  ></span>
+                                </td>
+                              </tr>
+                              <tr class="border-b border-black">
+                                <th class="w-2/6 align-top font-normal">
+                                  Sisa Kredit
+                                </th>
+                                <td class="flex flex-wrap">
+                                  <span>:</span>
+                                  <span
+                                    style="width: 98%"
+                                    class="pl-1 capitalize"
+                                    x-text="`${toRupiah(order.CreditDetail.Total-((monthly.Nth-1)*order.CreditDetail.Monthly))}`"
+                                  ></span>
+                                </td>
+                              </tr>
+                              <tr class="border-b border-black">
+                                <th class="w-2/6 align-top font-normal">
+                                  Jumlah Bayar
+                                </th>
+                                <td class="flex flex-wrap">
+                                  <span>:</span>
+                                  <span
+                                    style="width: 98%"
+                                    class="pl-1 capitalize"
+                                  ></span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <th class="w-2/6 align-top font-normal">
+                                  Sisa Habis Bayar
+                                </th>
+                                <td class="flex flex-wrap">
+                                  <span>:</span>
+                                  <span
+                                    style="width: 98%"
+                                    class="pl-1 capitalize"
+                                    x-text="`${toRupiah(order.CreditDetail.Total-((monthly.Nth-1)*order.CreditDetail.Monthly)-order.CreditDetail.Monthly)}`"
+                                  ></span>
+                                </td>
+                              </tr>
+                            </table>
+                          </template>
+                          <template x-if="monthly.Nth == 0">
+                            <div class="w-full">
+                              <p>
+                                MINTA DAN SIMPANLAH KWITANSI SETIAP SETELAH
+                                MELAKUKAN PEMBAYARAN
+                              </p>
+                              <p class="text-xs">
+                                *pastikan kwitansi tidak hilang jika suatu saat
+                                diperlukan untuk bukti pembayaran
+                              </p>
+                              <p class="text-xs">
+                                *perusahaan tidak bertanggung jawab atas segala
+                                kelalaian konsumen
+                              </p>
+                            </div>
+                          </template>
+                        </div>
+                        <div
+                          class="w-1/5 relative text-center border-l border-r border-black"
+                        >
+                          <p>Tanggal Bayar</p>
+                          <p>....................</p>
+                          <div class="absolute bottom-0 inset-x-0 mx-auto">
+                            <p>Penagih, TTD</p>
+
+                            <p
+                              class="capitalize"
+                              x-text="order.Collector.Name"
+                              x-show="order.Collector.Name != ''"
+                            ></p>
+                            <p x-show="order.Collector.Name == ''">-</p>
+                          </div>
+                        </div>
+                        <div class="w-1/5 relative text-center">
+                          <p class="absolute top-0 inset-x-0 mx-auto">Admin</p>
+                          <p class="absolute bottom-0 inset-x-0 mx-auto">
+                            Rika Artamevia
                           </p>
+                        </div>
+                      </div>
+                      <template x-if="monthly.Nth > 0">
+                        <div class="w-full pt-1">
                           <p class="text-xs">
                             *pastikan kwitansi tidak hilang jika suatu saat
                             diperlukan untuk bukti pembayaran
@@ -448,41 +490,7 @@
                         </div>
                       </template>
                     </div>
-                    <div
-                      class="w-1/5 relative text-center border-l border-r border-black"
-                    >
-                      <p>Tanggal Bayar</p>
-                      <p>....................</p>
-                      <div class="absolute bottom-0 inset-x-0 mx-auto">
-                        <p>Penagih, TTD</p>
-
-                        <p
-                          class="capitalize"
-                          x-text="order.Collector.Name"
-                          x-show="order.Collector.Name != ''"
-                        ></p>
-                        <p x-show="order.Collector.Name == ''">-</p>
-                      </div>
-                    </div>
-                    <div class="w-1/5 relative text-center">
-                      <p class="absolute top-0 inset-x-0 mx-auto">Admin</p>
-                      <p class="absolute bottom-0 inset-x-0 mx-auto">
-                        Rika Artamevia
-                      </p>
-                    </div>
                   </div>
-                  <template x-if="monthly.Nth > 0">
-                    <div class="w-full pt-1">
-                      <p class="text-xs">
-                        *pastikan kwitansi tidak hilang jika suatu saat
-                        diperlukan untuk bukti pembayaran
-                      </p>
-                      <p class="text-xs">
-                        *perusahaan tidak bertanggung jawab atas segala
-                        kelalaian konsumen
-                      </p>
-                    </div>
-                  </template>
                 </div>
               </div>
             </div>
@@ -577,7 +585,7 @@
         this.loadingText = "Membuat kwitansi " + receipt.Code;
         /*await html2canvas(document.querySelector(`#${receipt.Code}`), {scrollY: -window.scrollY, scrollX: -6}).then(canvas => {
           //document.body.appendChild(canvas)
-          
+
           // Buat file (gambar) untuk di print...
           var b64Prefix = "data:image/png;base64,";
           var imgBase64DataUri = canvas.toDataURL("image/png");
@@ -618,7 +626,7 @@
               if (_this.order.BillingAddress.length > 52) {
                 workbook.sheet("Sheet1").row(12).height(32);
               }
-              
+
               if (receipt.Nth == 0) {
                 workbook.sheet("Sheet1").cell("F13").value(`${toRupiah(_this.order.Deposit)} ( ${terbilang(_this.order.Deposit)} )`);
               } else {
@@ -649,7 +657,7 @@
               });
             });
           });
-        
+
 
         this.loadingText = "LOADING...";
         this.loading = false;
