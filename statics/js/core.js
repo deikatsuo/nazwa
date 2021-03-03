@@ -46,3 +46,19 @@ function future(due) {
 
   return td > now;
 }
+
+function past(due) {
+  now = Date.now();
+  ds = due.split("/");
+  td = new Date(`${ds[2]}-${ds[1]}-${ds[0]}`);
+
+  return td < now;
+}
+
+function today(due) {
+  now = new Date().toISOString().slice(0, 10);
+  ds = due.split("/");
+  td = new Date(`${ds[2]}-${ds[1]}-${ds[0]}`).toISOString().slice(0, 10);
+
+  return td === now;
+}
