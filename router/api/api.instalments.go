@@ -5,7 +5,6 @@ import (
 	"nazwa/misc/validation"
 	"nazwa/wrapper"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,11 +46,10 @@ func InstalmentShowByDate(c *gin.Context) {
 	var lines []wrapper.LocationLine
 	if next {
 		for _, mon := range monthly {
-			// Tanggal sekarang
-			current := time.Now()
+			// Tanggal cetak
 
 			if mon.PrintDate == "" {
-				mon.PrintDate = current.Format("02/01/2006")
+				mon.PrintDate = "-"
 			}
 
 			var orderInfo wrapper.OrderSimple
