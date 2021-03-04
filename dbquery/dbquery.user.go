@@ -132,7 +132,7 @@ func UserNew() *CreateUser {
 
 // SetFirstName Set nama depan
 func (u *CreateUser) SetFirstName(p string) *CreateUser {
-	u.Firstname = strings.ToLower(p)
+	u.Firstname = strings.Title(p)
 	u.into["first_name"] = ":first_name"
 	return u
 }
@@ -142,7 +142,7 @@ func (u *CreateUser) SetLastName(p string) *CreateUser {
 	// Nama belakang adalah opsional, jadi gak divalidasi
 	// maka perlu di cek sebelum di input ke database
 	if len(p) > 0 {
-		u.Lastname = strings.ToLower(p)
+		u.Lastname = strings.Title(p)
 		u.into["last_name"] = ":last_name"
 	}
 	return u
@@ -869,6 +869,9 @@ func UserUpdateResidentIdentityCard(uid int, ric string) error {
 func UserUpdateName(uid int, firstname, lastname string) error {
 	db := DB
 
+	firstname = strings.Title(firstname)
+	lastname = strings.Title(lastname)
+
 	// Update nik
 	if lastname == "" {
 		if _, err := db.Exec(`UPDATE "user" SET first_name=$1, last_name=NULL WHERE id=$2`, firstname, uid); err != nil {
@@ -877,7 +880,7 @@ func UserUpdateName(uid int, firstname, lastname string) error {
 		}
 	} else {
 		if _, err := db.Exec(`UPDATE "user" SET first_name=$1, last_name=$2 WHERE id=$3`, firstname, lastname, uid); err != nil {
-			log.Warn("dbquery.user.go UserUpdateName() Update nama")
+			log.Warn("dbquery.user.go UserUpdateName() Update nama depan & belakang")
 			return err
 		}
 	}
