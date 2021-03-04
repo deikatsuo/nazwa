@@ -251,10 +251,6 @@ func (c *CreateOrder) Save() error {
 	// Lalu kalkulasikan
 	for _, item := range c.orderItems {
 		if c.Credit {
-			if _, err := ZoneGetIDByLine(c.ShippingAddressID); err != nil {
-				return errors.New("Arah belum terdaftar dalam zona manapun")
-			}
-
 			// Temporary credit price
 			var tmpcp int
 			p, err := ProductGetProductCreditPrice(item.ProductID)
