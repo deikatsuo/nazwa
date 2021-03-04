@@ -73,18 +73,32 @@
                   class="w-full md:w-1/3 py-1 px-2 cursor-pointer hover:bg-blue-200 hover:text-blue-500"
                   :class="{'text-blue-500': selectedLine == line.ID }"
                   x-text="`#${line.Code} - ${line.Name} (${line.Count})`"
-                  @click="if (selectedLine !== line.ID) { selectedLine = line.ID; }"
+                  @click="if (selectedLine !== line.ID) { selectedLine = line.ID; } else { selectedLine = null; }"
                 ></div>
               </template>
             </div>
           </div>
         </template>
 
+        <!-- Pencarian -->
+        <template x-if="orders !== null">
+          <div class="w-full px-1 py-4">
+            <label for="search" class="sr-only">Search</label>
+            <div class="relative rounded-md shadow">
+              <input
+                class="block h-10 w-full px-4 sm:text-sm sm:leading-5"
+                placeholder="Cari kwitansi"
+                x-model="order_instant_search"
+              />
+            </div>
+          </div>
+        </template>
+
         <!-- Kwitansi -->
         <template x-if="orders !== null">
-          <template x-for="order in orders" :key="order.OrderID">
+          <template x-for="order in fill_orders" :key="order.OrderID">
             <div
-              x-show="order.OrderInfo.CreditDetail.ZoneLine.ID == selectedLine"
+              x-show="order.OrderInfo.CreditDetail.ZoneLine.ID == selectedLine || selectedLine == null"
             >
               <div
                 class="w-full px-1 cursor-pointer"
@@ -106,10 +120,12 @@
                         <div
                           class="absolute"
                           :class="{'h-50': idx == order.Monthly.length - 1, 'h-50 -bottom-1': idx == 0, 'h-full': idx !== order.Monthly.length - 1 && idx > 0 }"
-                          style="left: 1rem;"
+                          style="left: 1rem"
                           x-show="order.showall"
                         >
-                          <div class="border-opacity-20 border-gray-700 h-full border"></div>
+                          <div
+                            class="border-opacity-20 border-gray-700 h-full border"
+                          ></div>
                         </div>
                         <div
                           class="w-full flex flex-wrap border p-1"
@@ -146,7 +162,9 @@
                                       class="flex items-center justify-center px-2"
                                       :class="{'w-5/6': !order.showall, 'w-full': order.showall }"
                                     >
-                                      <div class="w-full flex flex-wrap md:block md:flex-no-wrap text-center">
+                                      <div
+                                        class="w-full flex flex-wrap md:block md:flex-no-wrap text-center"
+                                      >
                                         <div
                                           class="w-1/2 md:w-full"
                                           x-text="order.OrderInfo.CreditDetail.CreditCode"
@@ -159,7 +177,9 @@
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="w-full border py-2 md:py-0 md:border-none md:w-4/6 px-2">
+                                  <div
+                                    class="w-full border py-2 md:py-0 md:border-none md:w-4/6 px-2"
+                                  >
                                     <div
                                       x-text="`${itemsToString(order.OrderInfo.Items)}`"
                                     ></div>
@@ -226,6 +246,7 @@
         loading: false,
         selectedZone: null,
         selectedLine: null,
+        order_instant_search: "",
         errDate: false,
         errmDate: "",
 
@@ -273,6 +294,21 @@
             .catch((err) => {
               console.log("fetchData() " + err);
             });
+        },
+        get fill_orders() {
+          return this.orders
+            .filter((r) => {
+              const pattern = new RegExp(
+                this.order_instant_search,
+                "i"
+              );
+              return (
+                r.OrderInfo.Customer.Name.match(pattern) ||
+                r.OrderInfo.BillingAddress.match(pattern) ||
+                r.OrderInfo.CreditDetail.CreditCode.match(pattern)
+              );
+            })
+            .slice(0, 100);
         },
       };
     }
