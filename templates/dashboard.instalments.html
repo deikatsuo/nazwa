@@ -127,6 +127,16 @@
                             class="border-opacity-20 border-gray-700 h-full border"
                           ></div>
                         </div>
+
+                        <!-- Tag nama konsumen -->
+                        <div class="w-full" x-show="!order.showall || idx == 0">
+                          <span
+                            class="text-gray-400"
+                            x-text="`#${order.OrderInfo.Customer.Name}`"
+                          ></span>
+                        </div>
+
+                        <!-- Kwitansi bulanan -->
                         <div
                           class="w-full flex flex-wrap border p-1"
                           :class="{'bg-white text-black': !receipt.Done && today(receipt.DueDate), 'bg-orange-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && receipt.Printed, 'bg-red-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && !receipt.Printed, 'bg-green-100 text-red-400 border-orange-500': past(receipt.DueDate) && !receipt.Done && receipt.Paid > 0 }"
