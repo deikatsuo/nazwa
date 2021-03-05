@@ -50,12 +50,10 @@
             >
               <td
                 class="px-1 py-3 text-sm text-center cursor-pointer"
+                :class="{'checked': order.checked }"
                 @click="order.checked = !order.checked; if (order.checked) { pushChecked(order.ID); } else { removeChecked(order.ID); }"
               >
-                <p x-show="!order.checked" x-text="index + loaded + 1"></p>
-                <p x-show="order.checked" class="flex justify-center">
-                  {{ template "_svg_icon_checkcircle" }}
-                </p>
+                <p x-text="index + loaded + 1"></p>
               </td>
               <td class="px-4 py-3 text-sm">
                 <div class="flex items-center text-sm">

@@ -102,7 +102,7 @@
             >
               <div
                 class="w-full px-1 cursor-pointer"
-                @click.prevent="if (order.Monthly.length > 1 && !order.showall) { order.showall = !order.showall; }"
+                @contextmenu.prevent="if (order.Monthly.length > 1) { order.showall = !order.showall; }"
               >
                 <template
                   x-for="(receipt, idx) in order.Monthly"
@@ -124,12 +124,15 @@
                           x-show="order.showall"
                         >
                           <div
-                            class="border-opacity-20 border-gray-700 h-full border"
+                            class="border-opacity-20 border-blue-300 border h-full shadow-xs"
                           ></div>
                         </div>
 
                         <!-- Tag nama konsumen -->
-                        <div class="w-full" x-show="!order.showall || idx == 0" @contextmenu.prevent="if (order.showall) { order.showall = !order.showall;}">
+                        <div
+                          class="w-full"
+                          x-show="!order.showall || idx == 0"
+                        >
                           <span
                             class="text-gray-400"
                             x-text="`#${order.OrderInfo.Customer.Name}`"
@@ -156,9 +159,11 @@
                                   class="absolute"
                                   style="left: -2.8rem"
                                   x-show="order.showall"
+                                  @click="receipt.print = !receipt.print;"
                                 >
                                   <div
-                                    class="bg-black text-white font-bold w-8 h-8 flex items-center justify-center rounded-full"
+                                    class="border font-bold w-8 h-8 flex items-center justify-center rounded-full"
+                                    :class="{'checked': receipt.print, 'bg-white text-black': !receipt.Done && today(receipt.DueDate), 'bg-orange-100 text-orange-400 border-orange-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && receipt.Printed, 'bg-red-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && !receipt.Printed, 'bg-green-100 text-green-400 border-green-500': past(receipt.DueDate) && !receipt.Done && receipt.Paid > 0}"
                                     x-text="receipt.Nth"
                                   ></div>
                                 </div>
@@ -166,8 +171,10 @@
                                   <div class="w-full md:w-2/6 flex flex-wrap">
                                     <div
                                       class="w-1/6 flex items-center justify-center text-2xl"
+                                      :class="{'checked': receipt.print }"
                                       x-text="receipt.Nth"
                                       x-show="!order.showall"
+                                      @click="receipt.print = !receipt.print;"
                                     ></div>
                                     <div
                                       class="flex items-center justify-center px-2"
