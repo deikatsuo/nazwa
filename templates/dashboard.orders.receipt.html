@@ -283,7 +283,7 @@
                               ><span
                                 style="width: 97%"
                                 class="pl-1 text-base"
-                                x-text="`${monthly.Code}`"
+                                x-text="`${order.CreditDetail.CreditCode}`"
                               ></span>
                             </td>
                           </tr>
@@ -620,7 +620,7 @@
                 workbook.sheet("Sheet1").cell("J5").value(receipt.Promise);
               }
               workbook.sheet("Sheet1").cell("J6").value(receipt.PrintDate);
-              workbook.sheet("Sheet1").cell("J7").value(receipt.Code);
+              workbook.sheet("Sheet1").cell("J7").value(_this.order.CreditDetail.CreditCode);
               workbook.sheet("Sheet1").cell("F11").value(_this.order.Customer.Name + " (" +_this.order.Customer.Code +")");
               workbook.sheet("Sheet1").cell("F12").value(_this.order.BillingAddress);
               if (_this.order.BillingAddress.length > 52) {

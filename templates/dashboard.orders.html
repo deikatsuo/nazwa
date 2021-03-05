@@ -308,7 +308,7 @@
       removeChecked(oid) {
         if (this.checked.length > 0) {
           var index = this.checked.indexOf(oid);
-          if (index >= 0) {
+          if (index > 0) {
             this.checked.splice(index, 1);
           }
         }

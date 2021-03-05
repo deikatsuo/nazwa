@@ -129,10 +129,7 @@
                         </div>
 
                         <!-- Tag nama konsumen -->
-                        <div
-                          class="w-full"
-                          x-show="!order.showall || idx == 0"
-                        >
+                        <div class="w-full" x-show="!order.showall || idx == 0">
                           <span
                             class="text-gray-400"
                             x-text="`#${order.OrderInfo.Customer.Name}`"
@@ -159,7 +156,7 @@
                                   class="absolute"
                                   style="left: -2.8rem"
                                   x-show="order.showall"
-                                  @click="receipt.print = !receipt.print;"
+                                  @click="receipt.print = !receipt.print; if (receipt.print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
                                 >
                                   <div
                                     class="border font-bold w-8 h-8 flex items-center justify-center rounded-full"
@@ -174,7 +171,7 @@
                                       :class="{'checked': receipt.print }"
                                       x-text="receipt.Nth"
                                       x-show="!order.showall"
-                                      @click="receipt.print = !receipt.print;"
+                                      @click="receipt.print = !receipt.print; if (receipt.print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
                                     ></div>
                                     <div
                                       class="flex items-center justify-center px-2"
@@ -264,6 +261,7 @@
         loading: false,
         selectedZone: null,
         selectedLine: null,
+        checked: [],
         order_instant_search: "",
         errDate: false,
         errmDate: "",
@@ -326,6 +324,17 @@
                 r.OrderInfo.CreditDetail.CreditCode.match(pattern)
               );
             });
+        },
+        pushChecked(receipt) {
+          this.checked.push(receipt);
+        },
+        removeChecked(rid) {
+          if (this.checked.length > 0) {
+            var index = this.checked.map(function(e) { return e.ID; }).indexOf(rid);
+            if (index > 0) {
+              this.checked.splice(index, 1);
+            }
+          }
         },
       };
     }
