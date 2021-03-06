@@ -320,6 +320,7 @@ CREATE TABLE "order_credit_detail" (
     "total" numeric(15) NOT NULL,
     "remaining" numeric(15) NOT NULL,
     "lucky_discount" numeric(15) DEFAULT 0,
+    "last_paid" date,
     "active" bool NOT NULL DEFAULT 'true',
     "done" bool NOT NULL DEFAULT 'false',
     PRIMARY KEY (id),

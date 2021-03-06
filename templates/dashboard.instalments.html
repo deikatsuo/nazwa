@@ -132,7 +132,7 @@
                         <div class="w-full" x-show="!order.showall || idx == 0">
                           <span
                             class="text-gray-400"
-                            x-text="`#${order.OrderInfo.Customer.Name}`"
+                            x-text="`#${order.OrderInfo.Customer.Name} - ${order.OrderInfo.CreditDetail.LastPaid}`"
                             :class="{'hover:text-gray-600': order.showall }"
                           ></span>
                         </div>

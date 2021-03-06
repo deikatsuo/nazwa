@@ -207,6 +207,7 @@ type OrderCreditDetailSelect struct {
 	Total         int            `db:"total"`
 	Remaining     int            `db:"remaining"`
 	LuckyDiscount int            `db:"lucky_discount"`
+	LastPaid      sql.NullString `db:"last_paid"`
 	Active        bool           `db:"active"`
 	Done          bool           `db:"done"`
 }
@@ -223,6 +224,7 @@ type OrderCreditDetail struct {
 	Total         int
 	Remaining     int
 	LuckyDiscount int
+	LastPaid      string
 	Active        bool
 	Done          bool
 }

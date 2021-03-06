@@ -672,8 +672,8 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		o.status,
 		o.credit,
 		o.notes,
-		TO_CHAR(o.order_date, 'DD/MM/YYYY HH12:MI:SS AM') AS order_date,
-		TO_CHAR(o.shipping_date, 'DD/MM/YYYY HH12:MI:SS AM') AS shipping_date,
+		TO_CHAR(o.order_date, 'DD/MM/YYYY') AS order_date,
+		TO_CHAR(o.shipping_date, 'DD/MM/YYYY') AS shipping_date,
 		TO_CHAR(o.created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at,
 		o.code,
 		o.deposit,
@@ -795,7 +795,7 @@ func OrderGetSimpleOrderByID(oid int) (wrapper.OrderSimple, error) {
 		co.avatar as collector_thumb,
 		o.billing_address_id,
 		o.credit,
-		TO_CHAR(o.shipping_date, 'DD/MM/YYYY HH12:MI:SS AM') AS shipping_date,
+		TO_CHAR(o.shipping_date, 'DD/MM/YYYY') AS shipping_date,
 		o.code,
 		o.deposit,
 		o.price_total,
@@ -1072,7 +1072,7 @@ func OrderGetSubstituteByRic(ric string) ([]wrapper.NameID, error) {
 func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 	db := DB
 	var cd wrapper.OrderCreditDetailSelect
-	query := `SELECT ocd.id, ocd.zone_line_id, ocd.credit_code, ocd.monthly, ocd.duration, ocd.due, ocd.total, ocd.remaining, ocd.lucky_discount, zl.name as zone_line_name, zl.code as zone_line_code
+	query := `SELECT ocd.id, ocd.zone_line_id, ocd.credit_code, ocd.monthly, ocd.duration, ocd.due, ocd.total, ocd.remaining, ocd.lucky_discount, TO_CHAR(ocd.last_paid, 'DD/MM/YYYY') AS last_paid, zl.name as zone_line_name, zl.code as zone_line_code
 	FROM "order_credit_detail" ocd
 	LEFT JOIN "zone_line" zl ON zl.id=ocd.zone_line_id
 	WHERE ocd.order_id=$1`
@@ -1097,6 +1097,7 @@ func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 		Total:         cd.Total,
 		Remaining:     cd.Remaining,
 		LuckyDiscount: cd.LuckyDiscount,
+		LastPaid:      cd.LastPaid.String,
 	}, nil
 }
 
