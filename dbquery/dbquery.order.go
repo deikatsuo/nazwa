@@ -589,8 +589,8 @@ func (p *GetOrders) Show() ([]wrapper.Order, error) {
 		o.code,
 		o.status,
 		o.credit,
-		TO_CHAR(o.order_date, 'DD/MM/YYYY HH12:MI:SS AM') AS order_date,
-		TO_CHAR(o.shipping_date, 'DD/MM/YYYY HH12:MI:SS AM') AS shipping_date,
+		TO_CHAR(o.order_date, 'DD-MM-YYYY HH12:MI:SS AM') AS order_date,
+		TO_CHAR(o.shipping_date, 'DD-MM-YYYY HH12:MI:SS AM') AS shipping_date,
 		o.customer_id,
 		concat_ws(' ', c.first_name, c.last_name) as customer_name,
 		c.avatar as customer_thumb
@@ -672,9 +672,9 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		o.status,
 		o.credit,
 		o.notes,
-		TO_CHAR(o.order_date, 'DD/MM/YYYY') AS order_date,
-		TO_CHAR(o.shipping_date, 'DD/MM/YYYY') AS shipping_date,
-		TO_CHAR(o.created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at,
+		TO_CHAR(o.order_date, 'DD-MM-YYYY') AS order_date,
+		TO_CHAR(o.shipping_date, 'DD-MM-YYYY') AS shipping_date,
+		TO_CHAR(o.created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
 		o.code,
 		o.deposit,
 		o.price_total,
@@ -795,7 +795,7 @@ func OrderGetSimpleOrderByID(oid int) (wrapper.OrderSimple, error) {
 		co.avatar as collector_thumb,
 		o.billing_address_id,
 		o.credit,
-		TO_CHAR(o.shipping_date, 'DD/MM/YYYY') AS shipping_date,
+		TO_CHAR(o.shipping_date, 'DD-MM-YYYY') AS shipping_date,
 		o.code,
 		o.deposit,
 		o.price_total,
@@ -908,9 +908,9 @@ func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 		o.status,
 		o.credit,
 		o.notes,
-		TO_CHAR(o.order_date, 'DD/MM/YYYY HH12:MI:SS AM') AS order_date,
-		TO_CHAR(o.shipping_date, 'DD/MM/YYYY HH12:MI:SS AM') AS shipping_date,
-		TO_CHAR(o.created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at,
+		TO_CHAR(o.order_date, 'DD-MM-YYYY HH12:MI:SS AM') AS order_date,
+		TO_CHAR(o.shipping_date, 'DD-MM-YYYY HH12:MI:SS AM') AS shipping_date,
+		TO_CHAR(o.created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
 		o.code,
 		o.deposit,
 		o.price_total,
@@ -1072,7 +1072,7 @@ func OrderGetSubstituteByRic(ric string) ([]wrapper.NameID, error) {
 func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 	db := DB
 	var cd wrapper.OrderCreditDetailSelect
-	query := `SELECT ocd.id, ocd.zone_line_id, ocd.credit_code, ocd.monthly, ocd.duration, ocd.due, ocd.total, ocd.remaining, ocd.lucky_discount, TO_CHAR(ocd.last_paid, 'DD/MM/YYYY') AS last_paid, zl.name as zone_line_name, zl.code as zone_line_code
+	query := `SELECT ocd.id, ocd.zone_line_id, ocd.credit_code, ocd.monthly, ocd.duration, ocd.due, ocd.total, ocd.remaining, ocd.lucky_discount, TO_CHAR(ocd.last_paid, 'DD-MM-YYYY') AS last_paid, zl.name as zone_line_name, zl.code as zone_line_code
 	FROM "order_credit_detail" ocd
 	LEFT JOIN "zone_line" zl ON zl.id=ocd.zone_line_id
 	WHERE ocd.order_id=$1`
@@ -1117,7 +1117,7 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 	var monthly []wrapper.OrderMonthlyCredit
 	var monthlyQ []wrapper.OrderMonthlyCreditQuery
 
-	query := `SELECT *, TO_CHAR(due_date, 'DD/MM/YYYY') AS due_date
+	query := `SELECT *, TO_CHAR(due_date, 'DD-MM-YYYY') AS due_date
 	FROM "order_monthly_credit"
 	WHERE order_id=$1 ORDER BY nth`
 
@@ -1163,7 +1163,7 @@ func OrderGetMonthlyCreditByDate(zid int, date string) ([]wrapper.OrderMonthlyCr
 		tm = t
 	}
 
-	query := `SELECT omc.*, TO_CHAR(omc.due_date, 'DD/MM/YYYY') AS due_date
+	query := `SELECT omc.*, TO_CHAR(omc.due_date, 'DD-MM-YYYY') AS due_date
 	FROM "order_monthly_credit" omc
 	LEFT JOIN "order_credit_detail" ocd ON ocd.order_id=omc.order_id
 	LEFT JOIN "zone_list" zl ON zl.zone_line_id=ocd.zone_line_id

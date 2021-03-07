@@ -66,7 +66,7 @@ func (u *GetUsers) Show() ([]wrapper.User, error) {
 		u.avatar,
 		u.gender,
 		u.ric,
-		TO_CHAR(u.created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at,
+		TO_CHAR(u.created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
 		u.balance,
 		INITCAP(r.name) AS role
 		FROM "user" u
@@ -502,7 +502,7 @@ func UserGetByID(uid int) (wrapper.User, error) {
 		u.balance,
 		fc.number as family_card_number,
 		TO_CHAR(u.balance,'Rp999G999G999G999G999') AS balance,
-		TO_CHAR(u.created_at, 'DD/MM/YYYY HH12:MI:SS AM') AS created_at,
+		TO_CHAR(u.created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
 		r.name AS role
 		FROM "user" u
 		LEFT JOIN "user_role" ur ON ur.user_id=u.id
