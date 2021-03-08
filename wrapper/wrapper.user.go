@@ -100,6 +100,7 @@ type User struct {
 type UserEmail struct {
 	ID       int    `db:"id"`
 	Email    string `db:"email"`
+	Default  bool   `db:"is_default"`
 	Verified bool   `db:"verified"`
 }
 
@@ -107,6 +108,7 @@ type UserEmail struct {
 type UserPhone struct {
 	ID       int    `db:"id"`
 	Phone    string `db:"phone"`
+	Default  bool   `db:"is_default"`
 	Verified bool   `db:"verified"`
 }
 

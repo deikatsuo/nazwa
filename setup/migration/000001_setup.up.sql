@@ -80,6 +80,7 @@ CREATE TABLE "email" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
     "user_id" int NOT NULL,
     "email" varchar(60) UNIQUE NOT NULL,
+    "is_default" boolean DEFAULT 'false' NOT NULL,
     "verified" boolean DEFAULT 'false' NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES "user" ("id")
@@ -91,6 +92,7 @@ CREATE TABLE "phone" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
     "user_id" int NOT NULL,
     "phone" varchar(15) UNIQUE NOT NULL,
+    "is_default" boolean DEFAULT 'false' NOT NULL,
     "verified" boolean DEFAULT 'false' NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES "user" ("id")
