@@ -342,7 +342,7 @@
           dayjs.locale("id");
           dayjs.extend(window.dayjs_plugin_customParseFormat);
           dayjs.extend(window.dayjs_plugin_relativeTime);
-          return dayjs(d, "DD-MM-YYYY").fromNow();
+          return `${dayjs(d, "DD-MM-YYYY").fromNow()} (${dayjs(d, "DD-MM-YYYY").format("D MMM YYYY")})`;
         },
       };
     }
