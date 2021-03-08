@@ -129,13 +129,20 @@
                         </div>
 
                         <!-- Tag nama konsumen -->
-                        <div class="w-full text-gray-400" x-show="!order.showall || idx == 0">
+                        <div
+                          class="w-full text-gray-400"
+                          x-show="!order.showall || idx == 0"
+                        >
                           <span
                             x-text="`#${order.OrderInfo.Customer.Name}`"
                             :class="{'hover:text-gray-600': order.showall }"
                           ></span>
-                          <template x-if="order.OrderInfo.CreditDetail.LastPaid !== ''">
-                            <span x-text="`- ${toMoment(order.OrderInfo.CreditDetail.LastPaid)}`"></span>
+                          <template
+                            x-if="order.OrderInfo.CreditDetail.LastPaid !== ''"
+                          >
+                            <span
+                              x-text="`- ${toMoment(order.OrderInfo.CreditDetail.LastPaid)}`"
+                            ></span>
                           </template>
                         </div>
 
@@ -314,18 +321,20 @@
             });
         },
         get fill_orders() {
-          return this.orders
-            .filter((r) => {
-              const pattern = new RegExp(
-                this.order_instant_search,
-                "i"
-              );
-              return (
-                r.OrderInfo.Customer.Name.match(pattern) ||
-                r.OrderInfo.BillingAddress.match(pattern) ||
-                r.OrderInfo.CreditDetail.CreditCode.match(pattern)
-              );
-            });
+          if (this.orders !== null) {
+            return this.orders
+              .filter((r) => {
+                const pattern = new RegExp(
+                  this.order_instant_search,
+                  "i"
+                );
+                return (
+                  r.OrderInfo.Customer.Name.match(pattern) ||
+                  r.OrderInfo.BillingAddress.match(pattern) ||
+                  r.OrderInfo.CreditDetail.CreditCode.match(pattern)
+                );
+              });
+          }
         },
         pushChecked(receipt) {
           this.checked.push(receipt);
