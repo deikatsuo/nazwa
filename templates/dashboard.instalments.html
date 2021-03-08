@@ -129,12 +129,14 @@
                         </div>
 
                         <!-- Tag nama konsumen -->
-                        <div class="w-full" x-show="!order.showall || idx == 0">
+                        <div class="w-full text-gray-400" x-show="!order.showall || idx == 0">
                           <span
-                            class="text-gray-400"
-                            x-text="`#${order.OrderInfo.Customer.Name} - ${order.OrderInfo.CreditDetail.LastPaid}`"
+                            x-text="`#${order.OrderInfo.Customer.Name}`"
                             :class="{'hover:text-gray-600': order.showall }"
                           ></span>
+                          <template x-if="order.OrderInfo.CreditDetail.LastPaid !== ''">
+                            <span x-text="`- ${toMoment(order.OrderInfo.CreditDetail.LastPaid)}`"></span>
+                          </template>
                         </div>
 
                         <!-- Kwitansi bulanan -->
@@ -335,6 +337,12 @@
               this.checked.splice(index, 1);
             }
           }
+        },
+        toMoment(d) {
+          dayjs.locale("id");
+          dayjs.extend(window.dayjs_plugin_customParseFormat);
+          dayjs.extend(window.dayjs_plugin_relativeTime);
+          return dayjs(d, "DD-MM-YYYY").fromNow();
         },
       };
     }

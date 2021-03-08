@@ -27,6 +27,12 @@ func PageDashboardInstalments(c *gin.Context) {
 			"/assets/css/print.css",
 			"/assets/css/loading.css",
 		},
+		"js": []string{
+			"/assets/js/dayjs.min.js",
+			"/assets/js/dayjs.locale.id.js",
+			"/assets/js/dayjs.customParseFormat.js",
+			"/assets/js/dayjs.relativeTime.js",
+		},
 	}
 
 	df := c.MustGet("dashboard").(map[string]interface{})

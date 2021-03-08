@@ -41,7 +41,7 @@ function itemsToString(arr) {
 
 function future(due) {
   now = Date.now();
-  ds = due.split("/");
+  ds = due.split("-");
   td = new Date(`${ds[2]}-${ds[1]}-${ds[0]}`);
 
   return td > now;
@@ -49,7 +49,7 @@ function future(due) {
 
 function past(due) {
   now = Date.now();
-  ds = due.split("/");
+  ds = due.split("-");
   td = new Date(`${ds[2]}-${ds[1]}-${ds[0]}`);
 
   return td < now;
@@ -57,7 +57,7 @@ function past(due) {
 
 function today(due) {
   now = new Date().toISOString().slice(0, 10);
-  ds = due.split("/");
+  ds = due.split("-");
   td = new Date(`${ds[2]}-${ds[1]}-${ds[0]}`).toISOString().slice(0, 10);
 
   return td === now;
