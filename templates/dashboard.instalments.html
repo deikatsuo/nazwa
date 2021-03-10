@@ -36,7 +36,7 @@
             <template x-for="zone in zones" :key="zone.ID">
               <div
                 class="w-full md:w-1/3 p-1 cursor-pointer rounded-sm hover:bg-green-50"
-                @click="if (selectedZone !== zone.ID) { selectedZone = zone.ID; selectedLine = null; }"
+                @click="lines = null; selectedLine = null; if (selectedZone !== zone.ID) { selectedZone = zone.ID;  }"
               >
                 <div
                   class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-gray-50 dark:bg-gray-800"
@@ -81,7 +81,7 @@
         </template>
 
         <!-- Pencarian -->
-        <template x-if="orders !== null">
+        <template x-if="lines !== null">
           <div class="w-full px-1 py-4">
             <label for="search" class="sr-only">Search</label>
             <div class="relative rounded-md shadow">
@@ -95,10 +95,10 @@
         </template>
 
         <!-- Kwitansi -->
-        <template x-if="orders !== null">
+        <template x-if="lines !== null">
           <template x-for="order in fill_orders" :key="order.OrderID">
             <div
-              x-show="order.OrderInfo.CreditDetail.ZoneLine.ID == selectedLine || selectedLine == null"
+              x-show="selectedLine === null || selectedLine === order.OrderInfo.CreditDetail.ZoneLine.ID"
             >
               <div
                 class="w-full px-1 cursor-pointer"
@@ -149,7 +149,7 @@
                         <!-- Kwitansi bulanan -->
                         <div
                           class="w-full flex flex-wrap border p-1"
-                          :class="{'paper-stacked': !order.showall, 'bg-white text-black': !receipt.Done && today(receipt.DueDate), 'bg-orange-100 text-orange-400 border-orange-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && receipt.Printed, 'bg-red-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && !receipt.Printed, 'bg-green-100 text-green-400 border-green-500': past(receipt.DueDate) && !receipt.Done && receipt.Paid > 0 }"
+                          :class="{'paper-stacked': !order.showall && order.Monthly.length > 1, 'bg-white text-black': !receipt.Done && today(receipt.DueDate), 'bg-orange-100 text-orange-400 border-orange-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && receipt.Printed, 'bg-red-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && !receipt.Printed, 'bg-green-100 text-green-400 border-green-500': past(receipt.DueDate) && !receipt.Done && receipt.Paid > 0 }"
                         >
                           <div
                             class="w-full relative flex items-center"
@@ -305,16 +305,13 @@
                   message: data.message,
                 });
               }
-              if (data.orders !== null) {
-                this.orders = data.orders;
-              } else {
-                this.orders = null;
-              }
               if (data.lines !== null) {
                 this.lines = data.lines;
-              } else {
-                this.lines = null;
               }
+              if (data.orders !== null) {
+                this.orders = data.orders;
+              }
+              
             })
             .catch((err) => {
               console.log("fetchData() " + err);
@@ -334,6 +331,8 @@
                   r.OrderInfo.CreditDetail.CreditCode.match(pattern)
                 );
               });
+          } else {
+            return [];
           }
         },
         pushChecked(receipt) {
