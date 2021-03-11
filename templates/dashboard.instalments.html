@@ -295,6 +295,7 @@
           if (this.selectedZone == null || this.date == "") {
             return;
           }
+          this.selectedLine = null;
           this.loading = true;
           fetch(`/api/v1/local/instalment/z/${this.selectedZone}/date/${this.date}`, {
             method: "GET",
@@ -314,6 +315,7 @@
                 this.orders = data.orders;
               } else {
                 this.lines = null;
+                this.orders = null;
               }
               this.loading = false;
             })
