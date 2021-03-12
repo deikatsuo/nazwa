@@ -31,7 +31,7 @@ func MayNull(s interface{}) string {
 	case sql.NullInt32:
 		val = string(v.Int32)
 	case sql.NullInt64:
-		val = string(v.Int64)
+		val = fmt.Sprint(v.Int64)
 	case sql.NullString:
 		val = v.String
 	case sql.NullTime:
