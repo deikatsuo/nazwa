@@ -259,6 +259,7 @@ type OrderMonthlyCredit struct {
 	Notes     string
 	Position  string
 	Printed   bool
+	Print     bool
 	Done      bool
 	Log       []OrderMonthlyCreditLogSelect
 }

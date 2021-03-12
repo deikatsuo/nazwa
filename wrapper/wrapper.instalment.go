@@ -8,7 +8,8 @@ type InstalmentShowByDate struct {
 
 // InstalmentOrderReceipt wrapper list tagihan harian
 type InstalmentOrderReceipt struct {
-	OrderID   int
-	OrderInfo OrderSimple
-	Monthly   []OrderMonthlyCredit
+	OrderID      int
+	SuggestPrint bool
+	OrderInfo    OrderSimple
+	Monthly      []OrderMonthlyCredit
 }
