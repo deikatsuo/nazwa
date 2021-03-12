@@ -2,6 +2,7 @@ package api
 
 import (
 	"nazwa/dbquery"
+	"nazwa/misc"
 	"nazwa/misc/validation"
 	"nazwa/wrapper"
 	"net/http"
@@ -44,6 +45,8 @@ func InstalmentShowByDate(c *gin.Context) {
 	var orders []wrapper.InstalmentOrderReceipt
 	var tlines []wrapper.LocationLine
 	var lines []wrapper.LocationLine
+
+	// Kumpulkan data order
 	if next {
 		for _, mon := range monthly {
 			// Tanggal cetak
@@ -52,8 +55,31 @@ func InstalmentShowByDate(c *gin.Context) {
 				mon.PrintDate = "-"
 			}
 
-			var orderInfo wrapper.OrderSimple
-			if next {
+			exist := false
+			if len(orders) > 0 {
+				for oi, ord := range orders {
+					if ord.OrderID == mon.OrderID {
+
+						// Kwitansi yang harus di print hari ini
+						if !orders[oi].SuggestPrint {
+							if misc.IsLastMonth(orders[oi].OrderInfo.CreditDetail.LastPaid) {
+								if !mon.Printed {
+									mon.Print = true
+									orders[oi].SuggestPrint = true
+								}
+							}
+						}
+						orders[oi].Monthly = append(orders[oi].Monthly, mon)
+
+						exist = true
+					}
+				}
+			}
+
+			if !exist {
+				// order info
+				var orderInfo wrapper.OrderSimple
+
 				if ord, err := dbquery.OrderGetSimpleOrderByID(mon.OrderID); err == nil {
 					orderInfo = ord
 				} else {
@@ -61,26 +87,27 @@ func InstalmentShowByDate(c *gin.Context) {
 					message = "Sepertinya telah terjadi kesalahan saat memuat info order"
 					status = "error"
 					next = false
+					break
 				}
-			}
 
-			exist := false
-			if len(orders) > 0 {
-				for oi, ord := range orders {
-					if ord.OrderID == mon.OrderID {
-						orders[oi].Monthly = append(orders[oi].Monthly, mon)
-						exist = true
+				// kwitansi yang harus di print hari ini
+				var suggestPrint bool
+				if misc.IsLastMonth(orderInfo.CreditDetail.LastPaid) {
+					if !mon.Printed {
+						mon.Print = true
+						suggestPrint = true
 					}
 				}
-			}
 
-			if !exist {
+				// push data order
 				orders = append(orders, wrapper.InstalmentOrderReceipt{
-					OrderID:   mon.OrderID,
-					OrderInfo: orderInfo,
-					Monthly:   []wrapper.OrderMonthlyCredit{mon},
+					OrderID:      mon.OrderID,
+					SuggestPrint: suggestPrint,
+					OrderInfo:    orderInfo,
+					Monthly:      []wrapper.OrderMonthlyCredit{mon},
 				})
 
+				// push data arah
 				tlines = append(tlines, wrapper.LocationLine{
 					ID:   orderInfo.CreditDetail.ZoneLine.ID,
 					Code: orderInfo.CreditDetail.ZoneLine.Code,
@@ -90,6 +117,7 @@ func InstalmentShowByDate(c *gin.Context) {
 		}
 	}
 
+	// kumpulkan data arah
 	if next {
 		for _, tln := range tlines {
 			exist := false

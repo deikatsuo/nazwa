@@ -166,11 +166,11 @@
                                     class="absolute"
                                     style="left: -2.8rem"
                                     x-show="order.showall"
-                                    @click="receipt.print = !receipt.print; if (receipt.print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
+                                    @click="receipt.Print = !receipt.Print; if (receipt.Print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
                                   >
                                     <div
                                       class="border font-bold w-8 h-8 flex items-center justify-center rounded-full"
-                                      :class="{'checked': receipt.print, 'bg-white text-black': !receipt.Done && today(receipt.DueDate), 'bg-orange-100 text-orange-400 border-orange-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && receipt.Printed, 'bg-red-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && !receipt.Printed, 'bg-green-100 text-green-400 border-green-500': past(receipt.DueDate) && !receipt.Done && receipt.Paid > 0}"
+                                      :class="{'checked': receipt.Print, 'bg-white text-black': !receipt.Done && today(receipt.DueDate), 'bg-orange-100 text-orange-400 border-orange-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && receipt.Printed, 'bg-red-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && !receipt.Printed, 'bg-green-100 text-green-400 border-green-500': past(receipt.DueDate) && !receipt.Done && receipt.Paid > 0}"
                                       x-text="receipt.Nth"
                                     ></div>
                                   </div>
@@ -178,10 +178,10 @@
                                     <div class="w-full md:w-2/6 flex flex-wrap">
                                       <div
                                         class="w-1/6 flex items-center justify-center text-2xl"
-                                        :class="{'checked': receipt.print }"
+                                        :class="{'checked': receipt.Print }"
                                         x-text="receipt.Nth"
                                         x-show="!order.showall"
-                                        @click="receipt.print = !receipt.print; if (receipt.print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
+                                        @click="receipt.Print = !receipt.Print; if (receipt.Print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
                                       ></div>
                                       <div
                                         class="flex items-center justify-center px-2"
