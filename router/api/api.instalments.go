@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"
@@ -45,6 +46,7 @@ func InstalmentShowByDate(c *gin.Context) {
 	var orders []wrapper.InstalmentOrderReceipt
 	var tlines []wrapper.LocationLine
 	var lines []wrapper.LocationLine
+	var checked []wrapper.InstalmentPrintReceipt
 
 	// Kumpulkan data order
 	if next {
@@ -66,6 +68,22 @@ func InstalmentShowByDate(c *gin.Context) {
 								if !mon.Printed {
 									mon.Print = true
 									orders[oi].SuggestPrint = true
+									checked = append(checked, wrapper.InstalmentPrintReceipt{
+										ID:             mon.ID,
+										Nth:            mon.Nth,
+										DueDate:        mon.DueDate,
+										Promise:        mon.Promise,
+										PrintDate:      mon.PrintDate,
+										Code:           mon.Code,
+										CreditCode:     orders[oi].OrderInfo.CreditDetail.CreditCode,
+										Customer:       fmt.Sprintf("%s (%s)", orders[oi].OrderInfo.Customer.Name, orders[oi].OrderInfo.Customer.Code),
+										BillingAddress: orders[oi].OrderInfo.BillingAddress,
+										Deposit:        orders[oi].OrderInfo.Deposit,
+										Monthly:        orders[oi].OrderInfo.CreditDetail.Monthly,
+										Items:          misc.ItemsToString(orders[oi].OrderInfo.Items),
+										Total:          orders[oi].OrderInfo.CreditDetail.Total,
+										Collector:      orders[oi].OrderInfo.Collector.Name,
+									})
 								}
 							}
 						}
@@ -96,6 +114,22 @@ func InstalmentShowByDate(c *gin.Context) {
 					if !mon.Printed {
 						mon.Print = true
 						suggestPrint = true
+						checked = append(checked, wrapper.InstalmentPrintReceipt{
+							ID:             mon.ID,
+							Nth:            mon.Nth,
+							DueDate:        mon.DueDate,
+							Promise:        mon.Promise,
+							PrintDate:      mon.PrintDate,
+							Code:           mon.Code,
+							CreditCode:     orderInfo.CreditDetail.CreditCode,
+							Customer:       fmt.Sprintf("%s (%s)", orderInfo.Customer.Name, orderInfo.Customer.Code),
+							BillingAddress: orderInfo.BillingAddress,
+							Deposit:        orderInfo.Deposit,
+							Monthly:        orderInfo.CreditDetail.Monthly,
+							Items:          misc.ItemsToString(orderInfo.Items),
+							Total:          orderInfo.CreditDetail.Total,
+							Collector:      orderInfo.Collector.Name,
+						})
 					}
 				}
 
@@ -158,6 +192,7 @@ func InstalmentShowByDate(c *gin.Context) {
 		"lines":   lines,
 		"message": message,
 		"status":  status,
+		"checked": checked,
 	}
 
 	c.JSON(httpStatus, gh)

@@ -13,3 +13,21 @@ type InstalmentOrderReceipt struct {
 	OrderInfo    OrderSimple
 	Monthly      []OrderMonthlyCredit
 }
+
+// InstalmentPrintReceipt data kwitansi yang akan di print
+type InstalmentPrintReceipt struct {
+	ID             int
+	Nth            int
+	DueDate        string
+	Promise        string
+	PrintDate      string
+	Code           string
+	CreditCode     string
+	Customer       string
+	BillingAddress string
+	Deposit        int
+	Monthly        int
+	Items          string
+	Total          int
+	Collector      string
+}

@@ -134,10 +134,12 @@
                             class="w-full text-gray-400"
                             x-show="!order.showall || idx == 0"
                           >
-                            <span
+                            <a
+                              :href="`orders/receipt/${order.OrderID}`"
+                              target="_blank"
                               x-text="`#${order.OrderInfo.Customer.Name}`"
-                              :class="{'hover:text-gray-600': order.showall }"
-                            ></span>
+                              class="hover:text-gray-600"
+                            ></a>
                             <template
                               x-if="order.OrderInfo.CreditDetail.LastPaid !== ''"
                             >
@@ -316,6 +318,11 @@
               } else {
                 this.lines = null;
                 this.orders = null;
+              }
+              if (data.checked !== null) {
+                this.checked = data.checked;
+              } else {
+                this.checked = [];
               }
               this.loading = false;
             })
