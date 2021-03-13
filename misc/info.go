@@ -4,4 +4,4 @@ package misc
 const AUTHOR = "Deri Herdianto"
 
 // VERSION Versi aplikasi
-const VERSION = 0.1
+const VERSION = "0.1.0"
