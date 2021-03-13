@@ -1,14 +1,9 @@
 package misc
 
-/*
-// Mete2 menggabungkan dua map
-// digunakan untuk menggabungkan template
-func Mete2(m1, m2 map[string]interface{}) map[string]interface{} {
-	// Gabungkan
-	mergo.Merge(&m1, m2, mergo.WithOverride)
-	return m1
-}
-*/
+import (
+	"fmt"
+	"nazwa/wrapper"
+)
 
 // Mete menggabungkan dua map secara concurrent
 func Mete(m1, m2 map[string]interface{}) map[string]interface{} {
@@ -34,4 +29,21 @@ func Mete(m1, m2 map[string]interface{}) map[string]interface{} {
 	}
 
 	return nm
+}
+
+// ItemsToString array items ke string
+func ItemsToString(items []wrapper.OrderItem) string {
+	var is string
+
+	for i, item := range items {
+		is = fmt.Sprintf("%s[%dx %s]", is, item.Quantity, item.Product.Name)
+		if len(items) > 1 && i < (len(items)-2) {
+			is = fmt.Sprintf("%s, ", is)
+		}
+		if len(items) > 1 && i == (len(items)-2) {
+			is = fmt.Sprintf("%s dan ", is)
+		}
+	}
+
+	return is
 }
