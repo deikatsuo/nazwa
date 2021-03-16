@@ -148,7 +148,7 @@
     <!-- Menu Penjualan -->
     <ul>
       <li class="relative px-6 py-3">
-        {{ if eq .page "orders" "orders_add" "orders_receipt" }}
+        {{ if eq .page "orders" "orders_add" }}
           <span
             class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
             aria-hidden="true"
@@ -161,7 +161,7 @@
         >
           <span class="inline-flex items-center">
             {{ template "_svg_icon_chart" }}
-            <span class='ml-4 {{ if eq .page "orders" "orders_add" "orders_receipt" }}text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100{{ end }}'>Penjualan</span>
+            <span class='ml-4 {{ if eq .page "orders" "orders_add" }}text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100{{ end }}'>Penjualan</span>
           </span>
           {{ template "_svg_icon_arrow_bottom" }}
         </button>
@@ -194,7 +194,7 @@
     <!-- Menu Tagihan -->
     <ul>
       <li class="relative px-6 py-3">
-        {{ if eq .page "instalments" }}
+        {{ if eq .page "instalments" "instalments_receipt" }}
           <span
             class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
             aria-hidden="true"
@@ -207,7 +207,7 @@
         >
           <span class="inline-flex items-center">
             {{ template "_svg_icon_calendar" }}
-            <span class='ml-4 {{ if eq .page "instalments" }}text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100{{ end }}'>Tagihan</span>
+            <span class='ml-4 {{ if eq .page "instalments" "instalments_receipt" }}text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100{{ end }}'>Tagihan</span>
           </span>
           {{ template "_svg_icon_arrow_bottom" }}
         </button>

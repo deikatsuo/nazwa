@@ -160,13 +160,13 @@
                   <template x-if="order.Credit">
                     <div class="flex">
                       <div class="cursor-pointer px-1">
-                        <a :href="`orders/card?ids=${order.ID}`" target="_blank"
+                        <a :href="`instalments/card?ids=${order.ID}`" target="_blank"
                           >{{ template "_svg_icon_bookopen" }}</a
                         >
                       </div>
 
                       <div class="cursor-pointer px-1">
-                        <a :href="`orders/receipt/${order.ID}`" target="_blank"
+                        <a :href="`instalments/receipt/${order.ID}`" target="_blank"
                           >{{ template "_svg_icon_collection" }}</a
                         >
                       </div>

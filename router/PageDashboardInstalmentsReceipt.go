@@ -13,8 +13,8 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
-// PageDashboardOrdersReceipt halaman kwitansi berdasarkan ID
-func PageDashboardOrdersReceipt(c *gin.Context) {
+// PageDashboardInstalmentsReceipt halaman kwitansi berdasarkan ID
+func PageDashboardInstalmentsReceipt(c *gin.Context) {
 	httpStatus := http.StatusOK
 	message := ""
 	status := ""
@@ -82,7 +82,7 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 		"code":       order.Code,
 		"message":    message,
 		"status":     status,
-		"page":       "orders_receipt",
+		"page":       "instalments_receipt",
 		"css": []string{
 			"/assets/css/print.css",
 			"/assets/css/loading.css",
@@ -102,5 +102,5 @@ func PageDashboardOrdersReceipt(c *gin.Context) {
 	// Ambil konfigurasi default dashboard
 	df := c.MustGet("dashboard").(map[string]interface{})
 
-	c.HTML(httpStatus, "dashboard.orders.receipt.html", misc.Mete(df, gh))
+	c.HTML(httpStatus, "dashboard.instalments.receipt.html", misc.Mete(df, gh))
 }

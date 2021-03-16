@@ -104,14 +104,14 @@
               {{ block "dashboard_orders_add_content" .}}{{ end }}
             {{ end }}
 
-            {{ if eq .page "orders_receipt" }}
-              {{ block "dashboard_orders_receipt_content" .}}{{ end }}
-            {{ end }}
-
             {{ if eq .page "instalments" }}
               {{ block "dashboard_instalments_content" .}}{{ end }}
             {{ end }}
 
+            {{ if eq .page "instalments_receipt" }}
+              {{ block "dashboard_instalments_receipt_content" .}}{{ end }}
+            {{ end }}
+            
             {{ if eq .page "locations" }}
               {{ block "dashboard_locations_content" .}}{{ end }}
             {{ end }}

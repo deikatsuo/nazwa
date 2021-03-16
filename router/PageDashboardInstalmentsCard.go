@@ -11,8 +11,8 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
-// PageDashboardOrdersCard kartu angsuran
-func PageDashboardOrdersCard(c *gin.Context) {
+// PageDashboardInstalmentsCard kartu angsuran
+func PageDashboardInstalmentsCard(c *gin.Context) {
 	qid := c.QueryArray("ids")
 	if len(qid) == 0 {
 		Page404(c)
@@ -47,7 +47,7 @@ func PageDashboardOrdersCard(c *gin.Context) {
 
 	gh := gin.H{
 		"site_title": "Kartu Tagihan",
-		"page":       "orders_card",
+		"page":       "instalments_card",
 		"orders":     orders,
 		"fails": map[string]interface{}{
 			"parse": failsParse,
@@ -56,5 +56,5 @@ func PageDashboardOrdersCard(c *gin.Context) {
 	}
 
 	df := c.MustGet("dashboard").(map[string]interface{})
-	c.HTML(200, "dashboard.orders.card.html", misc.Mete(df, gh))
+	c.HTML(200, "dashboard.instalments.card.html", misc.Mete(df, gh))
 }
