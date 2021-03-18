@@ -5,9 +5,12 @@ import (
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/misc/validation"
+	"nazwa/router"
 	"nazwa/wrapper"
 	"net/http"
+	"strconv"
 
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -64,7 +67,7 @@ func InstalmentShowByDate(c *gin.Context) {
 
 						// Kwitansi yang harus di print hari ini
 						if !orders[oi].SuggestPrint {
-							if misc.IsLastMonth(orders[oi].OrderInfo.CreditDetail.LastPaid) && len(orders[oi].Monthly) <= 3 {
+							if misc.IsLastMonth(orders[oi].OrderInfo.CreditDetail.LastPaid) && len(orders[oi].Monthly) <= 2 {
 								if !mon.Printed {
 									mon.Print = true
 									orders[oi].SuggestPrint = true
@@ -193,6 +196,56 @@ func InstalmentShowByDate(c *gin.Context) {
 		"message": message,
 		"status":  status,
 		"checked": checked,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
+// InstalmentUpdateReceiptPrintStatus update printed status
+func InstalmentUpdateReceiptPrintStatus(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	rid, err := strconv.Atoi(c.Param("rid"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var printed wrapper.InstalmentUpdateReceiptPrintStatus
+	if err := c.ShouldBindQuery(&printed); err != nil {
+		next = false
+		message = "Request tidak valid"
+		status = "error"
+	}
+
+	// Update arah
+	if next {
+		if err := dbquery.InstalmentsPrintedStatus(rid, *printed.Printed); err != nil {
+			log.Warn("api.instalments.go InstalmentUpdateReceiptPrintStatus() Gagal mengubah nama arah")
+			log.Error(err)
+			message = "Gagal mengubah status di print"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Status print berhasil dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
 	}
 
 	c.JSON(httpStatus, gh)

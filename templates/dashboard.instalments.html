@@ -179,7 +179,7 @@
                                       <button
                                         class="font-bold p-2 rounded-l bg-blue-50 hover:bg-blue-200"
                                         :class="{'text-blue-200 hover:text-blue-300': !receipt.Printed, 'text-blue-800': receipt.Printed }"
-                                        @click="receipt.Printed = !receipt.Printed; setReceiptPrinted(!receipt.Printed);"
+                                        @click="receipt.Printed = !receipt.Printed; setReceiptPrinted($dispatch, receipt.ID, receipt.Printed);"
                                       >
                                         {{ template "_svg_icon_printer" }}
                                       </button>
@@ -401,9 +401,9 @@
           dayjs.extend(window.dayjs_plugin_relativeTime);
           return `${dayjs(d, "DD-MM-YYYY").fromNow()} (${dayjs(d, "DD-MM-YYYY").format("D MMM YYYY")})`;
         },
-        setReceiptPrinted(printed) {
+        setReceiptPrinted($dispatch,rid,printed) {
           fetch(
-            `/api/v1/local/line/edit/${lid}/update/name?set=${newLineName}`,
+            `/api/v1/local/instalment/edit/receipt/${rid}/update/printed?set=${printed}`,
             {
               method: "PATCH",
             }

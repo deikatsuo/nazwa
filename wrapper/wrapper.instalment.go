@@ -31,3 +31,8 @@ type InstalmentPrintReceipt struct {
 	Total          int
 	Collector      string
 }
+
+// InstalmentUpdateReceitPrintStatus status print
+type InstalmentUpdateReceiptPrintStatus struct {
+	Printed *bool `form:"set" binding:"required"`
+}

@@ -268,6 +268,10 @@ func runServer() {
 	v1instalment := v1local.Group("/instalment")
 	v1instalment.GET("/z/:zid/date/:date", api.InstalmentShowByDate)
 
+	// /api/v1/local/instalment/edit
+	v1iEdit := v1instalment.Group("/edit")
+	v1iEdit.PATCH("/receipt/:rid/update/printed", api.InstalmentUpdateReceiptPrintStatus)
+
 	// User API
 	// /api/v1/local/user
 	v1user := v1local.Group("/user")
