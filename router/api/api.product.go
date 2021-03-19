@@ -65,7 +65,6 @@ func ProductCreate(c *gin.Context) {
 					} else {
 						log.Warn("api.product.go ProductCreate() Konversi base64 ke dalam bentuk file")
 						log.Error(err)
-						message = err.Error()
 					}
 				}
 			}
@@ -77,7 +76,6 @@ func ProductCreate(c *gin.Context) {
 			if err != nil {
 				log.Warn("Gagal membuat thumbnail")
 				log.Error(err)
-				message = err.Error()
 			}
 		}
 	}

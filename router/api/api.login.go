@@ -49,7 +49,7 @@ func UserLogin(c *gin.Context) {
 
 	// Check apakah user ditemukan
 	// Atau tidak
-	if userExist == false || role == "" {
+	if !userExist || role == "" {
 		statusMessage = "User tidak ditemukan"
 		status = "fail"
 	} else {
