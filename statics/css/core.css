@@ -38,3 +38,14 @@
   opacity: 0.6;
   background-color: black;
 }
+
+#popover:before{
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 5%;
+  margin-left: -10px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent transparent lightgray transparent;
+}

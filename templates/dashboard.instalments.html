@@ -183,14 +183,34 @@
                                       >
                                         {{ template "_svg_icon_printer" }}
                                       </button>
-                                      <button
-                                        class="font-bold p-2 rounded-r bg-blue-50 hover:bg-blue-200"
-                                        :class="{'text-blue-200 hover:text-blue-300': !receipt.pop, ' text-blue-800': receipt.pop }"
-                                        @click="receipt.pop = !receipt.pop;"
-                                        @click.away="if (receipt.pop) { receipt.pop = false; }"
-                                      >
-                                        {{ template "_svg_icon_information" }}
-                                      </button>
+                                      <div class="relative">
+                                        <button
+                                          class="font-bold p-2 rounded-r bg-blue-50 hover:bg-blue-200"
+                                          :class="{'text-blue-200 hover:text-blue-300': !receipt.pop, ' text-blue-800': receipt.pop }"
+                                          @click="receipt.pop = !receipt.pop;"
+                                          @click.away="if (receipt.pop) { receipt.pop = false; }"
+                                        >
+                                          {{ template "_svg_icon_information" }}
+                                        </button>
+                                        <!-- Popover -->
+                                        <div
+                                          x-cloak
+                                          x-show.transition="receipt.pop"
+                                          id="popover"
+                                          class="p-3 max-w-xl bg-white rounded shadow-2xl flex flex-col text-sm text-gray-600 mt-3 absolute z-20"
+                                        >
+                                          <strong
+                                            class="text-sm text-gray-800 font-semibold"
+                                            >Catatan!</strong
+                                          >
+                                          <p>
+                                            Lorem ipsum dolor sit amet
+                                            consectetur, adipisicing elit. Ipsa
+                                            laborum incidunt debitis
+                                            necessitatibus veritatis.
+                                          </p>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
