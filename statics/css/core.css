@@ -39,13 +39,12 @@
   background-color: black;
 }
 
-#popover:before{
+#arrow-top:before{
   content: "";
   position: absolute;
   bottom: 100%;
-  left: 5%;
-  margin-left: -10px;
+  margin-left: 42%;
   border-width: 7px;
   border-style: solid;
-  border-color: transparent transparent lightgray transparent;
+  border-color: transparent transparent white transparent;
 }

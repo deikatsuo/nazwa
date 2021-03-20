@@ -261,15 +261,4 @@ type OrderMonthlyCredit struct {
 	Printed   bool
 	Print     bool
 	Done      bool
-	Log       []OrderMonthlyCreditLogSelect
-}
-
-// OrderMonthlyCreditLogSelect log kredit bulanan
-type OrderMonthlyCreditLogSelect struct {
-	ID                   int    `db:"id"`
-	OrderMonthlyCreditID int    `db:"order_monthly_credit_id"`
-	MoneyIn              int    `db:"money_in"`
-	CreatedAt            string `db:"created_at"`
-	CreatedBy            int    `db:"created_by"`
-	CollectedBy          int    `db:"collected_by"`
 }

@@ -1127,10 +1127,6 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 	}
 
 	for _, mon := range monthlyQ {
-		var monLog []wrapper.OrderMonthlyCreditLogSelect
-		if mlog, err := OrderMonthlyCreditLog(oid); err == nil {
-			monLog = mlog
-		}
 
 		monthly = append(monthly, wrapper.OrderMonthlyCredit{
 			ID:        mon.ID,
@@ -1145,7 +1141,6 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 			Position:  mon.Position,
 			Printed:   mon.Printed,
 			Done:      mon.Done,
-			Log:       monLog,
 		})
 	}
 
@@ -1177,10 +1172,6 @@ func OrderGetMonthlyCreditByDate(zid int, date string) ([]wrapper.OrderMonthlyCr
 	}
 
 	for _, mon := range monthlyQ {
-		var monLog []wrapper.OrderMonthlyCreditLogSelect
-		if mlog, err := OrderMonthlyCreditLog(mon.OrderID); err == nil {
-			monLog = mlog
-		}
 
 		monthly = append(monthly, wrapper.OrderMonthlyCredit{
 			ID:        mon.ID,
@@ -1195,28 +1186,10 @@ func OrderGetMonthlyCreditByDate(zid int, date string) ([]wrapper.OrderMonthlyCr
 			Position:  mon.Position,
 			Printed:   mon.Printed,
 			Done:      mon.Done,
-			Log:       monLog,
 		})
 	}
 
 	return monthly, nil
-}
-
-// OrderMonthlyCreditLog credit log
-func OrderMonthlyCreditLog(omc int) ([]wrapper.OrderMonthlyCreditLogSelect, error) {
-	db := DB
-	var loglist []wrapper.OrderMonthlyCreditLogSelect
-
-	query := `SELECT *
-	FROM "log_order_monthly_credit"
-	WHERE order_monthly_credit_id=$1`
-
-	err := db.Select(&loglist, query, omc)
-	if err != nil {
-		return []wrapper.OrderMonthlyCreditLogSelect{}, err
-	}
-
-	return loglist, nil
 }
 
 // OrderGetCodeByID ambil kode berdasarkan ID

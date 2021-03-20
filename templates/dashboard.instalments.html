@@ -183,12 +183,14 @@
                                       >
                                         {{ template "_svg_icon_printer" }}
                                       </button>
-                                      <div class="relative">
+                                      <div
+                                        class="relative"
+                                        @click.away="if (receipt.pop) { receipt.pop = false; }"
+                                      >
                                         <button
                                           class="font-bold p-2 rounded-r bg-blue-50 hover:bg-blue-200"
                                           :class="{'text-blue-200 hover:text-blue-300': !receipt.pop, ' text-blue-800': receipt.pop }"
                                           @click="receipt.pop = !receipt.pop;"
-                                          @click.away="if (receipt.pop) { receipt.pop = false; }"
                                         >
                                           {{ template "_svg_icon_information" }}
                                         </button>
@@ -196,19 +198,45 @@
                                         <div
                                           x-cloak
                                           x-show.transition="receipt.pop"
-                                          id="popover"
-                                          class="p-3 max-w-xl bg-white rounded shadow-2xl flex flex-col text-sm text-gray-600 mt-3 absolute z-20"
+                                          id="arrow-top"
+                                          class="p-3 w-64 bg-white rounded shadow-2xl flex flex-col text-sm text-gray-600 mt-3 absolute z-20"
+                                          style="margin-left: -110px"
                                         >
                                           <strong
                                             class="text-sm text-gray-800 font-semibold"
                                             >Catatan!</strong
                                           >
-                                          <p>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur, adipisicing elit. Ipsa
-                                            laborum incidunt debitis
-                                            necessitatibus veritatis.
-                                          </p>
+                                          <div
+                                            class="w-full"
+                                            @dblclick="receipt.editnotes = !receipt.editnotes;"
+                                            @keydown.enter="receipt.editnotes = false; if (receipt.tempnotes !== '' && receipt.tempnotes !== receipt.Notes) { receipt.Notes = receipt.tempnotes; updateReceiptNotes($dispatch, receipt.ID, receipt.tempnotes); }"
+                                          >
+                                            <template
+                                              x-if="receipt.Notes === ''"
+                                            >
+                                              <p
+                                                class="w-full h-full"
+                                                x-show="!receipt.editnotes"
+                                              >
+                                                Tidak ada catatan
+                                              </p>
+                                            </template>
+                                            <template
+                                              x-if="receipt.Notes !== ''"
+                                            >
+                                              <p
+                                                class="w-full h-full"
+                                                x-text="receipt.Notes"
+                                                x-show="!receipt.editnotes"
+                                              ></p>
+                                            </template>
+                                            <p
+                                              :contenteditable="receipt.editnotes"
+                                              @input="receipt.tempnotes = $event.target.textContent"
+                                              x-show="receipt.editnotes"
+                                              class="w-full h-full"
+                                            ></p>
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
@@ -421,7 +449,7 @@
           dayjs.extend(window.dayjs_plugin_relativeTime);
           return `${dayjs(d, "DD-MM-YYYY").fromNow()} (${dayjs(d, "DD-MM-YYYY").format("D MMM YYYY")})`;
         },
-        setReceiptPrinted($dispatch,rid,printed) {
+        setReceiptPrinted($dispatch, rid, printed) {
           fetch(
             `/api/v1/local/instalment/edit/receipt/${rid}/update/printed?set=${printed}`,
             {
@@ -439,6 +467,26 @@
             })
             .catch((err) => {
               console.log("Error: setReceiptPrinted() " + err);
+            });
+        },
+        updateReceiptNotes($dispatch, rid, notes) {
+          fetch(
+            `/api/v1/local/instalment/edit/receipt/${rid}/update/notes?set=${notes}`,
+            {
+              method: "PATCH",
+            }
+          )
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+            })
+            .catch((err) => {
+              console.log("Error: updateReceiptNotes() " + err);
             });
         },
       };

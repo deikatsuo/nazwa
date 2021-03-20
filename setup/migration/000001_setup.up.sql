@@ -348,17 +348,3 @@ CREATE TABLE "order_monthly_credit" (
     FOREIGN KEY (order_id) REFERENCES "order" ("id") ON DELETE CASCADE
 );
 
--- Tabel log kredit bulanan
-CREATE TABLE "log_order_monthly_credit" (
-    "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
-    "order_monthly_credit_id" int,
-    "money_in" numeric(15) NOT NULL,
-    "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
-    "created_by" int,
-    "collected_by" int,
-    PRIMARY KEY (id),
-    FOREIGN KEY (order_monthly_credit_id) REFERENCES "order_monthly_credit" ("id") ON DELETE CASCADE,
-    FOREIGN KEY (created_by) REFERENCES "user" ("id") ON DELETE SET NULL,
-    FOREIGN KEY (collected_by) REFERENCES "user" ("id") ON DELETE SET NULL
-);
-

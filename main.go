@@ -271,6 +271,7 @@ func runServer() {
 	// /api/v1/local/instalment/edit
 	v1iEdit := v1instalment.Group("/edit")
 	v1iEdit.PATCH("/receipt/:rid/update/printed", api.InstalmentUpdateReceiptPrintStatus)
+	v1iEdit.PATCH("/receipt/:rid/update/notes", api.InstalmentUpdateReceiptNotes)
 
 	// User API
 	// /api/v1/local/user

@@ -225,10 +225,10 @@ func InstalmentUpdateReceiptPrintStatus(c *gin.Context) {
 		status = "error"
 	}
 
-	// Update arah
+	// Update status print
 	if next {
-		if err := dbquery.InstalmentsPrintedStatus(rid, *printed.Printed); err != nil {
-			log.Warn("api.instalments.go InstalmentUpdateReceiptPrintStatus() Gagal mengubah nama arah")
+		if err := dbquery.InstalmentsReceiptPrintedStatus(rid, *printed.Printed); err != nil {
+			log.Warn("api.instalments.go InstalmentUpdateReceiptPrintStatus() Gagal mengubah status print")
 			log.Error(err)
 			message = "Gagal mengubah status di print"
 			status = "error"
@@ -240,6 +240,51 @@ func InstalmentUpdateReceiptPrintStatus(c *gin.Context) {
 	if next {
 		httpStatus = http.StatusOK
 		message = "Status print berhasil dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
+// InstalmentUpdateReceiptNotes update notes
+func InstalmentUpdateReceiptNotes(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	rid, err := strconv.Atoi(c.Param("rid"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	notes := c.Query("set")
+
+	// Update notes
+	if next {
+		if err := dbquery.InstalmentsReceiptUpdateNotes(rid, notes); err != nil {
+			log.Warn("api.instalments.go InstalmentUpdateReceiptNotes() Gagal mengubah notes")
+			log.Error(err)
+			message = "Gagal mengubah notes"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Disimpan"
 		status = "success"
 	}
 
