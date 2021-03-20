@@ -263,7 +263,7 @@ func (c *CreateOrder) Save() error {
 			}
 			if tmpcp <= 0 {
 				log.Warn("dbquery.order.go (CreateOrder) Save() Harga kredit tidak ada")
-				return fmt.Errorf("Tidak ditemukan harga kredit untuk durasi %d bulan", c.duration)
+				return fmt.Errorf("tidak ditemukan harga kredit untuk durasi %d bulan", c.duration)
 			}
 
 			if item.Discount > 0 {
@@ -315,7 +315,7 @@ func (c *CreateOrder) Save() error {
 		}
 
 		if c.Deposit > priceTotal {
-			return errors.New("Deposit lebih besar dari total harga barang, lebih baik beli cash")
+			return errors.New("deposit lebih besar dari total harga barang, lebih baik beli cash")
 		}
 	}
 

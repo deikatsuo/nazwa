@@ -154,7 +154,7 @@ func ZoneAddList(zid int, lists wrapper.LocationZoneAddListForm) error {
 			}
 		}
 	} else {
-		return errors.New("Tidak ada arah untuk dimasukan ke zona")
+		return errors.New("tidak ada arah untuk dimasukan ke zona")
 	}
 
 	return nil

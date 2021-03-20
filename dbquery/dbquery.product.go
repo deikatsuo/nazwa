@@ -61,9 +61,7 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 	// Where logic
 	where := p.where
 
-	if limit == 0 {
-		where = fmt.Sprintf("%s", where)
-	} else {
+	if limit != 0 {
 		where = fmt.Sprintf("%s LIMIT %d", where, limit)
 	}
 

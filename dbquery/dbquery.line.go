@@ -121,11 +121,7 @@ func LineCodeExist(c string) bool {
 	query := `SELECT id FROM "zone_line" WHERE code=$1`
 	err := db.Get(&id, query, c)
 
-	if err == nil {
-		return true
-	}
-
-	return false
+	return err == nil
 }
 
 // LineDelete hapus arah
