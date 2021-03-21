@@ -185,8 +185,8 @@
                                       </button>
                                       <div
                                         class="relative"
-                                        @click.away="if (receipt.pop) { receipt.pop = false; }"
-                                        @contextmenu.away="if (receipt.pop) { receipt.pop = false; }"
+                                        @click.away="if (receipt.pop) { receipt.editnotes = false; receipt.pop = false; }"
+                                        @contextmenu.away="if (receipt.pop) { receipt.editnotes = false; receipt.pop = false; }"
                                       >
                                         <button
                                           class="font-bold p-2 rounded-r bg-blue-50 hover:bg-blue-200"
@@ -209,7 +209,7 @@
                                           >
                                           <div
                                             class="w-full"
-                                            @dblclick="receipt.editnotes = !receipt.editnotes;"
+                                            @dblclick="document.querySelector(`#notes-${receipt.ID}`).innerHTML = receipt.Notes !== '' ? receipt.Notes : 'Tidak ada catatan'; receipt.editnotes = !receipt.editnotes;"
                                             @keydown.enter="receipt.editnotes = false; if (receipt.tempnotes !== '' && receipt.tempnotes !== receipt.Notes) { receipt.Notes = receipt.tempnotes; updateReceiptNotes($dispatch, receipt.ID, receipt.tempnotes); }"
                                           >
                                             <template
@@ -235,6 +235,7 @@
                                               :contenteditable="receipt.editnotes"
                                               @input="receipt.tempnotes = $event.target.textContent"
                                               x-show="receipt.editnotes"
+                                              :id="`notes-${receipt.ID}`"
                                               class="w-full h-full"
                                             ></p>
                                           </div>
