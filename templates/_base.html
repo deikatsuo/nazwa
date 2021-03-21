@@ -61,14 +61,17 @@
       </div>
     </template>
     
-    <!-- Sidebar -->
+    <!-- Main container -->
     <div
-      class="flex h-screen bg-gray-50 dark:bg-gray-900"
+      class="flex h-screen bg-grid-container dark:bg-gray-900"
       :class="{ 'overflow-hidden': isSideMenuOpen }"
     >
+      <!-- Sidebar -->
       {{ template "sidebar" .}}
       <div class="flex flex-col flex-1 w-full">
+        <!-- Navbar -->
         {{ template "navbar" .}}
+        <!-- Main -->
         <main class="h-full pb-16 overflow-y-auto">
           <div class="container mb-10 px-0 sm:px-6 mx-auto grid">
             <!-- contents -->
