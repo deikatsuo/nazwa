@@ -186,6 +186,7 @@
                                       <div
                                         class="relative"
                                         @click.away="if (receipt.pop) { receipt.pop = false; }"
+                                        @contextmenu.away="if (receipt.pop) { receipt.pop = false; }"
                                       >
                                         <button
                                           class="font-bold p-2 rounded-r bg-blue-50 hover:bg-blue-200"
