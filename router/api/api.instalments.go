@@ -67,7 +67,7 @@ func InstalmentShowByDate(c *gin.Context) {
 
 						// Kwitansi yang harus di print hari ini
 						if !orders[oi].SuggestPrint {
-							if misc.IsLastMonth(orders[oi].OrderInfo.CreditDetail.LastPaid) && len(orders[oi].Monthly) <= 2 {
+							if misc.IsLastMonth(orders[oi].OrderInfo.CreditDetail.LastPaid) || misc.IsThisMonth(orders[oi].OrderInfo.CreditDetail.LastPaid) && len(orders[oi].Monthly) <= 2 {
 								if !mon.Printed {
 									mon.Print = true
 									orders[oi].SuggestPrint = true

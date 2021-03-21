@@ -28,3 +28,27 @@ func IsLastMonth(d string) bool {
 
 	return result
 }
+
+// IsThisMonth tanggal adalah bulan sekarang
+func IsThisMonth(d string) bool {
+	var result bool
+	if d == "" {
+		return result
+	}
+
+	// hapus tanggal/hari
+	d = d[3:]
+
+	// bulan sekarang kurangi
+	dt := time.Now().AddDate(0, 0, 0)
+	comp := fmt.Sprintf("%02d-%d", dt.Month(), dt.Year())
+
+	// Cocokan
+	if d == comp {
+		result = true
+	} else {
+		result = false
+	}
+
+	return result
+}
