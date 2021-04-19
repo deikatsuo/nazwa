@@ -32,6 +32,14 @@ func PageDashboardInstalments(c *gin.Context) {
 			"/assets/js/dayjs.locale.id.js",
 			"/assets/js/dayjs.customParseFormat.js",
 			"/assets/js/dayjs.relativeTime.js",
+			"/assets/js/terbilang.js",
+			"/assets/js/jspm/zip.js",
+			"/assets/js/jspm/zip-ext.js",
+			"/assets/js/jspm/deflate.js",
+			"/assets/js/jspm/JSPrintManager.js",
+			"/assets/js/html2canvas.min.js",
+			"/assets/js/xlsx-populate.min.js",
+			"/assets/js/print.js",
 		},
 	}
 
