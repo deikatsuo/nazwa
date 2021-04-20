@@ -661,6 +661,7 @@
               this.progresses += 1;
 
               await this.printReceipt(printer, receipt);
+              this.setReceiptPrinted($dispatch, receipt.ID, true);
 
             }, Promise.resolve());
 
