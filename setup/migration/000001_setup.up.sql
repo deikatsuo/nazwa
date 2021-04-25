@@ -43,6 +43,7 @@ CREATE TABLE "user" (
     "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
     "created_by" int,
     "balance" numeric(15) DEFAULT 0,
+    "old_address" text,
     PRIMARY KEY (id),
     FOREIGN KEY (created_by) REFERENCES "user" ("id")
 );

@@ -10,6 +10,7 @@ type InstalmentShowByDate struct {
 type InstalmentOrderReceipt struct {
 	OrderID      int
 	SuggestPrint bool
+	Undone       int
 	OrderInfo    OrderSimple
 	Monthly      []OrderMonthlyCredit
 }

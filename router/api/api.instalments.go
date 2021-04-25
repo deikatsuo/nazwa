@@ -64,10 +64,13 @@ func InstalmentShowByDate(c *gin.Context) {
 			if len(orders) > 0 {
 				for oi, ord := range orders {
 					if ord.OrderID == mon.OrderID {
-
+						if !mon.Done {
+							orders[oi].Undone += 1
+						}
+						fmt.Printf("id %d undone %d", ord.OrderID, ord.Undone)
 						// Kwitansi yang harus di print hari ini
 						if !orders[oi].SuggestPrint {
-							if misc.IsLastMonth(orders[oi].OrderInfo.CreditDetail.LastPaid) || misc.IsThisMonth(orders[oi].OrderInfo.CreditDetail.LastPaid) && len(orders[oi].Monthly) <= 2 {
+							if (misc.IsLastMonth(orders[oi].OrderInfo.CreditDetail.LastPaid) || misc.IsThisMonth(orders[oi].OrderInfo.CreditDetail.LastPaid)) && ord.Undone < 2 {
 								if !mon.Printed {
 									mon.Print = true
 									orders[oi].SuggestPrint = true
@@ -136,10 +139,16 @@ func InstalmentShowByDate(c *gin.Context) {
 					}
 				}
 
+				var Undone int
+				if !mon.Done {
+					Undone += 1
+				}
+
 				// push data order
 				orders = append(orders, wrapper.InstalmentOrderReceipt{
 					OrderID:      mon.OrderID,
 					SuggestPrint: suggestPrint,
+					Undone:       Undone,
 					OrderInfo:    orderInfo,
 					Monthly:      []wrapper.OrderMonthlyCredit{mon},
 				})
