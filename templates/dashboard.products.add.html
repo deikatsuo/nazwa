@@ -1,4 +1,4 @@
-{{ template "base" .}} 
+{{ template "base" .}}
 
 <!-- Halaman tambah produk -->
 {{ define "dashboard_products_add_content" }}
@@ -148,6 +148,22 @@
             </span>
           </div>
         </div>
+
+        <!-- deskripsi -->
+        <div class="flex flex-wrap mb-6">
+          <div class="w-full md:px-1">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Deskripsi</span>
+              <textarea
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-gray-100 focus:outline-none focus:shadow-md dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                rows="3"
+                placeholder="Deskripsi produk!"
+                x-model="formData.description"
+              ></textarea>
+            </label>
+          </div>
+        </div>
+
         <div class="px-1">
           <label class="block mt-4 text-sm">
             <span class="text-gray-700 dark:text-gray-400">Foto</span></label
@@ -535,6 +551,7 @@
           stock: "10",
           code: "",
           brand: "",
+          description: "",
           type: "",
           base_price: "",
           price: "",

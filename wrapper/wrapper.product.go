@@ -7,16 +7,17 @@ import "database/sql"
 
 // ProductInsert base struk
 type ProductInsert struct {
-	Name      string `db:"name"`
-	Slug      string `db:"slug"`
-	Stock     int    `db:"stock"`
-	Code      string `db:"code"`
-	BasePrice int    `db:"base_price"`
-	Price     int    `db:"price"`
-	Type      string `db:"type"`
-	Brand     string `db:"brand"`
-	CreatedAt string `db:"created_at"`
-	CreatedBy int    `db:"created_by"`
+	Name        string `db:"name"`
+	Slug        string `db:"slug"`
+	Stock       int    `db:"stock"`
+	Code        string `db:"code"`
+	BasePrice   int    `db:"base_price"`
+	Price       int    `db:"price"`
+	Type        string `db:"type"`
+	Brand       string `db:"brand"`
+	CreatedAt   string `db:"created_at"`
+	CreatedBy   int    `db:"created_by"`
+	Description string `db:"description"`
 }
 
 /* ----------------------------------------------------- */
@@ -30,18 +31,19 @@ type ProductPhotoListSelect struct {
 
 // NullableProduct menampilkan list produk
 type NullableProduct struct {
-	ID        int            `db:"id"`
-	Name      string         `db:"name"`
-	Slug      string         `db:"slug"`
-	Stock     int            `db:"stock"`
-	Code      string         `db:"code"`
-	BasePrice int            `db:"base_price"`
-	Price     int            `db:"price"`
-	Type      sql.NullString `db:"type"`
-	Brand     sql.NullString `db:"brand"`
-	Thumbnail sql.NullString `db:"thumbnail"`
-	CreatedAt string         `db:"created_at"`
-	CreatedBy int            `db:"created_by"`
+	ID          int            `db:"id"`
+	Name        string         `db:"name"`
+	Slug        string         `db:"slug"`
+	Stock       int            `db:"stock"`
+	Code        string         `db:"code"`
+	BasePrice   int            `db:"base_price"`
+	Price       int            `db:"price"`
+	Type        sql.NullString `db:"type"`
+	Brand       sql.NullString `db:"brand"`
+	Thumbnail   sql.NullString `db:"thumbnail"`
+	Description sql.NullString `db:"description"`
+	CreatedAt   string         `db:"created_at"`
+	CreatedBy   int            `db:"created_by"`
 }
 
 // ProductCreditPriceInsert tambah harga kredit barang
@@ -78,6 +80,7 @@ type ProductForm struct {
 	Price       string                   `json:"price" binding:"required,numeric,min=1,max=15"`
 	CreditPrice []ProductCreditPriceForm `json:"credit_price" binding:"omitempty"`
 	Photo       []ProductPhotoForm       `json:"photos" binding:"omitempty"`
+	Description string                   `json:"description" binding:"omitempty"`
 }
 
 // ProductPhotoForm list photo produk
@@ -95,6 +98,7 @@ type Product struct {
 	Name        string
 	Slug        string
 	Code        string
+	Description string
 	Stock       int
 	BasePrice   int
 	Price       int

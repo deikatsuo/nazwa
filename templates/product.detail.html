@@ -4,6 +4,22 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="category" content="Product" />
+    <meta name="keywords" content="{{ .product.Type }}" />
+    <meta
+      name="description"
+      content='{{ printf "%.150s" .product.Description }}'
+    />
+
+    <meta property="og:type" content="product" />
+    <meta property="og:title" content="{{ .title }} - {{ .site_name }}" />
+    <meta
+      property="og:description"
+      content='{{ printf "%.150s" .product.Description }}'
+    />
+    <meta property="og:image" content="{{ if not .product.Photos }}https://cvnazwa.com/file/product/no-photo.png{{ else }}https://cvnazwa.com/file/product/{{ (index .product.Photos 0).Photo }}{{ end }}" />
+    <meta property="og:url" content="https://cvnazwa.com/product/{{ .product.Slug }}" />
+    <meta property="og:site_name" content="cvnazwa" />
 
     <title>{{ .title }} - {{ .site_name }}</title>
 
@@ -168,6 +184,22 @@
                     class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
                     x-text="product.CreatedAt"
                   ></dd>
+                </div>
+              </dl>
+
+              <!-- Deskripsi -->
+              <dl class="w-full whitespace-no-wrap">
+                <div
+                  class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                >
+                  <dt class="px-3 py-3">Deskripsi</dt>
+                  <dd class="px-4 sm:px-0"></dd>
+                </div>
+                <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+                  <div
+                    class="mt-1 text-sm leading-5 text-gray-500 sm:mt-0"
+                    x-text="product.Description"
+                  ></div>
                 </div>
               </dl>
 

@@ -193,6 +193,7 @@ func ProductGetProductBySlug(ps string) (wrapper.Product, error) {
 		id,
 		name,
 		stock,
+		description,
 		base_price,
 		price,
 		code,
@@ -225,7 +226,9 @@ func ProductGetProductBySlug(ps string) (wrapper.Product, error) {
 		ID:          p.ID,
 		Name:        strings.Title(p.Name),
 		Stock:       p.Stock,
+		Description: p.Description.String,
 		CreatedAt:   p.CreatedAt,
+		Slug:        ps,
 		BasePrice:   p.BasePrice,
 		Price:       p.Price,
 		Code:        p.Code,
@@ -362,6 +365,13 @@ func (c *CreateProduct) SetStock(p int) *CreateProduct {
 func (c *CreateProduct) SetBasePrice(p int) *CreateProduct {
 	c.BasePrice = p
 	c.into["base_price"] = ":base_price"
+	return c
+}
+
+// SetDescription deskripsi produk
+func (c *CreateProduct) SetDescription(p string) *CreateProduct {
+	c.Description = p
+	c.into["description"] = ":description"
 	return c
 }
 

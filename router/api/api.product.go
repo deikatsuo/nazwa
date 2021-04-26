@@ -87,6 +87,7 @@ func ProductCreate(c *gin.Context) {
 	stock, _ := strconv.Atoi(json.Stock)
 	var retProduct wrapper.Product
 	var pid int
+	fmt.Println(json.Description)
 	if save {
 		user := dbquery.NewProduct()
 		err := user.SetName(json.Name).
@@ -95,6 +96,7 @@ func ProductCreate(c *gin.Context) {
 			SetType(json.Type).
 			SetBrand(json.Brand).
 			SetStock(stock).
+			SetDescription(json.Description).
 			SetBasePrice(base).
 			SetPrice(price).
 			SetCreatedBy(uid.(int)).
