@@ -11,15 +11,35 @@
       content='{{ printf "%.150s" .product.Description }}'
     />
 
-    <meta property="og:type" content="product" />
+    <meta property="og:type" content="og:product" />
     <meta property="og:title" content="{{ .title }} - {{ .site_name }}" />
     <meta
       property="og:description"
       content='{{ printf "%.150s" .product.Description }}'
     />
-    <meta property="og:image" content="{{ if not .product.Photos }}https://cvnazwa.com/file/product/no-photo.png{{ else }}https://cvnazwa.com/file/product/{{ (index .product.Photos 0).Photo }}{{ end }}" />
-    <meta property="og:url" content="https://cvnazwa.com/product/{{ .product.Slug }}" />
-    <meta property="og:site_name" content="cvnazwa" />
+    {{ if not .product.Photos }}
+    <meta
+      property="og:image"
+      content="https://cvnazwa.com/file/product/no-photo.png"
+    />
+    {{ else }}
+    <!-- Gambar produk -->
+    {{range $i, $p := .product.Photos }}
+    <meta
+      property="og:image"
+      content="https://cvnazwa.com/file/product/{{ $p.Photo }}"
+    />
+    {{end}}
+    <!-- End -->
+    {{ end }}
+    <meta
+      property="og:url"
+      content="https://cvnazwa.com/product/{{ .product.Slug }}"
+    />
+    <meta property="og:site_name" content="nazwa" />
+    <meta property="product:plural_title" content="{{ .title }}" />
+    <meta property="product:price:currency" content="IDR"/>
+    <meta property="product:price:amount" content="{{ .product.Price }}"/>
 
     <title>{{ .title }} - {{ .site_name }}</title>
 
