@@ -173,6 +173,20 @@ func RunSetup() {
 
 }
 
+// Up upgrade database
+func Up() {
+	if misc.Migration("up") {
+		log.Info("Tabel berhasil upgrade ('-')")
+	}
+}
+
+// Down downgrade database
+func Down() {
+	if misc.Migration("down") {
+		log.Info("Tabel berhasil downgrade ('-')")
+	}
+}
+
 // Membuat user admin baru
 func setupUserAdmin() error {
 	user := dbquery.UserNew()

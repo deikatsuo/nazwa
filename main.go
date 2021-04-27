@@ -62,6 +62,12 @@ func main() {
 		case "setup":
 			log.Info("Menjalankan konfigurasi database...")
 			setup.RunSetup()
+		case "up":
+			log.Info("Upgrade database")
+			setup.Up()
+		case "down":
+			log.Info("Downgrade database")
+			setup.Down()
 		case "version":
 			fmt.Println("Authored by", misc.AUTHOR)
 			fmt.Println("Version ", misc.VERSION)
