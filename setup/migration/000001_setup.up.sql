@@ -37,7 +37,7 @@ CREATE TABLE "user" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
     "first_name" varchar(25) NOT NULL,
     "last_name" varchar(25),
-    "ric" varchar(16) UNIQUE NOT NULL,
+    "ric" varchar(16) UNIQUE,
     "username" varchar(25) UNIQUE,
     "avatar" varchar(50) DEFAULT 'default.jpg' NOT NULL,
     "password" char(60),
@@ -46,7 +46,6 @@ CREATE TABLE "user" (
     "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
     "created_by" int,
     "balance" numeric(15) DEFAULT 0,
-    "old_address" text,
     PRIMARY KEY (id),
     FOREIGN KEY (created_by) REFERENCES "user" ("id")
 );
