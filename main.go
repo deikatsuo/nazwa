@@ -167,6 +167,7 @@ func runServer() {
 	dashboard.GET("/developer", router.PageDashboardDeveloper)
 	dashboard.GET("/developer/upgrade", router.PageDashboardDeveloperUpgrade)
 	dashboard.GET("/developer/cloud", router.PageDashboardDeveloperCloud)
+	dashboard.GET("/developer/import", router.PageDashboardDeveloperImport)
 	dashboard.GET("/blank", router.PageDashboardBlank)
 
 	// API
@@ -183,9 +184,11 @@ func runServer() {
 	v1developer := v1.Group("/developer")
 	v1developer.POST("/upgrade/upload", api.DeveloperUpgradeUpload)
 	v1developer.GET("/upgrade/list", api.DeveloperUpgradeListAvailable)
+	v1developer.DELETE("/upgrade/delete", api.DeveloperUpgradeRemove)
 	v1developer.POST("/cloud/upload", api.DeveloperCloudUpload)
 	v1developer.GET("/cloud/list", api.DeveloperCloudListAvailable)
-	v1developer.DELETE("/upgrade/delete", api.DeveloperUpgradeRemove)
+	v1developer.POST("/import/upload", api.DeveloperImportUpload)
+
 	v1developer.DELETE("/cloud/delete", api.DeveloperCloudRemove)
 
 	// API untuk publik

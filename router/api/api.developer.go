@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/gin-gonic/gin"
 )
 
@@ -131,6 +133,129 @@ func DeveloperCloudUpload(c *gin.Context) {
 			message = "Terjadi kesalahan saat mencoba menyimpan file"
 			status = "error"
 			next = false
+		}
+	}
+
+	if next {
+		message = "File berhasil disimpan"
+		status = "success"
+		httpStatus = http.StatusOK
+	}
+
+	m := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, misc.Mete(m, simpleErrMap))
+}
+
+// DeveloperImportUpload API untuk upload file import
+func DeveloperImportUpload(c *gin.Context) {
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+	var simpleErrMap map[string]interface{}
+
+	// File
+	file, err := c.FormFile("file")
+
+	if err != nil {
+		log.Warn("api.developer.go DeveloperImportUpload() File tidak valid")
+		log.Error(err)
+		message = "Tidak ada file, atau format file tidak valid"
+		status = "error"
+		next = false
+	}
+
+	// Buka file
+	fo, err := file.Open()
+	if err != nil {
+		log.Warn("api.developer.go DeveloperImportUpload() Gagal membuka file")
+		log.Error(err)
+		message = "Tidak dapat membuka file import"
+		status = "error"
+		next = false
+	}
+	// Tutup file diakhir fungsi
+	defer fo.Close()
+
+	// Baca file
+	f, err := excelize.OpenReader(fo)
+	if err != nil {
+		log.Warn("api.developer.go DeveloperImportUpload() Gagal membaca file")
+		log.Error(err)
+		message = "Tidak dapat membaca file"
+		status = "error"
+		next = false
+	}
+
+	// Ambil semua baris di Sheet Pelanggan
+	rows, _ := f.GetRows("Pelanggan")
+	for rid, row := range rows {
+		// Baca mulai dari baris ke 5
+		if rid >= 4 && row[2] != "" {
+			var kode string
+			gender := "m"
+			if row[2][0:3] == "Ibu" {
+				gender = "f"
+			}
+			kode = row[1]
+
+			// Pecah nama konsumen
+			sname := strings.SplitN(row[2], "/", 2)
+
+			name := strings.ReplaceAll(sname[0], "Bpk.", "")
+			name = strings.ReplaceAll(name, "Bpk", "")
+			name = strings.ReplaceAll(name, "Ibu.", "")
+			name = strings.ReplaceAll(name, "Ibu", "")
+			name = strings.TrimSpace(name)
+			splitname := strings.SplitN(name, " ", 2)
+			firstname := splitname[0]
+			var lastname string
+			if len(splitname) > 1 {
+				lastname = splitname[1]
+			}
+			var substitutes []map[string]string
+
+			if len(sname) > 1 {
+				splitsubs := strings.Split(sname[1], "/")
+				for _, sva := range splitsubs {
+					sg := "f"
+					sn := strings.TrimSpace(sva)
+					sn = strings.ReplaceAll(sn, "Bpk.", "")
+					sn = strings.ReplaceAll(sn, "Bpk", "")
+					sn = strings.ReplaceAll(sn, "Ibu.", "")
+					sn = strings.ReplaceAll(sn, "Ibu", "")
+					sn = strings.TrimSpace(sn)
+
+					splitsn := strings.SplitN(sn, " ", 2)
+					sfn := splitsn[0]
+					var sln string
+					if len(splitsn) > 1 {
+						sln = splitsn[1]
+					}
+					if len(sg) > 3 {
+						if sg[0:3] == "Bpk" {
+							gender = "m"
+						}
+					}
+					substitutes = append(substitutes, map[string]string{
+						"firstname": sfn,
+						"lastname":  sln,
+						"gender":    sg,
+					})
+				}
+			}
+
+			fmt.Println("Kode: ", kode)
+			fmt.Println("Jenis Kelamin: ", gender)
+
+			fmt.Println("Nama depan: ", firstname)
+			fmt.Println("Nama belakang: ", lastname)
+			fmt.Println(substitutes)
+			fmt.Println()
 		}
 	}
 

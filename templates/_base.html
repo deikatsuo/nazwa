@@ -76,71 +76,110 @@
           <div class="container mb-10 px-0 sm:px-6 mx-auto grid">
             <!-- contents -->
             {{ if eq .page "dashboard" }}
+              <!-- Dashboard -->
               {{ block "dashboard_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "account" }}
+              <!-- Account -->
               {{ block "dashboard_account_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "users" }}
+              <!-- User -->
               {{ block "dashboard_users_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "users_add" }}
+              <!-- Add User -->
               {{ block "dashboard_users_add_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "products" }}
+              <!-- Product -->
               {{ block "dashboard_products_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "products_add" }}
+              <!-- Add Product -->
               {{ block "dashboard_products_add_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "orders" }}
+              <!-- Order -->
               {{ block "dashboard_orders_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "orders_add" }}
+              <!-- Add Order -->
               {{ block "dashboard_orders_add_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "instalments" }}
+              <!-- Instalment -->
               {{ block "dashboard_instalments_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "instalments_receipt" }}
+              <!-- Receipt -->
               {{ block "dashboard_instalments_receipt_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
             
             {{ if eq .page "locations" }}
+              <!-- Location -->
               {{ block "dashboard_locations_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "locations_lines" }}
+              <!-- Line -->
               {{ block "dashboard_locations_lines_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "locations_zones" }}
+              <!-- Zone -->
               {{ block "dashboard_locations_zones_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "developer" }}
+              <!-- Developer -->
               {{ block "dashboard_developer_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "developer_upgrade" }}
+              <!-- Upgrade -->
               {{ block "dashboard_developer_upgrade_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "developer_cloud"}}
+              <!-- Cloud -->
               {{ block "dashboard_developer_cloud_content" .}}{{ end }}
+              <!-- End -->
+            {{ end }}
+
+            {{ if eq .page "developer_import"}}
+              <!-- Import -->
+              {{ block "dashboard_developer_import_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
 
             {{ if eq .page "blank" }}
               {{ block "dashboard_blank_content" .}}{{ end }}
+              <!-- End -->
             {{ end }}
             
           </div>
