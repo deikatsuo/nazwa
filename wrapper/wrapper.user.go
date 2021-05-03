@@ -60,7 +60,7 @@ type NullableUser struct {
 	Firstname        string         `db:"first_name"`
 	Lastname         sql.NullString `db:"last_name"`
 	Username         sql.NullString `db:"username"`
-	RIC              string         `db:"ric"`
+	RIC              sql.NullString `db:"ric"`
 	Occupation       sql.NullString `db:"occupation"`
 	Avatar           string         `db:"avatar"`
 	Gender           string         `db:"gender"`

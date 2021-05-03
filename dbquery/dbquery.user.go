@@ -98,7 +98,7 @@ func (u *GetUsers) Show() ([]wrapper.User, error) {
 			Username:  string(u.Username.String),
 			Balance:   string(u.Balance),
 			Avatar:    u.Avatar,
-			RIC:       u.RIC,
+			RIC:       u.RIC.String,
 			Role:      u.Role,
 			Addresses: addresses,
 		})
@@ -544,7 +544,7 @@ func UserGetByID(uid int) (wrapper.User, error) {
 		ID:               u.ID,
 		Firstname:        strings.Title(u.Firstname),
 		Lastname:         strings.Title(string(u.Lastname.String)),
-		RIC:              u.RIC,
+		RIC:              u.RIC.String,
 		FamilyCardNumber: string(u.FamilyCardNumber.String),
 		Username:         string(u.Username.String),
 		Password:         pwd,
