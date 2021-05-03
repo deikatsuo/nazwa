@@ -3,7 +3,6 @@ package dbquery
 import (
 	"errors"
 	"fmt"
-	"math"
 	"nazwa/misc"
 	"nazwa/wrapper"
 	"strconv"
@@ -307,11 +306,12 @@ func (c *CreateOrder) Save() error {
 		monthly = priceTotal / c.duration
 
 		if c.Deposit > 0 {
-			remaining = priceTotal - c.Deposit
-			total = priceTotal - c.Deposit
-			monthly = (priceTotal - c.Deposit) / c.duration
-			monthly = int(math.Floor(float64(monthly)/1000)) * 1000
-			luckyDiscount = (priceTotal - c.Deposit) - (monthly * c.duration)
+			//remaining = priceTotal - c.Deposit
+			priceTotal += c.Deposit
+			//total = priceTotal - c.Deposit
+			//monthly = (priceTotal - c.Deposit) / c.duration
+			//monthly = int(math.Floor(float64(monthly)/1000)) * 1000
+			//luckyDiscount = (priceTotal - c.Deposit) - (monthly * c.duration)
 		}
 
 		if c.Deposit > priceTotal {
