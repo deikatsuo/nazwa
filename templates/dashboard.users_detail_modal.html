@@ -78,7 +78,11 @@
             x-show="updateFor !== 'residentcard'"
             @dblclick="openUpdateForResidentCard($nextTick);"
           >
-            <span x-text="user.RIC"></span>
+            <span
+              x-text="user.RIC"
+              x-show="user.RIC !== ''"
+            ></span>
+            <span x-show="user.RIC == ''">-</span>
           </div>
           <input
             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
