@@ -219,7 +219,7 @@ func DeveloperImportUpload(c *gin.Context) {
 			if len(splitname) > 1 {
 				lastname = splitname[1]
 			}
-			var substitutes []map[string]string
+			var substitutes []wrapper.OrderUserSubstituteForm
 
 			if len(sname) > 1 {
 				splitsubs := strings.Split(sname[1], "/")
@@ -243,10 +243,10 @@ func DeveloperImportUpload(c *gin.Context) {
 							gender = "m"
 						}
 					}
-					substitutes = append(substitutes, map[string]string{
-						"firstname": sfn,
-						"lastname":  sln,
-						"gender":    sg,
+					substitutes = append(substitutes, wrapper.OrderUserSubstituteForm{
+						Firstname: sfn,
+						Lastname:  sln,
+						Gender:    sg,
 					})
 				}
 			}
@@ -256,15 +256,6 @@ func DeveloperImportUpload(c *gin.Context) {
 				phone = strings.Split(strings.TrimSpace(row[12]), "/")[0]
 				phone = strings.ReplaceAll(phone, "-", "")
 			}
-
-			fmt.Println("Kode: ", kode)
-			fmt.Println("Jenis Kelamin: ", gender)
-
-			fmt.Println("Nama depan: ", firstname)
-			fmt.Println("Nama belakang: ", lastname)
-			fmt.Println(substitutes)
-			fmt.Println("Nomor HP: ", phone)
-			fmt.Println()
 
 			// Simpan data user
 			var uid int
@@ -277,10 +268,18 @@ func DeveloperImportUpload(c *gin.Context) {
 				ReturnID(&uid).
 				Save()
 			if err != nil {
-				log.Println("ERROR: api.user.go UserCreate() Gagal membuat user baru")
-				log.Print(err)
+				log.Warn("ERROR: api.user.go UserCreate() Gagal membuat user baru")
+				log.Error(err)
 			}
+
 			fmt.Println("ID DATABASE", uid)
+			fmt.Println("Kode: ", kode)
+			fmt.Println("Jenis Kelamin: ", gender)
+			fmt.Println("Nama depan: ", firstname)
+			fmt.Println("Nama belakang: ", lastname)
+			fmt.Println(substitutes)
+			fmt.Println("Nomor HP: ", phone)
+			fmt.Println()
 		}
 	}
 
