@@ -2,7 +2,9 @@ package api
 
 import (
 	"fmt"
+	"nazwa/dbquery"
 	"nazwa/misc"
+	"nazwa/wrapper"
 	"net/http"
 	"os"
 	"os/exec"
@@ -249,13 +251,36 @@ func DeveloperImportUpload(c *gin.Context) {
 				}
 			}
 
+			var phone string
+			if row[12] != "0" && row[12] != "" {
+				phone = strings.Split(strings.TrimSpace(row[12]), "/")[0]
+				phone = strings.ReplaceAll(phone, "-", "")
+			}
+
 			fmt.Println("Kode: ", kode)
 			fmt.Println("Jenis Kelamin: ", gender)
 
 			fmt.Println("Nama depan: ", firstname)
 			fmt.Println("Nama belakang: ", lastname)
 			fmt.Println(substitutes)
+			fmt.Println("Nomor HP: ", phone)
 			fmt.Println()
+
+			// Simpan data user
+			var uid int
+			user := dbquery.UserNew()
+			err := user.SetFirstName(firstname).
+				SetLastName(lastname).
+				SetPhone(phone).
+				SetGender(gender).
+				SetRole(wrapper.UserRoleCustomer).
+				ReturnID(&uid).
+				Save()
+			if err != nil {
+				log.Println("ERROR: api.user.go UserCreate() Gagal membuat user baru")
+				log.Print(err)
+			}
+			fmt.Println("ID DATABASE", uid)
 		}
 	}
 
