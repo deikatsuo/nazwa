@@ -25,14 +25,30 @@
           <td class="px-4 py-1 text-sm">Nama Pembeli</td>
           <td class="px-4 py-1 text-sm" x-text="customer.Name"></td>
         </tr>
-        <tr class="text-gray-700 dark:text-gray-400">
-          <td class="px-4 py-1 text-sm">Sales</td>
-          <td class="px-4 py-1 text-sm" x-text="sales.Name"></td>
-        </tr>
-        <tr class="text-gray-700 dark:text-gray-400">
-          <td class="px-4 py-1 text-sm">Surveyor</td>
-          <td class="px-4 py-1 text-sm" x-text="surveyor.Name"></td>
-        </tr>
+        <template x-if="order.ImportedSales === ''">
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-1 text-sm">Sales</td>
+            <td class="px-4 py-1 text-sm" x-text="sales.Name"></td>
+          </tr>
+        </template>
+        <template x-if="order.ImportedSurveyor === ''">
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-1 text-sm">Surveyor</td>
+            <td class="px-4 py-1 text-sm" x-text="surveyor.Name"></td>
+          </tr>
+        </template>
+        <template x-if="order.ImportedSales !== ''">
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-1 text-sm">Sales</td>
+            <td class="px-4 py-1 text-sm" x-text="order.ImportedSales"></td>
+          </tr>
+        </template>
+        <template x-if="order.ImportedSurveyor !== ''">
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-1 text-sm">Surveyor</td>
+            <td class="px-4 py-1 text-sm" x-text="order.ImportedSurveyor"></td>
+          </tr>
+        </template>
         <tr class="text-gray-700 dark:text-gray-400">
           <td class="px-4 py-1 text-sm">Collector</td>
           <td class="px-4 py-1 text-sm" x-text="collector.Name"></td>
@@ -51,14 +67,26 @@
         </tr>
       </thead>
       <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-        <tr class="text-gray-700 dark:text-gray-400">
-          <td class="px-4 py-1 text-sm">Pengiriman</td>
-          <td class="px-4 py-1 text-sm" x-text="shippingAddress"></td>
-        </tr>
-        <tr class="text-gray-700 dark:text-gray-400">
-          <td class="px-4 py-1 text-sm">Penagihan</td>
-          <td class="px-4 py-1 text-sm" x-text="billingAddress"></td>
-        </tr>
+        <template x-if="order.ImportedAddress === ''">
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-1 text-sm">Pengiriman</td>
+            <td class="px-4 py-1 text-sm" x-text="shippingAddress"></td>
+          </tr>
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-1 text-sm">Penagihan</td>
+            <td class="px-4 py-1 text-sm" x-text="billingAddress"></td>
+          </tr>
+        </template>
+        <template x-if="order.ImportedAddress !== ''">
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-1 text-sm">Pemesanan</td>
+            <td class="px-4 py-1 text-sm" x-text="order.ImportedAddress"></td>
+          </tr>
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-1 text-sm">Pengiriman</td>
+            <td class="px-4 py-1 text-sm" x-text="order.ImportedAddress"></td>
+          </tr>
+        </template>
       </tbody>
     </table>
 
