@@ -655,7 +655,8 @@ func (p *GetOrders) Show() ([]wrapper.Order, error) {
 		TO_CHAR(o.shipping_date, 'DD-MM-YYYY HH12:MI:SS AM') AS shipping_date,
 		o.customer_id,
 		concat_ws(' ', c.first_name, c.last_name) as customer_name,
-		c.avatar as customer_thumb
+		c.avatar as customer_thumb,
+		o.imported_items
 		FROM "order" o
 		LEFT JOIN "user" c ON c.id=customer_id
 		%s
@@ -688,7 +689,8 @@ func (p *GetOrders) Show() ([]wrapper.Order, error) {
 				Name:      p.CustomerName,
 				Thumbnail: p.CustomerThumb,
 			},
-			Items: items,
+			Items:         items,
+			ImportedItems: p.ImportedItems.String,
 		})
 	}
 

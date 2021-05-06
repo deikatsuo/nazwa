@@ -85,32 +85,40 @@
 
               <td class="px-4 py-3 text-sm">
                 <div class="flex flex-wrap item-center text-sm">
-                  <template x-if="order.Items !== null">
-                    <template x-for="(item, idx) in order.Items" :key="idx">
-                      <div class="flex item-center text-sm">
-                        <p
-                          class="text-xs text-gray-600 dark:text-gray-400"
-                          x-text="`[${item.Quantity}x ${item.Product.Name}]`"
-                        ></p>
-                        <p
-                          class="pr-1"
-                          x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
-                        >
-                          ,
-                        </p>
-                        <p
-                          class="px-1"
-                          x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
-                        >
-                          dan
-                        </p>
-                      </div>
+                  <template x-if="order.ImportedItems === ''">
+                    <template x-if="order.Items !== null">
+                      <template x-for="(item, idx) in order.Items" :key="idx">
+                        <div class="flex item-center text-sm">
+                          <p
+                            class="text-xs text-gray-600 dark:text-gray-400"
+                            x-text="`[${item.Quantity}x ${item.Product.Name}]`"
+                          ></p>
+                          <p
+                            class="pr-1"
+                            x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
+                          >
+                            ,
+                          </p>
+                          <p
+                            class="px-1"
+                            x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
+                          >
+                            dan
+                          </p>
+                        </div>
+                      </template>
+                    </template>
+                    <template x-if="order.Items === null">
+                      <p class="text-xs text-gray-600 dark:text-gray-400">
+                        Tidak ada produk
+                      </p>
                     </template>
                   </template>
-                  <template x-if="order.Items === null">
-                    <p class="text-xs text-gray-600 dark:text-gray-400">
-                      Tidak ada produk
-                    </p>
+                  <template x-if="order.ImportedItems !== ''">
+                    <p
+                      class="text-xs text-gray-600 dark:text-gray-400"
+                      x-text="order.ImportedItems"
+                    ></p>
                   </template>
                 </div>
               </td>
@@ -160,13 +168,17 @@
                   <template x-if="order.Credit">
                     <div class="flex">
                       <div class="cursor-pointer px-1">
-                        <a :href="`instalments/card?ids=${order.ID}`" target="_blank"
+                        <a
+                          :href="`instalments/card?ids=${order.ID}`"
+                          target="_blank"
                           >{{ template "_svg_icon_bookopen" }}</a
                         >
                       </div>
 
                       <div class="cursor-pointer px-1">
-                        <a :href="`instalments/receipt/${order.ID}`" target="_blank"
+                        <a
+                          :href="`instalments/receipt/${order.ID}`"
+                          target="_blank"
                           >{{ template "_svg_icon_collection" }}</a
                         >
                       </div>
