@@ -152,83 +152,100 @@
             <th class="px-4 py-3">Harga</th>
           </tr>
         </thead>
+
         <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-          <template x-for="(item, index) in items" :key="index">
+          <!-- Items -->
+          <template x-if="order.ImportedItems === ''">
+            <template x-for="(item, index) in items" :key="index">
+              <tr
+                class="text-gray-700 dark:text-gray-400 hover:bg-green-100 cursor-pointer border-b"
+              >
+                <td class="px-3 py-3 text-sm" x-text="index + 1"></td>
+                <td class="px-1 py-3">
+                  <div class="flex items-center text-sm">
+                    <!-- Tampilkan avatar -->
+                    <div
+                      class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
+                    >
+                      <img
+                        class="object-cover w-full h-full rounded-full"
+                        :src="'/file/product/no-photo.png'"
+                        alt=""
+                        loading="lazy"
+                        x-show="item.Product.Thumbnail == ''"
+                      />
+                      <img
+                        class="object-cover w-full h-full rounded-full"
+                        :src="`/file/product/thumbnail/${item.Product.Thumbnail}`"
+                        alt=""
+                        loading="lazy"
+                        x-show="item.Product.Thumbnail != ''"
+                      />
+                      <div
+                        class="absolute inset-0 rounded-full shadow-inner"
+                        aria-hidden="true"
+                      ></div>
+                    </div>
+                    <div>
+                      <p class="font-semibold" x-text="item.Product.Name"></p>
+                      <p
+                        class="text-xs text-gray-600 dark:text-gray-400"
+                        x-text="item.Product.Code"
+                      ></p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-sm" x-text="item.Quantity"></td>
+                <td
+                  x-show="item.Discount == 0"
+                  class="px-4 py-3 text-sm"
+                  x-text="toRupiah(item.Price*item.Quantity)"
+                ></td>
+                <td x-show="item.Discount > 0" class="px-4 py-3 text-sm">
+                  <div>
+                    <p
+                      class="font-semibold"
+                      x-text="toRupiah(item.Discount*item.Quantity)"
+                      :class="{'text-green-400': item.Discount < item.Price, 'text-orange-400': item.Discount > item.Price }"
+                    ></p>
+                    <p class="text-xs">
+                      <span
+                        class="text-red-400 line-through dark:text-gray-400"
+                        x-text="toRupiah(item.Price*item.Quantity)"
+                      ></span>
+                      <template
+                        x-if="(item.Price*item.Quantity) > (item.Discount*item.Quantity)"
+                      >
+                        <span
+                          class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
+                          x-text="` (-${toRupiah((item.Price*item.Quantity)-(item.Discount*item.Quantity))})`"
+                        ></span>
+                      </template>
+                      <template
+                        x-if="(item.Price*item.Quantity) < (item.Discount*item.Quantity)"
+                      >
+                        <span
+                          class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100"
+                          x-text="` (+${toRupiah((item.Price*item.Quantity)-(item.Discount*item.Quantity))})`"
+                        ></span>
+                      </template>
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </template>
+          <template x-if="order.ImportedItems != '' && order.Credit">
             <tr
               class="text-gray-700 dark:text-gray-400 hover:bg-green-100 cursor-pointer border-b"
             >
-              <td class="px-3 py-3 text-sm" x-text="index + 1"></td>
-              <td class="px-1 py-3">
-                <div class="flex items-center text-sm">
-                  <!-- Tampilkan avatar -->
-                  <div
-                    class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
-                  >
-                    <img
-                      class="object-cover w-full h-full rounded-full"
-                      :src="'/file/product/no-photo.png'"
-                      alt=""
-                      loading="lazy"
-                      x-show="item.Product.Thumbnail == ''"
-                    />
-                    <img
-                      class="object-cover w-full h-full rounded-full"
-                      :src="`/file/product/thumbnail/${item.Product.Thumbnail}`"
-                      alt=""
-                      loading="lazy"
-                      x-show="item.Product.Thumbnail != ''"
-                    />
-                    <div
-                      class="absolute inset-0 rounded-full shadow-inner"
-                      aria-hidden="true"
-                    ></div>
-                  </div>
-                  <div>
-                    <p class="font-semibold" x-text="item.Product.Name"></p>
-                    <p
-                      class="text-xs text-gray-600 dark:text-gray-400"
-                      x-text="item.Product.Code"
-                    ></p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-4 py-3 text-sm" x-text="item.Quantity"></td>
+              <td class="px-3 py-3 text-sm">1</td>
+              <td class="px-1 py-3" x-text="order.ImportedItems"></td>
+              <td class="px-4 py-3 text-sm">1</td>
               <td
-                x-show="item.Discount == 0"
-                class="px-4 py-3 text-sm"
-                x-text="toRupiah(item.Price*item.Quantity)"
+                class="px-4 py-3 text-sm font-semibold text-orange-500"
+                x-text="`${toRupiah(order.CreditDetail.Monthly)}`"
               ></td>
-              <td x-show="item.Discount > 0" class="px-4 py-3 text-sm">
-                <div>
-                  <p
-                    class="font-semibold"
-                    x-text="toRupiah(item.Discount*item.Quantity)"
-                    :class="{'text-green-400': item.Discount < item.Price, 'text-orange-400': item.Discount > item.Price }"
-                  ></p>
-                  <p class="text-xs">
-                    <span
-                      class="text-red-400 line-through dark:text-gray-400"
-                      x-text="toRupiah(item.Price*item.Quantity)"
-                    ></span>
-                    <template
-                      x-if="(item.Price*item.Quantity) > (item.Discount*item.Quantity)"
-                    >
-                      <span
-                        class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
-                        x-text="` (-${toRupiah((item.Price*item.Quantity)-(item.Discount*item.Quantity))})`"
-                      ></span>
-                    </template>
-                    <template
-                      x-if="(item.Price*item.Quantity) < (item.Discount*item.Quantity)"
-                    >
-                      <span
-                        class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100"
-                        x-text="` (+${toRupiah((item.Price*item.Quantity)-(item.Discount*item.Quantity))})`"
-                      ></span>
-                    </template>
-                  </p>
-                </div>
-              </td>
             </tr>
           </template>
 
