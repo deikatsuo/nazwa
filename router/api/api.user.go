@@ -1167,7 +1167,7 @@ func UserSearchByNIK(c *gin.Context) {
 	})
 }
 
-// UserSearchByNameType cari sales berdasarkan nama
+// UserSearchByNameType cari pengguna berdasarkan nama
 func UserSearchByNameType(roleid string) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		session := sessions.Default(c)
@@ -1201,7 +1201,7 @@ func UserSearchByNameType(roleid string) gin.HandlerFunc {
 		}
 
 		// Ambil query pencarian
-		search = strings.ToLower(c.Query("search"))
+		search = strings.Title(strings.ToLower(c.Query("search")))
 
 		// Ambil query id terakhir
 		lst, err := strconv.Atoi(c.Query("lastid"))
