@@ -15,20 +15,23 @@ import (
 // CreateOrder struct untuk menyimpan data order yang akan di insert
 type CreateOrder struct {
 	wrapper.OrderInsert
-	into        map[string]string
-	returnID    bool
-	returnIDTO  *int
-	orderItems  []wrapper.OrderItemForm
-	substitutes []wrapper.OrderUserSubstituteForm
-	due         int
-	line        int
-	duration    int
+	into            map[string]string
+	returnID        bool
+	returnIDTO      *int
+	orderItems      []wrapper.OrderItemForm
+	substitutes     []wrapper.OrderUserSubstituteForm
+	due             int
+	line            int
+	duration        int
+	importMode      bool
+	importedMonthly int
 }
 
 // NewOrder membuat order baru
 func NewOrder() *CreateOrder {
 	return &CreateOrder{
-		into: make(map[string]string),
+		into:       make(map[string]string),
+		importMode: false,
 	}
 }
 
@@ -195,6 +198,54 @@ func (c *CreateOrder) SetSubstitutes(o []wrapper.OrderUserSubstituteForm) *Creat
 	return c
 }
 
+// SetImportMode mode import
+func (c *CreateOrder) SetImportMode(o bool) *CreateOrder {
+	c.importMode = o
+	return c
+}
+
+// SetImportedItems import sales
+func (c *CreateOrder) SetImportedItems(o string) *CreateOrder {
+	if o != "" {
+		c.ImportedItems = o
+		c.into["imported_items"] = ":imported_items"
+	}
+	return c
+}
+
+// SetImportedAddress import alamat
+func (c *CreateOrder) SetImportedAddress(o string) *CreateOrder {
+	if o != "" {
+		c.ImportedAddress = o
+		c.into["imported_address"] = ":imported_address"
+	}
+	return c
+}
+
+// SetImportedSurveyor import survey
+func (c *CreateOrder) SetImportedSurveyor(o string) *CreateOrder {
+	if o != "" {
+		c.ImportedSurveyor = o
+		c.into["imported_surveyor"] = ":imported_surveyor"
+	}
+	return c
+}
+
+// SetImportedSales import sales
+func (c *CreateOrder) SetImportedSales(o string) *CreateOrder {
+	if o != "" {
+		c.ImportedSales = o
+		c.into["imported_sales"] = ":imported_sales"
+	}
+	return c
+}
+
+// SetImportedMonthly import harga bulanan
+func (c *CreateOrder) SetImportedMonthly(monthly int) *CreateOrder {
+	c.importedMonthly = monthly
+	return c
+}
+
 // ReturnID Mengembalikan ID produk terakhir
 func (c *CreateOrder) ReturnID(id *int) *CreateOrder {
 	c.returnID = true
@@ -219,9 +270,12 @@ func (c CreateOrder) generateInsertQuery() string {
 // Save Simpan produk
 func (c *CreateOrder) Save() error {
 	db := DB
-	// Jika tidak ada barang yang di order
-	if len(c.orderItems) == 0 {
-		return errors.New("dbuery.order.go (CreateOrder) Save() Item order kosong")
+	// Jika bukan mode import
+	if !c.importMode {
+		// Jika tidak ada barang yang di order
+		if len(c.orderItems) == 0 {
+			return errors.New("dbuery.order.go (CreateOrder) Save() Item order kosong")
+		}
 	}
 
 	// Jika tanggal pengiriman kosong
@@ -231,11 +285,13 @@ func (c *CreateOrder) Save() error {
 		c.into["shipping_date"] = ":shipping_date"
 	}
 
-	// Jika alamat penagihan kosong
-	// Maka alamat penagihan = alamat pengiriman
-	if c.BillingAddressID == 0 {
-		c.BillingAddressID = c.ShippingAddressID
-		c.into["billing_address_id"] = ":billing_address_id"
+	if !c.importMode {
+		// Jika alamat penagihan kosong
+		// Maka alamat penagihan = alamat pengiriman
+		if c.BillingAddressID == 0 {
+			c.BillingAddressID = c.ShippingAddressID
+			c.into["billing_address_id"] = ":billing_address_id"
+		}
 	}
 
 	// Total keseluruhan tagihan
@@ -246,55 +302,59 @@ func (c *CreateOrder) Save() error {
 	var prices []int
 	var basePrices []int
 
-	// Periksa apakah pembelian kredit atau cash
-	// Lalu kalkulasikan
-	for _, item := range c.orderItems {
-		if c.Credit {
-			// Temporary credit price
-			var tmpcp int
-			p, err := ProductGetProductCreditPrice(item.ProductID)
-			if err == nil {
-				for _, ps := range p {
-					if ps.Duration == c.duration {
-						tmpcp = ps.Price
+	if !c.importMode {
+		// Periksa apakah pembelian kredit atau cash
+		// Lalu kalkulasikan
+		for _, item := range c.orderItems {
+			if c.Credit {
+				// Temporary credit price
+				var tmpcp int
+				p, err := ProductGetProductCreditPrice(item.ProductID)
+				if err == nil {
+					for _, ps := range p {
+						if ps.Duration == c.duration {
+							tmpcp = ps.Price
+						}
 					}
 				}
-			}
-			if tmpcp <= 0 {
-				log.Warn("dbquery.order.go (CreateOrder) Save() Harga kredit tidak ada")
-				return fmt.Errorf("tidak ditemukan harga kredit untuk durasi %d bulan", c.duration)
-			}
+				if tmpcp <= 0 {
+					log.Warn("dbquery.order.go (CreateOrder) Save() Harga kredit tidak ada")
+					return fmt.Errorf("tidak ditemukan harga kredit untuk durasi %d bulan", c.duration)
+				}
 
-			if item.Discount > 0 {
-				priceTotal += ((item.Discount * item.Quantity) * c.duration)
+				if item.Discount > 0 {
+					priceTotal += ((item.Discount * item.Quantity) * c.duration)
+				} else {
+					priceTotal += ((tmpcp * item.Quantity) * c.duration)
+				}
+
+				prices = append(prices, tmpcp)
 			} else {
-				priceTotal += ((tmpcp * item.Quantity) * c.duration)
+				p, err := ProductGetProductPrice(item.ProductID)
+				if err != nil {
+					log.Warn("dbquery.order.go (CreateOrder) Save() Get item price")
+					return err
+				}
+
+				// Jika menggunakan harga diskon
+				if item.Discount > 0 {
+					priceTotal += item.Discount * item.Quantity
+				} else {
+					priceTotal += p * item.Quantity
+				}
+				prices = append(prices, p)
 			}
 
-			prices = append(prices, tmpcp)
-		} else {
-			p, err := ProductGetProductPrice(item.ProductID)
+			bp, err := ProductGetProductBasePrice(item.ProductID)
 			if err != nil {
-				log.Warn("dbquery.order.go (CreateOrder) Save() Get item price")
+				log.Warn("dbquery.order.go (CreateOrder) Save() Get item base price")
 				return err
 			}
-
-			// Jika menggunakan harga diskon
-			if item.Discount > 0 {
-				priceTotal += item.Discount * item.Quantity
-			} else {
-				priceTotal += p * item.Quantity
-			}
-			prices = append(prices, p)
+			basePriceTotal += bp * item.Quantity
+			basePrices = append(basePrices, bp)
 		}
-
-		bp, err := ProductGetProductBasePrice(item.ProductID)
-		if err != nil {
-			log.Warn("dbquery.order.go (CreateOrder) Save() Get item base price")
-			return err
-		}
-		basePriceTotal += bp * item.Quantity
-		basePrices = append(basePrices, bp)
+	} else {
+		priceTotal = c.importedMonthly * c.duration
 	}
 
 	remaining := priceTotal
@@ -352,38 +412,40 @@ func (c *CreateOrder) Save() error {
 		return err
 	}
 
-	// Item yang akan di insert
-	var itemInsert []wrapper.OrderItemInsert
+	if !c.importMode {
+		// Item yang akan di insert
+		var itemInsert []wrapper.OrderItemInsert
 
-	itemInsertQuery := `INSERT INTO "order_item" (order_id, product_id, quantity, notes, base_price, price, discount) VALUES (:order_id, :product_id, :quantity, :notes, :base_price, :price, :discount)`
-	for n, i := range c.orderItems {
-		if stock, err := ProductCheckStock(i.ProductID); err == nil {
-			remainingStock := stock - i.Quantity
-			if err := ProductUpdateStock(i.ProductID, remainingStock); err != nil {
-				log.Warn("dbquery.order.go Save() mengubah stok")
+		itemInsertQuery := `INSERT INTO "order_item" (order_id, product_id, quantity, notes, base_price, price, discount) VALUES (:order_id, :product_id, :quantity, :notes, :base_price, :price, :discount)`
+		for n, i := range c.orderItems {
+			if stock, err := ProductCheckStock(i.ProductID); err == nil {
+				remainingStock := stock - i.Quantity
+				if err := ProductUpdateStock(i.ProductID, remainingStock); err != nil {
+					log.Warn("dbquery.order.go Save() mengubah stok")
+					return err
+				}
+			}
+			itemInsert = append(itemInsert, wrapper.OrderItemInsert{
+				OrderID:   tempReturnID,
+				ProductID: i.ProductID,
+				Quantity:  i.Quantity,
+				Notes:     i.Notes,
+				Price:     prices[n],
+				BasePrice: basePrices[n],
+				Discount:  i.Discount,
+			})
+		}
+
+		if rows, err := tx.NamedQuery(itemInsertQuery, itemInsert); err == nil {
+			if err := rows.Close(); err != nil {
+				log.Warn("dbquery.order.go Save() Insert item closing row")
 				return err
 			}
-		}
-		itemInsert = append(itemInsert, wrapper.OrderItemInsert{
-			OrderID:   tempReturnID,
-			ProductID: i.ProductID,
-			Quantity:  i.Quantity,
-			Notes:     i.Notes,
-			Price:     prices[n],
-			BasePrice: basePrices[n],
-			Discount:  i.Discount,
-		})
-	}
-
-	if rows, err := tx.NamedQuery(itemInsertQuery, itemInsert); err == nil {
-		if err := rows.Close(); err != nil {
-			log.Warn("dbquery.order.go Save() Insert item closing row")
+		} else {
+			log.Warn("dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert item ")
+			tx.Rollback()
 			return err
 		}
-	} else {
-		log.Warn("dbquery.order.go (c *CreateOrder) Save(db *sqlx.DB) Gagal insert item ")
-		tx.Rollback()
-		return err
 	}
 
 	// Simpan data substitutes
@@ -678,7 +740,11 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		o.code,
 		o.deposit,
 		o.price_total,
-		o.base_price_total
+		o.base_price_total,
+		o.imported_items,
+		o.imported_address,
+		o.imported_sales,
+		o.imported_surveyor
 		FROM "order" o
 		LEFT JOIN "order_credit_detail" ocd ON order_id=o.id
 		LEFT JOIN "zone_list" zlt ON zlt.zone_line_id=ocd.zone_line_id
@@ -719,12 +785,16 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 	var shipping string
 	var billing string
 
-	if ship, err := AddressGetByID(o.ShippingAddressID); err == nil {
-		shipping = ship.String()
+	if int(o.ShippingAddressID.Int64) > 0 {
+		if ship, err := AddressGetByID(int(o.ShippingAddressID.Int64)); err == nil {
+			shipping = ship.String()
+		}
 	}
 
-	if bill, err := AddressGetByID(o.BillingAddressID); err == nil {
-		billing = bill.String()
+	if int(o.BillingAddressID.Int64) > 0 {
+		if bill, err := AddressGetByID(int(o.BillingAddressID.Int64)); err == nil {
+			billing = bill.String()
+		}
 	}
 
 	order = wrapper.Order{
@@ -751,24 +821,28 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 			Thumbnail: o.CollectorThumb.String,
 		},
 		CreatedBy: wrapper.NameID{
-			ID:        o.CreatedByID,
-			Name:      o.CreatedByName,
-			Thumbnail: o.CreatedByThumb,
+			ID:        int(o.CreatedByID.Int64),
+			Name:      o.CreatedByName.String,
+			Thumbnail: o.CreatedByThumb.String,
 		},
-		ShippingAddress: shipping,
-		BillingAddress:  billing,
-		Status:          strings.Title(o.Status),
-		Code:            o.Code,
-		Credit:          o.Credit,
-		Notes:           o.Notes.String,
-		OrderDate:       o.OrderDate,
-		ShippingDate:    o.ShippingDate,
-		CreatedAt:       o.CreatedAt,
-		Deposit:         o.Deposit,
-		PriceTotal:      o.PriceTotal,
-		BasePriceTotal:  o.BasePriceTotal,
-		Items:           items,
-		CreditDetail:    creditDetail,
+		ShippingAddress:  shipping,
+		BillingAddress:   billing,
+		Status:           strings.Title(o.Status),
+		Code:             o.Code,
+		Credit:           o.Credit,
+		Notes:            o.Notes.String,
+		OrderDate:        o.OrderDate,
+		ShippingDate:     o.ShippingDate,
+		CreatedAt:        o.CreatedAt,
+		Deposit:          o.Deposit,
+		PriceTotal:       o.PriceTotal,
+		BasePriceTotal:   int(o.BasePriceTotal.Int64),
+		Items:            items,
+		CreditDetail:     creditDetail,
+		ImportedItems:    o.ImportedItems.String,
+		ImportedAddress:  o.ImportedAddress.String,
+		ImportedSales:    o.ImportedSales.String,
+		ImportedSurveyor: o.ImportedSurveyor.String,
 	}
 
 	return order, nil
@@ -839,7 +913,7 @@ func OrderGetSimpleOrderByID(oid int) (wrapper.OrderSimple, error) {
 
 	var billing string
 
-	if bill, err := AddressGetByID(o.BillingAddressID); err == nil {
+	if bill, err := AddressGetByID(int(o.BillingAddressID.Int64)); err == nil {
 		billing = bill.String()
 	}
 
@@ -872,7 +946,7 @@ func OrderGetSimpleOrderByID(oid int) (wrapper.OrderSimple, error) {
 		ShippingDate:   o.ShippingDate,
 		Deposit:        o.Deposit,
 		PriceTotal:     o.PriceTotal,
-		BasePriceTotal: o.BasePriceTotal,
+		BasePriceTotal: int(o.BasePriceTotal.Int64),
 		Items:          items,
 		CreditDetail:   creditDetail,
 	}
@@ -951,11 +1025,11 @@ func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 	var shipping string
 	var billing string
 
-	if ship, err := AddressGetByID(o.ShippingAddressID); err == nil {
+	if ship, err := AddressGetByID(int(o.ShippingAddressID.Int64)); err == nil {
 		shipping = ship.String()
 	}
 
-	if bill, err := AddressGetByID(o.BillingAddressID); err == nil {
+	if bill, err := AddressGetByID(int(o.BillingAddressID.Int64)); err == nil {
 		billing = bill.String()
 	}
 
@@ -983,9 +1057,9 @@ func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 			Thumbnail: o.CollectorThumb.String,
 		},
 		CreatedBy: wrapper.NameID{
-			ID:        o.CreatedByID,
-			Name:      o.CreatedByName,
-			Thumbnail: o.CreatedByThumb,
+			ID:        int(o.CreatedByID.Int64),
+			Name:      o.CreatedByName.String,
+			Thumbnail: o.CreatedByThumb.String,
 		},
 		ShippingAddress: shipping,
 		BillingAddress:  billing,
@@ -998,7 +1072,7 @@ func OrderGetOrderByCode(code string) (wrapper.Order, error) {
 		CreatedAt:       o.CreatedAt,
 		Deposit:         o.Deposit,
 		PriceTotal:      o.PriceTotal,
-		BasePriceTotal:  o.BasePriceTotal,
+		BasePriceTotal:  int(o.BasePriceTotal.Int64),
 		Items:           items,
 		CreditDetail:    creditDetail,
 	}

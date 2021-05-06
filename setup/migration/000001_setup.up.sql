@@ -50,6 +50,11 @@ CREATE TABLE "user" (
     FOREIGN KEY (created_by) REFERENCES "user" ("id")
 );
 
+-- Buat user
+INSERT INTO "user" ("first_name", "username", "password", "gender")
+    VALUES ('deri', 'deri', 'tetehrika', 'm');
+
+
 -- Tabel KK
 CREATE TABLE "family_card" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
@@ -76,6 +81,11 @@ CREATE TABLE "user_role" (
     FOREIGN KEY (role_id) REFERENCES "role" ("id"),
     FOREIGN KEY (user_id) REFERENCES "user" ("id")
 );
+
+-- Buat user
+INSERT INTO "user_role" ("role_id", "user_id")
+    VALUES (1, 1);
+
 
 -- Tabel email
 -- Pengguna boleh memiliki beberapa email
@@ -263,7 +273,10 @@ CREATE TABLE "order" (
     "driver_id" int,
     "shipping_address_id" int,
     "billing_address_id" int,
-    "xl_address" text,
+    "imported_items" varchar(100),
+    "imported_address" text,
+    "imported_sales" varchar(50),
+    "imported_surveyor" varchar(50),
     "code" varchar(50) NOT NULL UNIQUE,
     "status" varchar(25) NOT NULL DEFAULT 'pending',
     "credit" boolean DEFAULT 'false' NOT NULL,
@@ -271,10 +284,10 @@ CREATE TABLE "order" (
     "order_date" date NOT NULL DEFAULT CURRENT_DATE,
     "shipping_date" date NOT NULL DEFAULT CURRENT_DATE,
     "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
-    "created_by" int NOT NULL,
+    "created_by" int,
     "deposit" numeric(15) DEFAULT 0,
     "price_total" numeric(15) NOT NULL,
-    "base_price_total" numeric(15) NOT NULL,
+    "base_price_total" numeric(15),
     PRIMARY KEY (id),
     FOREIGN KEY (customer_id) REFERENCES "user" ("id"),
     FOREIGN KEY (sales_id) REFERENCES "user" ("id"),

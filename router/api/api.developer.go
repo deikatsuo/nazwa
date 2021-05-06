@@ -8,7 +8,9 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/gin-gonic/gin"
@@ -160,6 +162,8 @@ func DeveloperImportUpload(c *gin.Context) {
 	status := ""
 	var simpleErrMap map[string]interface{}
 
+	var imLine int
+
 	// File
 	file, err := c.FormFile("file")
 
@@ -169,6 +173,14 @@ func DeveloperImportUpload(c *gin.Context) {
 		message = "Tidak ada file, atau format file tidak valid"
 		status = "error"
 		next = false
+	}
+
+	lineName := file.Filename
+	lineName = strings.ToLower(strings.Split(lineName, ".")[0])
+	if lid, err := dbquery.LineGetId(lineName); err == nil {
+		imLine = lid
+	} else {
+		log.Warn("Select line id by code, fail")
 	}
 
 	// Buka file
@@ -197,7 +209,7 @@ func DeveloperImportUpload(c *gin.Context) {
 	rows, _ := f.GetRows("Pelanggan")
 	for rid, row := range rows {
 		// Baca mulai dari baris ke 5
-		if rid >= 4 && row[2] != "" {
+		if rid >= 4 && row[2] != "" && row[29] != "Lunas" {
 			var kode string
 			gender := "m"
 			if row[2][0:3] == "Ibu" {
@@ -219,7 +231,7 @@ func DeveloperImportUpload(c *gin.Context) {
 			if len(splitname) > 1 {
 				lastname = splitname[1]
 			}
-			var substitutes []wrapper.OrderUserSubstituteForm
+			var imSubstitutes []wrapper.OrderUserSubstituteForm
 
 			if len(sname) > 1 {
 				splitsubs := strings.Split(sname[1], "/")
@@ -243,7 +255,7 @@ func DeveloperImportUpload(c *gin.Context) {
 							gender = "m"
 						}
 					}
-					substitutes = append(substitutes, wrapper.OrderUserSubstituteForm{
+					imSubstitutes = append(imSubstitutes, wrapper.OrderUserSubstituteForm{
 						Firstname: sfn,
 						Lastname:  sln,
 						Gender:    sg,
@@ -259,6 +271,18 @@ func DeveloperImportUpload(c *gin.Context) {
 
 			// Simpan data user
 			var uid int
+			var code string
+			var imItems string
+			var imDeposit int
+			var imDuration int
+			var imMonthly int
+			var imAddress string
+			var imShippingDate string
+			var imSales string
+			var imSurveyor string
+			var imDue int
+			var imNotes string
+
 			user := dbquery.UserNew()
 			err := user.SetFirstName(firstname).
 				SetLastName(lastname).
@@ -268,17 +292,114 @@ func DeveloperImportUpload(c *gin.Context) {
 				ReturnID(&uid).
 				Save()
 			if err != nil {
-				log.Warn("ERROR: api.user.go UserCreate() Gagal membuat user baru")
+				log.Warn("ERROR: api.developer.go DeveloperImportUpload() Gagal membuat user baru")
 				log.Error(err)
+			} else {
+
+				uname, err := dbquery.UserGetUsername(uid)
+				if err == nil {
+					if uname[:3] == "NZ-" || uname[:3] == "NE-" {
+						if len(uname) >= 7 {
+							uname = uname[3:]
+						}
+					}
+					tm := time.Now()
+					dt := strings.ReplaceAll(tm.Format("01-02-2006"), "-", "")
+					dy := tm.Format("Mon")
+					uq := tm.Format(".000")[1:]
+					code = strings.ToUpper(fmt.Sprintf("%s%s-%s%s-%s%s", uname[4:], dy, uq, dt[4:], dt[:4], uname[:4]))
+				} else {
+					log.Warn("ERROR: api.developer.go DeveloperImportUpload() Gagal membuat kode")
+					log.Error(err)
+				}
+
+				if row[4] != "" {
+					imItems = row[4]
+				}
+				if row[6] != "" {
+					imDeposit, _ = strconv.Atoi(row[6])
+				}
+				if row[8] != "" {
+					imDuration, _ = strconv.Atoi(row[8])
+				}
+				if row[10] != "" {
+					imMonthly, _ = strconv.Atoi(row[10])
+				}
+				if row[11] != "" {
+					imAddress = row[11]
+				}
+				if row[13] != "" {
+					imShippingDate = row[13]
+					imShippingDate = strings.ReplaceAll(imShippingDate, " ", "")
+					imShippingDate = strings.ReplaceAll(imShippingDate, "/", "-")
+					imShippingDate = strings.ReplaceAll(imShippingDate, ".", "-")
+					imSDS := strings.Split(imShippingDate, "-")
+					if len(imSDS) == 3 {
+						imShippingDate = fmt.Sprintf("%s-%s-%s", imSDS[2], imSDS[1], imSDS[0])
+					} else {
+						log.Warn("Tanggal tidak diformat ulang")
+					}
+				}
+				if row[14] != "" {
+					imSales = row[14]
+				}
+				if row[15] != "" {
+					imSurveyor = row[15]
+				}
+				if row[16] != "" {
+					imDue, _ = strconv.Atoi(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(row[16], " ", ""), "[", ""), "]", ""))
+				}
+				if row[21] != "" {
+					imNotes = row[21]
+				}
+
+				// Input order
+				order := dbquery.NewOrder()
+				errs := order.SetCustomer(uid).
+					SetImportMode(true).
+					SetImportedSales(imSales).
+					SetImportedSurveyor(imSurveyor).
+					SetImportedAddress(imAddress).
+					SetImportedItems(imItems).
+					SetCredit(true).
+					SetDeposit(imDeposit).
+					SetDuration(imDuration).
+					SetDue(imDue).
+					SetLine(imLine).
+					SetNotes(imNotes).
+					SetCode(code).
+					SetOrderDate(imShippingDate).
+					SetShippingDate(imShippingDate).
+					SetSubstitutes(imSubstitutes).
+					SetImportedMonthly(imMonthly).
+					Save()
+
+				if errs != nil {
+					log.Warn("ERROR: api.developer.go DeveloperImportUpload() Gagal membuat order baru")
+					log.Error(errs)
+				}
 			}
 
+			fmt.Println("NAMA FILE: ", lineName)
 			fmt.Println("ID DATABASE", uid)
 			fmt.Println("Kode: ", kode)
 			fmt.Println("Jenis Kelamin: ", gender)
 			fmt.Println("Nama depan: ", firstname)
 			fmt.Println("Nama belakang: ", lastname)
-			fmt.Println(substitutes)
+			fmt.Println(imSubstitutes)
 			fmt.Println("Nomor HP: ", phone)
+			fmt.Println("ORDER")
+			fmt.Println("Kode: ", code)
+			fmt.Println("Arah: ", imLine)
+			fmt.Println("Sales: ", imSales)
+			fmt.Println("Survey: ", imSurveyor)
+			fmt.Println("Deposit: ", imDeposit)
+			fmt.Println("Durasi: ", imDuration)
+			fmt.Println("Alamat: ", imAddress)
+			fmt.Println("Tanggal:", imShippingDate)
+			fmt.Println("Jatuh tempo: ", imDue)
+			fmt.Println("Catatan: ", imNotes)
+			fmt.Println("Bulanan: ", imMonthly)
 			fmt.Println()
 		}
 	}

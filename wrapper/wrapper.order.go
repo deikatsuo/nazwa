@@ -26,6 +26,11 @@ type OrderInsert struct {
 	Deposit        int `db:"deposit"`
 	PriceTotal     int `db:"price_total"`
 	BasePriceTotal int `db:"base_price_total"`
+
+	ImportedItems    string `db:"imported_items"`
+	ImportedAddress  string `db:"imported_address"`
+	ImportedSales    string `db:"imported_sales"`
+	ImportedSurveyor string `db:"imported_surveyor"`
 }
 
 // OrderItemInsert insert item
@@ -94,11 +99,11 @@ type NullableOrder struct {
 	DriverID          sql.NullInt64  `db:"driver_id"`
 	DriverName        sql.NullString `db:"driver_name"`
 	DriverThumb       sql.NullString `db:"driver_thumb"`
-	CreatedByID       int            `db:"created_by_id"`
-	CreatedByName     string         `db:"created_by_name"`
-	CreatedByThumb    string         `db:"created_by_thumb"`
-	ShippingAddressID int            `db:"shipping_address_id"`
-	BillingAddressID  int            `db:"billing_address_id"`
+	CreatedByID       sql.NullInt64  `db:"created_by_id"`
+	CreatedByName     sql.NullString `db:"created_by_name"`
+	CreatedByThumb    sql.NullString `db:"created_by_thumb"`
+	ShippingAddressID sql.NullInt64  `db:"shipping_address_id"`
+	BillingAddressID  sql.NullInt64  `db:"billing_address_id"`
 	Status            string         `db:"status"`
 	Code              string         `db:"code"`
 	Credit            bool           `db:"credit"`
@@ -108,7 +113,12 @@ type NullableOrder struct {
 	CreatedAt         string         `db:"created_at"`
 	Deposit           int            `db:"deposit"`
 	PriceTotal        int            `db:"price_total"`
-	BasePriceTotal    int            `db:"base_price_total"`
+	BasePriceTotal    sql.NullInt64  `db:"base_price_total"`
+
+	ImportedItems    sql.NullString `db:"imported_items"`
+	ImportedAddress  sql.NullString `db:"imported_address"`
+	ImportedSales    sql.NullString `db:"imported_sales"`
+	ImportedSurveyor sql.NullString `db:"imported_surveyor"`
 }
 
 // Order mapping data order
@@ -136,6 +146,11 @@ type Order struct {
 	BasePriceTotal  int
 	CreditDetail    OrderCreditDetail
 	MonthlyCredit   []OrderMonthlyCredit
+
+	ImportedItems    string
+	ImportedAddress  string
+	ImportedSales    string
+	ImportedSurveyor string
 }
 
 // OrderSimple data order sederhana

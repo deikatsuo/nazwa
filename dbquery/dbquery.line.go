@@ -124,6 +124,18 @@ func LineCodeExist(c string) bool {
 	return err == nil
 }
 
+// LineGetId dapatkan id arah
+func LineGetId(c string) (int, error) {
+	db := DB
+	var id int
+	query := `SELECT id FROM "zone_line" WHERE code=$1`
+	err := db.Get(&id, query, c)
+	if err != nil {
+		return id, err
+	}
+	return id, nil
+}
+
 // LineDelete hapus arah
 func LineDelete(lid int) error {
 	db := DB
