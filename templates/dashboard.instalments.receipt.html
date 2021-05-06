@@ -159,7 +159,9 @@
             >
               <div class="relative z-10 inset-0">
                 <div class="w-full h-full p-10">
-                  <div class="w-full h-full tracking-wide items-center font-normal font-sans">
+                  <div
+                    class="w-full h-full tracking-wide items-center font-normal font-sans"
+                  >
                     <div class="w-full flex flex-row text-left px-4">
                       <div class="w-3/5 relative">
                         <span
@@ -312,11 +314,20 @@
                           </th>
                           <td class="flex flex-wrap px-2">
                             <span>:</span>
-                            <span
-                              style="width: 98%"
-                              class="pl-1"
-                              x-text="`${order.BillingAddress}`"
-                            ></span>
+                            <template x-if="order.ImportedAddress === ''">
+                              <span
+                                style="width: 98%"
+                                class="pl-1"
+                                x-text="`${order.BillingAddress}`"
+                              ></span>
+                            </template>
+                            <template x-if="order.ImportedAddress !== ''">
+                              <span
+                                style="width: 98%"
+                                class="pl-1"
+                                x-text="`${order.ImportedAddress}`"
+                              ></span>
+                            </template>
                           </td>
                         </tr>
                         <tr class="border-b border-black">
@@ -347,33 +358,42 @@
                           </th>
                           <td class="flex flex-wrap px-2">
                             <span>:</span>
-                            <span style="width: 98%" class="pl-1">
-                              <template x-if="order.Items !== null">
-                                <template
-                                  x-for="(item, idx) in order.Items"
-                                  :key="idx"
-                                >
-                                  <div class="inline-flex item-center">
-                                    <p
-                                      class="text-black"
-                                      x-text="`[${item.Quantity}x ${item.Product.Name}]`"
-                                    ></p>
-                                    <p
-                                      class="pr-1"
-                                      x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
-                                    >
-                                      ,
-                                    </p>
-                                    <p
-                                      class="px-1"
-                                      x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
-                                    >
-                                      dan
-                                    </p>
-                                  </div>
+                            <template x-if="order.ImportedItems === ''">
+                              <span style="width: 98%" class="pl-1">
+                                <template x-if="order.Items !== null">
+                                  <template
+                                    x-for="(item, idx) in order.Items"
+                                    :key="idx"
+                                  >
+                                    <div class="inline-flex item-center">
+                                      <p
+                                        class="text-black"
+                                        x-text="`[${item.Quantity}x ${item.Product.Name}]`"
+                                      ></p>
+                                      <p
+                                        class="pr-1"
+                                        x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
+                                      >
+                                        ,
+                                      </p>
+                                      <p
+                                        class="px-1"
+                                        x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
+                                      >
+                                        dan
+                                      </p>
+                                    </div>
+                                  </template>
                                 </template>
-                              </template>
-                            </span>
+                                <template x-if="order.ImportedItems !== ''">
+                                  <span
+                                    style="width: 98%"
+                                    class="pl-1"
+                                    x-text="order.ImportedItems"
+                                  ></span>
+                                </template>
+                              </span>
+                            </template>
                           </td>
                         </tr>
                       </table>
@@ -665,7 +685,7 @@
         // Kirim signal ke printer untuk melakukan print
         printer.sendToClient();
       },
-      
+
       async getItems() {
         items = "";
         for (i=0; i<this.order.Items.length; i++) {
