@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"nazwa/dbquery"
 	"nazwa/misc"
 	"nazwa/wrapper"
@@ -10,7 +9,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/skip2/go-qrcode"
 )
 
 // PageDashboardInstalmentsReceipt halaman kwitansi berdasarkan ID
@@ -55,21 +53,23 @@ func PageDashboardInstalmentsReceipt(c *gin.Context) {
 		}
 	}
 
-	for i, mon := range monthly {
-		// Buat QR
-		var png []byte
-		png, err := qrcode.Encode(fmt.Sprintf("%s/check/receipt/%s", misc.GetEnv("SITE_URL", "").(string), mon.Code), qrcode.Medium, 100)
+	/*
+		for i, mon := range monthly {
+			// Buat QR
+			var png []byte
+			png, err := qrcode.Encode(fmt.Sprintf("%s/check/receipt/%s", misc.GetEnv("SITE_URL", "").(string), mon.Code), qrcode.Medium, 100)
 
-		// Tanggal sekarang
-		current := time.Now()
+			// Tanggal sekarang
+			current := time.Now()
 
-		if err == nil {
-			monthly[i].QR = png
-			if mon.PrintDate == "" {
-				monthly[i].PrintDate = current.Format("02/01/2006")
+			if err == nil {
+				monthly[i].QR = png
+				if mon.PrintDate == "" {
+					monthly[i].PrintDate = current.Format("02-01-2006")
+				}
 			}
 		}
-	}
+	*/
 
 	if next {
 		status = "success"
@@ -83,6 +83,7 @@ func PageDashboardInstalmentsReceipt(c *gin.Context) {
 		"message":    message,
 		"status":     status,
 		"page":       "instalments_receipt",
+		"date":       time.Now().Format("02-01-2006"),
 		"css": []string{
 			"/assets/css/print.css",
 			"/assets/css/loading.css",
