@@ -394,6 +394,9 @@
                                 </template>
                               </span>
                             </template>
+                            <template x-if="order.ImportedItems !== ''">
+                              <span style="width: 98%" class="pl-1" x-text="order.ImportedItems"></span>
+                            </template>
                           </td>
                         </tr>
                       </table>
