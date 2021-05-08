@@ -349,6 +349,9 @@ func DeveloperImportUpload(c *gin.Context) {
 				if row[16] != "" {
 					imDue, _ = strconv.Atoi(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(row[16], " ", ""), "[", ""), "]", ""))
 				}
+				if row[17] != "" {
+					imDue, _ = strconv.Atoi(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(row[17], " ", ""), "{", ""), "}", ""))
+				}
 				if row[21] != "" {
 					imNotes = row[21]
 				}
