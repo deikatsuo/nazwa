@@ -22,6 +22,7 @@ type CreateOrder struct {
 	substitutes     []wrapper.OrderUserSubstituteForm
 	due             int
 	line            int
+	lineMax         int
 	duration        int
 	importMode      bool
 	importedMonthly int
@@ -144,6 +145,14 @@ func (c *CreateOrder) SetDue(o int) *CreateOrder {
 func (c *CreateOrder) SetLine(o int) *CreateOrder {
 	if o > 0 {
 		c.line = o
+	}
+	return c
+}
+
+// SetLineCodeMaxNumber tentukan max number manual
+func (c *CreateOrder) SetLineCodeMaxNumber(o int) *CreateOrder {
+	if o > 0 {
+		c.lineMax = o
 	}
 	return c
 }
@@ -518,9 +527,12 @@ func (c *CreateOrder) Save() error {
 		} else {
 			log.Warn("Error sepertinya belum ada data, skip error")
 		}
-
-		// tambah satu
-		lmax++
+		if c.lineMax > 0 {
+			lmax = c.lineMax
+		} else {
+			// tambah satu
+			lmax++
+		}
 
 		if _, err := tx.Exec(`INSERT INTO "zone_line_list" (zone_line_code, number) VALUES ($1, $2)`, lc, lmax); err != nil {
 			log.Warn("dbquery.order.go Save() insert nomor arah total")

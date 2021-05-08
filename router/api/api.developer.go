@@ -210,12 +210,12 @@ func DeveloperImportUpload(c *gin.Context) {
 	for rid, row := range rows {
 		// Baca mulai dari baris ke 5
 		if rid >= 4 && row[2] != "" && row[29] != "Lunas" {
-			var kode string
+			var lineCode string
 			gender := "m"
 			if row[2][0:3] == "Ibu" {
 				gender = "f"
 			}
-			kode = row[1]
+			lineCode = strings.ToLower(row[1])
 
 			// Pecah nama konsumen
 			sname := strings.SplitN(row[2], "/", 2)
@@ -272,6 +272,7 @@ func DeveloperImportUpload(c *gin.Context) {
 			// Simpan data user
 			var uid int
 			var code string
+			var imLineMax int
 			var imItems string
 			var imDeposit int
 			var imDuration int
@@ -312,6 +313,8 @@ func DeveloperImportUpload(c *gin.Context) {
 					log.Warn("ERROR: api.developer.go DeveloperImportUpload() Gagal membuat kode")
 					log.Error(err)
 				}
+
+				imLineMax, _ = strconv.Atoi(strings.TrimPrefix(strings.ReplaceAll(lineCode, lineName, ""), "0"))
 
 				if row[4] != "" {
 					imItems = row[4]
@@ -369,6 +372,7 @@ func DeveloperImportUpload(c *gin.Context) {
 					SetDuration(imDuration).
 					SetDue(imDue).
 					SetLine(imLine).
+					SetLineCodeMaxNumber(imLineMax).
 					SetNotes(imNotes).
 					SetCode(code).
 					SetOrderDate(imShippingDate).
@@ -385,7 +389,7 @@ func DeveloperImportUpload(c *gin.Context) {
 
 			fmt.Println("NAMA FILE: ", lineName)
 			fmt.Println("ID DATABASE", uid)
-			fmt.Println("Kode: ", kode)
+			fmt.Println("Kode: ", lineCode)
 			fmt.Println("Jenis Kelamin: ", gender)
 			fmt.Println("Nama depan: ", firstname)
 			fmt.Println("Nama belakang: ", lastname)
