@@ -55,7 +55,7 @@
         </span>
       </div>
     </template>
-    
+
     <div class="w-full">
       <!-- Zona -->
       <div class="w-full">
@@ -295,27 +295,63 @@
                                   class="w-full h-full relative flex items-center flex-wrap"
                                 >
                                   <!-- Aangsuran kedalam bulatan -->
-                                  <div
-                                    class="absolute cursor-pointer"
-                                    style="left: -2.8rem"
-                                    x-show="order.showall"
-                                    @click="receipt.Print = !receipt.Print; if (receipt.Print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
+                                  <template
+                                    x-if="order.OrderInfo.ImportedAddress === ''"
                                   >
                                     <div
-                                      class="border font-bold w-8 h-8 flex items-center justify-center rounded-full"
-                                      :class="{'checked': receipt.Print, 'bg-white text-black': !receipt.Done && today(receipt.DueDate), 'bg-orange-100 text-orange-400 border-orange-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && receipt.Printed, 'bg-red-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && !receipt.Printed, 'bg-green-100 text-green-400 border-green-500': past(receipt.DueDate) && !receipt.Done && receipt.Paid > 0}"
-                                      x-text="receipt.Nth"
-                                    ></div>
-                                  </div>
+                                      class="absolute cursor-pointer"
+                                      style="left: -2.8rem"
+                                      x-show="order.showall"
+                                      @click="receipt.Print = !receipt.Print; if (receipt.Print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
+                                    >
+                                      <div
+                                        class="border font-bold w-8 h-8 flex items-center justify-center rounded-full"
+                                        :class="{'checked': receipt.Print, 'bg-white text-black': !receipt.Done && today(receipt.DueDate), 'bg-orange-100 text-orange-400 border-orange-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && receipt.Printed, 'bg-red-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && !receipt.Printed, 'bg-green-100 text-green-400 border-green-500': past(receipt.DueDate) && !receipt.Done && receipt.Paid > 0}"
+                                        x-text="receipt.Nth"
+                                      ></div>
+                                    </div>
+                                  </template>
+                                  <template
+                                    x-if="order.OrderInfo.ImportedAddress !== ''"
+                                  >
+                                    <div
+                                      class="absolute cursor-pointer"
+                                      style="left: -2.8rem"
+                                      x-show="order.showall"
+                                      @click="receipt.Print = !receipt.Print; if (receipt.Print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.ImportedAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: order.OrderInfo.ImportedItems, Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
+                                    >
+                                      <div
+                                        class="border font-bold w-8 h-8 flex items-center justify-center rounded-full"
+                                        :class="{'checked': receipt.Print, 'bg-white text-black': !receipt.Done && today(receipt.DueDate), 'bg-orange-100 text-orange-400 border-orange-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && receipt.Printed, 'bg-red-100 text-red-400 border-red-500': !receipt.Done && past(receipt.DueDate) && !today(receipt.DueDate) && !receipt.Printed, 'bg-green-100 text-green-400 border-green-500': past(receipt.DueDate) && !receipt.Done && receipt.Paid > 0}"
+                                        x-text="receipt.Nth"
+                                      ></div>
+                                    </div>
+                                  </template>
                                   <div class="w-full md:w-4/6 flex flex-wrap">
                                     <div class="w-full md:w-2/6 flex flex-wrap">
-                                      <div
-                                        class="w-1/6 flex items-center justify-center text-2xl cursor-pointer"
-                                        :class="{'checked': receipt.Print }"
-                                        x-text="receipt.Nth"
-                                        x-show="!order.showall"
-                                        @click="receipt.Print = !receipt.Print; if (receipt.Print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
-                                      ></div>
+                                      <!-- Tombol check -->
+                                      <template
+                                        x-if="order.OrderInfo.ImportedAddress === ''"
+                                      >
+                                        <div
+                                          class="w-1/6 flex items-center justify-center text-2xl cursor-pointer"
+                                          :class="{'checked': receipt.Print }"
+                                          x-text="receipt.Nth"
+                                          x-show="!order.showall"
+                                          @click="receipt.Print = !receipt.Print; if (receipt.Print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.BillingAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: itemsToString(order.OrderInfo.Items), Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
+                                        ></div>
+                                      </template>
+                                      <template
+                                        x-if="order.OrderInfo.ImportedAddress !== ''"
+                                      >
+                                        <div
+                                          class="w-1/6 flex items-center justify-center text-2xl cursor-pointer"
+                                          :class="{'checked': receipt.Print }"
+                                          x-text="receipt.Nth"
+                                          x-show="!order.showall"
+                                          @click="receipt.Print = !receipt.Print; if (receipt.Print) { data = { ID: receipt.ID, Nth: receipt.Nth, DueDate: receipt.DueDate, Promise: receipt.Promise, PrintDate: receipt.PrintDate, Code: receipt.Code, CreditCode: order.OrderInfo.CreditDetail.CreditCode, Customer: `${order.OrderInfo.Customer.Name} (${order.OrderInfo.Customer.Code})`, BillingAddress: order.OrderInfo.ImportedAddress, Deposit: order.OrderInfo.Deposit, Monthly: order.OrderInfo.CreditDetail.Monthly, Items: order.OrderInfo.ImportedItems, Total: order.OrderInfo.CreditDetail.Total, Collector: order.OrderInfo.Collector.Name, }; pushChecked(data); } else { removeChecked(receipt.ID) }"
+                                        ></div>
+                                      </template>
                                       <div
                                         class="flex items-center justify-center px-2"
                                         :class="{'w-5/6': !order.showall, 'w-full': order.showall }"
@@ -338,13 +374,37 @@
                                     <div
                                       class="w-full border py-2 md:py-0 md:border-none md:w-4/6 px-2"
                                     >
-                                      <div
-                                        x-text="`${itemsToString(order.OrderInfo.Items)}`"
-                                      ></div>
+                                      <!-- Nama item -->
+                                      <template
+                                        x-if="order.OrderInfo.ImportedItems === ''"
+                                      >
+                                        <div
+                                          x-text="`${itemsToString(order.OrderInfo.Items)}`"
+                                        ></div>
+                                      </template>
+                                      <template
+                                        x-if="order.OrderInfo.ImportedItems !== ''"
+                                      >
+                                        <div
+                                          x-text="order.OrderInfo.ImportedItems"
+                                        ></div>
+                                      </template>
                                       <hr />
-                                      <div
-                                        x-text="order.OrderInfo.BillingAddress"
-                                      ></div>
+                                      <!-- Alamat penagihan -->
+                                      <template
+                                        x-if="order.OrderInfo.ImportedAddress === ''"
+                                      >
+                                        <div
+                                          x-text="order.OrderInfo.BillingAddress"
+                                        ></div>
+                                      </template>
+                                      <template
+                                        x-if="order.OrderInfo.ImportedAddress !== ''"
+                                      >
+                                        <div
+                                          x-text="order.OrderInfo.ImportedAddress"
+                                        ></div>
+                                      </template>
                                     </div>
                                   </div>
                                   <div class="w-full md:w-2/6 flex flex-wrap">

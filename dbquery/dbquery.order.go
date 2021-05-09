@@ -887,7 +887,11 @@ func OrderGetSimpleOrderByID(oid int) (wrapper.OrderSimple, error) {
 		o.code,
 		o.deposit,
 		o.price_total,
-		o.base_price_total
+		o.base_price_total,
+		o.imported_items,
+		o.imported_address,
+		o.imported_sales,
+		o.imported_surveyor
 		FROM "order" o
 		LEFT JOIN "order_credit_detail" ocd ON order_id=o.id
 		LEFT JOIN "zone_list" zlt ON zlt.zone_line_id=ocd.zone_line_id
@@ -927,8 +931,10 @@ func OrderGetSimpleOrderByID(oid int) (wrapper.OrderSimple, error) {
 
 	var billing string
 
-	if bill, err := AddressGetByID(int(o.BillingAddressID.Int64)); err == nil {
-		billing = bill.String()
+	if !o.ImportedAddress.Valid {
+		if bill, err := AddressGetByID(int(o.BillingAddressID.Int64)); err == nil {
+			billing = bill.String()
+		}
 	}
 
 	order = wrapper.OrderSimple{
@@ -954,15 +960,19 @@ func OrderGetSimpleOrderByID(oid int) (wrapper.OrderSimple, error) {
 			Name:      o.CollectorName.String,
 			Thumbnail: o.CollectorThumb.String,
 		},
-		BillingAddress: billing,
-		Code:           o.Code,
-		Credit:         o.Credit,
-		ShippingDate:   o.ShippingDate,
-		Deposit:        o.Deposit,
-		PriceTotal:     o.PriceTotal,
-		BasePriceTotal: int(o.BasePriceTotal.Int64),
-		Items:          items,
-		CreditDetail:   creditDetail,
+		BillingAddress:   billing,
+		Code:             o.Code,
+		Credit:           o.Credit,
+		ShippingDate:     o.ShippingDate,
+		Deposit:          o.Deposit,
+		PriceTotal:       o.PriceTotal,
+		BasePriceTotal:   int(o.BasePriceTotal.Int64),
+		Items:            items,
+		CreditDetail:     creditDetail,
+		ImportedItems:    o.ImportedItems.String,
+		ImportedAddress:  o.ImportedAddress.String,
+		ImportedSales:    o.ImportedSales.String,
+		ImportedSurveyor: o.ImportedSurveyor.String,
 	}
 
 	return order, nil

@@ -10,9 +10,10 @@ type InstalmentShowByDate struct {
 type InstalmentOrderReceipt struct {
 	OrderID      int
 	SuggestPrint bool
-	Undone       int
-	OrderInfo    OrderSimple
-	Monthly      []OrderMonthlyCredit
+	// Total kwitansi yang belum selesai yang sudah masuk jatuh tempo
+	Undone    int
+	OrderInfo OrderSimple
+	Monthly   []OrderMonthlyCredit
 }
 
 // InstalmentPrintReceipt data kwitansi yang akan di print

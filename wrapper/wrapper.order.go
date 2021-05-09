@@ -169,6 +169,11 @@ type OrderSimple struct {
 	PriceTotal     int
 	BasePriceTotal int
 	CreditDetail   OrderCreditDetail
+
+	ImportedItems    string
+	ImportedAddress  string
+	ImportedSales    string
+	ImportedSurveyor string
 }
 
 // NullableOrderItem item/produk yang di order
@@ -275,5 +280,6 @@ type OrderMonthlyCredit struct {
 	Position  string
 	Printed   bool
 	Print     bool
-	Done      bool
+	// Kwitansi sudah selesai
+	Done bool
 }
