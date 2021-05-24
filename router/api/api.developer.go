@@ -206,8 +206,8 @@ func DeveloperImportUpload(c *gin.Context) {
 	}
 
 	// Ambil semua baris di Sheet Pelanggan
-	rows, _ := f.GetRows("Pelanggan")
-	for rid, row := range rows {
+	customers, _ := f.GetRows("Pelanggan")
+	for rid, row := range customers {
 		// Baca mulai dari baris ke 5
 		if rid >= 4 && row[2] != "" && row[29] != "Lunas" {
 			var lineCode string
@@ -408,6 +408,27 @@ func DeveloperImportUpload(c *gin.Context) {
 			fmt.Println("Catatan: ", imNotes)
 			fmt.Println("Bulanan: ", imMonthly)
 			fmt.Println()
+		}
+	}
+
+	// Import data pembayaran masuk
+	paids, _ := f.GetRows("Pembayaran")
+	for rid, row := range paids {
+		var pLineDate string
+		if rid >= 3 && row[1] != "" {
+			pLineCode := row[1]
+			dirtyDate := row[2]
+			dirtyDate = strings.ReplaceAll(dirtyDate, "/", "-")
+			dirtyDate = strings.ReplaceAll(dirtyDate, " ", "")
+			ddSplit := strings.Split(dirtyDate, "-")
+			if len(ddSplit) == 3 {
+				pLineDate = fmt.Sprintf("%02s-%02s-%s", ddSplit[2], ddSplit[1], ddSplit[0])
+			} else {
+				log.Warn("Tanggal tidak diformat ulang")
+			}
+
+			fmt.Println("P Line code: ", pLineCode)
+			fmt.Println("P Line date: ", pLineDate)
 		}
 	}
 
