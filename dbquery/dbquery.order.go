@@ -1302,3 +1302,29 @@ func OrderGetCodeByID(oid int) (string, error) {
 
 	return code, nil
 }
+
+// OrderGetIDByCode ambil ID berdasarkan Kode
+func OrderGetIDByCode(code string) (int, error) {
+	db := DB
+	var id int
+	query := `SELECT order_id FROM "order_credit_detail" WHERE credit_code=$1`
+	err := db.Get(&id, query, code)
+	if err != nil {
+		return id, err
+	}
+
+	return id, nil
+}
+
+// OrderCreditAddPayment bayar tagihan/pembelian
+func OrderCreditAddPayment(payments []wrapper.OrderPaymentInsert) error {
+	db := DB
+	query := `INSERT INTO "order_credit_payment" (order_id, receiver_id, imported_receiver, payment_date, cash, notes, amount) VALUES (:order_id, :receiver_id, :imported_receiver, :payment_date, :cash, :notes, :amount)`
+
+	if _, err := db.NamedQuery(query, payments); err != nil {
+		log.Warn("dbquery.order.go OrderCreditAddPayment() Gagal menambahkan pembayaran")
+		return err
+	}
+
+	return nil
+}

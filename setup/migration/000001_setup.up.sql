@@ -368,4 +368,17 @@ CREATE TABLE "order_monthly_credit" (
     FOREIGN KEY (order_id) REFERENCES "order" ("id") ON DELETE CASCADE
 );
 
+-- Tabel log pembayaran
+CREATE TABLE "order_credit_payment" (
+    "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
+    "order_id" int NOT NULL,
+    "receiver_id" int,
+    "imported_receiver" varchar(20),
+    "payment_date" date,
+    "cash" boolean DEFAULT 'true' NOT NULL,
+    "notes" varchar(100),
+    "amount" numeric(15),
+    PRIMARY KEY (id)
+);
+
 COMMIT;

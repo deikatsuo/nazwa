@@ -285,3 +285,15 @@ type OrderMonthlyCredit struct {
 	// Kwitansi sudah selesai
 	Done bool
 }
+
+// OrderPaymentInsert pembayaran
+type OrderPaymentInsert struct {
+	ID               int    `db:"id"`
+	OrderID          int    `db:"order_id"`
+	ReceiverID       int    `db:"receiver_id"`
+	ImportedReceiver string `db:"imported_receiver"`
+	PaymentDate      string `db:"payment_date"`
+	Cash             bool   `db:"cash"`
+	Notes            string `db:"notes"`
+	Amount           int    `db:"amount"`
+}

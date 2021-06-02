@@ -411,25 +411,97 @@ func DeveloperImportUpload(c *gin.Context) {
 		}
 	}
 
+	importPayment := func(oid int, agDate string, agAmountOne string, agAmountTwo string, agMethod string, agReceiver string) wrapper.OrderPaymentInsert {
+		var pLineDate string
+		var amount int
+		cash := true
+
+		dirtyDate := agDate
+		dirtyDate = strings.ReplaceAll(dirtyDate, "/", "-")
+		dirtyDate = strings.ReplaceAll(dirtyDate, " ", "")
+		ddSplit := strings.Split(dirtyDate, "-")
+		if len(ddSplit) == 3 {
+			pLineDate = fmt.Sprintf("%02s-%02s-%s", ddSplit[2], ddSplit[1], ddSplit[0])
+		} else {
+			log.Warn("Tanggal tidak diformat ulang")
+		}
+
+		dirtyAmount := agAmountOne
+		if agAmountTwo != "" {
+			dirtyAmount = agAmountTwo
+		}
+
+		amount, _ = strconv.Atoi(dirtyAmount)
+
+		// metode pembayaran
+		if agMethod != "Tunai" {
+			cash = false
+		}
+
+		receiver := agReceiver
+
+		_, err := time.Parse(`2006-01-02`, pLineDate)
+		if err != nil {
+			pLineDate = "2016-01-01"
+		}
+
+		if len(receiver) > 20 {
+			receiver = "ERROR PANJANG"
+		}
+
+		paymentData := wrapper.OrderPaymentInsert{
+			OrderID:          oid,
+			ImportedReceiver: receiver,
+			PaymentDate:      pLineDate,
+			Cash:             cash,
+			Amount:           amount,
+		}
+
+		fmt.Println("P Oid: ", oid)
+		fmt.Println("P Line date: ", pLineDate)
+		fmt.Println("P Penerima: ", receiver)
+		fmt.Println("P Cash: ", cash)
+		fmt.Println("P Amount: ", amount)
+
+		return paymentData
+	}
 	// Import data pembayaran masuk
 	paids, _ := f.GetRows("Pembayaran")
+	var paymentInsertData []wrapper.OrderPaymentInsert
+
+	var plastCode string
+	var plastDate string
 	for rid, row := range paids {
-		var pLineDate string
 		if rid >= 3 && row[1] != "" {
-			pLineCode := row[1]
-			dirtyDate := row[2]
-			dirtyDate = strings.ReplaceAll(dirtyDate, "/", "-")
-			dirtyDate = strings.ReplaceAll(dirtyDate, " ", "")
-			ddSplit := strings.Split(dirtyDate, "-")
-			if len(ddSplit) == 3 {
-				pLineDate = fmt.Sprintf("%02s-%02s-%s", ddSplit[2], ddSplit[1], ddSplit[0])
-			} else {
-				log.Warn("Tanggal tidak diformat ulang")
+			record := true
+
+			if plastCode == row[1] {
+				if plastDate == row[2] {
+					record = false
+				}
 			}
 
-			fmt.Println("P Line code: ", pLineCode)
-			fmt.Println("P Line date: ", pLineDate)
+			// Check apakah Order dengan kode kredit ini terdaftar
+			oid, err := dbquery.OrderGetIDByCode(strings.ToUpper(row[1]))
+			if err != nil {
+				record = false
+			}
+
+			// Data untuk disimpan
+			if record {
+				paymentInsertData = append(paymentInsertData, importPayment(oid, row[2], row[4], row[6], row[5], row[7]))
+			}
+
+			plastCode = row[1]
+			plastDate = row[2]
 		}
+	}
+
+	// Simpan data pembayaran
+	err = dbquery.OrderCreditAddPayment(paymentInsertData)
+	if err != nil {
+		fmt.Println("Gagal insert data pembayaran")
+		log.Error(err)
 	}
 
 	if next {
