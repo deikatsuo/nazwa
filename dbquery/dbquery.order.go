@@ -549,7 +549,7 @@ func (c *CreateOrder) Save() error {
 
 	// Buat kwitansi nth
 	if c.Credit {
-		var monthlyCredit []wrapper.OrderMonthlyCreditQuery
+		var monthlyCredit []wrapper.OrderMonthlyCreditSelect
 		var tm time.Time
 		if t, err := time.Parse(time.RFC3339, c.ShippingDate+"T00:00:00.0000Z"); err == nil {
 			tm = t
@@ -557,7 +557,7 @@ func (c *CreateOrder) Save() error {
 		tm2 := time.Date(tm.Year(), tm.Month(), c.due, 0, 0, 0, 0, tm.Location())
 		tm2 = tm2.AddDate(0, 1, 0)
 		if c.Deposit > 0 {
-			monthlyCredit = append(monthlyCredit, wrapper.OrderMonthlyCreditQuery{
+			monthlyCredit = append(monthlyCredit, wrapper.OrderMonthlyCreditSelect{
 				OrderID: tempReturnID,
 				Code:    xid.New().String(),
 				Nth:     0,
@@ -584,7 +584,7 @@ func (c *CreateOrder) Save() error {
 				dueDate = fmt.Sprintf("%d-%d-%d", tm2.Year(), tm2.Month(), tm2.Day())
 			}
 
-			monthlyCredit = append(monthlyCredit, wrapper.OrderMonthlyCreditQuery{
+			monthlyCredit = append(monthlyCredit, wrapper.OrderMonthlyCreditSelect{
 				OrderID: tempReturnID,
 				Code:    xid.New().String(),
 				Nth:     i + 1,
@@ -666,11 +666,13 @@ func (p *GetOrders) Show() ([]wrapper.Order, error) {
 		TO_CHAR(o.order_date, 'DD-MM-YYYY HH12:MI:SS AM') AS order_date,
 		TO_CHAR(o.shipping_date, 'DD-MM-YYYY HH12:MI:SS AM') AS shipping_date,
 		o.customer_id,
+		ocd.credit_code,
 		concat_ws(' ', c.first_name, c.last_name) as customer_name,
 		c.avatar as customer_thumb,
 		o.imported_items
 		FROM "order" o
 		LEFT JOIN "user" c ON c.id=customer_id
+		LEFT JOIN "order_credit_detail" ocd ON ocd.order_id=o.id
 		%s
 		LIMIT $1`
 
@@ -695,6 +697,7 @@ func (p *GetOrders) Show() ([]wrapper.Order, error) {
 			ShippingDate: p.ShippingDate,
 			Credit:       p.Credit,
 			Code:         p.Code,
+			CreditCode:   p.CreditCode,
 			Status:       strings.Title(p.Status),
 			Customer: wrapper.NameIDCode{
 				ID:        p.CustomerID,
@@ -747,6 +750,7 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		o.billing_address_id,
 		o.status,
 		o.credit,
+		ocd.credit_code,
 		o.notes,
 		TO_CHAR(o.order_date, 'DD-MM-YYYY') AS order_date,
 		TO_CHAR(o.shipping_date, 'DD-MM-YYYY') AS shipping_date,
@@ -843,6 +847,7 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		BillingAddress:   billing,
 		Status:           strings.Title(o.Status),
 		Code:             o.Code,
+		CreditCode:       o.CreditCode,
 		Credit:           o.Credit,
 		Notes:            o.Notes.String,
 		OrderDate:        o.OrderDate,
@@ -1213,7 +1218,7 @@ func OrderDeleteByID(oid int) error {
 func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 	db := DB
 	var monthly []wrapper.OrderMonthlyCredit
-	var monthlyQ []wrapper.OrderMonthlyCreditQuery
+	var monthlyQ []wrapper.OrderMonthlyCreditSelect
 
 	query := `SELECT *, TO_CHAR(due_date, 'DD-MM-YYYY') AS due_date
 	FROM "order_monthly_credit"
@@ -1249,7 +1254,7 @@ func OrderGetMonthlyCredit(oid int) ([]wrapper.OrderMonthlyCredit, error) {
 func OrderGetMonthlyCreditByDate(zid int, date string) ([]wrapper.OrderMonthlyCredit, error) {
 	db := DB
 	var monthly []wrapper.OrderMonthlyCredit
-	var monthlyQ []wrapper.OrderMonthlyCreditQuery
+	var monthlyQ []wrapper.OrderMonthlyCreditSelect
 
 	var tm time.Time
 	if t, err := time.Parse(time.RFC3339, date+"T00:00:00.0000Z"); err == nil {

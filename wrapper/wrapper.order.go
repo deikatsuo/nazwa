@@ -106,6 +106,7 @@ type NullableOrder struct {
 	BillingAddressID  sql.NullInt64  `db:"billing_address_id"`
 	Status            string         `db:"status"`
 	Code              string         `db:"code"`
+	CreditCode        string         `db:"credit_code"`
 	Credit            bool           `db:"credit"`
 	Notes             sql.NullString `db:"notes"`
 	OrderDate         string         `db:"order_date"`
@@ -133,6 +134,7 @@ type Order struct {
 	BillingAddress  string
 	Status          string
 	Code            string
+	CreditCode      string
 	QR              []byte
 	Credit          bool
 	Notes           string
@@ -249,8 +251,8 @@ type OrderCreditDetail struct {
 	Done          bool
 }
 
-// OrderMonthlyCreditQuery kredit bulanan
-type OrderMonthlyCreditQuery struct {
+// OrderMonthlyCreditSelect kredit bulanan
+type OrderMonthlyCreditSelect struct {
 	ID        int            `db:"id"`
 	OrderID   int            `db:"order_id"`
 	Code      string         `db:"code"`
@@ -294,4 +296,28 @@ type OrderPaymentInsert struct {
 	Cash             bool   `db:"cash"`
 	Notes            string `db:"notes"`
 	Amount           int    `db:"amount"`
+}
+
+// OrderPaymentQuery data pembayaran
+type OrderPaymentSelect struct {
+	ID               int            `db:"id"`
+	OrderID          int            `db:"order_id"`
+	ReceiverID       sql.NullInt32  `db:"receiver_id"`
+	ImportedReceiver sql.NullString `db:"imported_receiver"`
+	PaymentDate      sql.NullString `db:"payment_date"`
+	Cash             bool           `db:"cash"`
+	Notes            sql.NullString `db:"notes"`
+	Amount           int            `db:"amount"`
+}
+
+// OrderPayment wrapper data pembayaran
+type OrderPayment struct {
+	ID               int
+	OrderID          int
+	ReceiverID       int
+	ImportedReceiver string
+	PaymentDate      string
+	Cash             bool
+	Notes            string
+	Amount           int
 }

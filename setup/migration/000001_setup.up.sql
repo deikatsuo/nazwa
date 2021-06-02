@@ -375,7 +375,7 @@ CREATE TABLE "order_credit_payment" (
     "payment_date" date,
     "cash" boolean DEFAULT 'true' NOT NULL,
     "notes" varchar(100),
-    "amount" numeric(15),
+    "amount" numeric(15) DEFAULT 0,
     PRIMARY KEY (id)
 );
 

@@ -387,27 +387,27 @@ func DeveloperImportUpload(c *gin.Context) {
 				}
 			}
 
-			fmt.Println("NAMA FILE: ", lineName)
-			fmt.Println("ID DATABASE", uid)
-			fmt.Println("Kode: ", lineCode)
-			fmt.Println("Jenis Kelamin: ", gender)
-			fmt.Println("Nama depan: ", firstname)
-			fmt.Println("Nama belakang: ", lastname)
-			fmt.Println(imSubstitutes)
-			fmt.Println("Nomor HP: ", phone)
-			fmt.Println("ORDER")
-			fmt.Println("Kode: ", code)
-			fmt.Println("Arah: ", imLine)
-			fmt.Println("Sales: ", imSales)
-			fmt.Println("Survey: ", imSurveyor)
-			fmt.Println("Deposit: ", imDeposit)
-			fmt.Println("Durasi: ", imDuration)
-			fmt.Println("Alamat: ", imAddress)
-			fmt.Println("Tanggal:", imShippingDate)
-			fmt.Println("Jatuh tempo: ", imDue)
-			fmt.Println("Catatan: ", imNotes)
-			fmt.Println("Bulanan: ", imMonthly)
-			fmt.Println()
+			// fmt.Println("NAMA FILE: ", lineName)
+			// fmt.Println("ID DATABASE", uid)
+			// fmt.Println("Kode: ", lineCode)
+			// fmt.Println("Jenis Kelamin: ", gender)
+			// fmt.Println("Nama depan: ", firstname)
+			// fmt.Println("Nama belakang: ", lastname)
+			// fmt.Println(imSubstitutes)
+			// fmt.Println("Nomor HP: ", phone)
+			// fmt.Println("ORDER")
+			// fmt.Println("Kode: ", code)
+			// fmt.Println("Arah: ", imLine)
+			// fmt.Println("Sales: ", imSales)
+			// fmt.Println("Survey: ", imSurveyor)
+			// fmt.Println("Deposit: ", imDeposit)
+			// fmt.Println("Durasi: ", imDuration)
+			// fmt.Println("Alamat: ", imAddress)
+			// fmt.Println("Tanggal:", imShippingDate)
+			// fmt.Println("Jatuh tempo: ", imDue)
+			// fmt.Println("Catatan: ", imNotes)
+			// fmt.Println("Bulanan: ", imMonthly)
+			// fmt.Println()
 		}
 	}
 
@@ -457,11 +457,11 @@ func DeveloperImportUpload(c *gin.Context) {
 			Amount:           amount,
 		}
 
-		fmt.Println("P Oid: ", oid)
-		fmt.Println("P Line date: ", pLineDate)
-		fmt.Println("P Penerima: ", receiver)
-		fmt.Println("P Cash: ", cash)
-		fmt.Println("P Amount: ", amount)
+		// fmt.Println("P Oid: ", oid)
+		// fmt.Println("P Line date: ", pLineDate)
+		// fmt.Println("P Penerima: ", receiver)
+		// fmt.Println("P Cash: ", cash)
+		// fmt.Println("P Amount: ", amount)
 
 		return paymentData
 	}

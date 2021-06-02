@@ -75,7 +75,7 @@
                   <div>
                     <p
                       class="text-xs"
-                      x-text="order.Code"
+                      x-text="`${order.CreditCode} -> ${order.Code}`"
                       :class="{'px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-r-full dark:bg-green-700 dark:text-green-100': !order.Credit, 'px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600': order.Credit }"
                     ></p>
                     <p class="text-xs" x-text="order.Customer.Name"></p>
