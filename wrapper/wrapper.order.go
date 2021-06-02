@@ -259,12 +259,10 @@ type OrderMonthlyCreditQuery struct {
 	PrintDate sql.NullString `db:"print_date"`
 	Promise   sql.NullString `db:"promise"`
 	Paid      int            `db:"paid"`
-	PaidDate  sql.NullString `db:"paid_date"`
 	Notes     sql.NullString `db:"notes"`
 	Position  string         `db:"position"`
 	Printed   bool           `db:"printed"`
 	Done      bool           `db:"done"`
-	Method    string         `db:"method"`
 }
 
 // OrderMonthlyCredit kredit tagihan bulanan

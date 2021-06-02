@@ -358,11 +358,9 @@ CREATE TABLE "order_monthly_credit" (
     "print_date" date,
     "promise" date,
     "paid" numeric(15) DEFAULT 0 NOT NULL,
-    "paid_date" date,
     "notes" varchar(100),
     "position" char(3) DEFAULT 'in' NOT NULL,
     "printed" boolean DEFAULT 'false' NOT NULL,
-    "method" varchar(8) DEFAULT 'cash' NOT NULL,
     "done" boolean DEFAULT 'false' NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (order_id) REFERENCES "order" ("id") ON DELETE CASCADE
