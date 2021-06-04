@@ -544,23 +544,37 @@
                     text-xs
                     font-semibold
                     tracking-wide
-                    text-left text-gray-500
+                    text-center text-gray-500
                     dark:border-gray-700
-                    bg-gray-50
+                    bg-green-50
                     dark:text-gray-400
-                    dark:bg-gray-800
                   "
                 >
-                  <th class="px-3 py-3">Tanggal</th>
+                  <th class="px-4 py-3">Tanggal</th>
                   <th class="px-4 py-3">Metode</th>
                   <th class="px-4 py-3">Nominal</th>
                   <th class="px-4 py-3">Penerima</th>
                 </tr>
               </thead>
-
-              <tbody
-                class="bg-white dark:divide-gray-700 dark:bg-gray-800"
-              ></tbody>
+              <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
+                <template x-if="payments.length > 0">
+                  <template x-for="(p, index) in payments" :key="index">
+                    <tr class="text-sm tracking-wide text-center hover:bg-green-100">
+                      <td class="px-4" x-text="p.PaymentDate"></td>
+                      <td class="px-4">
+                        <template x-if="p.Cash">
+                          <span>Tunai</span>
+                        </template>
+                        <template x-if="!p.Cash">
+                          <span>Transfer</span>
+                        </template>
+                      </td>
+                      <td class="px-4" x-text="`${toRupiah(p.Amount)}`"></td>
+                      <td class="px-4" x-text="p.ImportedReceiver"></td>
+                    </tr>
+                  </template>
+                </template>
+              </tbody>
             </table>
           </td>
         </tr>
@@ -580,6 +594,7 @@
       shippingAddress: [],
       billingAddress: [],
       items: [],
+      payments: [],
       fetchById($dispatch) {
         fetch(`/api/v1/local/order/id/${this.id}`, {
           method: "GET",
@@ -608,6 +623,7 @@
               this.shippingAddress = json.order.ShippingAddress;
               this.billingAddress = json.order.BillingAddress;
               this.items = json.order.Items;
+              this.payments = json.order.PaymentLogs;
             }
           })
           .catch((err) => {

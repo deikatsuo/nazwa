@@ -148,6 +148,7 @@ type Order struct {
 	BasePriceTotal  int
 	CreditDetail    OrderCreditDetail
 	MonthlyCredit   []OrderMonthlyCredit
+	PaymentLogs     []OrderPayment
 
 	ImportedItems    string
 	ImportedAddress  string

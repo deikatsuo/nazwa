@@ -815,6 +815,14 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		}
 	}
 
+	var payments []wrapper.OrderPayment
+	if py, err := OrderPaymentsByOrderID(oid); err == nil {
+		payments = py
+	} else {
+		log.Warn("dbquery.order.go OrderGetOrderByID() select payment logs")
+		log.Error(err)
+	}
+
 	order = wrapper.Order{
 		ID: o.ID,
 		Customer: wrapper.NameIDCode{
@@ -858,6 +866,7 @@ func OrderGetOrderByID(oid int) (wrapper.Order, error) {
 		BasePriceTotal:   int(o.BasePriceTotal.Int64),
 		Items:            items,
 		CreditDetail:     creditDetail,
+		PaymentLogs:      payments,
 		ImportedItems:    o.ImportedItems.String,
 		ImportedAddress:  o.ImportedAddress.String,
 		ImportedSales:    o.ImportedSales.String,
@@ -1332,4 +1341,32 @@ func OrderCreditAddPayment(payments []wrapper.OrderPaymentInsert) error {
 	}
 
 	return nil
+}
+
+// OrderPaymentsByOrderID ambil log pembayaran
+func OrderPaymentsByOrderID(oid int) ([]wrapper.OrderPayment, error) {
+	db := DB
+	var payments []wrapper.OrderPayment
+	var tmp []wrapper.OrderPaymentSelect
+	query := `SELECT id, order_id, receiver_id, imported_receiver, cash, notes, amount, TO_CHAR(payment_date, 'DD-MM-YYYY') AS payment_date FROM "order_credit_payment" WHERE order_id=$1 ORDER BY CAST(payment_date AS DATE) DESC`
+
+	err := db.Select(&tmp, query, oid)
+	if err != nil {
+		return payments, err
+	}
+
+	for _, pay := range tmp {
+		payments = append(payments, wrapper.OrderPayment{
+			ID:               pay.ID,
+			OrderID:          pay.OrderID,
+			ReceiverID:       int(pay.ReceiverID.Int32),
+			ImportedReceiver: pay.ImportedReceiver.String,
+			PaymentDate:      pay.PaymentDate.String,
+			Cash:             pay.Cash,
+			Notes:            pay.Notes.String,
+			Amount:           pay.Amount,
+		})
+	}
+
+	return payments, nil
 }
