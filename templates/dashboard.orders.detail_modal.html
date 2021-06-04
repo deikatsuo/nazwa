@@ -569,7 +569,7 @@
                           <span>Transfer</span>
                         </template>
                       </td>
-                      <td class="px-4" x-text="`${toRupiah(p.Amount)}`"></td>
+                      <td class="px-4" x-text="`${toRupiah(p.Amount)}`" :class="{'text-red-500': p.Amount < order.CreditDetail.Monthly, 'text-green-500': p.Amount > order.CreditDetail.Monthly }"></td>
                       <td class="px-4" x-text="p.ImportedReceiver"></td>
                     </tr>
                   </template>

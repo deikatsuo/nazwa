@@ -119,7 +119,7 @@ func LineCodeExist(c string) bool {
 	db := DB
 	var id int
 	query := `SELECT id FROM "zone_line" WHERE code=$1`
-	err := db.Get(&id, query, c)
+	err := db.Get(&id, query, strings.ToLower(c))
 
 	return err == nil
 }

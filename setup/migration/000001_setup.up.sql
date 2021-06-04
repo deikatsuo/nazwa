@@ -104,7 +104,7 @@ CREATE TABLE "email" (
 CREATE TABLE "phone" (
     "id" int GENERATED ALWAYS AS IDENTITY NOT NULL,
     "user_id" int NOT NULL,
-    "phone" varchar(15) UNIQUE NOT NULL,
+    "phone" varchar(15) NOT NULL,
     "is_default" boolean DEFAULT 'false' NOT NULL,
     "verified" boolean DEFAULT 'false' NOT NULL,
     PRIMARY KEY (id),
