@@ -367,6 +367,13 @@ func DeveloperImportUpload(c *gin.Context) {
 						imNotes = row[21]
 					}
 
+					{
+						_, err := time.Parse(`2006-01-02`, imShippingDate)
+						if err != nil {
+							imShippingDate = "2006-01-02"
+						}
+					}
+
 					// Input order
 					order := dbquery.NewOrder()
 					errs := order.SetCustomer(uid).
@@ -450,7 +457,7 @@ func DeveloperImportUpload(c *gin.Context) {
 
 			_, err := time.Parse(`2006-01-02`, pLineDate)
 			if err != nil {
-				pLineDate = "2016-01-01"
+				pLineDate = "2006-01-02"
 			}
 
 			if len(receiver) > 20 {
@@ -503,6 +510,35 @@ func DeveloperImportUpload(c *gin.Context) {
 
 				plastCode = row[1]
 				plastDate = row[2]
+			}
+		}
+
+		// Data masuk dua (yang dipindahin atas)
+		for rid, row := range paids {
+			if len(row) > 15 {
+				if rid >= 3 && row[1+9] != "" {
+					record := true
+
+					if plastCode == row[1+9] {
+						if plastDate == row[2+9] {
+							record = false
+						}
+					}
+
+					// Check apakah Order dengan kode kredit ini terdaftar
+					oid, err := dbquery.OrderGetIDByCode(strings.ToUpper(row[1+9]))
+					if err != nil {
+						record = false
+					}
+
+					// Data untuk disimpan
+					if record {
+						paymentInsertData = append(paymentInsertData, importPayment(oid, row[2+9], row[4+9], row[6+9], row[5+9], row[7+9]))
+					}
+
+					plastCode = row[1+9]
+					plastDate = row[2+9]
+				}
 			}
 		}
 
