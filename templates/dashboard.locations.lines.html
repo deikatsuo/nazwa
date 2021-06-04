@@ -70,7 +70,7 @@
                   class="inline-block cursor-pointer rounded-full px-3 py-1 text-xs font-semibold mr-2 mb-2"
                   :class="{'bg-red-300 text-red-500 select-none': selectedLine == line.ID, 'bg-orange-300 text-orange-500': selectedLine !== line.ID }"
                   x-text="`${line.Code} - ${line.Name} ${getCount(line.Count)}`"
-                  @click="$dispatch('modal', { footer: true, title: 'Ubah nama arah', html: $refs.editLineForm.innerHTML, tmp: line.Name, callback: function() { updateLineName($dispatch, line.ID) } })"
+                  @click="if (selectedLine !== line.ID) { $dispatch('modal', { footer: true, title: 'Ubah nama arah', html: $refs.editLineForm.innerHTML, tmp: line.Name, callback: function() { updateLineName($dispatch, line.ID) } }) }"
                   @dblclick="if (selectedLine == line.ID) { deleteLine($dispatch, line.ID); }"
                   @contextmenu.prevent="if (selectedLine !== line.ID) { selectedLine = line.ID; } else { selectedLine = null; }"
                 ></span>
