@@ -275,7 +275,7 @@ CREATE TABLE "order" (
     "billing_address_id" int,
     "imported_items" varchar(100),
     "imported_address" text,
-    "imported_sales" varchar(20),
+    "imported_sales" varchar(50),
     "imported_surveyor" varchar(20),
     "code" varchar(50) NOT NULL UNIQUE,
     "status" varchar(25) NOT NULL DEFAULT 'pending',
