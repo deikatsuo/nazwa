@@ -175,19 +175,34 @@ func DeveloperImportUpload(c *gin.Context) {
 		next = false
 	}
 
-	lineName := file.Filename
-	lineName = strings.ToLower(strings.Split(lineName, ".")[0])
-	if lid, err := dbquery.LineGetId(lineName); err == nil {
-		imLine = lid
-	} else {
-		log.Warn("Select line id by code, fail")
+	fname := strings.ToLower(strings.Split(file.Filename, ".")[0])
+
+	// Pecah nama file
+	sfname := strings.Split(fname, "-")
+	lname := strings.TrimSpace(sfname[1])
+	lcode := strings.TrimSpace(sfname[2])
+
+	if !dbquery.LineCodeExist(lcode) {
+		nl := wrapper.LocationLineNewForm{
+			Code: lcode,
+			Name: lname,
+		}
+		if err := dbquery.LineNew(nl); err != nil {
+			next = false
+			message = "Gagal membuat arah tagih baru"
+			status = "error"
+			httpStatus = http.StatusInternalServerError
+			fmt.Println("Error Buat Kode tagih")
+			log.Error(err)
+		}
 	}
 
-	if !dbquery.LineCodeExist(lineName) {
-		next = false
-		message = "Kode arah tidak terdaftar"
-		status = "error"
-		httpStatus = http.StatusNotFound
+	if next {
+		if lid, err := dbquery.LineGetId(lcode); err == nil {
+			imLine = lid
+		} else {
+			log.Warn("Select line id by code, fail")
+		}
 	}
 
 	if next {
@@ -218,12 +233,11 @@ func DeveloperImportUpload(c *gin.Context) {
 		for rid, row := range customers {
 			// Baca mulai dari baris ke 5
 			if rid >= 4 && row[2] != "" && row[29] != "Lunas" {
-				var lineCode string
 				gender := "m"
 				if row[2][0:3] == "Ibu" {
 					gender = "f"
 				}
-				lineCode = strings.ToLower(row[1])
+				lineCode := strings.ToLower(row[1])
 
 				// Pecah nama konsumen
 				sname := strings.SplitN(row[2], "/", 2)
@@ -322,7 +336,7 @@ func DeveloperImportUpload(c *gin.Context) {
 						log.Error(err)
 					}
 
-					imLineMax, _ = strconv.Atoi(strings.TrimPrefix(strings.ReplaceAll(lineCode, lineName, ""), "0"))
+					imLineMax, _ = strconv.Atoi(strings.TrimPrefix(strings.ReplaceAll(lineCode, lcode, ""), "0"))
 
 					if row[4] != "" {
 						imItems = row[4]
@@ -372,6 +386,20 @@ func DeveloperImportUpload(c *gin.Context) {
 						if err != nil {
 							imShippingDate = "2006-01-02"
 						}
+					}
+
+					// Debug
+					if len(imSales) > 20 {
+						fmt.Println("SALES: ERROR LEBIH 20 ", imSales)
+					}
+					if len(imSurveyor) > 20 {
+						fmt.Println("SURVEY: ERROR LEBIH 20 ", imSurveyor)
+					}
+					if len(imItems) > 100 {
+						fmt.Println("ITEMS: ERROR LEBIH 100 ", imItems)
+					}
+					if len(imNotes) > 100 {
+						fmt.Println("NOTES: ERROR LEBIH 100 ", imNotes)
 					}
 
 					// Input order
