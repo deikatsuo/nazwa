@@ -51,8 +51,8 @@ CREATE TABLE "user" (
 );
 
 -- Buat user
-INSERT INTO "user" ("first_name", "username", "password", "gender")
-    VALUES ('deri', 'deri', 'tetehrika', 'm');
+-- INSERT INTO "user" ("first_name", "username", "password", "gender")
+--     VALUES ('deri', 'deri', 'tetehrika', 'm');
 
 
 -- Tabel KK
@@ -83,8 +83,8 @@ CREATE TABLE "user_role" (
 );
 
 -- Buat user
-INSERT INTO "user_role" ("role_id", "user_id")
-    VALUES (1, 1);
+-- INSERT INTO "user_role" ("role_id", "user_id")
+--     VALUES (1, 1);
 
 
 -- Tabel email
