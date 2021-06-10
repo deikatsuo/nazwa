@@ -233,7 +233,6 @@ CREATE TABLE "product" (
     "name" varchar(100) NOT NULL,
     "slug" varchar(100) UNIQUE NOT NULL,
     "stock" int NOT NULL DEFAULT 0,
-    "code" varchar(10) UNIQUE NOT NULL,
     "base_price" numeric(15) DEFAULT 0,
     "price" numeric(15) DEFAULT 0,
     "type" varchar(25),

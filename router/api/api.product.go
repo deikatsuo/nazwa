@@ -50,12 +50,6 @@ func ProductCreate(c *gin.Context) {
 		save = false
 	}
 
-	if dbquery.ProductSkuExist(json.Code) {
-		simpleErrMap["code"] = "SKU atau Kode produk sudah terdaftar"
-		status = "fail"
-		save = false
-	}
-
 	if save {
 		if len(json.Photo) > 0 {
 			for _, p := range json.Photo {
@@ -92,7 +86,6 @@ func ProductCreate(c *gin.Context) {
 		user := dbquery.NewProduct()
 		err := user.SetName(json.Name).
 			SetSlug(slugURL).
-			SetCode(json.Code).
 			SetType(json.Type).
 			SetBrand(json.Brand).
 			SetStock(stock).

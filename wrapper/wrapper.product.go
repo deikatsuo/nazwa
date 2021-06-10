@@ -10,7 +10,6 @@ type ProductInsert struct {
 	Name        string `db:"name"`
 	Slug        string `db:"slug"`
 	Stock       int    `db:"stock"`
-	Code        string `db:"code"`
 	BasePrice   int    `db:"base_price"`
 	Price       int    `db:"price"`
 	Type        string `db:"type"`
@@ -35,7 +34,6 @@ type NullableProduct struct {
 	Name        string         `db:"name"`
 	Slug        string         `db:"slug"`
 	Stock       int            `db:"stock"`
-	Code        string         `db:"code"`
 	BasePrice   int            `db:"base_price"`
 	Price       int            `db:"price"`
 	Type        sql.NullString `db:"type"`
@@ -73,7 +71,6 @@ type ProductCreditPriceSelect struct {
 type ProductForm struct {
 	Name        string                   `json:"name" binding:"required,min=4,max=100"`
 	Stock       string                   `json:"stock" binding:"numeric,gte=0"`
-	Code        string                   `json:"code" binding:"min=5,max=10"`
 	Brand       string                   `json:"brand" binding:"omitempty,min=2,max=25"`
 	Type        string                   `json:"type" binding:"omitempty,min=2,max=25"`
 	BasePrice   string                   `json:"base_price" binding:"required,numeric,min=1,max=15"`
@@ -97,7 +94,6 @@ type Product struct {
 	ID          int
 	Name        string
 	Slug        string
-	Code        string
 	Description string
 	Stock       int
 	BasePrice   int

@@ -75,7 +75,6 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 		type,
 		base_price,
 		price,
-		code,
 		thumbnail,
 		created_by,
 		TO_CHAR(created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at
@@ -110,7 +109,6 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 			CreatedBy:   p.CreatedBy,
 			BasePrice:   p.BasePrice,
 			Price:       p.Price,
-			Code:        p.Code,
 			Thumbnail:   p.Thumbnail.String,
 			CreditPrice: creditPrice,
 		})
@@ -142,7 +140,6 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 		stock,
 		base_price,
 		price,
-		code,
 		TO_CHAR(created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
 		type,
 		brand
@@ -174,7 +171,6 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 		CreatedAt:   p.CreatedAt,
 		BasePrice:   p.BasePrice,
 		Price:       p.Price,
-		Code:        p.Code,
 		Type:        strings.Title(p.Type.String),
 		Brand:       strings.Title(p.Brand.String),
 		Photos:      photos,
@@ -196,7 +192,6 @@ func ProductGetProductBySlug(ps string) (wrapper.Product, error) {
 		description,
 		base_price,
 		price,
-		code,
 		TO_CHAR(created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
 		type,
 		brand
@@ -231,7 +226,6 @@ func ProductGetProductBySlug(ps string) (wrapper.Product, error) {
 		Slug:        ps,
 		BasePrice:   p.BasePrice,
 		Price:       p.Price,
-		Code:        p.Code,
 		Type:        strings.Title(p.Type.String),
 		Brand:       strings.Title(p.Brand.String),
 		Photos:      photos,
@@ -331,15 +325,6 @@ func NewProduct() *CreateProduct {
 func (c *CreateProduct) SetName(p string) *CreateProduct {
 	c.Name = strings.ToLower(p)
 	c.into["name"] = ":name"
-	return c
-}
-
-// SetCode Kode produk
-func (c *CreateProduct) SetCode(p string) *CreateProduct {
-	if p != "" {
-		c.Code = strings.ToLower(p)
-		c.into["code"] = ":code"
-	}
 	return c
 }
 
@@ -516,22 +501,6 @@ func ProductDeleteCreditPrice(pcpid int64, pid int) error {
 ///////////
 // CHECK //
 ///////////
-
-// ProductSkuExist kode produk sudah digunakan
-func ProductSkuExist(sku string) bool {
-	db := DB
-	// Check bila sku sudah ada di database
-	var indb string
-	query := `SELECT code FROM "product" WHERE code=$1`
-	err := db.Get(&indb, query, sku)
-	if err == nil {
-		if indb != "" {
-			return true
-		}
-	}
-
-	return false
-}
 
 // ProductCreditDurationExist chek apakah durasi kredit sudah ada
 func ProductCreditDurationExist(pid int, dur int) bool {
