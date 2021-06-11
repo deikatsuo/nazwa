@@ -24,54 +24,27 @@ func NewDefaultConfig(c *gin.Context) {
 		login = false
 	}
 
-	cur := session.Get("user")
 	var user wrapper.User
 
-	if cur == nil {
-		// Periksa apakah session nil
-		// guna menghindari error saat konversi nil ke int
-		if userid != nil {
-			if userid.(int) > 0 {
-				abort := false
-				if u, err := dbquery.UserGetByID(userid.(int)); err != nil {
-					log.Print("ERROR: default-config.go NewDashboardDefaultConfig() Gagal mengambil user by ID")
-					log.Print(err)
-					abort = true
-				} else {
-					user = u
-				}
+	// Periksa apakah session nil
+	// guna menghindari error saat konversi nil ke int
+	if userid != nil {
+		if userid.(int) > 0 {
+			abort := false
+			if u, err := dbquery.UserGetByID(userid.(int)); err != nil {
+				log.Print("ERROR: default-config.go NewDashboardDefaultConfig() Gagal mengambil user by ID")
+				log.Print(err)
+				abort = true
+			} else {
+				user = u
+			}
 
-				if abort {
-					router.Page500(c)
-					c.Abort()
-					return
-				}
-
-				user.ID = userid.(int)
-				// Ambil data email
-				email, err := dbquery.UserGetEmail(userid.(int))
-				if err != nil {
-					log.Print("User tidak memiliki email ", err)
-				}
-				user.Emails = email
-
-				// Ambil nomor HP
-				phone, err := dbquery.UserGetPhone(userid.(int))
-				if err != nil {
-					log.Print("User tidak memiliki nomor HP ", err)
-				}
-				user.Phones = phone
-				session.Set("user", user)
-				if err := session.Save(); err != nil {
-					log.Println("Data user tidak tersimpan di session")
-					log.Println(err)
-				} else {
-					log.Println("Data user tersimpan di session")
-				}
+			if abort {
+				router.Page500(c)
+				c.Abort()
+				return
 			}
 		}
-	} else {
-		user = cur.(wrapper.User)
 	}
 
 	config := map[string]interface{}{
