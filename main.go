@@ -303,6 +303,7 @@ func runServer() {
 	v1uEdit.PATCH("/:id/update/name", api.UserUpdateName)
 	v1uEdit.PATCH("/:id/update/password", api.UserUpdatePassword)
 	v1uEdit.PATCH("/:id/update/username", api.UserUpdateUsername)
+	v1uEdit.PATCH("/:id/update/occupation", api.UserUpdateOccupation)
 	v1uEdit.PATCH("/:id/update/role", api.UserUpdateRole)
 	v1uEdit.POST("/:id/add/address", api.UserAddAddress)
 	v1uEdit.PATCH("/:id/update/address/:aid", api.UserUpdateAddress)

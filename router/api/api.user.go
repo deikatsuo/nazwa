@@ -263,6 +263,59 @@ func UserUpdateUsername(c *gin.Context) {
 	c.JSON(httpStatus, gh)
 }
 
+// UserUpdateOccupation update pekerjaan
+func UserUpdateOccupation(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	uid, err := strconv.Atoi(c.Param("id"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var simpleErr map[string]interface{}
+
+	var updateOccupation wrapper.UserUpdateOccupation
+	if err := c.ShouldBindQuery(&updateOccupation); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["occupation"].(string)
+		status = "error"
+	}
+
+	// Update pekerjaan
+	if next {
+		if err := dbquery.UserUpdateOccupation(uid, updateOccupation.Occupation); err != nil {
+			log.Warn("api.user.go UserUpdateOccupation() Gagal mengubah pekerjaan")
+			log.Error(err)
+			message = "Gagal mengubah pekerjaan"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Pekerjaan berhasil dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
 // UserUpdateFamilyCard ubah nomor kartu keluarga
 func UserUpdateFamilyCard(c *gin.Context) {
 	session := sessions.Default(c)

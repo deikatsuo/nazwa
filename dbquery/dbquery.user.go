@@ -794,6 +794,17 @@ func UserUpdateUsername(uid int, uname string) error {
 	return err
 }
 
+// UserUpdateOccupation mengubah pekerjaan user
+func UserUpdateOccupation(uid int, occupation string) error {
+	db := DB
+	query := `UPDATE "user"
+	SET occupation=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, occupation, uid)
+
+	return err
+}
+
 // UserUpdateFamilyCard mengubah nomor kk
 func UserUpdateFamilyCard(uid int, fc string) error {
 	db := DB

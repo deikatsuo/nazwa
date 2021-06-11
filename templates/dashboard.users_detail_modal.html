@@ -6,7 +6,20 @@
     id="user_detail"
   >
     <div
-      class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+      class="
+        absolute
+        top-0
+        mt-3
+        ml-3
+        sm:mr-0
+        text-sm
+        md:text-lg
+        font-semibold
+        tracking-wide
+        text-left text-gray-500
+        uppercase
+        dark:text-gray-400
+      "
       x-text="'Kode #'+user.Username"
     ></div>
     <!-- Photo pengguna -->
@@ -36,7 +49,18 @@
 
     <dl class="w-full whitespace-no-wrap">
       <div
-        class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        class="
+          text-xs
+          font-semibold
+          tracking-wide
+          text-left text-gray-900
+          uppercase
+          border-b
+          dark:border-gray-700
+          bg-gray-50
+          dark:text-gray-400
+          dark:bg-gray-800
+        "
       >
         <dt class="px-3 py-3">ID Unik</dt>
         <dd class="px-4 sm:px-0"></dd>
@@ -58,7 +82,15 @@
             <span x-show="user.FamilyCardNumber == ''">-</span>
           </div>
           <input
-            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+            class="
+              block
+              w-full
+              mt-1
+              text-sm
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:outline-none
+            "
             type="text"
             id="edit-family-card"
             x-model="updateData.familycard"
@@ -78,14 +110,19 @@
             x-show="updateFor !== 'residentcard'"
             @dblclick="openUpdateForResidentCard($nextTick);"
           >
-            <span
-              x-text="user.RIC"
-              x-show="user.RIC !== ''"
-            ></span>
+            <span x-text="user.RIC" x-show="user.RIC !== ''"></span>
             <span x-show="user.RIC == ''">-</span>
           </div>
           <input
-            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+            class="
+              block
+              w-full
+              mt-1
+              text-sm
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:outline-none
+            "
             type="text"
             id="edit-resident-card"
             x-model="updateData.residentcard"
@@ -99,7 +136,18 @@
 
     <dl class="w-full whitespace-no-wrap">
       <div
-        class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        class="
+          text-xs
+          font-semibold
+          tracking-wide
+          text-left text-gray-900
+          uppercase
+          border-b
+          dark:border-gray-700
+          bg-gray-50
+          dark:text-gray-400
+          dark:bg-gray-800
+        "
       >
         <dt class="px-3 py-3">Informasi Pengguna</dt>
         <dd class="px-4 sm:px-0"></dd>
@@ -121,7 +169,14 @@
             class="w-full flex flex-wrap"
           >
             <input
-              class="w-1/2 mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+              class="
+                w-1/2
+                mt-1
+                text-sm
+                dark:border-gray-600
+                dark:bg-gray-700
+                focus:outline-none
+              "
               type="text"
               id="edit-name"
               x-model="updateData.firstname"
@@ -129,7 +184,14 @@
               placeholder="Nama depan"
             />
             <input
-              class="w-1/2 mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+              class="
+                w-1/2
+                mt-1
+                text-sm
+                dark:border-gray-600
+                dark:bg-gray-700
+                focus:outline-none
+              "
               type="text"
               x-model="updateData.lastname"
               @keydown.enter="updateName($dispatch)"
@@ -148,7 +210,15 @@
             x-show="updateFor !== 'username'"
           ></div>
           <input
-            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:outline-none"
+            class="
+              block
+              w-full
+              mt-1
+              text-sm
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:outline-none
+            "
             type="text"
             id="edit-username"
             x-model="updateData.username"
@@ -204,16 +274,35 @@
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">Pekerjaan</dt>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="user.Occupation != ''"
-          x-text="user.Occupation"
-        ></dd>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="user.Occupation == ''"
-        >
-          -
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            @dblclick="openUpdateForOccupation($nextTick);"
+            x-show="updateFor !== 'occupation'"
+          >
+            <div class="w-full" >
+              <span x-show="user.Occupation != ''" x-text="user.Occupation"></span>
+              <span x-show="user.Occupation == ''">-</span>
+            </div>
+          </div>
+
+          <input
+            class="
+              block
+              w-full
+              mt-1
+              text-sm
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:outline-none
+            "
+            type="text"
+            id="edit-occupation"
+            x-model="updateData.occupation"
+            x-show="updateFor == 'occupation'"
+            @click.away="if (updateFor == 'occupation') { updateFor = ''; }"
+            @keydown.enter="updateOccupation($dispatch)"
+          />
         </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
@@ -246,7 +335,18 @@
 
     <dl class="w-full whitespace-no-wrap">
       <div
-        class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        class="
+          text-xs
+          font-semibold
+          tracking-wide
+          text-left text-gray-900
+          uppercase
+          border-b
+          dark:border-gray-700
+          bg-gray-50
+          dark:text-gray-400
+          dark:bg-gray-800
+        "
       >
         <dt class="px-3 py-3">Informasi Kontak</dt>
         <dd class="px-4 sm:px-0"></dd>
@@ -292,7 +392,18 @@
     <table class="w-full whitespace-no-wrap table-auto">
       <thead>
         <tr
-          class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+          class="
+            text-xs
+            font-semibold
+            tracking-wide
+            text-left text-gray-900
+            uppercase
+            border-b
+            dark:border-gray-700
+            bg-gray-50
+            dark:text-gray-400
+            dark:bg-gray-800
+          "
         >
           <th class="px-3 py-3">Informasi Alamat</th>
           <th class="px-4 py-3"></th>
@@ -636,6 +747,7 @@
         residentcard: "",
         firstname: "",
         lastname: "",
+        occupation: "",
       },
       updateFor: "",
       role: [
@@ -664,6 +776,14 @@
         this.updateData.username = this.user.Username;
         $nextTick(() => {
           document.getElementById(`edit-username`).select();
+        });
+      },
+
+      openUpdateForOccupation($nextTick) {
+        this.updateFor = "occupation";
+        this.updateData.occupation = this.user.Occupation;
+        $nextTick(() => {
+          document.getElementById(`edit-occupation`).select();
         });
       },
 
@@ -786,6 +906,37 @@
           })
           .catch((err) => {
             console.log("Error: updateUsername() " + err);
+          });
+      },
+
+      updateOccupation($dispatch) {
+        if (this.updateData.occupation.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Pekerjaan tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/user/edit/${this.id}/update/occupation?set=${this.updateData.occupation}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              this.user.Occupation = this.updateData.occupation;
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updateOccupation() " + err);
           });
       },
 
@@ -934,13 +1085,10 @@
           district: "",
           village: "",
         };
-        document.getElementById(
-          "address"
-        ).__x.$data.formAddressOpen = !document.getElementById("address").__x
-          .$data.formAddressOpen;
-        this.isAao = document.getElementById(
-          "address"
-        ).__x.$data.formAddressOpen;
+        document.getElementById("address").__x.$data.formAddressOpen =
+          !document.getElementById("address").__x.$data.formAddressOpen;
+        this.isAao =
+          document.getElementById("address").__x.$data.formAddressOpen;
       },
       editAddressMask: null,
       toEditAddress(address) {
