@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="category" content="Product" />
-    <meta name="keywords" content="{{ .product.Brand }}, {{ .product.Type }}" />
+    <meta name="keywords" content="{{ .product.Brand }}, {{ .product.Category }}" />
     <meta
       name="description"
       content='{{ printf "%.150s" .product.Description }}'
@@ -185,16 +185,16 @@
                 </div>
                 <div class="px-4 py-1 sm:grid sm:grid-cols-2">
                   <dt class="text-sm leading-5 font-medium text-gray-500">
-                    Tipe
+                    Kategori
                   </dt>
                   <dd
                     class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                    x-show="product.Type != ''"
-                    x-text="product.Type"
+                    x-show="product.Category != ''"
+                    x-text="product.Category"
                   ></dd>
                   <dd
                     class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-                    x-show="product.Type == ''"
+                    x-show="product.Category == ''"
                   >
                     -
                   </dd>

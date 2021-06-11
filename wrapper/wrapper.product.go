@@ -12,7 +12,7 @@ type ProductInsert struct {
 	Stock       int    `db:"stock"`
 	BasePrice   int    `db:"base_price"`
 	Price       int    `db:"price"`
-	Type        string `db:"type"`
+	Category    string `db:"category"`
 	Brand       string `db:"brand"`
 	CreatedAt   string `db:"created_at"`
 	CreatedBy   int    `db:"created_by"`
@@ -36,7 +36,7 @@ type NullableProduct struct {
 	Stock       int            `db:"stock"`
 	BasePrice   int            `db:"base_price"`
 	Price       int            `db:"price"`
-	Type        sql.NullString `db:"type"`
+	Category    sql.NullString `db:"category"`
 	Brand       sql.NullString `db:"brand"`
 	Thumbnail   sql.NullString `db:"thumbnail"`
 	Description sql.NullString `db:"description"`
@@ -72,7 +72,7 @@ type ProductForm struct {
 	Name        string                   `json:"name" binding:"required,min=4,max=100"`
 	Stock       string                   `json:"stock" binding:"numeric,gte=0"`
 	Brand       string                   `json:"brand" binding:"omitempty,min=2,max=25"`
-	Type        string                   `json:"type" binding:"omitempty,min=2,max=25"`
+	Category    string                   `json:"category" binding:"omitempty,min=2,max=25"`
 	BasePrice   string                   `json:"base_price" binding:"required,numeric,min=1,max=15"`
 	Price       string                   `json:"price" binding:"required,numeric,min=1,max=15"`
 	CreditPrice []ProductCreditPriceForm `json:"credit_price" binding:"omitempty"`
@@ -98,7 +98,7 @@ type Product struct {
 	Stock       int
 	BasePrice   int
 	Price       int
-	Type        string
+	Category    string
 	Brand       string
 	Thumbnail   string
 	CreatedAt   string

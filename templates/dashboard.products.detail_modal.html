@@ -3,8 +3,8 @@
   <div x-init="fetchById($dispatch)" x-data="fProDetail($parent)">
     <!-- Title -->
     <div
-      class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
-      x-text="'Kode #'+product.Code"
+      class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 dark:text-gray-400"
+      x-text="product.Name"
     ></div>
     <!-- Photo produk -->
     <div
@@ -113,15 +113,15 @@
         </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-        <dt class="text-sm leading-5 font-medium text-gray-500">Tipe</dt>
+        <dt class="text-sm leading-5 font-medium text-gray-500">Kategori</dt>
         <dd
           class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="product.Type != ''"
-          x-text="product.Type"
+          x-show="product.Category != ''"
+          x-text="product.Category"
         ></dd>
         <dd
           class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="product.Type == ''"
+          x-show="product.Category == ''"
         >
           -
         </dd>

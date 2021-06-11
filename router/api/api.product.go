@@ -86,7 +86,7 @@ func ProductCreate(c *gin.Context) {
 		user := dbquery.NewProduct()
 		err := user.SetName(json.Name).
 			SetSlug(slugURL).
-			SetType(json.Type).
+			SetCategory(json.Category).
 			SetBrand(json.Brand).
 			SetStock(stock).
 			SetDescription(json.Description).

@@ -72,7 +72,7 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 		slug,
 		stock,
 		brand,
-		type,
+		category,
 		base_price,
 		price,
 		thumbnail,
@@ -104,7 +104,7 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 			Slug:        p.Slug,
 			Stock:       p.Stock,
 			Brand:       p.Brand.String,
-			Type:        p.Type.String,
+			Category:    p.Category.String,
 			CreatedAt:   p.CreatedAt,
 			CreatedBy:   p.CreatedBy,
 			BasePrice:   p.BasePrice,
@@ -141,7 +141,7 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 		base_price,
 		price,
 		TO_CHAR(created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
-		type,
+		category,
 		brand
 		FROM "product"
 		WHERE id=$1
@@ -171,7 +171,7 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 		CreatedAt:   p.CreatedAt,
 		BasePrice:   p.BasePrice,
 		Price:       p.Price,
-		Type:        strings.Title(p.Type.String),
+		Category:    strings.Title(p.Category.String),
 		Brand:       strings.Title(p.Brand.String),
 		Photos:      photos,
 		CreditPrice: creditPrice,
@@ -193,7 +193,7 @@ func ProductGetProductBySlug(ps string) (wrapper.Product, error) {
 		base_price,
 		price,
 		TO_CHAR(created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
-		type,
+		category,
 		brand
 		FROM "product"
 		WHERE slug=$1
@@ -226,7 +226,7 @@ func ProductGetProductBySlug(ps string) (wrapper.Product, error) {
 		Slug:        ps,
 		BasePrice:   p.BasePrice,
 		Price:       p.Price,
-		Type:        strings.Title(p.Type.String),
+		Category:    strings.Title(p.Category.String),
 		Brand:       strings.Title(p.Brand.String),
 		Photos:      photos,
 		CreditPrice: creditPrice,
@@ -367,10 +367,10 @@ func (c *CreateProduct) SetPrice(p int) *CreateProduct {
 	return c
 }
 
-// SetType Tipe atau model produk
-func (c *CreateProduct) SetType(p string) *CreateProduct {
-	c.Type = p
-	c.into["type"] = ":type"
+// SetCategory kategori produk
+func (c *CreateProduct) SetCategory(p string) *CreateProduct {
+	c.Category = p
+	c.into["category"] = ":category"
 	return c
 }
 

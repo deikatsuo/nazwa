@@ -135,9 +135,8 @@
             const pattern = new RegExp(this.product_instant_search, "i");
             return (
               p.Name.match(pattern) ||
-              p.Code.match(pattern) ||
               p.Brand.match(pattern) ||
-              p.Type.match(pattern)
+              p.Category.match(pattern)
             );
           })
           .slice(0, this.count);
