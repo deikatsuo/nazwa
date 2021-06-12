@@ -280,8 +280,11 @@
             @dblclick="openUpdateForOccupation($nextTick);"
             x-show="updateFor !== 'occupation'"
           >
-            <div class="w-full" >
-              <span x-show="user.Occupation != ''" x-text="user.Occupation"></span>
+            <div class="w-full">
+              <span
+                x-show="user.Occupation != ''"
+                x-text="user.Occupation"
+              ></span>
               <span x-show="user.Occupation == ''">-</span>
             </div>
           </div>
@@ -358,7 +361,12 @@
           x-show="emails.length > 0"
         >
           <template x-for="(email, index) in emails" :key="index">
-            <p x-text="email.Email"></p>
+            <p
+              @contextmenu.prevent="if (selectedEmail != email.ID) { selectedEmail = email.ID; } else { selectedEmail = null; }"
+            >
+              <a x-text="email.Email" x-show="selectedEmail != email.ID" :href="`mailto:${email.Email}`"></a>
+              <span @dblclick="deleteEmail($dispatch, email.ID);" x-text="email.Email" x-show="selectedEmail == email.ID" class="text-red-400 cursor-pointer"></span>
+            </p>
           </template>
         </dd>
         <dd
@@ -377,7 +385,12 @@
           x-show="phones.length > 0"
         >
           <template x-for="(phone, index) in phones" :key="index">
-            <p x-text="phone.Phone"></p>
+            <p
+              @contextmenu.prevent="if (selectedPhone != phone.ID) { selectedPhone = phone.ID; } else { selectedPhone = null; }"
+            >
+              <a x-text="phone.Phone" x-show="selectedPhone != phone.ID" :href="`tel:${phone.Phone}`"></a>
+              <span @dblclick="deletePhone($dispatch, phone.ID);" x-text="phone.Phone" x-show="selectedPhone == phone.ID" class="text-red-400 cursor-pointer"></span>
+            </p>
           </template>
         </dd>
         <dd
@@ -644,6 +657,7 @@
           console.log(err);
         });
       },
+
       initPlaces($watch) {
         $watch('addAddressData.province', (value) => {
           this.addAddressData.city = '';
@@ -769,6 +783,56 @@
       deleteAddr($dispatch, addrid) {
         address = document.getElementById("address").__x.$data;
         address.deleteAddress($dispatch, addrid);
+      },
+
+      selectedEmail: null,
+      deleteEmailData: {
+        id: null,
+      },
+      deleteEmail($dispatch, eid) {
+        this.deleteEmailData.id = eid;
+        fetch("/api/v1/local/user/edit/{{ .user.ID }}/delete/email", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.deleteEmailData),
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            this.emails = json.emails;
+            if (json.error) {
+              $dispatch("notif", { type: "error", message: json.error });
+            } else if (json.success) {
+              $dispatch("notif", { type: "success", message: json.success });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+
+      selectedPhone: null,
+      deletePhoneData: {
+        id: null,
+      },
+      deletePhone($dispatch, pid) {
+        this.deletePhoneData.id = pid;
+        fetch("/api/v1/local/user/edit/{{ .user.ID }}/delete/phone", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.deletePhoneData),
+        })
+        .then((res) => res.json())
+        .then((json) => {
+          this.phones = json.phones;
+          if (json.error) {
+            $dispatch('notif', {type: 'error', message: json.error});
+          } else if (json.success) {
+            $dispatch('notif', {type: 'success', message: json.success});
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        });
       },
 
       openUpdateForUsername($nextTick) {
