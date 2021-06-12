@@ -364,8 +364,17 @@
             <p
               @contextmenu.prevent="if (selectedEmail != email.ID) { selectedEmail = email.ID; } else { selectedEmail = null; }"
             >
-              <a x-text="email.Email" x-show="selectedEmail != email.ID" :href="`mailto:${email.Email}`"></a>
-              <span @dblclick="deleteEmail($dispatch, email.ID);" x-text="email.Email" x-show="selectedEmail == email.ID" class="text-red-400 cursor-pointer"></span>
+              <a
+                x-text="email.Email"
+                x-show="selectedEmail != email.ID"
+                :href="`mailto:${email.Email}`"
+              ></a>
+              <span
+                @dblclick="deleteEmail($dispatch, email.ID);"
+                x-text="email.Email"
+                x-show="selectedEmail == email.ID"
+                class="text-red-400 cursor-pointer"
+              ></span>
             </p>
           </template>
         </dd>
@@ -378,26 +387,58 @@
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">
-          Nomor Telepon
+          <span @click="addPhoneShow = !addPhoneShow;" class="hover:text-blue-500 cursor-pointer">Nomor Telepon</span>
         </dt>
         <dd
           class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="phones.length > 0"
+          x-show="phones.length > 0 && !addPhoneShow"
         >
           <template x-for="(phone, index) in phones" :key="index">
             <p
               @contextmenu.prevent="if (selectedPhone != phone.ID) { selectedPhone = phone.ID; } else { selectedPhone = null; }"
             >
-              <a x-text="phone.Phone" x-show="selectedPhone != phone.ID" :href="`tel:${phone.Phone}`"></a>
-              <span @dblclick="deletePhone($dispatch, phone.ID);" x-text="phone.Phone" x-show="selectedPhone == phone.ID" class="text-red-400 cursor-pointer"></span>
+              <a
+                x-text="phone.Phone"
+                x-show="selectedPhone != phone.ID"
+                :href="`tel:${phone.Phone}`"
+              ></a>
+              <span
+                @dblclick="deletePhone($dispatch, phone.ID);"
+                x-text="phone.Phone"
+                x-show="selectedPhone == phone.ID"
+                class="text-red-400 cursor-pointer"
+              ></span>
             </p>
           </template>
         </dd>
         <dd
           class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="phones.length == 0"
+          x-show="phones.length == 0 && !addPhoneShow"
         >
           -
+        </dd>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0" x-show="addPhoneShow">
+          <input
+            class="
+              block
+              w-full
+              pr-20
+              mt-1
+              text-sm text-black
+              dark:text-gray-300
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:border-purple-400
+              focus:outline-none
+              focus:shadow-outline-purple
+              dark:focus:shadow-outline-gray
+              form-input
+            "
+            x-model="addPhoneData.phone"
+            type="text"
+            placeholder="Nomor HP..."
+            @keydown.enter="addPhone($dispatch); addPhoneShow = false;"
+          />
         </dd>
       </div>
     </dl>
@@ -821,18 +862,41 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.deletePhoneData),
         })
-        .then((res) => res.json())
-        .then((json) => {
-          this.phones = json.phones;
-          if (json.error) {
-            $dispatch('notif', {type: 'error', message: json.error});
-          } else if (json.success) {
-            $dispatch('notif', {type: 'success', message: json.success});
-          }
+          .then((res) => res.json())
+          .then((json) => {
+            this.phones = json.phones;
+            if (json.error) {
+              $dispatch("notif", { type: "error", message: json.error });
+            } else if (json.success) {
+              $dispatch("notif", { type: "success", message: json.success });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      addPhoneShow: false,
+      addPhoneData: {
+        phone: null,
+      },
+      addPhone($dispatch) {
+        fetch("/api/v1/local/user/edit/{{ .user.ID }}/add/phone", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.addPhoneData),
         })
-        .catch((err) => {
-          console.log(err)
-        });
+          .then((res) => res.json())
+          .then((json) => {
+            this.phones = json.phones;
+            if (json.error) {
+              $dispatch("notif", { type: "error", message: json.error });
+            } else if (json.success) {
+              $dispatch("notif", { type: "success", message: json.success });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       },
 
       openUpdateForUsername($nextTick) {
