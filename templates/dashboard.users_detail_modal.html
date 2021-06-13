@@ -355,10 +355,12 @@
         <dd class="px-4 sm:px-0"></dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
-        <dt class="text-sm leading-5 font-medium text-gray-500">Email</dt>
+        <dt class="text-sm leading-5 font-medium text-gray-500">
+          <span @click="addEmailShow = !addEmailShow;" class="hover:text-blue-500 cursor-pointer">Email</span>
+        </dt>
         <dd
           class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="emails.length > 0"
+          x-show="emails.length > 0 && !addEmailShow"
         >
           <template x-for="(email, index) in emails" :key="index">
             <p
@@ -380,9 +382,32 @@
         </dd>
         <dd
           class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="emails.length == 0"
+          x-show="emails.length == 0 && !addEmailShow"
         >
           -
+        </dd>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0" x-show="addEmailShow">
+          <input
+            class="
+              block
+              w-full
+              pr-20
+              mt-1
+              text-sm text-black
+              dark:text-gray-300
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:border-purple-400
+              focus:outline-none
+              focus:shadow-outline-purple
+              dark:focus:shadow-outline-gray
+              form-input
+            "
+            x-model="addEmailData.email"
+            type="text"
+            placeholder="Alamat email..."
+            @keydown.enter="addEmail($dispatch); addEmailShow = false;"
+          />
         </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
@@ -839,16 +864,41 @@
         })
           .then((res) => res.json())
           .then((json) => {
-            this.emails = json.emails;
+            
             if (json.error) {
               $dispatch("notif", { type: "error", message: json.error });
             } else if (json.success) {
+              this.emails = json.emails;
               $dispatch("notif", { type: "success", message: json.success });
             }
           })
           .catch((err) => {
             console.log(err);
           });
+      },
+      addEmailShow: false,
+      addEmailData: {
+        email: null,
+      },
+      addEmail($dispatch) {
+        fetch("/api/v1/local/user/edit/{{ .user.ID }}/add/email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.addEmailData),
+        })
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.error) {
+            $dispatch('notif', {type: 'error', message: json.error});
+          } else if (json.success) {
+            this.addEmailData.email = null;
+            this.emails = json.emails;
+            $dispatch('notif', {type: 'success', message: json.success});
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        });
       },
 
       selectedPhone: null,
@@ -864,10 +914,11 @@
         })
           .then((res) => res.json())
           .then((json) => {
-            this.phones = json.phones;
+            
             if (json.error) {
               $dispatch("notif", { type: "error", message: json.error });
             } else if (json.success) {
+              this.phones = json.phones;
               $dispatch("notif", { type: "success", message: json.success });
             }
           })
@@ -887,10 +938,12 @@
         })
           .then((res) => res.json())
           .then((json) => {
-            this.phones = json.phones;
+            
             if (json.error) {
               $dispatch("notif", { type: "error", message: json.error });
             } else if (json.success) {
+              this.addPhoneData.phone = null;
+              this.phones = json.phones;
               $dispatch("notif", { type: "success", message: json.success });
             }
           })
