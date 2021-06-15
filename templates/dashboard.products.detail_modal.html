@@ -175,20 +175,17 @@
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">Brand</dt>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="product.Brand != ''"
-        >
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
           <div
             class="w-full"
             x-text="product.Brand"
             @dblclick="openUpdateForBrand($nextTick);"
-            x-show="updateFor !== 'brand' && product.Brand != ''"
+            x-show="updateFor !== 'brand' && product.Brand !== ''"
           ></div>
           <div
             class="w-full"
             @dblclick="openUpdateForBrand($nextTick);"
-            x-show="updateFor !== 'brand' && product.Brand == ''"
+            x-show="updateFor !== 'brand' && product.Brand === ''"
           >
             -
           </div>
