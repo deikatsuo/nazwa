@@ -142,7 +142,8 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 		price,
 		TO_CHAR(created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
 		category,
-		brand
+		brand,
+		description
 		FROM "product"
 		WHERE id=$1
 		LIMIT 1`
@@ -173,6 +174,7 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 		Price:       p.Price,
 		Category:    strings.Title(p.Category.String),
 		Brand:       strings.Title(p.Brand.String),
+		Description: p.Description.String,
 		Photos:      photos,
 		CreditPrice: creditPrice,
 	}
@@ -569,6 +571,17 @@ func ProductUpdateCategory(pid int, category string) error {
 	SET category=$1
 	WHERE id=$2`
 	_, err := db.Exec(query, category, pid)
+
+	return err
+}
+
+// ProductUpdateDescription mengubah deskripsi produk
+func ProductUpdateDescription(pid int, desc string) error {
+	db := DB
+	query := `UPDATE "product"
+	SET description=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, desc, pid)
 
 	return err
 }

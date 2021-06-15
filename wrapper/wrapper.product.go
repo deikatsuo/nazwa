@@ -121,3 +121,8 @@ type ProductUpdateBrand struct {
 type ProductUpdateCategory struct {
 	Category string `form:"set" binding:"required,min=2,max=25"`
 }
+
+// ProductUpdateDescription update deskripsi
+type ProductUpdateDescription struct {
+	Description string `form:"set" binding:"required,min=2,max=1000"`
+}
