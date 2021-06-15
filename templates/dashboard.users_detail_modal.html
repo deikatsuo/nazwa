@@ -1099,7 +1099,7 @@
           return;
         }
         fetch(
-          `/api/v1/local/user/edit/${this.id}/update/occupation?set=${this.updateData.occupation}`,
+          `/api/v1/local/user/edit/${this.id}/update/occupation?set=${encodeURIComponent(this.updateData.occupation)}`,
           {
             method: "PATCH",
           }
