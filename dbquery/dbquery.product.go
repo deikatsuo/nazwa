@@ -539,3 +539,25 @@ func ProductUpdateStock(pid, stock int) error {
 
 	return err
 }
+
+// ProductUpdateName mengubah nama produk
+func ProductUpdateName(pid int, name string) error {
+	db := DB
+	query := `UPDATE "product"
+	SET name=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, name, pid)
+
+	return err
+}
+
+// ProductUpdateBrand mengubah brand produk
+func ProductUpdateBrand(pid int, brand string) error {
+	db := DB
+	query := `UPDATE "product"
+	SET brand=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, brand, pid)
+
+	return err
+}

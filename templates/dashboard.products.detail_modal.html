@@ -3,7 +3,19 @@
   <div x-init="fetchById($dispatch)" x-data="fProDetail($parent)">
     <!-- Title -->
     <div
-      class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 dark:text-gray-400"
+      class="
+        absolute
+        top-0
+        mt-3
+        ml-3
+        sm:mr-0
+        text-sm
+        md:text-lg
+        font-semibold
+        tracking-wide
+        text-left text-gray-500
+        dark:text-gray-400
+      "
       x-text="product.Name"
     ></div>
     <!-- Photo produk -->
@@ -19,9 +31,7 @@
               x-show="activeSlide === index + 1"
               class="h-48 w-full flex items-center rounded-lg"
             >
-              <div
-                class="relative w-full h-full cursor-pointer"
-              >
+              <div class="relative w-full h-full cursor-pointer">
                 <img
                   class="object-scale-down w-full h-full"
                   :src="'/file/product/'+photo.Photo"
@@ -47,7 +57,17 @@
         <div class="absolute inset-0 flex" x-show="photos.length > 1">
           <div class="flex items-center justify-start w-1/2">
             <button
-              class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow-lg rounded-full w-12 h-12 -ml-6"
+              class="
+                bg-teal-100
+                text-teal-500
+                hover:text-orange-500
+                font-bold
+                hover:shadow-lg
+                rounded-full
+                w-12
+                h-12
+                -ml-6
+              "
               x-on:click="activeSlide = activeSlide === 1 ? photos.length : activeSlide - 1"
             >
               &#8592;
@@ -55,7 +75,17 @@
           </div>
           <div class="flex items-center justify-end w-1/2">
             <button
-              class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow rounded-full w-12 h-12 -mr-6"
+              class="
+                bg-teal-100
+                text-teal-500
+                hover:text-orange-500
+                font-bold
+                hover:shadow
+                rounded-full
+                w-12
+                h-12
+                -mr-6
+              "
               x-on:click="activeSlide = activeSlide === photos.length ? 1 : activeSlide + 1"
             >
               &#8594;
@@ -70,7 +100,20 @@
           <div>
             <template x-for="(_,index) in photos" :key="index">
               <button
-                class="flex-1 w-2 h-2 mt-4 mx-2 rounded-full overflow-hidden transition-colors duration-200 ease-out hover:bg-teal-600 hover:shadow-lg"
+                class="
+                  flex-1
+                  w-2
+                  h-2
+                  mt-4
+                  mx-2
+                  rounded-full
+                  overflow-hidden
+                  transition-colors
+                  duration-200
+                  ease-out
+                  hover:bg-teal-600
+                  hover:shadow-lg
+                "
                 :class="{ 
                         'bg-orange-600': activeSlide === index + 1,
                         'bg-teal-300': activeSlide !== index + 1 
@@ -86,30 +129,86 @@
     <!-- Informasi Produk -->
     <dl class="w-full whitespace-no-wrap">
       <div
-        class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        class="
+          text-xs
+          font-semibold
+          tracking-wide
+          text-left text-gray-900
+          uppercase
+          border-b
+          dark:border-gray-700
+          bg-gray-50
+          dark:text-gray-400
+          dark:bg-gray-800
+        "
       >
         <dt class="px-3 py-3">Informasi Produk</dt>
         <dd class="px-4 sm:px-0"></dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">Nama Barang</dt>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-text="product.Name"
-        ></dd>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-text="product.Name"
+            @dblclick="openUpdateForName($nextTick);"
+            x-show="updateFor !== 'name'"
+          ></div>
+          <input
+            class="
+              block
+              w-full
+              mt-1
+              text-sm
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:outline-none
+            "
+            type="text"
+            id="edit-name"
+            x-model="updateData.name"
+            x-show="updateFor == 'name'"
+            @click.away="if (updateFor == 'name') { updateFor = ''; }"
+            @keydown.enter="updateName($dispatch)"
+          />
+        </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">Brand</dt>
         <dd
           class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
           x-show="product.Brand != ''"
-          x-text="product.Brand"
-        ></dd>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="product.Brand == ''"
         >
-          -
+          <div
+            class="w-full"
+            x-text="product.Brand"
+            @dblclick="openUpdateForBrand($nextTick);"
+            x-show="updateFor !== 'brand' && product.Brand != ''"
+          ></div>
+          <div
+            class="w-full"
+            @dblclick="openUpdateForBrand($nextTick);"
+            x-show="updateFor !== 'brand' && product.Brand == ''"
+          >
+            -
+          </div>
+          <input
+            class="
+              block
+              w-full
+              mt-1
+              text-sm
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:outline-none
+            "
+            type="text"
+            id="edit-brand"
+            x-model="updateData.brand"
+            x-show="updateFor == 'brand'"
+            @click.away="if (updateFor == 'brand') { updateFor = ''; }"
+            @keydown.enter="updateBrand($dispatch)"
+          />
         </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
@@ -140,7 +239,14 @@
         <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
           <span
             x-text="`${product.Stock} Unit`"
-            class="inline-block rounded-full px-3 text-xs font-semibold cursor-pointer"
+            class="
+              inline-block
+              rounded-full
+              px-3
+              text-xs
+              font-semibold
+              cursor-pointer
+            "
             :class="{'bg-red-200 text-red-500': product.Stock <= 20, 'bg-orange-200 text-orange-500': product.Stock > 20, 'bg-green-200 text-green-500': product.Stock > 100 }"
             @click="mpstock = !mpstock;"
           ></span>
@@ -151,7 +257,20 @@
           <dt class="text-sm leading-5 font-medium text-gray-500"></dt>
           <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
             <input
-              class="block rounded-full w-full text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              class="
+                block
+                rounded-full
+                w-full
+                text-sm
+                dark:border-gray-600
+                dark:bg-gray-700
+                focus:border-purple-400
+                focus:outline-none
+                focus:shadow-outline-purple
+                dark:text-gray-300
+                dark:focus:shadow-outline-gray
+                form-input
+              "
               placeholder="Tambah/kurangi stock: +100/-100"
               x-model="vmpstock"
               @keydown.enter="cmpstock($dispatch)"
@@ -164,7 +283,18 @@
     <!-- Harga produk -->
     <dl class="w-full whitespace-no-wrap">
       <div
-        class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        class="
+          text-xs
+          font-semibold
+          tracking-wide
+          text-left text-gray-900
+          uppercase
+          border-b
+          dark:border-gray-700
+          bg-gray-50
+          dark:text-gray-400
+          dark:bg-gray-800
+        "
       >
         <dt class="px-3 py-3">Harga Produk</dt>
         <dd class="px-4 sm:px-0"></dd>
@@ -188,7 +318,18 @@
     <!-- Harga Kredit -->
     <dl class="w-full whitespace-no-wrap">
       <div
-        class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        class="
+          text-xs
+          font-semibold
+          tracking-wide
+          text-left text-gray-900
+          uppercase
+          border-b
+          dark:border-gray-700
+          bg-gray-50
+          dark:text-gray-400
+          dark:bg-gray-800
+        "
       >
         <dt class="px-3 py-3">Harga Kredit</dt>
         <dd class="px-4 sm:px-0"></dd>
@@ -227,22 +368,70 @@
         <div class="w-full px-4">
           <label class="block text-sm">
             <div
-              class="flex flex-wrap mt-1 relative text-gray-500 focus-within:text-purple-600"
+              class="
+                flex flex-wrap
+                mt-1
+                relative
+                text-gray-500
+                focus-within:text-purple-600
+              "
             >
               <input
-                class="block rounded-none rounded-l-sm w-2/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                class="
+                  block
+                  rounded-none rounded-l-sm
+                  w-2/12
+                  text-sm
+                  dark:border-gray-600
+                  dark:bg-gray-700
+                  focus:border-purple-400
+                  focus:outline-none
+                  focus:shadow-outline-purple
+                  dark:text-gray-300
+                  dark:focus:shadow-outline-gray
+                  form-input
+                "
                 placeholder="Tenor"
                 x-model.number="addCreditPrice.duration"
                 @keydown.enter="addCp($dispatch)"
               />
               <input
-                class="block rounded-none w-10/12 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                class="
+                  block
+                  rounded-none
+                  w-10/12
+                  text-sm
+                  dark:border-gray-600
+                  dark:bg-gray-700
+                  focus:border-purple-400
+                  focus:outline-none
+                  focus:shadow-outline-purple
+                  dark:text-gray-300
+                  dark:focus:shadow-outline-gray
+                  form-input
+                "
                 placeholder="Cicilan per bulan"
                 x-model.number="addCreditPrice.price"
                 @keydown.enter="addCp($dispatch)"
               />
               <button
-                class="absolute h-full bottom-0 right-0 px-4 text-sm text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-sm active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                class="
+                  absolute
+                  h-full
+                  bottom-0
+                  right-0
+                  px-4
+                  text-sm text-white
+                  transition-colors
+                  duration-150
+                  bg-purple-600
+                  border border-transparent
+                  rounded-r-sm
+                  active:bg-purple-600
+                  hover:bg-purple-700
+                  focus:outline-none
+                  focus:shadow-outline-purple
+                "
                 @click="addCp($dispatch)"
               >
                 tambah
@@ -274,6 +463,15 @@
       selectedCP: null,
       mpstock: false,
       vmpstock: null,
+      // Update
+      updateData: {
+        name: "",
+        brand: "",
+        category: "",
+        buy: null,
+        sell: null,
+      },
+      updateFor: "",
       cmpstock($dispatch) {
         if (this.vmpstock == null) {
           $dispatch("notif", {
@@ -463,6 +661,92 @@
           })
           .catch((err) => {
             console.log(err);
+          });
+      },
+
+      openUpdateForName($nextTick) {
+        this.updateFor = "name";
+        this.updateData.name = this.product.Name;
+        $nextTick(() => {
+          document.getElementById(`edit-name`).select();
+        });
+      },
+
+      openUpdateForBrand($nextTick) {
+        this.updateFor = "brand";
+        this.updateData.brand = this.product.Brand;
+        $nextTick(() => {
+          document.getElementById(`edit-brand`).select();
+        });
+      },
+
+      updateName($dispatch) {
+        if (this.updateData.name.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Nama produk tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/product/edit/${
+            this.id
+          }/update/name?set=${encodeURIComponent(this.updateData.name)}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              product = document.getElementById("product_data").__x.$data;
+              product.fetchProductsData($dispatch, false, "reload", true);
+              this.product.Name = this.updateData.name;
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updateName() " + err);
+          });
+      },
+
+      updateBrand($dispatch) {
+        if (this.updateData.brand.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Brand produk tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/product/edit/${
+            this.id
+          }/update/brand?set=${encodeURIComponent(this.updateData.brand)}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              product = document.getElementById("product_data").__x.$data;
+              product.fetchProductsData($dispatch, false, "reload", true);
+              this.product.Brand = this.updateData.brand;
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updateBrand() " + err);
           });
       },
     };

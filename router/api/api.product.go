@@ -620,3 +620,103 @@ func ProductUpdateStock(c *gin.Context) {
 
 	c.JSON(httpStatus, misc.Mete(gh, simpleErr))
 }
+
+// ProductUpdateName ubah nama produk
+func ProductUpdateName(c *gin.Context) {
+	// ID produk yang akan di update
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var simpleErr map[string]interface{}
+
+	var updateName wrapper.ProductUpdateName
+	if err := c.ShouldBindQuery(&updateName); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["name"].(string)
+		status = "error"
+	}
+
+	// Update nama produk
+	if next {
+		if err := dbquery.ProductUpdateName(pid, updateName.Name); err != nil {
+			log.Warn("api.product.go ProductUpdateName() Gagal mengubah nama produk")
+			log.Error(err)
+			message = "Gagal mengubah nama produk"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Nama produk telah dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
+// ProductUpdateBrand update brand
+func ProductUpdateBrand(c *gin.Context) {
+	// ID produk yang akan di update
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var simpleErr map[string]interface{}
+
+	var updateBrand wrapper.ProductUpdateBrand
+	if err := c.ShouldBindQuery(&updateBrand); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["brand"].(string)
+		status = "error"
+	}
+
+	// Update brand produk
+	if next {
+		if err := dbquery.ProductUpdateBrand(pid, updateBrand.Brand); err != nil {
+			log.Warn("api.product.go ProductUpdateBrand() Gagal mengubah brand produk")
+			log.Error(err)
+			message = "Gagal mengubah brand produk"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Brand telah dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}

@@ -106,3 +106,13 @@ type Product struct {
 	CreditPrice []ProductCreditPriceSelect
 	Photos      []ProductPhotoListSelect
 }
+
+// ProductUpdateName update nama produk wrapper
+type ProductUpdateName struct {
+	Name string `form:"set" binding:"required,min=4,max=100"`
+}
+
+// ProductUpdateBrand update brand
+type ProductUpdateBrand struct {
+	Brand string `form:"set" binding:"required,min=2,max=25"`
+}
