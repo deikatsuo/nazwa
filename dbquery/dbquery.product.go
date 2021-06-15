@@ -561,3 +561,14 @@ func ProductUpdateBrand(pid int, brand string) error {
 
 	return err
 }
+
+// ProductUpdateCategory mengubah kategori produk
+func ProductUpdateCategory(pid int, category string) error {
+	db := DB
+	query := `UPDATE "product"
+	SET category=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, category, pid)
+
+	return err
+}

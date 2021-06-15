@@ -212,14 +212,37 @@
         <dt class="text-sm leading-5 font-medium text-gray-500">Kategori</dt>
         <dd
           class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="product.Category != ''"
-          x-text="product.Category"
-        ></dd>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-show="product.Category == ''"
         >
-          -
+          <div
+            class="w-full"
+            x-text="product.Category"
+            @dblclick="openUpdateForCategory($nextTick);"
+            x-show="updateFor !== 'category' && product.Category !== ''"
+          ></div>
+          <div
+            class="w-full"
+            @dblclick="openUpdateForCategory($nextTick);"
+            x-show="updateFor !== 'category' && product.Category === ''"
+          >
+            -
+          </div>
+          <input
+            class="
+              block
+              w-full
+              mt-1
+              text-sm
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:outline-none
+            "
+            type="text"
+            id="edit-category"
+            x-model="updateData.category"
+            x-show="updateFor == 'category'"
+            @click.away="if (updateFor == 'category') { updateFor = ''; }"
+            @keydown.enter="updateCategory($dispatch)"
+          />
         </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
@@ -677,6 +700,14 @@
         });
       },
 
+      openUpdateForCategory($nextTick) {
+        this.updateFor = "category";
+        this.updateData.category = this.product.Category;
+        $nextTick(() => {
+          document.getElementById(`edit-category`).select();
+        });
+      },
+
       updateName($dispatch) {
         if (this.updateData.name.length < 1) {
           $dispatch("notif", {
@@ -744,6 +775,43 @@
           })
           .catch((err) => {
             console.log("Error: updateBrand() " + err);
+          });
+      },
+
+      updateCategory($dispatch) {
+        if (this.updateData.category.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Kategori produk tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/product/edit/${
+            this.id
+          }/update/category?set=${encodeURIComponent(
+            this.updateData.category
+          )}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              product = document.getElementById("product_data").__x.$data;
+              product.fetchProductsData($dispatch, false, "reload", true);
+              this.product.Category = this.updateData.category;
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updateCategory() " + err);
           });
       },
     };

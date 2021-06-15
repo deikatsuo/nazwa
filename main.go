@@ -259,6 +259,7 @@ func runServer() {
 	v1pEdit.PATCH("/:id/update/stock", api.ProductUpdateStock)
 	v1pEdit.PATCH("/:id/update/name", api.ProductUpdateName)
 	v1pEdit.PATCH("/:id/update/brand", api.ProductUpdateBrand)
+	v1pEdit.PATCH("/:id/update/category", api.ProductUpdateCategory)
 
 	// /api/v1/local/product/search
 	v1pSearch := v1product.Group("/search")

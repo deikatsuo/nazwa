@@ -720,3 +720,53 @@ func ProductUpdateBrand(c *gin.Context) {
 
 	c.JSON(httpStatus, gh)
 }
+
+// ProductUpdateCategory update kategori
+func ProductUpdateCategory(c *gin.Context) {
+	// ID produk yang akan di update
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var simpleErr map[string]interface{}
+
+	var updateCategory wrapper.ProductUpdateCategory
+	if err := c.ShouldBindQuery(&updateCategory); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["category"].(string)
+		status = "error"
+	}
+
+	// Update kategori produk
+	if next {
+		if err := dbquery.ProductUpdateCategory(pid, updateCategory.Category); err != nil {
+			log.Warn("api.product.go ProductUpdateCategory() Gagal mengubah kategori produk")
+			log.Error(err)
+			message = "Gagal mengubah kategori produk"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Kategori produk telah dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
