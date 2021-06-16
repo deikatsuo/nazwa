@@ -356,17 +356,59 @@
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">Beli</dt>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-text="toRupiah(product.BasePrice)"
-        ></dd>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-text="toRupiah(product.BasePrice)"
+            @dblclick="openUpdateForPriceBuy($nextTick);"
+            x-show="updateFor !== 'price-buy'"
+          ></div>
+          <input
+            class="
+              block
+              w-full
+              mt-1
+              text-sm
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:outline-none
+            "
+            type="text"
+            id="edit-price-buy"
+            x-model="updateData.buy"
+            x-show="updateFor == 'price-buy'"
+            @click.away="if (updateFor == 'price-buy') { updateFor = ''; }"
+            @keydown.enter="updatePriceBuy($dispatch)"
+          />
+        </dd>
       </div>
       <div class="px-4 py-1 sm:grid sm:grid-cols-2">
         <dt class="text-sm leading-5 font-medium text-gray-500">Jual</dt>
-        <dd
-          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
-          x-text="toRupiah(product.Price)"
-        ></dd>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-text="toRupiah(product.Price)"
+            @dblclick="openUpdateForPriceSell($nextTick);"
+            x-show="updateFor !== 'price-sell'"
+          ></div>
+          <input
+            class="
+              block
+              w-full
+              mt-1
+              text-sm
+              dark:border-gray-600
+              dark:bg-gray-700
+              focus:outline-none
+            "
+            type="text"
+            id="edit-price-sell"
+            x-model="updateData.sell"
+            x-show="updateFor == 'price-sell'"
+            @click.away="if (updateFor == 'price-sell') { updateFor = ''; }"
+            @keydown.enter="updatePriceSell($dispatch)"
+          />
+        </dd>
       </div>
     </dl>
 
@@ -752,6 +794,22 @@
         });
       },
 
+      openUpdateForPriceBuy($nextTick) {
+        this.updateFor = "price-buy";
+        this.updateData.buy = this.product.BasePrice;
+        $nextTick(() => {
+          document.getElementById(`edit-price-buy`).select();
+        });
+      },
+
+      openUpdateForPriceSell($nextTick) {
+        this.updateFor = "price-sell";
+        this.updateData.sell = this.product.Price;
+        $nextTick(() => {
+          document.getElementById(`edit-price-sell`).select();
+        });
+      },
+
       updateName($dispatch) {
         if (this.updateData.name.length < 1) {
           $dispatch("notif", {
@@ -863,7 +921,7 @@
         if (this.updateData.description.length < 1) {
           $dispatch("notif", {
             type: "error",
-            message: "Kategori produk tidak boleh kosong",
+            message: "Deskripsi produk tidak boleh kosong",
           });
           return;
         }
@@ -893,6 +951,72 @@
           })
           .catch((err) => {
             console.log("Error: updateDescription() " + err);
+          });
+      },
+
+      updatePriceBuy($dispatch) {
+        if (this.updateData.buy.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Harga beli produk tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/product/edit/${this.id}/update/price/buy?set=${this.updateData.buy}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              product = document.getElementById("product_data").__x.$data;
+              product.fetchProductsData($dispatch, false, "reload", true);
+              this.product.BasePrice = this.updateData.buy;
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updatePriceBuy() " + err);
+          });
+      },
+
+      updatePriceSell($dispatch) {
+        if (this.updateData.sell.length < 1) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Harga beli produk tidak boleh kosong",
+          });
+          return;
+        }
+        fetch(
+          `/api/v1/local/product/edit/${this.id}/update/price/sell?set=${this.updateData.sell}`,
+          {
+            method: "PATCH",
+          }
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+            if (json.status == "success") {
+              product = document.getElementById("product_data").__x.$data;
+              product.fetchProductsData($dispatch, false, "reload", true);
+              this.product.Price = this.updateData.sell;
+            }
+          })
+          .catch((err) => {
+            console.log("Error: updatePriceSell() " + err);
           });
       },
     };

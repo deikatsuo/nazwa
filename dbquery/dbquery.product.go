@@ -585,3 +585,25 @@ func ProductUpdateDescription(pid int, desc string) error {
 
 	return err
 }
+
+// ProductUpdatePriceBuy ubah harga beli
+func ProductUpdatePriceBuy(pid int, bp int) error {
+	db := DB
+	query := `UPDATE "product"
+	SET base_price=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, bp, pid)
+
+	return err
+}
+
+// ProductUpdatePriceSell ubah harga jual
+func ProductUpdatePriceSell(pid int, p int) error {
+	db := DB
+	query := `UPDATE "product"
+	SET price=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, p, pid)
+
+	return err
+}

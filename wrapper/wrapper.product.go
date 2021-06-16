@@ -126,3 +126,13 @@ type ProductUpdateCategory struct {
 type ProductUpdateDescription struct {
 	Description string `form:"set" binding:"required,min=2,max=1000"`
 }
+
+// ProductUpdatePriceBuy update harga beli
+type ProductUpdatePriceBuy struct {
+	BasePrice string `form:"set" binding:"required,numeric,min=1,max=15"`
+}
+
+// ProductUpdatePriceSell update harga jual
+type ProductUpdatePriceSell struct {
+	Price string `form:"set" binding:"required,numeric,min=1,max=15"`
+}

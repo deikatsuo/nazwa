@@ -820,3 +820,117 @@ func ProductUpdateDescription(c *gin.Context) {
 
 	c.JSON(httpStatus, gh)
 }
+
+// ProductUpdatePriceBuy Update harga beli
+func ProductUpdatePriceBuy(c *gin.Context) {
+	// ID produk yang akan di update
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var simpleErr map[string]interface{}
+
+	var updatePriceBuy wrapper.ProductUpdatePriceBuy
+	if err := c.ShouldBindQuery(&updatePriceBuy); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["base_price"].(string)
+		status = "error"
+	}
+
+	price, err := strconv.Atoi(updatePriceBuy.BasePrice)
+	if err != nil {
+		next = false
+		message = "Nilai input harga beli tidak benar"
+		status = "error"
+	}
+
+	// Update harga beli produk
+	if next {
+		if err := dbquery.ProductUpdatePriceBuy(pid, price); err != nil {
+			log.Warn("api.product.go ProductUpdatePriceBuy() Gagal mengubah harga beli produk")
+			log.Error(err)
+			message = "Gagal mengubah harga beli produk"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Harga beli produk telah dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
+
+// ProductUpdatePriceSell Update harga jual
+func ProductUpdatePriceSell(c *gin.Context) {
+	// ID produk yang akan di update
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var simpleErr map[string]interface{}
+
+	var updatePriceSell wrapper.ProductUpdatePriceSell
+	if err := c.ShouldBindQuery(&updatePriceSell); err != nil {
+		simpleErr = validation.SimpleValErrMap(err)
+		next = false
+		message = simpleErr["price"].(string)
+		status = "error"
+	}
+
+	price, err := strconv.Atoi(updatePriceSell.Price)
+	if err != nil {
+		next = false
+		message = "Nilai input harga jual tidak benar"
+		status = "error"
+	}
+
+	// Update harga jual produk
+	if next {
+		if err := dbquery.ProductUpdatePriceSell(pid, price); err != nil {
+			log.Warn("api.product.go ProductUpdatePriceSell() Gagal mengubah harga jual produk")
+			log.Error(err)
+			message = "Gagal mengubah harga jual produk"
+			status = "error"
+			next = false
+		}
+	}
+
+	// Berhasil update data
+	if next {
+		httpStatus = http.StatusOK
+		message = "Harga jual produk telah dirubah"
+		status = "success"
+	}
+
+	gh := gin.H{
+		"message": message,
+		"status":  status,
+	}
+
+	c.JSON(httpStatus, gh)
+}
