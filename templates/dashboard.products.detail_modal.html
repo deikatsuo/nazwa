@@ -275,8 +275,8 @@
             id="edit-description"
             x-model="updateData.description"
             x-show="updateFor == 'description'"
-            @click.away="if (updateFor == 'description') { updateFor = ''; }"
-            @keydown.enter="updateDescription($dispatch)"
+            @click.away="if (updateFor == 'description') { updateFor = ''; updateDescription($dispatch); }"
+            @keydown.enter="updateDescriptionEvent($event, $dispatch)"
           ></textarea>
         </dd>
       </div>
@@ -915,6 +915,12 @@
           .catch((err) => {
             console.log("Error: updateCategory() " + err);
           });
+      },
+
+      updateDescriptionEvent($event, $dispatch) {
+        if ($event.ctrlKey) {
+          this.updateDescription($dispatch);
+        }
       },
 
       updateDescription($dispatch) {
