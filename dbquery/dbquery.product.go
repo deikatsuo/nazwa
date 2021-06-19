@@ -1,6 +1,7 @@
 package dbquery
 
 import (
+	"database/sql"
 	"fmt"
 	"nazwa/wrapper"
 	"strings"
@@ -301,6 +302,34 @@ func ProductGetProductPhoto(pid int) ([]wrapper.ProductPhotoListSelect, error) {
 	return photos, err
 }
 
+// ProductGetProductPhotoName mengambil nama foto
+func ProductGetProductPhotoName(photoID int) (string, error) {
+	db := DB
+	var photo string
+	query := `SELECT photo
+	FROM "product_photo"
+	WHERE id=$1`
+	err := db.Get(&photo, query, photoID)
+	if err != nil {
+		return photo, err
+	}
+	return photo, err
+}
+
+// ProductGetProductThumbName mengambil thumb foto
+func ProductGetProductThumbName(pid int) (string, error) {
+	db := DB
+	var thumb sql.NullString
+	query := `SELECT thumbnail
+	FROM "product"
+	WHERE id=$1`
+	err := db.Get(&thumb, query, pid)
+	if err != nil {
+		return thumb.String, err
+	}
+	return thumb.String, err
+}
+
 //////////
 // POST //
 //////////
@@ -500,6 +529,15 @@ func ProductDeleteCreditPrice(pcpid int64, pid int) error {
 	return err
 }
 
+// ProductDeletePhoto menghapus foto produk
+func ProductDeletePhoto(foto int64, pid int) error {
+	db := DB
+	query := `DELETE FROM "product_photo"
+	WHERE id=$1 AND product_id=$2`
+	_, err := db.Exec(query, foto, pid)
+	return err
+}
+
 ///////////
 // CHECK //
 ///////////
@@ -604,6 +642,17 @@ func ProductUpdatePriceSell(pid int, p int) error {
 	SET price=$1
 	WHERE id=$2`
 	_, err := db.Exec(query, p, pid)
+
+	return err
+}
+
+// ProductUpdateThumb ubah thumbnail
+func ProductUpdateThumb(pid int, thumb sql.NullString) error {
+	db := DB
+	query := `UPDATE "product"
+	SET thumbnail=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, thumb, pid)
 
 	return err
 }

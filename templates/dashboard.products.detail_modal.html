@@ -43,6 +43,10 @@
                   aria-hidden="true"
                 ></div>
               </div>
+              <div
+                x-show="selectedPhoto === photo.ID"
+                class="absolute h-full w-full bg-black bg-opacity-75"
+              ></div>
             </div>
             <div
               class="absolute inset-0 mx-5 z-10 cursor-pointer"
@@ -50,7 +54,36 @@
               @click="$dispatch('preview', {
                     html: '<img @click=\'closePreview()\' src=\'/file/product/'+photo.Photo+'\' class=\'object-scale-down object w-full h-full lazy\' />',
                     });"
+              @contextmenu.prevent="if (photo.ID > 0) { if (selectedPhoto === photo.ID) { selectedPhoto = null; } else { selectedPhoto = photo.ID; } }"
             ></div>
+            <div
+              class="absolute inset-0 mx-5 z-10"
+              x-show="selectedPhoto === photo.ID"
+              @contextmenu.prevent="if (photo.ID > 0) { if (selectedPhoto === photo.ID) { selectedPhoto = null; } else { selectedPhoto = photo.ID; } }"
+            >
+              <div class="w-full h-full flex items-center justify-center">
+                <button
+                  class="
+                    cursor-pointer
+                    py-1
+                    px-4
+                    text-sm text-white
+                    transition-colors
+                    duration-150
+                    bg-red-600
+                    border border-transparent
+                    rounded-r-sm
+                    active:bg-red-600
+                    hover:bg-red-700
+                    focus:outline-none
+                    focus:shadow-outline-purple
+                  "
+                  @click="deletePhoto($dispatch, index);"
+                >
+                  hapus
+                </button>
+              </div>
+            </div>
           </div>
         </template>
         <!-- Prev/Next Arrows -->
@@ -558,6 +591,7 @@
       ],
       creditPrice: [],
       selectedCP: null,
+      selectedPhoto: null,
       mpstock: false,
       vmpstock: null,
       // Update
@@ -755,6 +789,50 @@
               this.creditPrice = data.credit_price;
             } else {
               this.creditPrice = [];
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+
+      deletePhotoData: {
+        id: null,
+      },
+      deletePhoto($dispatch, index) {
+        this.deletePhotoData.id = this.selectedPhoto;
+        fetch(`/api/v1/local/product/edit/${this.id}/delete/photo`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.deletePhotoData),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.error) {
+              $dispatch("notif", {
+                type: "error",
+                message: data.error,
+              });
+            }
+            if (data.success) {
+              $dispatch("notif", {
+                type: "success",
+                message: data.success,
+              });
+
+              this.selectedPhoto = null;
+              this.photos.splice(index, 1);
+              if (this.photos.length == 0) {
+                this.photos = [
+                  {
+                    ID: 0,
+                    Photo: "no-photo.png",
+                  },
+                ];
+              }
+              if (this.activeSlide > 1) {
+                this.activeSlide = this.activeSlide - 1;
+              }
             }
           })
           .catch((err) => {

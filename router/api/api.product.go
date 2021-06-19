@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"nazwa/dbquery"
@@ -282,6 +283,100 @@ func ProductDeleteCreditPrice(c *gin.Context) {
 		"error":        errMess,
 		"success":      success,
 		"credit_price": retCreditPrices,
+	})
+}
+
+// ProductDeletePhoto hapus foto produk
+func ProductDeletePhoto(c *gin.Context) {
+	// User id yang merequest
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Warn("api.product.go ProductDeletePhoto() id produk tidak valid")
+		log.Error(err)
+
+		router.Page404(c)
+		return
+	}
+
+	errMess := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	success := ""
+
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Warn("api.product.go ProductDeleteCreditPrice() gagal membaca body")
+		log.Error(err)
+
+		errMess = "Data tidak benar"
+		next = false
+	}
+
+	photoID, err := jsonparser.GetInt(body, "id")
+	if err != nil {
+		errMess = "Request tidak valid"
+	}
+
+	var photo string
+	if next {
+		if ph, err := dbquery.ProductGetProductPhotoName(int(photoID)); err != nil {
+			log.Warn(err)
+			errMess = "tidak ditemukan foto"
+			next = false
+		} else {
+			photo = ph
+		}
+	}
+
+	var thumb string
+	if next {
+		if tb, err := dbquery.ProductGetProductThumbName(pid); err != nil {
+			log.Warn(err)
+		} else {
+			thumb = tb
+		}
+	}
+
+	if thumb == photo {
+		err := os.Remove("../data/upload/product/thumbnail/" + thumb)
+		if err != nil {
+			log.Error(err)
+			errMess = "Gagal menghapus thumbnail dari direktori"
+			next = false
+		}
+	}
+
+	// Delete thumb
+	if next {
+		if err := dbquery.ProductUpdateThumb(pid, sql.NullString{}); err != nil {
+			errMess = "Gagal menghapus thumbnail"
+			next = false
+		} else {
+			success = "Thumbnail telah dihapus"
+		}
+	}
+
+	// Delete foto
+	if next {
+		if err := dbquery.ProductDeletePhoto(photoID, pid); err != nil {
+			errMess = "Gagal menghapus foto"
+			next = false
+		} else {
+			success = "Foto telah dihapus"
+		}
+	}
+
+	if next {
+		err := os.Remove("../data/upload/product/" + photo)
+		if err != nil {
+			errMess = "Gagal menghapus foto dari direktori"
+			next = false
+		}
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"error":   errMess,
+		"success": success,
 	})
 }
 
