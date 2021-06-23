@@ -670,9 +670,10 @@
                 : Math.round(file.size / 1024) + "kb"
               : file.size + "b";
           var reader = new FileReader();
+          _this = this;
           reader.onloadend = function () {
             var bsplit = reader.result.split(",");
-            document.getElementById("create").__x.$data.formData.photos.push({
+            _this.formData.photos.push({
               photo_type: bsplit[0],
               photo: bsplit[1],
               name: file.name,
