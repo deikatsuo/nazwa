@@ -80,6 +80,11 @@ type ProductForm struct {
 	Description string                   `json:"description" binding:"omitempty"`
 }
 
+// ProductAddPhotosForm tambah foto produk
+type ProductAddPhotosForm struct {
+	Photo []ProductPhotoForm `json:"photos" binding:"required"`
+}
+
 // ProductPhotoForm list photo produk
 type ProductPhotoForm struct {
 	PhotoType string `json:"photo_type" binding:"base64"`

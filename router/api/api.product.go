@@ -223,6 +223,74 @@ func ProductAddCreditPrice(c *gin.Context) {
 	})
 }
 
+// ProductAddPhotos tambah foto produk
+func ProductAddPhotos(c *gin.Context) {
+	// User id yang merequest
+	pid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Warn("api.product.go ProductAddPhotos() parameter id tidak valid")
+		log.Error(err)
+
+		router.Page404(c)
+		return
+	}
+
+	errMess := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	success := ""
+
+	var photos wrapper.ProductAddPhotosForm
+	if err := c.ShouldBindJSON(&photos); err != nil {
+		log.Warn("api.product.go ProductAddPhotos() gagal bind json")
+		log.Error(err)
+		next = false
+	}
+
+	var files []string
+	if next {
+		if len(photos.Photo) > 0 {
+			for _, p := range photos.Photo {
+				if p.PhotoType != "" && p.Photo != "" {
+					if f, err := misc.FileBase64ToFileWithData("../data/upload/product/", p.Photo, p.PhotoType); err == nil {
+						files = append(files, f)
+					} else {
+						next = false
+						log.Warn("api.product.go ProductAddPhotos() Konversi base64 ke dalam bentuk file")
+						log.Error(err)
+					}
+				}
+			}
+		}
+	}
+
+	if next {
+		if err := dbquery.ProductAddPhotos(pid, files); err != nil {
+			errMess = "Gagal menyimpan ke database"
+			log.Warn("api.product.go ProductAddPhotos() Simpan file ke database")
+			log.Error(err)
+
+			for _, s := range files {
+				if err := os.Remove("../data/upload/product/" + s); err != nil {
+					log.Warn("api.product.go ProductCreate() Gagal menghapus file")
+					log.Error(err)
+				}
+			}
+		}
+	}
+
+	if next {
+		success = "Foto berhasil ditambahkan"
+		httpStatus = http.StatusOK
+		errMess = ""
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"error":   errMess,
+		"success": success,
+	})
+}
+
 /////////////////////////////////////// DELETE /////////////////////////////////////////
 
 // ProductDeleteCreditPrice hapus harga kredit barang

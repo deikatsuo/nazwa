@@ -255,6 +255,7 @@ func runServer() {
 	// /api/v1/local/product/edit
 	v1pEdit := v1product.Group("/edit")
 	v1pEdit.POST("/:id/add/credit_price", api.ProductAddCreditPrice)
+	v1pEdit.POST("/:id/add/photos", api.ProductAddPhotos)
 	v1pEdit.DELETE("/:id/delete/credit_price", api.ProductDeleteCreditPrice)
 	v1pEdit.DELETE("/:id/delete/photo", api.ProductDeletePhoto)
 	v1pEdit.PATCH("/:id/update/stock", api.ProductUpdateStock)

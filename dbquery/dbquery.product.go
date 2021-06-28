@@ -656,3 +656,24 @@ func ProductUpdateThumb(pid int, thumb sql.NullString) error {
 
 	return err
 }
+
+// ProductAddPhotos tambah foto
+func ProductAddPhotos(pid int, photos []string) error {
+	db := DB
+
+	// Mulai transaksi
+	tx := db.MustBegin()
+	query := `INSERT INTO "product_photo" (product_id, photo) VALUES ($1, $2)`
+
+	for id, s := range photos {
+		// insert foto produk
+		if _, err := db.Exec(query, pid, s); err != nil {
+			log.Warn("dbquery.product.go ProductAddPhotos() Insert photo ID: ", id)
+			return err
+		}
+	}
+
+	// Komit
+	err := tx.Commit()
+	return err
+}

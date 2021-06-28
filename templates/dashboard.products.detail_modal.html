@@ -376,7 +376,10 @@
           </article>
         </div>
       </div>
-      <div class="px-4 py-1 flex justify-center items-center" x-show="addPhoto.photos.length > 0">
+      <div
+        class="px-4 py-1 flex justify-center items-center"
+        x-show="addPhoto.photos.length > 0"
+      >
         <button
           class="
             px-4
@@ -1031,7 +1034,38 @@
       },
 
       addNewPhoto($dispatch) {
-      
+        if (this.addPhoto.photos.length === 0) {
+          $dispatch("notif", {
+            type: "error",
+            message: "Tidak ada foto untuk diupload",
+          });
+          return;
+        }
+        fetch(`/api/v1/local/product/edit/${this.id}/add/photos`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.addPhoto),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.error) {
+              $dispatch("notif", {
+                type: "error",
+                message: data.error,
+              });
+            }
+            if (data.success) {
+              $dispatch("notif", {
+                type: "success",
+                message: data.success,
+              });
+              this.addPhoto.photos = [];
+              this.fetchById($dispatch);
+            }
+          })
+          .catch(() => {
+            console.log("Telah terjadi kesalahan");
+          });
       },
 
       deleteCreditPriceData: {
