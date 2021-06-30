@@ -116,6 +116,12 @@ func (c *CreateOrder) SetCredit(o bool) *CreateOrder {
 	return c
 }
 
+func (c *CreateOrder) SetCreditStatus(o string) *CreateOrder {
+	c.Status = o
+	c.into["status"] = ":status"
+	return c
+}
+
 // SetDeposit uang muka
 func (c *CreateOrder) SetDeposit(o int) *CreateOrder {
 	if o > 0 {

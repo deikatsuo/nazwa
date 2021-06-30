@@ -51,8 +51,8 @@ CREATE TABLE "user" (
 );
 
 -- Buat user
-INSERT INTO "user" ("first_name", "username", "password", "gender")
-    VALUES ('deri', 'deri', 'tetehrika', 'm');
+-- INSERT INTO "user" ("first_name", "username", "password", "gender")
+--     VALUES ('deri', 'deri', 'tetehrika', 'm');
 
 
 -- Tabel KK
@@ -83,8 +83,8 @@ CREATE TABLE "user_role" (
 );
 
 -- Buat user
-INSERT INTO "user_role" ("role_id", "user_id")
-    VALUES (1, 1);
+-- INSERT INTO "user_role" ("role_id", "user_id")
+--     VALUES (1, 1);
 
 
 -- Tabel email
@@ -274,12 +274,12 @@ CREATE TABLE "order" (
     "billing_address_id" int,
     "imported_items" varchar(100),
     "imported_address" text,
-    "imported_sales" varchar(50),
+    "imported_sales" varchar(100),
     "imported_surveyor" varchar(20),
     "code" varchar(50) NOT NULL UNIQUE,
-    "status" varchar(25) NOT NULL DEFAULT 'pending',
+    "status" varchar(25) NOT NULL DEFAULT 'jalan',
     "credit" boolean DEFAULT 'false' NOT NULL,
-    "notes" varchar(100),
+    "notes" text,
     "order_date" date NOT NULL DEFAULT CURRENT_DATE,
     "shipping_date" date NOT NULL DEFAULT CURRENT_DATE,
     "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,

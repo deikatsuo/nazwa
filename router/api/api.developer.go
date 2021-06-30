@@ -232,7 +232,17 @@ func DeveloperImportUpload(c *gin.Context) {
 		customers, _ := f.GetRows("Pelanggan")
 		for rid, row := range customers {
 			// Baca mulai dari baris ke 5
-			if rid >= 4 && row[2] != "" && row[29] != "Lunas" {
+			if rid >= 4 && row[2] != "" && row[4] != "" && row[5] != "" && row[8] != "" {
+				var creditStatus string
+				status := strings.ToLower(row[29])
+				if status == "lunas" {
+					creditStatus = "lunas"
+				} else if status == "bedep" {
+					creditStatus = "bedep"
+				} else {
+					creditStatus = "aktif"
+				}
+
 				gender := "m"
 				if row[2][0:3] == "Ibu" {
 					gender = "f"
@@ -411,6 +421,7 @@ func DeveloperImportUpload(c *gin.Context) {
 						SetImportedAddress(imAddress).
 						SetImportedItems(imItems).
 						SetCredit(true).
+						SetCreditStatus(creditStatus).
 						SetDeposit(imDeposit).
 						SetDuration(imDuration).
 						SetDue(imDue).
@@ -579,7 +590,7 @@ func DeveloperImportUpload(c *gin.Context) {
 	}
 
 	if next {
-		message = "File berhasil disimpan"
+		message = "Data berhasil di import"
 		status = "success"
 		httpStatus = http.StatusOK
 	}

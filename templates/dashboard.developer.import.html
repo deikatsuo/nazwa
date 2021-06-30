@@ -3,21 +3,55 @@
 <!-- Halaman import -->
 {{ define "dashboard_developer_import_content" }}
 <h2
-  class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+  class="
+    px-6
+    sm:px-0
+    my-6
+    text-2xl
+    font-semibold
+    text-gray-700
+    dark:text-gray-200
+  "
 >
   Import data
 </h2>
 
 <div class="grid gap-6 mb-8 overflow-hidden">
   <!-- Cloud -->
-  <div class="p-4 bg-white sm:rounded-lg shadow-xs dark:bg-gray-800 overflow-x-auto">
-    <div x-data="cloud()" x-init="fetchFileAvailable($dispatch)" id="cloud" class="overflow-hidden">
+  <div
+    class="
+      p-4
+      bg-white
+      sm:rounded-lg
+      shadow-xs
+      dark:bg-gray-800
+      overflow-x-auto
+    "
+  >
+    <div
+      x-data="importData()"
+      id="import"
+      class="overflow-hidden"
+    >
       <div class="flex flex-wrap mb-6">
         <div class="w-full md:w-1/3 md:px-1">
           <label class="block text-sm">
             <span class="text-gray-700 dark:text-gray-400">Upload File</span>
             <input
-              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              class="
+                block
+                w-full
+                mt-1
+                text-sm
+                dark:border-gray-600
+                dark:bg-gray-700
+                focus:border-purple-400
+                focus:outline-none
+                focus:shadow-outline-purple
+                dark:text-gray-300
+                dark:focus:shadow-outline-gray
+                form-input
+              "
               type="file"
               id="file_to_upload"
               x-model="formData.file"
@@ -33,7 +67,25 @@
           <div class="block">
             <button
               type="submit"
-              class="block px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+              class="
+                block
+                px-4
+                py-2
+                mt-4
+                text-sm
+                font-medium
+                leading-5
+                text-center text-white
+                transition-colors
+                duration-150
+                bg-purple-600
+                border border-transparent
+                rounded-lg
+                active:bg-purple-600
+                hover:bg-purple-700
+                focus:outline-none
+                focus:shadow-outline-purple
+              "
               @click="upload($dispatch)"
               :disabled="loading == true"
               :class="{'cursor-not-allowed opacity-50': loading == true }"
@@ -43,46 +95,9 @@
           </div>
         </div>
       </div>
-      <div class="w-full overflow-hidden flex flex-wrap mb-6">
-        <div class="w-full overflow-hidden md:px-1">
-          <label class="block text-sm">
-            <span class="text-gray-700 dark:text-gray-400"
-              >List File di Awan</span
-            >
-          </label>
-          <div
-            class="w-full overflow-x-auto flex flex-wrap p-2 mt-2 text-sm font-medium text-gray-500 rounded-md shadow-inner bg-blue-50 dark:text-gray-400 dark:bg-gray-900"
-          >
-            <table class="w-full whitespace-no-wrap">
-              <thead>
-                <tr
-                  class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-70 bg-blue-50 dark:text-gray-400 dark:bg-gray-800"
-                >
-                  <th class="px-3 py-3">Nama</th>
-                  <th class="px-4 py-3">Ukuran</th>
-                  <th class="px-4 py-3">Terakhir disunting</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y dark:divide-gray-700 dark:bg-gray-800">
-                <template x-for="(file, index) in files" :key="index">
-                  <tr
-                    class="text-gray-700 dark:text-gray-400 cursor-pointer"
-                    @contextmenu.prevent="if (selectedFile == file.Name) { selectedFile == ''; } else { selectedFile = file.Name; }"
-                    :class="{'bg-orange-300 hover:bg-orange-200': selectedFile == file.Name, 'hover:bg-blue-100': selectedFile !== file.Name }"
-                    @dblclick="if (selectedFile == file.Name) { removeCloudFile($dispatch, file.Name); }"
-                  >
-                    <td class="px-4 py-3 text-sm" x-text="file.Name"></td>
-                    <td class="px-4 py-3 text-sm" x-text="file.Size"></td>
-                    <td class="px-4 py-3 text-sm" x-text="file.Edit"></td></tr
-                ></template>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
     <script>
-      function cloud() {
+      function importData() {
         return {
           formData: {
             file: null,
@@ -120,48 +135,6 @@
               .catch((err) => {
                 this.loading = false;
                 console.log("Error upload() " + err);
-              });
-          },
-          fetchFileAvailable($dispatch) {
-            fetch(`/api/v1/developer/cloud/list`, {
-              method: "GET",
-            })
-              .then((res) => res.json())
-              .then((json) => {
-                if (json.message) {
-                  $dispatch("notif", {
-                    type: json.status,
-                    message: json.message,
-                  });
-                }
-                if (json.files !== null) {
-                  this.files = json.files;
-                } else {
-                  this.files = [];
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          },
-          removeCloudFile($dispatch, fileName) {
-            fetch(`/api/v1/developer/cloud/delete?file=${fileName}`, {
-              method: "DELETE",
-            })
-              .then((res) => res.json())
-              .then((json) => {
-                if (json.message) {
-                  $dispatch("notif", {
-                    type: json.status,
-                    message: json.message,
-                  });
-                }
-                if (json.status == "success") {
-                  this.fetchFileAvailable($dispatch);
-                }
-              })
-              .catch((err) => {
-                console.log(err);
               });
           },
         };
