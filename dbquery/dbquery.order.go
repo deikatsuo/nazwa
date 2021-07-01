@@ -1278,9 +1278,10 @@ func OrderGetMonthlyCreditByDate(zid int, date string) ([]wrapper.OrderMonthlyCr
 
 	query := `SELECT omc.*, TO_CHAR(omc.due_date, 'DD-MM-YYYY') AS due_date
 	FROM "order_monthly_credit" omc
+	LEFT JOIN "order" od ON od.id=omc.order_id
 	LEFT JOIN "order_credit_detail" ocd ON ocd.order_id=omc.order_id
 	LEFT JOIN "zone_list" zl ON zl.zone_line_id=ocd.zone_line_id
-	WHERE TO_CHAR(omc.due_date, 'YYYY-MM-DD')<=$1 AND omc.done=false AND ocd.due=$2 AND zl.zone_id=$3 ORDER BY omc.nth`
+	WHERE od.status='aktif' AND TO_CHAR(omc.due_date, 'YYYY-MM-DD')<=$1 AND omc.done=false AND ocd.due=$2 AND zl.zone_id=$3 ORDER BY omc.nth`
 
 	err := db.Select(&monthlyQ, query, date, tm.Day(), zid)
 	if err != nil {

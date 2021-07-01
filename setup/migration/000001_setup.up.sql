@@ -277,7 +277,7 @@ CREATE TABLE "order" (
     "imported_sales" varchar(100),
     "imported_surveyor" varchar(20),
     "code" varchar(50) NOT NULL UNIQUE,
-    "status" varchar(25) NOT NULL DEFAULT 'jalan',
+    "status" varchar(25) NOT NULL DEFAULT 'aktif',
     "credit" boolean DEFAULT 'false' NOT NULL,
     "notes" text,
     "order_date" date NOT NULL DEFAULT CURRENT_DATE,
