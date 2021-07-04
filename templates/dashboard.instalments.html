@@ -573,9 +573,7 @@
         removeChecked(rid) {
           if (this.checked.length > 0) {
             var index = this.checked.map(function(e) { return e.ID; }).indexOf(rid);
-            if (index > 0) {
-              this.checked.splice(index, 1);
-            }
+            this.checked.splice(index, 1);
           }
         },
         toMoment(d) {
