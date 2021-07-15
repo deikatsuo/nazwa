@@ -421,7 +421,7 @@ func DeveloperImportUpload(c *gin.Context) {
 						SetImportedAddress(imAddress).
 						SetImportedItems(imItems).
 						SetCredit(true).
-						SetCreditStatus(creditStatus).
+						SetStatus(creditStatus).
 						SetDeposit(imDeposit).
 						SetDuration(imDuration).
 						SetDue(imDue).

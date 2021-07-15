@@ -100,10 +100,13 @@ func (c *CreateOrder) SetCode(o string) *CreateOrder {
 }
 
 // SetStatus Status order
-// default 'pending'
+// default 'tunggu'
 func (c *CreateOrder) SetStatus(o string) *CreateOrder {
 	if o != "" {
 		c.Status = o
+		c.into["status"] = ":status"
+	} else {
+		c.Status = "tunggu"
 		c.into["status"] = ":status"
 	}
 	return c
@@ -113,12 +116,6 @@ func (c *CreateOrder) SetStatus(o string) *CreateOrder {
 func (c *CreateOrder) SetCredit(o bool) *CreateOrder {
 	c.Credit = o
 	c.into["credit"] = ":credit"
-	return c
-}
-
-func (c *CreateOrder) SetCreditStatus(o string) *CreateOrder {
-	c.Status = o
-	c.into["status"] = ":status"
 	return c
 }
 

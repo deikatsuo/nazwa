@@ -136,12 +136,22 @@
                 ></span>
                 <span
                   class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600"
-                  x-show="order.Status == 'Macet'"
+                  x-show="order.Status == 'Tarik'"
                   x-text="order.Status"
                 ></span>
                 <span
                   class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-700"
                   x-show="order.Status == 'Bedep'"
+                  x-text="order.Status"
+                ></span>
+                <span
+                  class="px-2 py-1 font-semibold leading-tight text-purple-700 bg-purple-100 rounded-full dark:text-purple-100 dark:bg-purple-700"
+                  x-show="order.Status == 'Tunggu'"
+                  x-text="order.Status"
+                ></span>
+                <span
+                  class="px-2 py-1 font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-700"
+                  x-show="order.Status == 'Batal'"
                   x-text="order.Status"
                 ></span>
               </td>
