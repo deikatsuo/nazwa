@@ -234,13 +234,19 @@ func DeveloperImportUpload(c *gin.Context) {
 			// Baca mulai dari baris ke 5
 			if rid >= 4 && row[2] != "" && row[4] != "" && row[5] != "" && row[8] != "" {
 				var creditStatus string
-				status := strings.ToLower(row[29])
-				if status == "lunas" {
-					creditStatus = "lunas"
-				} else if status == "bedep" {
+				status := strings.ToLower(row[22])
+				if status == "1" {
 					creditStatus = "bedep"
+				} else if status == "2" {
+					creditStatus = "tarik"
+				} else if status == "3" {
+					creditStatus = "batal"
 				} else {
-					creditStatus = "aktif"
+					if strings.ToLower(row[29]) == "lunas" {
+						creditStatus = "lunas"
+					} else {
+						creditStatus = "aktif"
+					}
 				}
 
 				gender := "m"
