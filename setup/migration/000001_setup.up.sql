@@ -84,7 +84,7 @@ CREATE TABLE "user_role" (
 
 -- Buat user
 -- INSERT INTO "user_role" ("role_id", "user_id")
---     VALUES (1, 1);
+--     VALUES (0, 1);
 
 
 -- Tabel email
