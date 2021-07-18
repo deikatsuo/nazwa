@@ -9,7 +9,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="category" content="Product" />
-    <meta name="keywords" content="{{ .product.Brand }}, {{ .product.Category }}" />
+    <meta
+      name="keywords"
+      content="{{ .product.Brand }}, {{ .product.Category }}"
+    />
     <meta
       name="description"
       content='{{ printf "%.150s" .product.Description }}'
@@ -64,7 +67,11 @@
     {{ range $href := .js }}
     <script src="{{ $href }}"></script>
     {{ end }}
-    <script data-ad-client="ca-pub-4081541529374923" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script
+      data-ad-client="ca-pub-4081541529374923"
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+    ></script>
   </head>
 
   <body>
@@ -76,13 +83,38 @@
         <div class="container m-10 px-2 sm:px-6 lg:px-64 mx-auto grid">
           <!-- Title -->
           <div
-            class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
+            class="
+              absolute
+              top-0
+              mt-3
+              ml-3
+              sm:mr-0
+              text-sm
+              md:text-lg
+              font-semibold
+              tracking-wide
+              text-left text-gray-500
+              uppercase
+              dark:text-gray-400
+            "
           ></div>
           <div>
             <div x-init="init($dispatch)" x-data="fProDetail()">
               <!-- Title -->
               <div
-                class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 dark:text-gray-400"
+                class="
+                  absolute
+                  top-0
+                  mt-3
+                  ml-3
+                  sm:mr-0
+                  text-sm
+                  md:text-lg
+                  font-semibold
+                  tracking-wide
+                  text-left text-gray-500
+                  dark:text-gray-400
+                "
                 x-text="product.Name"
               ></div>
               <!-- Photo produk -->
@@ -115,7 +147,17 @@
                   <div class="absolute inset-0 flex" x-show="photos.length > 1">
                     <div class="flex items-center justify-start w-1/2">
                       <button
-                        class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow-lg rounded-full w-12 h-12 -ml-6"
+                        class="
+                          bg-teal-100
+                          text-teal-500
+                          hover:text-orange-500
+                          font-bold
+                          hover:shadow-lg
+                          rounded-full
+                          w-12
+                          h-12
+                          -ml-6
+                        "
                         x-on:click="activeSlide = activeSlide === 1 ? photos.length : activeSlide - 1"
                       >
                         &#8592;
@@ -123,7 +165,17 @@
                     </div>
                     <div class="flex items-center justify-end w-1/2">
                       <button
-                        class="bg-teal-100 text-teal-500 hover:text-orange-500 font-bold hover:shadow rounded-full w-12 h-12 -mr-6"
+                        class="
+                          bg-teal-100
+                          text-teal-500
+                          hover:text-orange-500
+                          font-bold
+                          hover:shadow
+                          rounded-full
+                          w-12
+                          h-12
+                          -mr-6
+                        "
                         x-on:click="activeSlide = activeSlide === photos.length ? 1 : activeSlide + 1"
                       >
                         &#8594;
@@ -132,13 +184,34 @@
                   </div>
                   <!-- Buttons -->
                   <div
-                    class="absolute w-full flex items-center justify-center px-4 mb-4"
+                    class="
+                      absolute
+                      w-full
+                      flex
+                      items-center
+                      justify-centerGFG Example for whatsapp sharing
+                      px-4
+                      mb-4
+                    "
                     x-show="photos.length > 1"
                   >
                     <div>
                       <template x-for="(_,index) in photos" :key="index">
                         <button
-                          class="flex-1 w-2 h-2 mt-4 mx-2 rounded-full overflow-hidden transition-colors duration-200 ease-out hover:bg-teal-600 hover:shadow-lg"
+                          class="
+                            flex-1
+                            w-2
+                            h-2
+                            mt-4
+                            mx-2
+                            rounded-full
+                            overflow-hidden
+                            transition-colors
+                            duration-200
+                            ease-out
+                            hover:bg-teal-600
+                            hover:shadow-lg
+                          "
                           :class="{ 
                         'bg-orange-600': activeSlide === index + 1,
                         'bg-teal-300': activeSlide !== index + 1 
@@ -154,7 +227,18 @@
               <!-- Informasi Produk -->
               <dl class="w-full whitespace-no-wrap">
                 <div
-                  class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                  class="
+                    text-xs
+                    font-semibold
+                    tracking-wide
+                    text-left text-gray-900
+                    uppercase
+                    border-b
+                    dark:border-gray-700
+                    bg-gray-50
+                    dark:text-gray-400
+                    dark:bg-gray-800
+                  "
                 >
                   <dt class="px-3 py-3">Informasi Produk</dt>
                   <dd class="px-4 sm:px-0"></dd>
@@ -214,7 +298,18 @@
               <!-- Deskripsi -->
               <dl class="w-full">
                 <div
-                  class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                  class="
+                    text-xs
+                    font-semibold
+                    tracking-wide
+                    text-left text-gray-900
+                    uppercase
+                    border-b
+                    dark:border-gray-700
+                    bg-gray-50
+                    dark:text-gray-400
+                    dark:bg-gray-800
+                  "
                 >
                   <dt class="px-3 py-3">Deskripsi</dt>
                   <dd class="px-4 sm:px-0"></dd>
@@ -232,7 +327,18 @@
               <!-- Harga produk -->
               <dl class="w-full whitespace-no-wrap">
                 <div
-                  class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                  class="
+                    text-xs
+                    font-semibold
+                    tracking-wide
+                    text-left text-gray-900
+                    uppercase
+                    border-b
+                    dark:border-gray-700
+                    bg-gray-50
+                    dark:text-gray-400
+                    dark:bg-gray-800
+                  "
                 >
                   <dt class="px-3 py-3">Harga Produk</dt>
                   <dd class="px-4 sm:px-0"></dd>
@@ -261,14 +367,31 @@
               <!-- Harga Kredit -->
               <dl class="w-full whitespace-no-wrap">
                 <div
-                  class="text-xs font-semibold tracking-wide text-left text-gray-900 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                  class="
+                    text-xs
+                    font-semibold
+                    tracking-wide
+                    text-left text-gray-900
+                    uppercase
+                    border-b
+                    dark:border-gray-700
+                    bg-gray-50
+                    dark:text-gray-400
+                    dark:bg-gray-800
+                  "
                 >
                   <dt class="px-3 py-3">Harga Kredit</dt>
                   <dd class="px-4 sm:px-0"></dd>
                 </div>
                 <template x-for="(credit, index) in creditPrice" :key="index">
                   <div
-                    class="cursor-pointer px-4 py-1 sm:grid sm:grid-cols-2 hover:bg-green-200"
+                    class="
+                      cursor-pointer
+                      px-4
+                      py-1
+                      sm:grid sm:grid-cols-2
+                      hover:bg-green-200
+                    "
                     @dblclick="deleteCreditPrice($dispatch, credit.ID)"
                   >
                     <dt
@@ -286,6 +409,84 @@
                       ></span>
                     </dd></div
                 ></template>
+              </dl>
+
+              <!-- Hubungi -->
+              <dl class="w-full whitespace-no-wrap">
+                <div
+                  class="
+                    text-xs
+                    font-semibold
+                    tracking-wide
+                    text-left text-gray-900
+                    uppercase
+                    border-b
+                    dark:border-gray-700
+                    bg-gray-50
+                    dark:text-gray-400
+                    dark:bg-gray-800
+                  "
+                >
+                  <dt class="px-3 py-3">Hubungi</dt>
+                  <dd class="px-4 sm:px-0"></dd>
+                </div>
+                <div class="cursor-pointer px-4 py-1 xs:grid xs:grid-cols-2 md:grid md:grid-cols-4">
+                  <!-- Telegram -->
+                  <dt class="text-sm leading-5 font-medium text-gray-500">
+                    <a
+                      :href="`tg://resolve?domain=rika_nz`"
+                      target="_blank"
+                      class="md:hidden"
+                    >
+                      <img
+                        src="/assets/img/chat-tg.png"
+                        class="w-32"
+                        alt="whatsapp"
+                      />
+                    </a>
+                    <a
+                      :href="`tg://resolve?domain=rika_nz`"
+                      data-action="share/whatsapp/share"
+                      target="_blank"
+                      class="xs:hidden md:visible"
+                    >
+                      <img
+                        src="/assets/img/chat-tg.png"
+                        class="w-32"
+                        alt="telegram"
+                      />
+                    </a>
+                  </dt>
+                  
+                  <!-- Whatsapp -->
+                  <dt class="text-sm leading-5 font-medium text-gray-500">
+                    <a
+                      :href="`whatsapp://send?phone=6281563465840&text=${product.Name}%0D%0Ahttps://cvnazwa.com/product/${product.Slug}%0D%0AApakah ini tersedia?`"
+                      data-action="share/whatsapp/share"
+                      target="_blank"
+                      class="md:hidden"
+                    >
+                      <img
+                        src="/assets/img/chat-wa.png"
+                        class="w-32"
+                        alt="whatsapp"
+                      />
+                    </a>
+                    <a
+                      :href="`https://api.whatsapp.com/send?phone=6281563465840&text=${product.Name}%0D%0Ahttps://cvnazwa.com/product/${product.Slug}%0D%0AApakah ini tersedia?`"
+                      data-action="share/whatsapp/share"
+                      target="_blank"
+                      class="xs:hidden md:visible"
+                    >
+                      <img
+                        src="/assets/img/chat-wa.png"
+                        class="w-32"
+                        alt="whatsapp"
+                      />
+                    </a>
+                  </dt>
+                  
+                </div>
               </dl>
             </div>
           </div>
