@@ -356,7 +356,7 @@ func ProductDeleteCreditPrice(c *gin.Context) {
 
 // ProductDeletePhoto hapus foto produk
 func ProductDeletePhoto(c *gin.Context) {
-	// User id yang merequest
+	// id produk
 	pid, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Warn("api.product.go ProductDeletePhoto() id produk tidak valid")
@@ -414,17 +414,40 @@ func ProductDeletePhoto(c *gin.Context) {
 		}
 	}
 
-	// Delete thumb
+	// Update thumb
 	if next {
-		if err := dbquery.ProductUpdateThumb(pid, sql.NullString{}); err != nil {
-			errMess = "Gagal menghapus thumbnail"
-			next = false
+		var photos []wrapper.ProductPhotoListSelect
+
+		if pp, err := dbquery.ProductGetProductPhoto(pid); err == nil {
+			photos = pp
+		}
+
+		// Buat thumbnail
+		if len(photos) > 0 {
+			err := misc.FileGenerateThumb(photos[0].Photo, "../data/upload/product/")
+			if err != nil {
+				log.Warn("Gagal membuat thumbnail")
+				log.Error(err)
+			} else {
+				if err := dbquery.ProductUpdateThumb(pid, sql.NullString{String: photos[0].Photo, Valid: true}); err != nil {
+					errMess = "Gagal menghapus thumbnail"
+					next = false
+				} else {
+					success = "Thumbnail telah dihapus"
+				}
+			}
 		} else {
-			success = "Thumbnail telah dihapus"
+
+			if err := dbquery.ProductUpdateThumb(pid, sql.NullString{}); err != nil {
+				errMess = "Gagal menghapus thumbnail"
+				next = false
+			} else {
+				success = "Thumbnail telah dihapus"
+			}
 		}
 	}
 
-	// Delete foto
+	// Hapus photo
 	if next {
 		if err := dbquery.ProductDeletePhoto(photoID, pid); err != nil {
 			errMess = "Gagal menghapus foto"
