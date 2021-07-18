@@ -414,6 +414,24 @@ func ProductDeletePhoto(c *gin.Context) {
 		}
 	}
 
+	// Hapus photo
+	if next {
+		if err := dbquery.ProductDeletePhoto(photoID, pid); err != nil {
+			errMess = "Gagal menghapus foto"
+			next = false
+		} else {
+			success = "Foto telah dihapus"
+		}
+	}
+
+	if next {
+		err := os.Remove("../data/upload/product/" + photo)
+		if err != nil {
+			errMess = "Gagal menghapus foto dari direktori"
+			next = false
+		}
+	}
+
 	// Update thumb
 	if next {
 		var photos []wrapper.ProductPhotoListSelect
@@ -444,24 +462,6 @@ func ProductDeletePhoto(c *gin.Context) {
 			} else {
 				success = "Thumbnail telah dihapus"
 			}
-		}
-	}
-
-	// Hapus photo
-	if next {
-		if err := dbquery.ProductDeletePhoto(photoID, pid); err != nil {
-			errMess = "Gagal menghapus foto"
-			next = false
-		} else {
-			success = "Foto telah dihapus"
-		}
-	}
-
-	if next {
-		err := os.Remove("../data/upload/product/" + photo)
-		if err != nil {
-			errMess = "Gagal menghapus foto dari direktori"
-			next = false
 		}
 	}
 
