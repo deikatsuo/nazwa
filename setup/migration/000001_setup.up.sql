@@ -277,7 +277,7 @@ CREATE TABLE "order" (
     "imported_sales" varchar(100),
     "imported_surveyor" varchar(20),
     "code" varchar(50) NOT NULL UNIQUE,
-    -- status = tunggu | aktif | lunas | batal | tarik | bedep
+    -- status = tunggu | aktif | lunas | batal | tarik | bedep | bonus
     "status" varchar(25) NOT NULL DEFAULT 'tunggu',
     "credit" boolean DEFAULT 'false' NOT NULL,
     "notes" text,

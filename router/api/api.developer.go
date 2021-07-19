@@ -241,6 +241,8 @@ func DeveloperImportUpload(c *gin.Context) {
 					creditStatus = "tarik"
 				} else if status == "3" {
 					creditStatus = "batal"
+				} else if status == "4" {
+					creditStatus = "bonus"
 				} else {
 					if strings.ToLower(row[29]) == "lunas" {
 						creditStatus = "lunas"
