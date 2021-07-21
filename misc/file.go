@@ -1,10 +1,14 @@
 package misc
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
 	"image"
 	"image/color"
+	"image/draw"
+	"image/jpeg"
+	"image/png"
 	"io"
 	"math"
 	"os"
@@ -19,8 +23,8 @@ import (
 // b64: string base64
 // info: informasi file
 func FileBase64ToFileWithData(dir string, b64 string, info string) (string, error) {
-	ext := FileBase64GetExtensionFromData(info)
-	fileName := uuid.New().String() + "." + ext
+	//ext := FileBase64GetExtensionFromData(info)
+	fileName := uuid.New().String() + ".jpg" // + ext
 	decode, err := base64.StdEncoding.DecodeString(b64)
 
 	if err != nil {
@@ -28,23 +32,48 @@ func FileBase64ToFileWithData(dir string, b64 string, info string) (string, erro
 		return "", err
 	}
 
-	fs, err := os.Create(dir + fileName)
+	img, _, err := image.Decode(bytes.NewReader(decode))
+	if err != nil {
+		log.Warn("Gagal convert byte ke image")
+		log.Error(err)
+	}
+
+	watermark, err := os.Open("statics/img/watermark.png")
+	if err != nil {
+		log.Error("Gagal membuka file watermark: %s", err)
+	}
+	defer watermark.Close()
+
+	dewatermark, err := png.Decode(watermark)
+	if err != nil {
+		log.Error("Gagal meng decode watermark: %s", err)
+	}
+
+	offset := image.Pt(img.Bounds().Max.X/2-132, img.Bounds().Max.Y-75)
+	b := img.Bounds()
+	final := image.NewRGBA(b)
+	draw.Draw(final, b, img, image.Point{}, draw.Src)
+	draw.Draw(final, dewatermark.Bounds().Add(offset), dewatermark, image.Point{}, draw.Over)
+
+	new, err := os.Create(dir + fileName)
 	if err != nil {
 		log.Println("ERROR: image.go Base64ToFileWithData() Membuat file")
 		return "", err
 	}
 
-	defer fs.Close()
+	defer new.Close()
 
-	if _, err := fs.Write(decode); err != nil {
-		log.Println("ERROR: image.go Base64ToFileWithData() Menulis kedalam file")
-		return "", err
-	}
+	jpeg.Encode(new, final, &jpeg.Options{Quality: 75})
 
-	if err := fs.Sync(); err != nil {
-		log.Println("ERROR: image.go Base64ToFileWithData() Sinkron file")
-		return "", err
-	}
+	// if _, err := fs.Write(decode); err != nil {
+	// 	log.Println("ERROR: image.go Base64ToFileWithData() Menulis kedalam file")
+	// 	return "", err
+	// }
+
+	// if err := fs.Sync(); err != nil {
+	// 	log.Println("ERROR: image.go Base64ToFileWithData() Sinkron file")
+	// 	return "", err
+	// }
 
 	return fileName, nil
 }
