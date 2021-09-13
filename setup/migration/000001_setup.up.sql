@@ -238,6 +238,7 @@ CREATE TABLE "product" (
     "category" varchar(25),
     "brand" varchar(25),
     "thumbnail" varchar(50),
+    "seen" int DEFAULT 0,
     "description" text,
     "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),

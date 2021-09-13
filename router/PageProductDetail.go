@@ -19,6 +19,7 @@ func PageProductDetail(c *gin.Context) {
 	var product wrapper.Product
 	if p, err := dbquery.ProductGetProductBySlug(slug); err == nil {
 		product = p
+		_ = dbquery.ProductUpdateSeen(p.ID, p.Seen+1)
 	} else {
 		Page404(c)
 		return

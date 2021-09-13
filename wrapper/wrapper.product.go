@@ -42,6 +42,7 @@ type NullableProduct struct {
 	Description sql.NullString `db:"description"`
 	CreatedAt   string         `db:"created_at"`
 	CreatedBy   int            `db:"created_by"`
+	Seen        int            `db:"seen"`
 }
 
 // ProductCreditPriceInsert tambah harga kredit barang
@@ -108,6 +109,7 @@ type Product struct {
 	Thumbnail   string
 	CreatedAt   string
 	CreatedBy   int
+	Seen        int
 	CreditPrice []ProductCreditPriceSelect
 	Photos      []ProductPhotoListSelect
 }

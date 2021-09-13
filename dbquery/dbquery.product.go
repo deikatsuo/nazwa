@@ -77,6 +77,7 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 		base_price,
 		price,
 		thumbnail,
+		seen,
 		created_by,
 		TO_CHAR(created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at
 		FROM "product"
@@ -111,6 +112,7 @@ func (p *GetProducts) Show() ([]wrapper.Product, error) {
 			BasePrice:   p.BasePrice,
 			Price:       p.Price,
 			Thumbnail:   p.Thumbnail.String,
+			Seen:        p.Seen,
 			CreditPrice: creditPrice,
 		})
 	}
@@ -197,7 +199,8 @@ func ProductGetProductBySlug(ps string) (wrapper.Product, error) {
 		price,
 		TO_CHAR(created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
 		category,
-		brand
+		brand,
+		seen
 		FROM "product"
 		WHERE slug=$1
 		LIMIT 1`
@@ -233,6 +236,7 @@ func ProductGetProductBySlug(ps string) (wrapper.Product, error) {
 		Brand:       strings.Title(p.Brand.String),
 		Photos:      photos,
 		CreditPrice: creditPrice,
+		Seen:        p.Seen,
 	}
 
 	return product, nil
@@ -653,6 +657,17 @@ func ProductUpdateThumb(pid int, thumb sql.NullString) error {
 	SET thumbnail=$1
 	WHERE id=$2`
 	_, err := db.Exec(query, thumb, pid)
+
+	return err
+}
+
+// ProductUpdateSeen tambahkan telah dilihat
+func ProductUpdateSeen(pid int, seen int) error {
+	db := DB
+	query := `UPDATE "product"
+	SET seen=$1
+	WHERE id=$2`
+	_, err := db.Exec(query, seen, pid)
 
 	return err
 }
