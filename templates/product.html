@@ -17,7 +17,10 @@
       }
     </style>
     <script src="/assets/js/alpine-magic-helper-component.js"></script>
-    <script src="/assets/js/alpine.min.js" defer></script>
+    <script src="/assets/js/alpine-intersect.min.js"></script>
+    <!-- <script src="/assets/js/alpine.min.js" defer></script> -->
+    <!-- Alpine Core -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="/assets/js/init.js"></script>
     <script src="/assets/js/core.js"></script>
 
@@ -130,11 +133,11 @@
               </ul>
               <div class="bg-blue-500">
                 <button
-                  class="block w-full mx-auto mt-5 shadow hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white text-sm py-2 px-5"
-                  @click="showMore($dispatch)"
-                  :class="{'disable cursor-not-allowed bg-blue-400': products.length <= count }"
+                  class="block w-full disable bg-blue-400 mx-auto mt-5 shadow focus:outline-none text-white text-sm py-2 px-5"
+                  :class="{'hidden': products.length <= count }"
+                  x-intersect="count += 12"
                 >
-                  Lihat Lebih Banyak
+                  Memuat...
                 </button>
               </div>
             </div>
