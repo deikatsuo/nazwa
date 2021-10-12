@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html :class="{ 'theme-dark': dark }" x-data="data()" lang="en" id="root">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -28,184 +28,452 @@
     {{ range $href := .js }}
     <script src="{{ $href }}"></script>
     {{ end }}
-    <script data-ad-client="ca-pub-4081541529374923" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script
+      data-ad-client="ca-pub-4081541529374923"
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+    ></script>
   </head>
 
   <body>
+    <div
+      @modal.window="openModal(); if (typeof($event.detail.tmp) != 'undefined') { modalTmp = $event.detail.tmp }; modalFooter = $event.detail.footer; modalTitle = $event.detail.title; modalContent = $event.detail.content; if (typeof($event.detail.html) != 'undefined') { showModalHTML = true }; $refs.modalHTML.innerHTML = $event.detail.html; if (typeof($event.detail.callback) != 'undefined') { modalCallback = $event.detail.callback };"
+    ></div>
     <!-- Navbar -->
     {{ template "public_navbar" .}}
 
-    <div class="flex flex-col flex-1 w-full pt-24">
-      <main class="h-full pb-16 overflow-y-auto relative">
-        <div class="container m-10 px-2 sm:px-6 mx-auto grid">
-          <div x-init="initProduct($dispatch)" x-data="product()">
-            <!-- Title -->
-            <div
-              class="absolute top-0 mt-3 ml-3 sm:mr-0 text-sm md:text-lg font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400"
-            >
-              Katalog produk
-            </div>
-            <div class="text-center">
-              <div class="mx-auto py-4">
-                <label for="search" class="sr-only">Search</label>
-                <div class="relative rounded-md shadow">
-                  <input
-                    class="block h-10 w-full px-4 sm:text-sm sm:leading-5"
-                    placeholder="Cari nama atau kode produk"
-                    x-model="product_instant_search"
-                  />
+    <div
+      class="flex h-screen bg-grid-container dark:bg-gray-900"
+      :class="{ 'overflow-hidden': isSideMenuOpen }"
+    >
+      <div class="flex flex-col flex-1 w-full pt-20">
+        <main class="h-full pb-16 overflow-y-auto relative">
+          <div class="container m-10 px-2 sm:px-6 mx-auto grid">
+            <div x-init="initProduct($dispatch)" x-data="product()">
+              <!-- Title -->
+              <div
+                class="
+                  absolute
+                  top-0
+                  mt-3
+                  ml-3
+                  sm:mr-0
+                  text-sm
+                  md:text-lg
+                  font-semibold
+                  tracking-wide
+                  text-left text-gray-500
+                  uppercase
+                  dark:text-gray-400
+                "
+              >
+                Katalog produk
+              </div>
+              <div class="text-center">
+                <div class="mx-auto py-4">
+                  <label for="search" class="sr-only">Search</label>
+                  <div class="relative rounded-md shadow">
+                    <input
+                      class="block h-10 w-full px-4 sm:text-sm sm:leading-5"
+                      placeholder="Cari nama atau kode produk"
+                      x-model="product_instant_search"
+                    />
+                  </div>
+                </div>
+                <ul
+                  class="
+                    grid grid-cols-1
+                    col-gap-4
+                    row-gap-8
+                    md:col-gap-6
+                    sm:grid-cols-2
+                    md:grid-cols-4
+                    lg:grid-cols-5
+                  "
+                >
+                  <template
+                    x-for="(product, index) in fill_products"
+                    :key="index"
+                  >
+                    <a
+                      class="relative cursor-pointer"
+                      @click="$dispatch('modal', { tmp: product.ID, html: $refs.productDetail.innerHTML, callback: function() { alert('Fungsi belum di implementasikan') } });"
+                    >
+                      <div
+                        x-show="product.Stock <= 0"
+                        class="absolute z-30 bg-gray-500 opacity-50 inset-0"
+                      ></div>
+                      <div class="rounded relative overflow-hidden shadow-lg">
+                        {{ if and (.login) (ne .user.Role "Customer") }}
+                        <div
+                          class="
+                            absolute
+                            bg-blue-200
+                            text-blue-500
+                            font-bold
+                            text-xs
+                            top-0
+                            right-0
+                            px-1
+                          "
+                        >
+                          <p x-text="toRupiah(product.Price)"></p>
+                        </div>
+                        {{ end }}
+                        <img
+                          class="object-cover w-full"
+                          :src="'/file/product/'+product.Thumbnail"
+                          alt=""
+                          loading="lazy"
+                          x-show="product.Thumbnail != ''"
+                        />
+                        <img
+                          class="object-cover w-full"
+                          :src="'/file/product/no-photo.png'"
+                          alt=""
+                          loading="lazy"
+                          x-show="product.Thumbnail === ''"
+                        />
+                        <div class="px-6 py-2">
+                          <div
+                            class="font-bold text-xl mb-2"
+                            x-text="product.Name"
+                          ></div>
+                          <p
+                            x-show="product.Description != ''"
+                            class="text-gray-700 text-base text-left"
+                            x-text="product.Description"
+                          ></p>
+                        </div>
+                        <div class="px-2 pt-2 pb-2">
+                          <span
+                            class="
+                              inline-block
+                              bg-orange-200
+                              rounded-full
+                              px-3
+                              py-1
+                              text-xs
+                              font-semibold
+                              text-orange-500
+                              mr-2
+                              mb-2
+                            "
+                            x-text="'#Merk: ' + product.Brand"
+                            x-show="product.Brand != ''"
+                          ></span>
+                          <span
+                            class="
+                              inline-block
+                              bg-green-200
+                              rounded-full
+                              px-3
+                              py-1
+                              text-xs
+                              font-semibold
+                              text-green-500
+                              mr-2
+                              mb-2
+                            "
+                            x-text="'#Kategori: ' + product.Category"
+                            x-show="product.Category != ''"
+                          ></span>
+                          <span
+                            class="
+                              inline-block
+                              bg-red-200
+                              rounded-full
+                              px-3
+                              py-1
+                              text-xs
+                              font-semibold
+                              text-red-500
+                              mr-2
+                              mb-2
+                            "
+                            x-text="'#Stok: ' + product.Stock"
+                            :class="{}"
+                          ></span>
+                          {{ if and (.login) (ne .user.Role "Customer") }}
+                          <span
+                            class="
+                              inline-block
+                              bg-gray-200
+                              rounded-full
+                              px-3
+                              py-1
+                              text-xs
+                              font-semibold
+                              text-gray-500
+                              mr-2
+                              mb-2
+                            "
+                            x-text="'#Beli: ' + toRupiah(product.BasePrice)"
+                          ></span>
+                          {{ end }}
+                        </div>
+                      </div>
+                    </a>
+                  </template>
+                  <!-- template modal !-->
+                  {{ template "products_detail_modal" .}}
+                </ul>
+                <div class="bg-blue-500">
+                  <button
+                    class="
+                      block
+                      w-full
+                      disable
+                      bg-blue-400
+                      mx-auto
+                      mt-5
+                      shadow
+                      focus:outline-none
+                      text-white text-sm
+                      py-2
+                      px-5
+                    "
+                    :class="{'hidden': products.length <= count }"
+                    x-intersect="count += 12"
+                  >
+                    Memuat...
+                  </button>
                 </div>
               </div>
-              <ul
-                class="grid grid-cols-1 col-gap-4 row-gap-8 md:col-gap-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5"
-              >
-                <template
-                  x-for="(product, index) in fill_products"
-                  :key="index"
-                >
-                  <a
-                    class="relative cursor-pointer"
-                    :href="`/product/${product.Slug}`"
-                  >
-                    <div
-                      x-show="product.Stock <= 0"
-                      class="absolute z-30 bg-gray-500 opacity-50 inset-0"
-                    ></div>
-                    <div class="rounded relative overflow-hidden shadow-lg">
-                      {{ if and (.login) (ne .user.Role "Customer") }}
-                      <div
-                        class="absolute bg-blue-200 text-blue-500 font-bold text-xs top-0 right-0 px-1"
-                      >
-                        <p x-text="toRupiah(product.Price)"></p>
-                      </div>
-                      {{ end }}
-                      <img
-                        class="object-cover w-full"
-                        :src="'/file/product/'+product.Thumbnail"
-                        alt=""
-                        loading="lazy"
-                        x-show="product.Thumbnail != ''"
-                      />
-                      <img
-                        class="object-cover w-full"
-                        :src="'/file/product/no-photo.png'"
-                        alt=""
-                        loading="lazy"
-                        x-show="product.Thumbnail === ''"
-                      />
-                      <div class="px-6 py-2">
-                        <div
-                          class="font-bold text-xl mb-2"
-                          x-text="product.Name"
-                        ></div>
-                        <p
-                          x-show="product.Description != ''"
-                          class="text-gray-700 text-base text-left"
-                          x-text="product.Description"
-                        ></p>
-                      </div>
-                      <div class="px-2 pt-2 pb-2">
-                        <span
-                          class="inline-block bg-orange-200 rounded-full px-3 py-1 text-xs font-semibold text-orange-500 mr-2 mb-2"
-                          x-text="'#Merk: ' + product.Brand"
-                          x-show="product.Brand != ''"
-                        ></span>
-                        <span
-                          class="inline-block bg-green-200 rounded-full px-3 py-1 text-xs font-semibold text-green-500 mr-2 mb-2"
-                          x-text="'#Kategori: ' + product.Category"
-                          x-show="product.Category != ''"
-                        ></span>
-                        <span
-                          class="inline-block bg-red-200 rounded-full px-3 py-1 text-xs font-semibold text-red-500 mr-2 mb-2"
-                          x-text="'#Stok: ' + product.Stock"
-                          :class="{}"
-                        ></span>
-                        {{ if and (.login) (ne .user.Role "Customer") }}
-                        <span
-                          class="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-500 mr-2 mb-2"
-                          x-text="'#Beli: ' + toRupiah(product.BasePrice)"
-                        ></span>
-                        {{ end }}
-                      </div>
-                    </div>
-                  </a>
-                </template>
-              </ul>
-              <div class="bg-blue-500">
-                <button
-                  class="block w-full disable bg-blue-400 mx-auto mt-5 shadow focus:outline-none text-white text-sm py-2 px-5"
-                  :class="{'hidden': products.length <= count }"
-                  x-intersect="count += 12"
-                >
-                  Memuat...
-                </button>
-              </div>
             </div>
+            <script>
+              function product() {
+                return {
+                  products: [],
+                  product_instant_search: "",
+                  count: 15,
+                  initProduct($dispatch) {
+                    this.fetchProduct($dispatch);
+                  },
+                  fetchProduct($dispatch) {
+                    fetch(`/api/v1/public/product/all`, {
+                      method: "GET",
+                    })
+                      .then((res) => res.json())
+                      .then((data) => {
+                        if (data.error) {
+                          $dispatch("notif", {
+                            type: "error",
+                            message: data.error,
+                          });
+                        }
+                        if (data.products) {
+                          this.products = data.products;
+                        }
+                      })
+                      .catch(() => {
+                        console.log(
+                          "Telah terjadi kesalahan saat memuat data produk"
+                        );
+                      });
+                  },
+                  get fill_products() {
+                    return this.products
+                      .filter((p) => {
+                        const pattern = new RegExp(
+                          this.product_instant_search,
+                          "i"
+                        );
+                        return (
+                          p.Name.match(pattern) ||
+                          p.Brand.match(pattern) ||
+                          p.Category.match(pattern)
+                        );
+                      })
+                      .slice(0, this.count);
+                  },
+                  showMore($dispatch) {
+                    if (this.products.length <= this.count) {
+                      $dispatch("notif", {
+                        type: "error",
+                        message: "Tidak ada lagi data yang bisa ditampilkan",
+                      });
+                    } else {
+                      this.count += 12;
+                    }
+                  },
+                };
+              }
+            </script>
           </div>
-          <script>
-            function product() {
-              return {
-                products: [],
-                product_instant_search: "",
-                count: 15,
-                initProduct($dispatch) {
-                  this.fetchProduct($dispatch);
-                },
-                fetchProduct($dispatch) {
-                  fetch(`/api/v1/public/product/all`, {
-                    method: "GET",
-                  })
-                    .then((res) => res.json())
-                    .then((data) => {
-                      if (data.error) {
-                        $dispatch("notif", {
-                          type: "error",
-                          message: data.error,
-                        });
-                      }
-                      if (data.products) {
-                        this.products = data.products;
-                      }
-                    })
-                    .catch(() => {
-                      console.log(
-                        "Telah terjadi kesalahan saat memuat data produk"
-                      );
-                    });
-                },
-                get fill_products() {
-                  return this.products
-                    .filter((p) => {
-                      const pattern = new RegExp(
-                        this.product_instant_search,
-                        "i"
-                      );
-                      return (
-                        p.Name.match(pattern) ||
-                        p.Brand.match(pattern) ||
-                        p.Category.match(pattern)
-                      );
-                    })
-                    .slice(0, this.count);
-                },
-                showMore($dispatch) {
-                  if (this.products.length <= this.count) {
-                    $dispatch("notif", {
-                      type: "error",
-                      message: "Tidak ada lagi data yang bisa ditampilkan",
-                    });
-                  } else {
-                    this.count += 12;
-                  }
-                },
-              };
-            }
-          </script>
-        </div>
-      </main>
+          {{ template "public_footer" .}}
+        </main>
 
-      {{ template "public_footer" .}}
-      
+        
+      </div>
     </div>
+
+    <!-- Modal backdrop. This what you want to place close to the closing body tag -->
+    <div
+      x-cloak
+      x-show="isModalOpen"
+      x-transition:enter="transition ease-out duration-150"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-150"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      class="
+        fixed
+        pt-20
+        sm:py-20
+        inset-0
+        z-30
+        flex
+        sm:items-start
+        justify-center
+        bg-black bg-opacity-50
+        overflow-y-auto overflow-x-hidden
+      "
+    >
+      <!-- Modal -->
+      <div
+        x-show="isModalOpen"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0 transform translate-y-1/2"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0  transform translate-y-1/2"
+        @click.away="if (!isPreviewOpen && previewContent == '') { closeModal(); } else { previewContent = ''; }"
+        @keydown.escape="if (!isPreviewOpen) { closeModal(); }"
+        class="
+          w-full
+          md:w-3/4
+          lg:w-2/4
+          relative
+          sm:px-3
+          sm:py-3
+          bg-white
+          rounded-t-lg
+          dark:bg-gray-800
+          sm:rounded-b-lg
+          sm:m-4
+        "
+        role="dialog"
+        id="modal"
+      >
+        <!-- Remove header if you don't want a close icon. Use modal body to place modal tile. -->
+        <header class="flex justify-end pr-3 pt-3 sm:p-0">
+          <button
+            class="
+              inline-flex
+              items-center
+              justify-center
+              w-6
+              h-6
+              text-gray-400
+              transition-colors
+              duration-150
+              rounded
+              dark:hover:text-gray-200
+              hover:
+              hover:text-gray-700
+            "
+            aria-label="close"
+            @click="closeModal"
+          >
+            {{ template "_svg_icon_close" }}
+          </button>
+        </header>
+        <!-- Modal body -->
+        <div class="mt-4">
+          <!-- Modal title -->
+          <p
+            class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
+            x-text="modalTitle"
+            x-show="modalTitle != ''"
+          >
+            {{ .l_modal_header }}
+          </p>
+          <!-- Modal content -->
+          <div x-ref="modalHTML" x-show="showModalHTML" class="bg-white"></div>
+          <p
+            class="text-sm text-gray-700 dark:text-gray-400"
+            x-text="modalContent"
+            x-show="modalContent != ''"
+          >
+            {{ .l_modal_content }}
+          </p>
+        </div>
+        <footer
+          class="
+            flex flex-col
+            items-center
+            justify-end
+            px-6
+            py-3
+            -mb-2
+            space-y-4
+            sm:space-y-0 sm:space-x-6
+            sm:flex-row
+            bg-gray-50
+            dark:bg-gray-800
+          "
+          x-show="modalFooter"
+        >
+          <button
+            @click="closeModal()"
+            class="
+              w-full
+              px-5
+              py-3
+              text-sm
+              font-medium
+              leading-5
+              text-gray-700
+              transition-colors
+              duration-150
+              border border-gray-300
+              rounded-lg
+              dark:text-gray-400
+              sm:px-4
+              sm:py-2
+              sm:w-auto
+              active:bg-transparent
+              hover:border-gray-500
+              focus:border-gray-500
+              active:text-gray-500
+              focus:outline-none
+              focus:shadow-outline-gray
+            "
+          >
+            {{ .l_modal_btn_one }}
+          </button>
+          <button
+            class="
+              w-full
+              px-5
+              py-3
+              text-sm
+              font-medium
+              leading-5
+              text-white
+              transition-colors
+              duration-150
+              bg-purple-600
+              border border-transparent
+              rounded-lg
+              sm:w-auto
+              sm:px-4
+              sm:py-2
+              active:bg-purple-600
+              hover:bg-purple-700
+              focus:outline-none
+              focus:shadow-outline-purple
+            "
+            @click="modalCallback(); closeModal()"
+          >
+            {{ .l_modal_btn_two }}
+          </button>
+        </footer>
+      </div>
+    </div>
+    <!-- End of modal backdrop -->
   </body>
 </html>

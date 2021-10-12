@@ -143,6 +143,7 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 		stock,
 		base_price,
 		price,
+		slug,
 		TO_CHAR(created_at, 'DD-MM-YYYY HH12:MI:SS AM') AS created_at,
 		category,
 		brand,
@@ -180,6 +181,7 @@ func ProductGetProductByID(pid int) (wrapper.Product, error) {
 		Description: p.Description.String,
 		Photos:      photos,
 		CreditPrice: creditPrice,
+		Slug:        p.Slug,
 	}
 
 	return product, nil

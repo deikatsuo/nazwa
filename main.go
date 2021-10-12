@@ -195,6 +195,7 @@ func runServer() {
 	// /api/v1/public
 	v1public := v1.Group("/public")
 	v1public.GET("/product/all", api.ProductShowAll)
+	v1public.GET("/product/id/:id", api.PublicProductShowByID)
 
 	// API yang diakses dari Lokal
 	// /api/v1/local

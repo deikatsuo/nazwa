@@ -652,6 +652,35 @@ func ProductShowByID(c *gin.Context) {
 	})
 }
 
+// PublicProductShowByID mengambil data produk berdasarkan ID
+func PublicProductShowByID(c *gin.Context) {
+	httpStatus := http.StatusOK
+	errMess := ""
+
+	// Mengambil parameter id produk
+	var pid int
+	id, err := strconv.Atoi(c.Param("id"))
+	if err == nil {
+		pid = id
+	} else {
+		httpStatus = http.StatusBadRequest
+		errMess = "Request tidak valid"
+	}
+
+	var product wrapper.Product
+	if p, err := dbquery.ProductGetProductByID(pid); err == nil {
+		product = p
+	} else {
+		httpStatus = http.StatusInternalServerError
+		errMess = "Sepertinya telah terjadi kesalahan saat memuat data"
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"product": product,
+		"error":   errMess,
+	})
+}
+
 // ProductSearchByName cari produk berdasarkan nama
 func ProductSearchByName(c *gin.Context) {
 	session := sessions.Default(c)

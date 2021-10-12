@@ -1,0 +1,354 @@
+{{ define "products_detail_modal" }}
+<template x-ref="productDetail">
+  <div x-init="fetchById($dispatch)" x-data="fProDetail(modalTmp)">
+    <!-- Title -->
+    <a
+      class="
+        absolute
+        top-0
+        mt-3
+        ml-3
+        sm:mr-0
+        text-sm
+        md:text-lg
+        font-semibold
+        tracking-wide
+        text-left text-gray-500
+        dark:text-gray-400
+      "
+      x-text="product.Name"
+      :href="`/product/${product.Slug}`"
+    ></a>
+    <!-- Photo produk -->
+    <div
+      class="w-full h-48 flex flex-col justify-center items-center"
+      :class="{ 'mb-4': photos.length > 1 }"
+    >
+      <div class="w-full relative">
+        <!-- Slide photo -->
+        <template x-for="(photo, index) in photos" :key="index">
+          <div>
+            <div
+              x-show="activeSlide === index + 1"
+              class="h-48 w-full flex items-center rounded-lg"
+            >
+              <div class="relative w-full h-full cursor-pointer">
+                <img
+                  class="object-scale-down w-full h-full"
+                  :src="'/file/product/'+photo.Photo"
+                  alt=""
+                  loading="lazy"
+                />
+                <div
+                  class="absolute inset-0 shadow-inner"
+                  aria-hidden="true"
+                ></div>
+              </div>
+            </div>
+            <div
+              class="absolute inset-0 mx-5 z-10 cursor-pointer"
+              x-show="activeSlide === index + 1"
+              @click="$dispatch('preview', {
+                    html: '<img @click=\'closePreview()\' src=\'/file/product/'+photo.Photo+'\' class=\'object-scale-down object w-full h-full lazy\' />',
+                    });"
+            ></div>
+          </div>
+        </template>
+        <!-- Prev/Next Arrows -->
+        <div class="absolute inset-0 flex" x-show="photos.length > 1">
+          <div class="flex items-center justify-start w-1/2">
+            <button
+              class="
+                bg-teal-100
+                text-teal-500
+                hover:text-orange-500
+                font-bold
+                hover:shadow-lg
+                rounded-full
+                w-12
+                h-12
+                -ml-6
+              "
+              x-on:click="activeSlide = activeSlide === 1 ? photos.length : activeSlide - 1"
+            >
+              &#8592;
+            </button>
+          </div>
+          <div class="flex items-center justify-end w-1/2">
+            <button
+              class="
+                bg-teal-100
+                text-teal-500
+                hover:text-orange-500
+                font-bold
+                hover:shadow
+                rounded-full
+                w-12
+                h-12
+                -mr-6
+              "
+              x-on:click="activeSlide = activeSlide === photos.length ? 1 : activeSlide + 1"
+            >
+              &#8594;
+            </button>
+          </div>
+        </div>
+        <!-- Buttons -->
+        <div
+          class="absolute w-full flex items-center justify-center px-4 mb-4"
+          x-show="photos.length > 1"
+        >
+          <div>
+            <template x-for="(_,index) in photos" :key="index">
+              <button
+                class="
+                  flex-1
+                  w-2
+                  h-2
+                  mt-4
+                  mx-2
+                  rounded-full
+                  overflow-hidden
+                  transition-colors
+                  duration-200
+                  ease-out
+                  hover:bg-teal-600
+                  hover:shadow-lg
+                "
+                :class="{ 
+                        'bg-orange-600': activeSlide === index + 1,
+                        'bg-teal-300': activeSlide !== index + 1 
+                      }"
+                x-on:click="activeSlide = index + 1"
+              ></button>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informasi Produk -->
+    <dl class="w-full whitespace-no-wrap">
+      <div
+        class="
+          text-xs
+          font-semibold
+          tracking-wide
+          text-left text-gray-900
+          uppercase
+          border-b
+          dark:border-gray-700
+          bg-gray-50
+          dark:text-gray-400
+          dark:bg-gray-800
+        "
+      >
+        <dt class="px-3 py-3">Informasi Produk</dt>
+        <dd class="px-4 sm:px-0"></dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Nama Barang</dt>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-text="product.Name"
+          ></div>
+        </dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Brand</dt>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-text="product.Brand"
+          ></div>
+          
+        </dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Kategori</dt>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-text="product.Category"
+          ></div>
+        </dd>
+      </div>
+      <!-- Deskripsi Produk -->
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Deskripsi</dt>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            style="white-space: pre-line"
+            class="w-full"
+            x-text="product.Description"
+          ></div>
+        </dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">
+          Tanggal Ditambahkan
+        </dt>
+        <dd
+          class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0"
+          x-text="product.CreatedAt"
+        ></dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Stok</dt>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <span
+            x-text="`${product.Stock} Unit`"
+            class="
+              inline-block
+              rounded-full
+              px-3
+              text-xs
+              font-semibold
+              cursor-pointer
+            "
+            :class="{'bg-red-200 text-red-500': product.Stock <= 20, 'bg-orange-200 text-orange-500': product.Stock > 20, 'bg-green-200 text-green-500': product.Stock > 100 }"
+          ></span>
+        </dd>
+      </div>
+    </dl>
+
+    <!-- Harga produk -->
+    <dl class="w-full whitespace-no-wrap">
+      <div
+        class="
+          text-xs
+          font-semibold
+          tracking-wide
+          text-left text-gray-900
+          uppercase
+          border-b
+          dark:border-gray-700
+          bg-gray-50
+          dark:text-gray-400
+          dark:bg-gray-800
+        "
+      >
+        <dt class="px-3 py-3">Harga Produk</dt>
+        <dd class="px-4 sm:px-0"></dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Beli</dt>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-text="toRupiah(product.BasePrice)"
+          ></div>
+        </dd>
+      </div>
+      <div class="px-4 py-1 sm:grid sm:grid-cols-2">
+        <dt class="text-sm leading-5 font-medium text-gray-500">Jual</dt>
+        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+          <div
+            class="w-full"
+            x-text="toRupiah(product.Price)"
+          ></div>
+        </dd>
+      </div>
+    </dl>
+
+    <!-- Harga Kredit -->
+    <dl class="w-full whitespace-no-wrap">
+      <div
+        class="
+          text-xs
+          font-semibold
+          tracking-wide
+          text-left text-gray-900
+          uppercase
+          border-b
+          dark:border-gray-700
+          bg-gray-50
+          dark:text-gray-400
+          dark:bg-gray-800
+        "
+      >
+        <dt class="px-3 py-3">Harga Kredit</dt>
+        <dd class="px-4 sm:px-0"></dd>
+      </div>
+      <template x-for="(credit, index) in creditPrice" :key="index">
+        <div
+          class="cursor-pointer px-4 py-1 sm:grid sm:grid-cols-2 select-none"
+          >
+          <dt
+            class="text-sm leading-5 font-medium text-gray-500"
+            x-text="credit.Duration + ' bulan'"
+          ></dt>
+          <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0">
+            <span
+              class="text-sm font-semibold"
+              x-text="`${toRupiah(credit.Price*credit.Duration)}`"
+            ></span>
+            <span
+              class="text-xs text-orange-500"
+              x-text="`(${toRupiah(credit.Price)} / bulan)`"
+            ></span>
+          </dd></div
+      ></template>
+    </dl>
+  </div>
+</template>
+<script>
+  function fProDetail(pid) {
+    return {
+      id: pid,
+      product: [],
+      activeSlide: 1,
+      photos: [
+        {
+          ID: 0,
+          Photo: "no-photo.png",
+        },
+      ],
+      creditPrice: [],
+      fetchById($dispatch) {
+        fetch(`/api/v1/public/product/id/${this.id}`, {
+          method: "GET",
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.error) {
+              $dispatch("notif", {
+                type: "error",
+                message: json.error,
+              });
+            }
+
+            if (json.product == null) {
+              $dispatch("notif", {
+                type: "error",
+                message:
+                  "Sepertinya telah terjadi kesalahan saat memuat data produk",
+              });
+            } else {
+              this.product = json.product;
+              if (json.product.CreditPrice != null) {
+                this.creditPrice = json.product.CreditPrice;
+              } else {
+                this.creditPrice = [];
+              }
+              if (json.product.Photos != null) {
+                this.photos = json.product.Photos;
+              } else {
+                this.photos = [
+                  {
+                    ID: 0,
+                    Photo: "no-photo.png",
+                  },
+                ];
+              }
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+    };
+  }
+</script>
+{{ end }}
