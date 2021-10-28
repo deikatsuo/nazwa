@@ -1126,7 +1126,7 @@ func OrderGetOrderItem(oid int) ([]wrapper.OrderItem, error) {
 	db := DB
 	var items []wrapper.NullableOrderItem
 	var parse []wrapper.OrderItem
-	query := `SELECT oi.id, oi.product_id, oi.quantity, oi.notes, oi.discount, oi.base_price, oi.price, p.name, p.code, p.thumbnail
+	query := `SELECT oi.id, oi.product_id, oi.quantity, oi.notes, oi.discount, oi.base_price, oi.price, p.name, p.thumbnail
 	FROM "order_item" oi
 	LEFT JOIN "product" p ON p.id=oi.product_id
 	WHERE order_id=$1`
@@ -1141,7 +1141,6 @@ func OrderGetOrderItem(oid int) ([]wrapper.OrderItem, error) {
 			Product: wrapper.NameIDCode{
 				ID:        i.ProductID,
 				Name:      i.ProductName,
-				Code:      i.ProductCode,
 				Thumbnail: i.Thumbnail,
 			},
 			Quantity:  i.Quantity,

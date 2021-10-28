@@ -105,11 +105,13 @@
         <template x-if="order.ImportedAddress === ''">
           <tr class="text-gray-700 dark:text-gray-400">
             <td class="px-4 py-1 text-sm">Pengiriman</td>
-            <td class="px-4 py-1 text-sm" x-text="shippingAddress"></td>
+            <td class="px-4 py-1 text-sm" x-text="order.ShippingAddress"></td>
           </tr>
+        </template>
+        <template x-if="order.ImportedAddress === ''">
           <tr class="text-gray-700 dark:text-gray-400">
             <td class="px-4 py-1 text-sm">Penagihan</td>
-            <td class="px-4 py-1 text-sm" x-text="billingAddress"></td>
+            <td class="px-4 py-1 text-sm" x-text="order.BillingAddress"></td>
           </tr>
         </template>
         <template x-if="order.ImportedAddress !== ''">
@@ -117,6 +119,8 @@
             <td class="px-4 py-1 text-sm">Pemesanan</td>
             <td class="px-4 py-1 text-sm" x-text="order.ImportedAddress"></td>
           </tr>
+        </template>
+        <template x-if="order.ImportedAddress !== ''">
           <tr class="text-gray-700 dark:text-gray-400">
             <td class="px-4 py-1 text-sm">Pengiriman</td>
             <td class="px-4 py-1 text-sm" x-text="order.ImportedAddress"></td>
@@ -180,6 +184,12 @@
         </tr>
       </thead>
       <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
+        <tr class="text-gray-700 dark:text-gray-400">
+          <td class="px-4 py-1 text-sm">Jatuh Tempo</td>
+          <td class="px-4 py-1 text-xl">
+            <span x-text="info.Due"></span>
+          </td>
+        </tr>
         <tr class="text-gray-700 dark:text-gray-400">
           <td class="px-4 py-1 text-sm">Status</td>
           <td class="px-4 py-1 text-xs">
@@ -557,7 +567,7 @@
                 </tr>
               </thead>
               <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-                <template x-if="payments.length > 0">
+                <template x-if="payments !== null && payments.length > 0">
                   <template x-for="(p, index) in payments" :key="index">
                     <tr class="text-sm tracking-wide text-center hover:bg-green-100">
                       <td class="px-4" x-text="p.PaymentDate"></td>
@@ -595,6 +605,7 @@
       billingAddress: [],
       items: [],
       payments: [],
+      info: [],
       fetchById($dispatch) {
         fetch(`/api/v1/local/order/id/${this.id}`, {
           method: "GET",
@@ -624,6 +635,7 @@
               this.billingAddress = json.order.BillingAddress;
               this.items = json.order.Items;
               this.payments = json.order.PaymentLogs;
+              this.info = json.order.CreditDetail;
             }
           })
           .catch((err) => {
