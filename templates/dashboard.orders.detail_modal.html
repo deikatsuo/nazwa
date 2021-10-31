@@ -194,63 +194,38 @@
           <td class="px-4 py-1 text-sm">Status</td>
           <td class="px-4 py-1 text-xs">
             <span
-              class="
-                px-2
-                py-1
-                font-semibold
-                leading-tight
-                text-green-700
-                bg-green-100
-                rounded-full
-                dark:bg-green-700
-                dark:text-green-100
-              "
+              class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
               x-show="order.Status == 'Lunas'"
               x-text="order.Status"
             ></span>
             <span
-              class="
-                px-2
-                py-1
-                font-semibold
-                leading-tight
-                text-gray-700
-                bg-gray-100
-                rounded-full
-                dark:text-gray-100
-                dark:bg-gray-700
-              "
+              class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700"
               x-show="order.Status == 'Aktif'"
               x-text="order.Status"
             ></span>
             <span
-              class="
-                px-2
-                py-1
-                font-semibold
-                leading-tight
-                text-orange-700
-                bg-orange-100
-                rounded-full
-                dark:text-white
-                dark:bg-orange-600
-              "
-              x-show="order.Status == 'Macet'"
+              class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600"
+              x-show="order.Status == 'Tarik'"
               x-text="order.Status"
             ></span>
             <span
-              class="
-                px-2
-                py-1
-                font-semibold
-                leading-tight
-                text-red-700
-                bg-red-100
-                rounded-full
-                dark:text-red-100
-                dark:bg-red-700
-              "
+              class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-700"
               x-show="order.Status == 'Bedep'"
+              x-text="order.Status"
+            ></span>
+            <span
+              class="px-2 py-1 font-semibold leading-tight text-purple-700 bg-purple-100 rounded-full dark:text-purple-100 dark:bg-purple-700"
+              x-show="order.Status == 'Tunggu'"
+              x-text="order.Status"
+            ></span>
+            <span
+              class="px-2 py-1 font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-700"
+              x-show="order.Status == 'Batal'"
+              x-text="order.Status"
+            ></span>
+            <span
+              class="px-2 py-1 font-semibold leading-tight text-teal-700 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-700"
+              x-show="order.Status == 'Bonus'"
               x-text="order.Status"
             ></span>
           </td>

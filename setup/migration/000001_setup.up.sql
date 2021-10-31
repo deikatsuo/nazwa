@@ -279,7 +279,7 @@ CREATE TABLE "order" (
     "imported_surveyor" varchar(20),
     "code" varchar(50) NOT NULL UNIQUE,
     -- status = tunggu | aktif | lunas | batal | tarik | bedep | bonus
-    "status" varchar(25) NOT NULL DEFAULT 'tunggu',
+    "status" varchar(25) NOT NULL DEFAULT 'aktif',
     "credit" boolean DEFAULT 'false' NOT NULL,
     "notes" text,
     "order_date" date NOT NULL DEFAULT CURRENT_DATE,

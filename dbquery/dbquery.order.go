@@ -100,13 +100,10 @@ func (c *CreateOrder) SetCode(o string) *CreateOrder {
 }
 
 // SetStatus Status order
-// default 'tunggu'
+// default 'aktif'
 func (c *CreateOrder) SetStatus(o string) *CreateOrder {
 	if o != "" {
 		c.Status = o
-		c.into["status"] = ":status"
-	} else {
-		c.Status = "tunggu"
 		c.into["status"] = ":status"
 	}
 	return c

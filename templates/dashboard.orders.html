@@ -3,7 +3,15 @@
 <!-- Halaman order -->
 {{ define "dashboard_orders_content" }}
 <h2
-  class="px-6 sm:px-0 my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+  class="
+    px-6
+    sm:px-0
+    my-6
+    text-2xl
+    font-semibold
+    text-gray-700
+    dark:text-gray-200
+  "
 >
   Penjualan
 </h2>
@@ -19,7 +27,17 @@
       <table class="w-full whitespace-no-wrap">
         <thead>
           <tr
-            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+            class="
+              text-xs
+              font-semibold
+              tracking-wide
+              text-left text-gray-500
+              uppercase
+              border-b
+              dark:border-gray-700
+              bg-gray-50
+              dark:text-gray-400 dark:bg-gray-800
+            "
           >
             <th class="px-1 py-3 text-center">No</th>
             <th class="px-4 py-3">Konsumen</th>
@@ -87,33 +105,33 @@
                 <div class="flex flex-wrap item-center text-sm">
                   <template x-if="order.ImportedItems === ''">
                     <div>
-                    <template x-if="order.Items !== null">
-                      <template x-for="(item, idx) in order.Items" :key="idx">
-                        <div class="flex item-center text-sm">
-                          <p
-                            class="text-xs text-gray-600 dark:text-gray-400"
-                            x-text="`[${item.Quantity}x ${item.Product.Name}]`"
-                          ></p>
-                          <p
-                            class="pr-1"
-                            x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
-                          >
-                            ,
-                          </p>
-                          <p
-                            class="px-1"
-                            x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
-                          >
-                            dan
-                          </p>
-                        </div>
+                      <template x-if="order.Items !== null">
+                        <template x-for="(item, idx) in order.Items" :key="idx">
+                          <div class="flex item-center text-sm">
+                            <p
+                              class="text-xs text-gray-600 dark:text-gray-400"
+                              x-text="`[${item.Quantity}x ${item.Product.Name}]`"
+                            ></p>
+                            <p
+                              class="pr-1"
+                              x-show="order.Items.length > 1 && idx < (order.Items.length-2)"
+                            >
+                              ,
+                            </p>
+                            <p
+                              class="px-1"
+                              x-show="order.Items.length > 1 && idx == (order.Items.length-2)"
+                            >
+                              dan
+                            </p>
+                          </div>
+                        </template>
                       </template>
-                    </template>
-                    <template x-if="order.Items === null">
-                      <p class="text-xs text-gray-600 dark:text-gray-400">
-                        Tidak ada produk
-                      </p>
-                    </template>
+                      <template x-if="order.Items === null">
+                        <p class="text-xs text-gray-600 dark:text-gray-400">
+                          Tidak ada produk
+                        </p>
+                      </template>
                     </div>
                   </template>
                   <template x-if="order.ImportedItems !== ''">
@@ -127,37 +145,100 @@
 
               <td class="px-4 py-3 text-xs">
                 <span
-                  class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
+                  class="
+                    px-2
+                    py-1
+                    font-semibold
+                    leading-tight
+                    text-green-700
+                    bg-green-100
+                    rounded-full
+                    dark:bg-green-700 dark:text-green-100
+                  "
                   x-show="order.Status == 'Lunas'"
                   x-text="order.Status"
                 ></span>
                 <span
-                  class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700"
+                  class="
+                    px-2
+                    py-1
+                    font-semibold
+                    leading-tight
+                    text-gray-700
+                    bg-gray-100
+                    rounded-full
+                    dark:text-gray-100 dark:bg-gray-700
+                  "
                   x-show="order.Status == 'Aktif'"
                   x-text="order.Status"
                 ></span>
                 <span
-                  class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600"
+                  class="
+                    px-2
+                    py-1
+                    font-semibold
+                    leading-tight
+                    text-orange-700
+                    bg-orange-100
+                    rounded-full
+                    dark:text-white dark:bg-orange-600
+                  "
                   x-show="order.Status == 'Tarik'"
                   x-text="order.Status"
                 ></span>
                 <span
-                  class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-700"
+                  class="
+                    px-2
+                    py-1
+                    font-semibold
+                    leading-tight
+                    text-red-700
+                    bg-red-100
+                    rounded-full
+                    dark:text-red-100 dark:bg-red-700
+                  "
                   x-show="order.Status == 'Bedep'"
                   x-text="order.Status"
                 ></span>
                 <span
-                  class="px-2 py-1 font-semibold leading-tight text-purple-700 bg-purple-100 rounded-full dark:text-purple-100 dark:bg-purple-700"
+                  class="
+                    px-2
+                    py-1
+                    font-semibold
+                    leading-tight
+                    text-purple-700
+                    bg-purple-100
+                    rounded-full
+                    dark:text-purple-100 dark:bg-purple-700
+                  "
                   x-show="order.Status == 'Tunggu'"
                   x-text="order.Status"
                 ></span>
                 <span
-                  class="px-2 py-1 font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-700"
+                  class="
+                    px-2
+                    py-1
+                    font-semibold
+                    leading-tight
+                    text-blue-700
+                    bg-blue-100
+                    rounded-full
+                    dark:text-blue-100 dark:bg-blue-700
+                  "
                   x-show="order.Status == 'Batal'"
                   x-text="order.Status"
                 ></span>
                 <span
-                  class="px-2 py-1 font-semibold leading-tight text-teal-700 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-700"
+                  class="
+                    px-2
+                    py-1
+                    font-semibold
+                    leading-tight
+                    text-teal-700
+                    bg-teal-100
+                    rounded-full
+                    dark:text-teal-100 dark:bg-teal-700
+                  "
                   x-show="order.Status == 'Bonus'"
                   x-text="order.Status"
                 ></span>
@@ -181,10 +262,20 @@
               </td>
 
               <td class="pl-1 pr-2 py-3 text-sm">
-                <div class="flex text-sm justify-end" x-show="selected == order.Code">
+                <div
+                  class="flex text-sm justify-end"
+                  x-show="selected == order.Code"
+                >
                   <template x-if="order.Credit">
                     <div class="flex">
-                      <div class="cursor-pointer px-1">
+                      <div class="cursor-pointer px-1 hover:text-green-400">
+                        <a
+                          @click="$dispatch('modal', { footer: true, title: 'Bayar Tagihan', html: $refs.moneyIn.innerHTML, callback: function() { addMoneyIn($dispatch, order.ID) } })"
+                          >{{ template "_svg_icon_plus" }}</a
+                        >
+                      </div>
+
+                      <div class="cursor-pointer px-1 hover:text-blue-400">
                         <a
                           :href="`instalments/card?ids=${order.ID}`"
                           target="_blank"
@@ -192,7 +283,7 @@
                         >
                       </div>
 
-                      <div class="cursor-pointer px-1">
+                      <div class="cursor-pointer px-1 hover:text-blue-400">
                         <a
                           :href="`instalments/receipt/${order.ID}`"
                           target="_blank"
@@ -201,7 +292,7 @@
                       </div>
                     </div>
                   </template>
-                  <div class="cursor-pointer px-1">
+                  <div class="cursor-pointer px-1 hover:text-red-400">
                     <a
                       @click="if (selected == order.Code) { deleteOrder($dispatch, order.ID); }"
                       >{{ template "_svg_icon_trash" }}</a
@@ -212,20 +303,79 @@
             </tr>
           </template>
 
+          <template x-ref="moneyIn">
+            <div id="money-in" x-data="{ moneyin: null, }">
+              <input
+                class="
+                  block
+                  w-full
+                  pr-20
+                  mt-1
+                  text-sm text-black
+                  dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700
+                  focus:border-purple-400
+                  focus:outline-none
+                  focus:shadow-outline-purple
+                  dark:focus:shadow-outline-gray
+                  form-input
+                "
+                x-model="moneyin"
+                type="text"
+                @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
+                placeholder="Jumlah Uang Masuk..."
+              />
+            </div>
+          </template>
+
           <!-- Modal detail order -->
           {{ template "dashboard_order_detail_modal" .}}
         </tbody>
       </table>
     </div>
     <div
-      class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
+      class="
+        grid
+        px-4
+        py-3
+        text-xs
+        font-semibold
+        tracking-wide
+        text-gray-500
+        uppercase
+        border-t
+        dark:border-gray-700
+        bg-gray-50
+        sm:grid-cols-9
+        dark:text-gray-400 dark:bg-gray-800
+      "
     >
       <span
-        class="flex items-center justify-center sm:justify-start col-span-10 sm:col-span-1"
+        class="
+          flex
+          items-center
+          justify-center
+          sm:justify-start
+          col-span-10
+          sm:col-span-1
+        "
       >
         <div class="relative">
           <select
-            class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+            class="
+              block
+              appearance-none
+              w-full
+              bg-white
+              border border-gray-400
+              hover:border-gray-500
+              px-4
+              py-2
+              pr-8
+              rounded
+              shadow
+              leading-tight
+              focus:outline-none focus:shadow-outline
+            "
             x-model="limit"
           >
             <option value="">Jumlah per halaman</option>
@@ -234,7 +384,16 @@
             <option value="100">100</option>
           </select>
           <div
-            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            class="
+              pointer-events-none
+              absolute
+              inset-y-0
+              right-0
+              flex
+              items-center
+              px-2
+              text-gray-700
+            "
           >
             {{ template "_svg_icon_arrow_bottom" }}
           </div>
@@ -250,14 +409,26 @@
       </span>
       <!-- Pagination -->
       <span
-        class="flex justify-center col-span-10 sm:col-span-1 mt-2 sm:mt-auto sm:justify-end"
+        class="
+          flex
+          justify-center
+          col-span-10
+          sm:col-span-1
+          mt-2
+          sm:mt-auto sm:justify-end
+        "
       >
         <nav aria-label="Table navigation">
           <ul class="inline-flex items-center">
             <!-- Backwaard -->
             <li>
               <button
-                class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                class="
+                  px-3
+                  py-1
+                  rounded-md rounded-l-lg
+                  focus:outline-none focus:shadow-outline-purple
+                "
                 aria-label="Previous"
                 @click="backW($dispatch)"
                 :class="{'cursor-not-allowed opacity-50': page <= 1 || loading == true}"
@@ -279,7 +450,12 @@
             <!-- Forward -->
             <li>
               <button
-                class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                class="
+                  px-3
+                  py-1
+                  rounded-md rounded-r-lg
+                  focus:outline-none focus:shadow-outline-purple
+                "
                 aria-label="Next"
                 @click="forW($dispatch)"
                 :class="{'cursor-not-allowed opacity-50': last == true || loading == true}"
@@ -431,6 +607,10 @@
             console.log(err);
           });
       },
+      addMoneyIn($dispatch, oid) {
+        moneyin = document.getElementById("money-in").__x.$data.moneyin;
+        alert(moneyin);
+      }
     };
   }
 </script>

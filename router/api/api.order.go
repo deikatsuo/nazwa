@@ -258,6 +258,7 @@ func OrderCreate(c *gin.Context) {
 			SetLine(json.Line).
 			SetNotes(json.Notes).
 			SetCode(code).
+			SetStatus("aktif").
 			SetOrderDate(json.OrderDate).
 			SetShippingDate(json.ShippingDate).
 			SetOrderItems(json.OrderItems).
