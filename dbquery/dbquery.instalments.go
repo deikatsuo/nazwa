@@ -51,19 +51,28 @@ func InstalmentsMoneyIn(oid int, moneyIn int) error {
 	}
 
 	moneyInRem := moneyIn
+	mIndex := 0
 
 	for moneyInRem > 0 {
-		toFill := order.CreditDetail.Monthly - monthlyQ[0].Paid
-		toPay := 0
-		if moneyInRem >= toFill {
-			toPay = toFill
-			moneyInRem = moneyInRem - toFill
+		if (len(monthlyQ) - mIndex) > 0 {
+			toFill := order.CreditDetail.Monthly - monthlyQ[mIndex].Paid
+			toPay := 0
+			if moneyInRem >= toFill {
+				toPay = toFill
+				moneyInRem = moneyInRem - toFill
+			} else {
+				toPay = moneyInRem
+				moneyInRem = 0
+			}
+			fmt.Println("Topay: ", toPay)
+
+			mIndex += 1
 		} else {
-			toPay = moneyInRem
+			//todo
+			//masukan remain
+			fmt.Println("Lebih: ", moneyInRem)
 			moneyInRem = 0
 		}
-		fmt.Println("Topay: ", toPay)
-		fmt.Println("Remain: ", moneyInRem)
 	}
 
 	return nil
