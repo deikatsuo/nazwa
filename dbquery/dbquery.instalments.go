@@ -29,7 +29,7 @@ func InstalmentsReceiptUpdateNotes(rid int, notes string) error {
 }
 
 // InstalmentsMoneyIn uang angsuran masuk
-func InstalmentsMoneyIn(oid int, moneyIn int) error {
+func InstalmentsMoneyIn(oid, receiver, moneyIn int, notes, mode string) error {
 	db := DB
 
 	var order wrapper.Order
@@ -101,6 +101,7 @@ func InstalmentsMoneyIn(oid int, moneyIn int) error {
 		orderStatus = "lunas"
 	}
 
+	// Update kredit detail
 	query = `UPDATE "order_credit_detail"
 	SET last_paid=$2, remaining=$3, done=$4, active=$5
 	WHERE id=$1`
@@ -110,11 +111,23 @@ func InstalmentsMoneyIn(oid int, moneyIn int) error {
 		return err
 	}
 
+	// Update order status
 	query = `UPDATE "order"
 	SET status=$2
 	WHERE id=$1`
 	_, err = tx.Exec(query, order.ID, orderStatus)
 	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	isCash := true
+	if mode == "transfer" {
+		isCash = false
+	}
+	// Tambahkan histori pembayaran angsuran
+	if _, err := db.Exec(`INSERT INTO "order_credit_payment" (order_id, receiver_id, payment_date, cash, notes, amount) VALUES ($1, $2, $3, $4, $5, $6)`, order.ID, receiver, time.Now(), isCash, notes, moneyIn); err != nil {
+		log.Warn("dbquery.line.go LineNew() Gagal menambahkan arah")
 		tx.Rollback()
 		return err
 	}

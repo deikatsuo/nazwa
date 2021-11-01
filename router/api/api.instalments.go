@@ -270,7 +270,7 @@ func InstalmentMoneyIn(c *gin.Context) {
 
 	// Masukan angsuran
 	if next {
-		if err := dbquery.InstalmentsMoneyIn(oid, money); err != nil {
+		if err := dbquery.InstalmentsMoneyIn(oid, moneyIn.Receiver, money, moneyIn.Notes, moneyIn.Mode); err != nil {
 			message = "Gagal membayar angsuran"
 			status = "error"
 			next = false

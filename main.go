@@ -330,6 +330,7 @@ func runServer() {
 	// /api/v1/local/user/search
 	v1uSearch := v1user.Group("/search")
 	v1uSearch.GET("/ric/:limit", api.UserSearchByNIK)
+	v1uSearch.GET("/name/:limit", api.UserSearchByName())
 	v1uSearch.GET("/collector/:limit", api.UserSearchByNameType("2"))
 	v1uSearch.GET("/surveyor/:limit", api.UserSearchByNameType("4"))
 	v1uSearch.GET("/sales/:limit", api.UserSearchByNameType("5"))

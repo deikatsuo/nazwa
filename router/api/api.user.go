@@ -1315,3 +1315,99 @@ func UserSearchByNameType(roleid string) gin.HandlerFunc {
 	}
 	return gin.HandlerFunc(fn)
 }
+
+// UserSearchByName cari pengguna berdasarkan nama
+func UserSearchByName() gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		session := sessions.Default(c)
+		// User session saat ini
+		// Tolak jika yang request bukan user terdaftar
+		uid := session.Get("userid")
+		if uid == nil {
+			router.Page404(c)
+			return
+		}
+
+		search := ""
+		lastid := 1
+		last := false
+		limit := 10
+		var direction string
+		httpStatus := http.StatusOK
+		errMess := ""
+		u := dbquery.GetUsers{}
+		next := true
+
+		// Mengambil parameter limit
+		lim, err := strconv.Atoi(c.Param("limit"))
+		if err == nil {
+			limit = lim
+			u.Limit(limit)
+		} else {
+			errMess = "Limit tidak valid"
+			httpStatus = http.StatusBadRequest
+			next = false
+		}
+
+		// Ambil query pencarian
+		search = strings.Title(strings.ToLower(c.Query("search")))
+
+		// Ambil query id terakhir
+		lst, err := strconv.Atoi(c.Query("lastid"))
+		if err == nil {
+			lastid = lst
+		}
+
+		// Forward/backward
+		direction = c.Query("direction")
+		if direction == "back" {
+			u.Direction(direction)
+		} else {
+			u.Direction("next")
+		}
+
+		var total int
+		if t, err := dbquery.UserGetUserTotalRow(); err == nil {
+			total = t
+		}
+
+		var users []wrapper.User
+
+		if next {
+			u.Where("WHERE concat(u.first_name, ' ', u.last_name) LIKE '" + search + "%' ORDER BY u.id ASC")
+			u.LastID(lastid)
+
+			usr, err := u.Show()
+			if err != nil {
+				errMess = err.Error()
+				httpStatus = http.StatusInternalServerError
+			}
+			users = usr
+		}
+
+		if len(users) > 0 && direction == "back" {
+			// Reverse urutan array user
+			temp := make([]wrapper.User, len(users))
+			in := 0
+			for i := len(users) - 1; i >= 0; i-- {
+				temp[in] = users[i]
+				in++
+			}
+			users = temp
+		}
+
+		// Cek id terakhir
+		if len(users) > 0 && len(users) < limit {
+			// Periksa apakah ini data terakhir atau bukan
+			last = true
+		}
+
+		c.JSON(httpStatus, gin.H{
+			"users": users,
+			"error": errMess,
+			"total": total,
+			"last":  last,
+		})
+	}
+	return gin.HandlerFunc(fn)
+}

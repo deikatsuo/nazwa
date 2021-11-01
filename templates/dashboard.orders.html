@@ -304,28 +304,265 @@
           </template>
 
           <template x-ref="moneyIn">
-            <div id="money-in" x-data="{ moneyin: null, }">
-              <input
-                class="
-                  block
-                  w-full
-                  pr-20
-                  mt-1
-                  text-sm text-black
-                  dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700
-                  focus:border-purple-400
-                  focus:outline-none
-                  focus:shadow-outline-purple
-                  dark:focus:shadow-outline-gray
-                  form-input
-                "
-                x-model="moneyin"
-                type="text"
-                @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
-                placeholder="Jumlah Uang Masuk..."
-              />
+            <div id="money-in" x-data="moneyIn()">
+              <div class="w-full flex">
+                <div class="w-full relative md:w-3/4 md:px-1">
+                  <label class="block mt-4 text-sm">
+                    <span class="text-gray-700 dark:text-gray-400"
+                      >Nominal</span
+                    >
+                    <input
+                      class="
+                        block
+                        w-full
+                        pr-20
+                        mt-1
+                        text-sm text-black
+                        dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700
+                        focus:border-purple-400
+                        focus:outline-none
+                        focus:shadow-outline-purple
+                        dark:focus:shadow-outline-gray
+                        form-input
+                      "
+                      x-model="moneyin"
+                      type="text"
+                      @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
+                      placeholder="Jumlah Uang Masuk..."
+                    />
+                  </label>
+                </div>
+
+                <div class="w-full relative md:w-1/4 md:px-1">
+                  <label class="block mt-4 text-sm">
+                    <span class="text-gray-700 dark:text-gray-400">Metode</span>
+                    <select
+                      x-model="mode"
+                      class="bg-white block
+                        w-full
+                        mt-1
+                        text-sm text-black
+                        dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700
+                        focus:border-purple-400
+                        focus:outline-none
+                        focus:shadow-outline-purple
+                        dark:focus:shadow-outline-gray
+                        form-input"
+                    >
+                      <option value="cash" selected>Cash</option>
+                      <option value="transfer">Transfer</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+
+              <div class="w-full relative md:w-1/2 md:px-1">
+                <label class="block mt-4 text-sm">
+                  <span class="text-gray-700 dark:text-gray-400">Penagih</span>
+                  <input
+                    class="
+                      block
+                      w-full
+                      mt-1
+                      text-sm
+                      dark:border-gray-600 dark:bg-gray-700
+                      focus:border-gray-100 focus:outline-none focus:shadow-md
+                      dark:text-gray-300 dark:focus:shadow-outline-gray
+                      form-input
+                    "
+                    placeholder="Yang menerima angsuran"
+                    x-model="instantData.user"
+                    @keyup="if (instantData.user.length >= 3 && instantData.user.length <= 25) { closeUserIS = false; searchUser(); } else { closeUserIS = true; }"
+                    @click="if (instantData.user.length >= 3 && instantData.user.length <= 25) { closeUserIS = false; } else { closeUserIS = true; }"
+                    @click.away="closeUserIS = true;"
+                    @keydown.tab="closeUserIS = true;"
+                    x-show="$parent.isObjEmpty(tempDataUser)"
+                    :class="{'border-red-600 focus:border-red-400 focus:outline-none focus:shadow-outline-red': errUser }"
+                  />
+                </label>
+                <div class="w-full">
+                  <div
+                    class="
+                      relative
+                      bg-blue-400 bg-opacity-50
+                      mt-1
+                      text-sm
+                      inline-block
+                      py-1
+                      pl-4
+                      pr-8
+                      rounded-full
+                    "
+                    x-show="!$parent.isObjEmpty(tempDataUser)"
+                  >
+                    <i
+                      x-text="tempDataUser.Firstname +' '+ tempDataUser.Lastname"
+                    ></i>
+                    (<b x-text="tempDataUser.Username"></b>)
+                    <p
+                      style="margin-top: 0.42rem"
+                      class="cursor-pointer absolute right-0 top-0 mr-2"
+                      @click="tempDataUser = {};
+                  receiver = 0;"
+                    >
+                      {{ template "_svg_icon_close" }}
+                    </p>
+                  </div>
+                </div>
+                <ul
+                  x-transition:leave="transition ease-in duration-150"
+                  x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0"
+                  x-show="!closeUserIS"
+                  class="
+                    absolute
+                    z-30
+                    left-0
+                    right-0
+                    -mt-1
+                    md:mr-1 md:ml-1
+                    text-gray-600
+                    bg-white
+                    border-none border-r border-l border-b border-gray-100
+                    rounded-br-md rounded-bl-md
+                    shadow-md
+                    dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700
+                  "
+                  aria-label="submenu"
+                >
+                  <div
+                    x-show="userIS.length > 0 && closeUserIS == false && $parent.isObjEmpty(tempDataUser)"
+                  >
+                    <template x-for="(user, index) in userIS" :key="index">
+                      <li class="flex">
+                        <a
+                          class="
+                            inline-flex
+                            items-center
+                            w-full
+                            px-3
+                            py-1
+                            text-sm
+                            transition-colors
+                            duration-150
+                            hover:bg-gray-100 hover:text-gray-800
+                            dark:hover:bg-gray-800 dark:hover:text-gray-200
+                          "
+                          href="#"
+                          tabindex="-1"
+                          @click="tempDataUser = 
+                      {
+                        ID: user.ID,
+                        Firstname: user.Firstname,
+                        Lastname: user.Lastname,
+                        Username: user.Username,
+                      };
+                      receiver = user.ID;"
+                        >
+                          <img
+                            class="object-cover w-5 h-5 rounded-full mr-3"
+                            :src="'/file/profile/thumbnail/'+user.Avatar"
+                            alt=""
+                            loading="lazy"
+                          />
+                          <span
+                            x-text="user.Firstname +' '+ user.Lastname"
+                          ></span>
+                        </a>
+                      </li>
+                    </template>
+                  </div>
+                  <div x-show="userIS.length == 0">
+                    <span
+                      class="
+                        inline-flex
+                        items-center
+                        w-full
+                        px-3
+                        py-1
+                        text-sm
+                        transition-colors
+                        duration-150
+                        hover:bg-gray-100 hover:text-gray-800
+                        dark:hover:bg-gray-800 dark:hover:text-gray-200
+                      "
+                      >Tidak ada data</span
+                    >
+                  </div>
+                </ul>
+              </div>
+
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">Catatan</span>
+                <input
+                  class="
+                    block
+                    w-full
+                    pr-20
+                    mt-1
+                    text-sm text-black
+                    dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700
+                    focus:border-purple-400
+                    focus:outline-none
+                    focus:shadow-outline-purple
+                    dark:focus:shadow-outline-gray
+                    form-input
+                  "
+                  x-model="notes"
+                  type="text"
+                  @keydown.enter="$parent.modalCallback(); $parent.closeModal()"
+                  placeholder="Catatan tambahan.."
+                />
+              </label>
             </div>
           </template>
+          <script>
+            function moneyIn() {
+              return {
+                moneyin: null,
+                receiver: null,
+                notes: null,
+                mode: "cash",
+                instantData: {
+                  user: "",
+                },
+                tempDataUser: {},
+                closeUserIS: true,
+                userIS: [],
+                errUser: false,
+                errmUser: "",
+                searchUser() {
+                  fetch(
+                    `/api/v1/local/user/search/name/10?search=${this.instantData.user}`,
+                    {
+                      method: "GET",
+                      headers: { "Content-Type": "application/json" },
+                    }
+                  )
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (data.error) {
+                        $dispatch("notif", {
+                          type: "error",
+                          message: data.error,
+                        });
+                      }
+                      if (data.users) {
+                        this.userIS = data.users;
+                      } else {
+                        this.userIS = [];
+                      }
+                    })
+                    .catch(() => {
+                      this.loading = false;
+                      console.log(
+                        "Telah terjadi kesalahan saat memuat data user"
+                      );
+                    });
+                },
+              };
+            }
+          </script>
 
           <!-- Modal detail order -->
           {{ template "dashboard_order_detail_modal" .}}
@@ -609,28 +846,35 @@
       },
       paid: {
         moneyin: null,
+        receiver: null,
+        notes: null,
       },
       addMoneyIn($dispatch, oid) {
         //moneyin = document.getElementById("money-in").__x.$data.moneyin;
-        this.paid.moneyin = document.getElementById("money-in").__x.$data.moneyin,
+        this.paid.moneyin =
+          document.getElementById("money-in").__x.$data.moneyin;
+        this.paid.receiver =
+          document.getElementById("money-in").__x.$data.receiver;
+        this.paid.notes = document.getElementById("money-in").__x.$data.notes;
+        this.paid.mode = document.getElementById("money-in").__x.$data.mode;
         fetch(`/api/v1/local/instalment/moneyin/${oid}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(this.paid),
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.paid),
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
           })
-            .then((res) => res.json())
-            .then((json) => {
-              if (json.message) {
-                $dispatch("notif", {
-                  type: json.status,
-                  message: json.message,
-                });
-              }
-            })
-            .catch((err) => {
-              console.log("addMoneyIn() " + err);
-            });
-      }
+          .catch((err) => {
+            console.log("addMoneyIn() " + err);
+          });
+      },
     };
   }
 </script>

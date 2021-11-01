@@ -40,5 +40,8 @@ type InstalmentUpdateReceiptPrintStatus struct {
 }
 
 type InstalmentMoneyIn struct {
-	MoneyIn string `json:"moneyin" binding:"numeric"`
+	MoneyIn  string `json:"moneyin" binding:"numeric"`
+	Receiver int    `json:"receiver" binding:"numeric"`
+	Notes    string `json:"notes" binding:"omitempty"`
+	Mode     string `json:"mode" binding:"required"`
 }
