@@ -38,3 +38,7 @@ type InstalmentPrintReceipt struct {
 type InstalmentUpdateReceiptPrintStatus struct {
 	Printed *bool `form:"set" binding:"required"`
 }
+
+type InstalmentMoneyIn struct {
+	MoneyIn string `json:"moneyin" binding:"numeric"`
+}

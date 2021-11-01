@@ -285,6 +285,7 @@ func runServer() {
 	// /api/v1/local/instalment
 	v1instalment := v1local.Group("/instalment")
 	v1instalment.GET("/z/:zid/date/:date", api.InstalmentShowByDate)
+	v1instalment.POST("/moneyin/:oid", api.InstalmentMoneyIn)
 
 	// /api/v1/local/instalment/edit
 	v1iEdit := v1instalment.Group("/edit")

@@ -607,9 +607,29 @@
             console.log(err);
           });
       },
+      paid: {
+        moneyin: null,
+      },
       addMoneyIn($dispatch, oid) {
-        moneyin = document.getElementById("money-in").__x.$data.moneyin;
-        alert(moneyin);
+        //moneyin = document.getElementById("money-in").__x.$data.moneyin;
+        this.paid.moneyin = document.getElementById("money-in").__x.$data.moneyin,
+        fetch(`/api/v1/local/instalment/moneyin/${oid}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(this.paid),
+          })
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.message) {
+                $dispatch("notif", {
+                  type: json.status,
+                  message: json.message,
+                });
+              }
+            })
+            .catch((err) => {
+              console.log("addMoneyIn() " + err);
+            });
       }
     };
   }

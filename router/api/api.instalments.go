@@ -238,6 +238,56 @@ func InstalmentShowByDate(c *gin.Context) {
 	c.JSON(httpStatus, gh)
 }
 
+// InstalmentMoneyIn uang tagihan masuk
+func InstalmentMoneyIn(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	// id zone
+	oid, err := strconv.Atoi(c.Param("oid"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var moneyIn wrapper.InstalmentMoneyIn
+	if err := c.ShouldBindJSON(&moneyIn); err != nil {
+		log.Warn("Gagal unmarshal json")
+		log.Error(err)
+
+		message = "Request tidak valid"
+		status = "error"
+		next = false
+	}
+
+	money, _ := strconv.Atoi(moneyIn.MoneyIn)
+
+	// Masukan angsuran
+	if next {
+		if err := dbquery.InstalmentsMoneyIn(oid, money); err != nil {
+			message = "Gagal membayar angsuran"
+			status = "error"
+			next = false
+		} else {
+			message = "Angsuran berhasil dibayarkan"
+			status = "success"
+			next = true
+			httpStatus = http.StatusOK
+		}
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"message": message,
+		"status":  status,
+	})
+}
+
 // InstalmentUpdateReceiptPrintStatus update printed status
 func InstalmentUpdateReceiptPrintStatus(c *gin.Context) {
 	session := sessions.Default(c)
