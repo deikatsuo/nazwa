@@ -3,6 +3,7 @@ package dbquery
 import (
 	"fmt"
 	"nazwa/wrapper"
+	"time"
 )
 
 // InstalmentsReceiptPrintedStatus update nama arah
@@ -50,6 +51,8 @@ func InstalmentsMoneyIn(oid int, moneyIn int) error {
 		return err
 	}
 
+	// Transaksi
+	tx := db.MustBegin()
 	moneyInRem := moneyIn
 	mIndex := 0
 
@@ -64,16 +67,59 @@ func InstalmentsMoneyIn(oid int, moneyIn int) error {
 				toPay = moneyInRem
 				moneyInRem = 0
 			}
-			fmt.Println("Topay: ", toPay)
+
+			// Kwitansi/angsuran dianggap selesai jika "paid" sudah penuh
+			isDone := false
+			if (monthlyQ[mIndex].Paid + toPay) == order.CreditDetail.Monthly {
+				isDone = true
+			}
+
+			query = `UPDATE "order_monthly_credit"
+			SET paid=$2, done=$3
+			WHERE id=$1`
+			_, err := tx.Exec(query, monthlyQ[mIndex].ID, monthlyQ[mIndex].Paid+toPay, isDone)
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
 
 			mIndex += 1
 		} else {
-			//todo
 			//masukan remain
 			fmt.Println("Lebih: ", moneyInRem)
 			moneyInRem = 0
 		}
+
 	}
 
-	return nil
+	isCreditDone := false
+	isCreditActive := true
+	orderStatus := "aktif"
+	if (order.CreditDetail.Remaining - moneyIn) <= 0 {
+		isCreditDone = true
+		isCreditActive = false
+		orderStatus = "lunas"
+	}
+
+	query = `UPDATE "order_credit_detail"
+	SET last_paid=$2, remaining=$3, done=$4, active=$5
+	WHERE id=$1`
+	_, err = tx.Exec(query, order.CreditDetail.ID, time.Now(), order.CreditDetail.Remaining-moneyIn, isCreditDone, isCreditActive)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	query = `UPDATE "order"
+	SET status=$2
+	WHERE id=$1`
+	_, err = tx.Exec(query, order.ID, orderStatus)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Komit
+	err = tx.Commit()
+	return err
 }
