@@ -1183,7 +1183,7 @@ func OrderGetSubstituteByRic(ric string) ([]wrapper.NameID, error) {
 func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 	db := DB
 	var cd wrapper.OrderCreditDetailSelect
-	query := `SELECT ocd.id, ocd.zone_line_id, ocd.credit_code, ocd.monthly, ocd.duration, ocd.due, ocd.total, ocd.remaining, ocd.lucky_discount, TO_CHAR(ocd.last_paid, 'DD-MM-YYYY') AS last_paid, zl.name as zone_line_name, zl.code as zone_line_code
+	query := `SELECT ocd.id, ocd.zone_line_id, ocd.credit_code, ocd.monthly, ocd.duration, ocd.due, ocd.active, ocd.done, ocd.total, ocd.remaining, ocd.lucky_discount, TO_CHAR(ocd.last_paid, 'DD-MM-YYYY') AS last_paid, zl.name as zone_line_name, zl.code as zone_line_code
 	FROM "order_credit_detail" ocd
 	LEFT JOIN "zone_line" zl ON zl.id=ocd.zone_line_id
 	WHERE ocd.order_id=$1`
@@ -1209,6 +1209,8 @@ func OrderGetCreditInfo(oid int) (wrapper.OrderCreditDetail, error) {
 		Remaining:     cd.Remaining,
 		LuckyDiscount: cd.LuckyDiscount,
 		LastPaid:      cd.LastPaid.String,
+		Active:        cd.Active,
+		Done:          cd.Done,
 	}, nil
 }
 
@@ -1348,7 +1350,10 @@ func OrderPaymentsByOrderID(oid int) ([]wrapper.OrderPayment, error) {
 	db := DB
 	var payments []wrapper.OrderPayment
 	var tmp []wrapper.OrderPaymentSelect
-	query := `SELECT id, order_id, receiver_id, imported_receiver, cash, notes, amount, TO_CHAR(payment_date, 'DD-MM-YYYY') AS payment_date FROM "order_credit_payment" WHERE order_id=$1 ORDER BY CAST(payment_date AS DATE) DESC`
+	query := `SELECT ocp.id, ocp.order_id, ocp.receiver_id, ocp.imported_receiver, ocp.cash, ocp.notes, ocp.amount, TO_CHAR(ocp.payment_date, 'DD-MM-YYYY') AS payment_date, concat_ws(' ', us.first_name, us.last_name) as receiver_name
+	FROM "order_credit_payment" ocp
+	LEFT JOIN "user" us ON ocp.receiver_id=us.id
+	WHERE ocp.order_id=$1 ORDER BY CAST(ocp.payment_date AS DATE) DESC`
 
 	err := db.Select(&tmp, query, oid)
 	if err != nil {
@@ -1359,7 +1364,8 @@ func OrderPaymentsByOrderID(oid int) ([]wrapper.OrderPayment, error) {
 		payments = append(payments, wrapper.OrderPayment{
 			ID:               pay.ID,
 			OrderID:          pay.OrderID,
-			ReceiverID:       int(pay.ReceiverID.Int32),
+			ReceiverID:       pay.ReceiverID,
+			ReceiverName:     pay.ReceiverName,
 			ImportedReceiver: pay.ImportedReceiver.String,
 			PaymentDate:      pay.PaymentDate.String,
 			Cash:             pay.Cash,

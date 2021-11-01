@@ -555,9 +555,36 @@
                         </template>
                       </td>
                       <td class="px-4" x-text="`${toRupiah(p.Amount)}`" :class="{'text-red-500': p.Amount < order.CreditDetail.Monthly, 'text-green-500': p.Amount > order.CreditDetail.Monthly }"></td>
-                      <td class="px-4" x-text="p.ImportedReceiver"></td>
+                      <template x-if="p.ImportedReceiver !== ''">
+                        <td class="px-4" x-text="p.ImportedReceiver"></td>
+                      </template>
+                      <template x-if="p.ReceiverName !== ''">
+                        <td class="px-4" x-text="p.ReceiverName"></td>
+                      </template>
                     </tr>
                   </template>
+                </template>
+                <tr class="text-xl border-t tracking-wide text-center hover:bg-green-100">
+                  <td class="px-4"></td>
+                  <td class="px-4">Total uang masuk</td>
+                  <td class="px-4" x-text="toRupiah(info.Total-info.Remaining)"></td>
+                  <td class="px-4"></td>
+                </tr>
+                <template x-if="info.Remaining < 0">
+                  <tr class="text-sm tracking-wide text-center hover:bg-green-100">
+                    <td class="px-4"></td>
+                    <td class="px-4">Sisa angsuran</td>
+                    <td class="px-4" x-text="toRupiah(0)"></td>
+                    <td class="px-4"></td>
+                  </tr>
+                </template>
+                <template x-if="info.Remaining > 0">
+                  <tr class="text-sm tracking-wide text-center hover:bg-green-100">
+                    <td class="px-4"></td>
+                    <td class="px-4">Sisa angsuran</td>
+                    <td class="px-4" x-text="toRupiah(info.Remaining)"></td>
+                    <td class="px-4"></td>
+                  </tr>
                 </template>
               </tbody>
             </table>

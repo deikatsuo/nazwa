@@ -303,7 +303,8 @@ type OrderPaymentInsert struct {
 type OrderPaymentSelect struct {
 	ID               int            `db:"id"`
 	OrderID          int            `db:"order_id"`
-	ReceiverID       sql.NullInt32  `db:"receiver_id"`
+	ReceiverID       int            `db:"receiver_id"`
+	ReceiverName     string         `db:"receiver_name"`
 	ImportedReceiver sql.NullString `db:"imported_receiver"`
 	PaymentDate      sql.NullString `db:"payment_date"`
 	Cash             bool           `db:"cash"`
@@ -316,6 +317,7 @@ type OrderPayment struct {
 	ID               int
 	OrderID          int
 	ReceiverID       int
+	ReceiverName     string
 	ImportedReceiver string
 	PaymentDate      string
 	Cash             bool
