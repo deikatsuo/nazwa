@@ -39,10 +39,6 @@ func InstalmentsMoneyIn(oid int, moneyIn int) error {
 		return err
 	}
 
-	fmt.Println(order.CreditDetail.Remaining)
-	fmt.Println(order.Code)
-	fmt.Println(moneyIn)
-
 	var monthlyQ []wrapper.OrderMonthlyCreditSelect
 
 	query := `SELECT *, TO_CHAR(due_date, 'DD-MM-YYYY') AS due_date
@@ -58,13 +54,17 @@ func InstalmentsMoneyIn(oid int, moneyIn int) error {
 
 	for moneyInRem > 0 {
 		toFill := order.CreditDetail.Monthly - monthlyQ[0].Paid
+		toPay := 0
 		if moneyInRem >= toFill {
+			toPay = toFill
 			moneyInRem = moneyInRem - toFill
+		} else {
+			toPay = moneyInRem
+			moneyInRem = 0
 		}
-		fmt.Println(moneyInRem)
+		fmt.Println("Topay: ", toPay)
+		fmt.Println("Remain: ", moneyInRem)
 	}
-
-	fmt.Println(moneyInRem)
 
 	return nil
 }
