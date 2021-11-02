@@ -36,8 +36,7 @@
             border-b
             dark:border-gray-700
             bg-gray-50
-            dark:text-gray-400
-            dark:bg-gray-800
+            dark:text-gray-400 dark:bg-gray-800
           "
         >
           <th class="px-3 py-3">#Melibatkan</th>
@@ -93,8 +92,7 @@
             border-b
             dark:border-gray-700
             bg-gray-50
-            dark:text-gray-400
-            dark:bg-gray-800
+            dark:text-gray-400 dark:bg-gray-800
           "
         >
           <th class="px-3 py-3">#Alamat</th>
@@ -142,8 +140,7 @@
             border-b
             dark:border-gray-700
             bg-gray-50
-            dark:text-gray-400
-            dark:bg-gray-800
+            dark:text-gray-400 dark:bg-gray-800
           "
         >
           <th class="px-3 py-3">#Tanggal</th>
@@ -175,8 +172,7 @@
             border-b
             dark:border-gray-700
             bg-gray-50
-            dark:text-gray-400
-            dark:bg-gray-800
+            dark:text-gray-400 dark:bg-gray-800
           "
         >
           <th class="px-3 py-3">#Lainnya</th>
@@ -194,37 +190,100 @@
           <td class="px-4 py-1 text-sm">Status</td>
           <td class="px-4 py-1 text-xs">
             <span
-              class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"
+              class="
+                px-2
+                py-1
+                font-semibold
+                leading-tight
+                text-green-700
+                bg-green-100
+                rounded-full
+                dark:bg-green-700 dark:text-green-100
+              "
               x-show="order.Status == 'Lunas'"
               x-text="order.Status"
             ></span>
             <span
-              class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700"
+              class="
+                px-2
+                py-1
+                font-semibold
+                leading-tight
+                text-gray-700
+                bg-gray-100
+                rounded-full
+                dark:text-gray-100 dark:bg-gray-700
+              "
               x-show="order.Status == 'Aktif'"
               x-text="order.Status"
             ></span>
             <span
-              class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600"
+              class="
+                px-2
+                py-1
+                font-semibold
+                leading-tight
+                text-orange-700
+                bg-orange-100
+                rounded-full
+                dark:text-white dark:bg-orange-600
+              "
               x-show="order.Status == 'Tarik'"
               x-text="order.Status"
             ></span>
             <span
-              class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-700"
+              class="
+                px-2
+                py-1
+                font-semibold
+                leading-tight
+                text-red-700
+                bg-red-100
+                rounded-full
+                dark:text-red-100 dark:bg-red-700
+              "
               x-show="order.Status == 'Bedep'"
               x-text="order.Status"
             ></span>
             <span
-              class="px-2 py-1 font-semibold leading-tight text-purple-700 bg-purple-100 rounded-full dark:text-purple-100 dark:bg-purple-700"
+              class="
+                px-2
+                py-1
+                font-semibold
+                leading-tight
+                text-purple-700
+                bg-purple-100
+                rounded-full
+                dark:text-purple-100 dark:bg-purple-700
+              "
               x-show="order.Status == 'Tunggu'"
               x-text="order.Status"
             ></span>
             <span
-              class="px-2 py-1 font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-700"
+              class="
+                px-2
+                py-1
+                font-semibold
+                leading-tight
+                text-blue-700
+                bg-blue-100
+                rounded-full
+                dark:text-blue-100 dark:bg-blue-700
+              "
               x-show="order.Status == 'Batal'"
               x-text="order.Status"
             ></span>
             <span
-              class="px-2 py-1 font-semibold leading-tight text-teal-700 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-700"
+              class="
+                px-2
+                py-1
+                font-semibold
+                leading-tight
+                text-teal-700
+                bg-teal-100
+                rounded-full
+                dark:text-teal-100 dark:bg-teal-700
+              "
               x-show="order.Status == 'Bonus'"
               x-text="order.Status"
             ></span>
@@ -243,8 +302,7 @@
                 text-orange-700
                 bg-orange-100
                 rounded-full
-                dark:bg-orange-700
-                dark:text-orange-100
+                dark:bg-orange-700 dark:text-orange-100
               "
               x-show="order.Credit"
               >Kredit</span
@@ -257,8 +315,7 @@
                 text-green-700
                 bg-green-100
                 rounded-full
-                dark:bg-green-700
-                dark:text-green-100
+                dark:bg-green-700 dark:text-green-100
               "
               x-show="!order.Credit"
               >Cash</span
@@ -282,8 +339,7 @@
               border-b
               dark:border-gray-700
               bg-gray-50
-              dark:text-gray-400
-              dark:bg-gray-800
+              dark:text-gray-400 dark:bg-gray-800
             "
           >
             <th class="px-3 py-3">No</th>
@@ -372,8 +428,7 @@
                             text-green-700
                             bg-green-100
                             rounded-full
-                            dark:bg-green-700
-                            dark:text-green-100
+                            dark:bg-green-700 dark:text-green-100
                           "
                           x-text="` (-${toRupiah((item.Price*item.Quantity)-(item.Discount*item.Quantity))})`"
                         ></span>
@@ -390,8 +445,7 @@
                             text-red-700
                             bg-red-100
                             rounded-full
-                            dark:bg-red-700
-                            dark:text-red-100
+                            dark:bg-red-700 dark:text-red-100
                           "
                           x-text="` (+${toRupiah((item.Price*item.Quantity)-(item.Discount*item.Quantity))})`"
                         ></span>
@@ -512,8 +566,7 @@
             border-b
             dark:border-gray-700
             bg-gray-50
-            dark:text-gray-400
-            dark:bg-gray-800
+            dark:text-gray-400 dark:bg-gray-800
           "
         >
           <th class="px-3 py-3">#Histori</th>
@@ -544,7 +597,16 @@
               <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
                 <template x-if="payments !== null && payments.length > 0">
                   <template x-for="(p, index) in payments" :key="index">
-                    <tr class="text-sm tracking-wide text-center hover:bg-green-100">
+                    <tr
+                      @contextmenu.prevent="if (selectedPayment == p.ID) { selectedPayment = null; } else { selectedPayment = p.ID; }"
+                      @dblclick="if (selectedPayment == p.ID) { cancelPayment($dispatch); }"
+                      class="
+                        text-sm
+                        tracking-wide
+                        text-center
+                      "
+                      :class="{'bg-red-100 cursor-pointer hover:bg-red-200': selectedPayment == p.ID, 'hover:bg-green-100': selectedPayment != p.ID }"
+                    >
                       <td class="px-4" x-text="p.PaymentDate"></td>
                       <td class="px-4">
                         <template x-if="p.Cash">
@@ -554,7 +616,11 @@
                           <span>Transfer</span>
                         </template>
                       </td>
-                      <td class="px-4" x-text="`${toRupiah(p.Amount)}`" :class="{'text-red-500': p.Amount < order.CreditDetail.Monthly, 'text-green-500': p.Amount > order.CreditDetail.Monthly }"></td>
+                      <td
+                        class="px-4"
+                        x-text="`${toRupiah(p.Amount)}`"
+                        :class="{'text-red-500': p.Amount < order.CreditDetail.Monthly, 'text-green-500': p.Amount > order.CreditDetail.Monthly }"
+                      ></td>
                       <template x-if="p.ImportedReceiver !== ''">
                         <td class="px-4" x-text="p.ImportedReceiver"></td>
                       </template>
@@ -564,14 +630,17 @@
                     </tr>
                   </template>
                 </template>
-                <tr class="text-xl border-t tracking-wide text-center hover:bg-green-100">
+                <tr class="text-xl border-t tracking-wide text-center">
                   <td class="px-4"></td>
                   <td class="px-4">Total uang masuk</td>
-                  <td class="px-4" x-text="toRupiah(info.Total-info.Remaining)"></td>
+                  <td
+                    class="px-4"
+                    x-text="toRupiah(info.Total-info.Remaining)"
+                  ></td>
                   <td class="px-4"></td>
                 </tr>
                 <template x-if="info.Remaining < 0">
-                  <tr class="text-sm tracking-wide text-center hover:bg-green-100">
+                  <tr class="text-sm tracking-wide text-center">
                     <td class="px-4"></td>
                     <td class="px-4">Sisa angsuran</td>
                     <td class="px-4" x-text="toRupiah(0)"></td>
@@ -579,7 +648,9 @@
                   </tr>
                 </template>
                 <template x-if="info.Remaining > 0">
-                  <tr class="text-sm tracking-wide text-center hover:bg-green-100">
+                  <tr
+                    class="text-sm tracking-wide text-center hover:bg-green-100"
+                  >
                     <td class="px-4"></td>
                     <td class="px-4">Sisa angsuran</td>
                     <td class="px-4" x-text="toRupiah(info.Remaining)"></td>
@@ -607,6 +678,7 @@
       billingAddress: [],
       items: [],
       payments: [],
+      selectedPayment: null,
       info: [],
       fetchById($dispatch) {
         fetch(`/api/v1/local/order/id/${this.id}`, {
@@ -644,6 +716,29 @@
             console.log(err);
           });
       },
+      capa: {
+        paymentid: null,
+      },
+      cancelPayment($dispatch) {
+        this.capa.paymentid = this.selectedPayment;
+        fetch(`/api/v1/local/instalment/moneyout/${this.id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.capa),
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.message) {
+              $dispatch("notif", {
+                type: json.status,
+                message: json.message,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("cancelPayment() " + err);
+          });
+      }
     };
   }
 </script>

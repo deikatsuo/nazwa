@@ -138,15 +138,15 @@ func InstalmentsMoneyIn(oid, receiver, moneyIn int, notes, mode string) error {
 }
 
 // InstalmentsMoneyOut uang angsuran tidak jadi masuk/dihapus
-func InstalmentsMoneyOut(pid int) error {
+func InstalmentsMoneyOut(oid, pid int) error {
 	db := DB
 
 	var payment wrapper.OrderPaymentSelect
 	query := `SELECT *, TO_CHAR(payment_date, 'DD-MM-YYYY') AS payment_date
 	FROM "order_credit_payment"
-	WHERE order_id=$1`
+	WHERE id=$1 AND order_id=$2`
 
-	err := db.Get(&payment, query, pid)
+	err := db.Get(&payment, query, pid, oid)
 	if err != nil {
 		return err
 	}

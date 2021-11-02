@@ -244,7 +244,7 @@ func InstalmentMoneyIn(c *gin.Context) {
 	// User session saat ini
 	nowID := session.Get("userid")
 
-	// id zone
+	// id order
 	oid, err := strconv.Atoi(c.Param("oid"))
 	if err != nil || nowID == nil {
 		router.Page404(c)
@@ -276,6 +276,54 @@ func InstalmentMoneyIn(c *gin.Context) {
 			next = false
 		} else {
 			message = "Angsuran berhasil dibayarkan"
+			status = "success"
+			next = true
+			httpStatus = http.StatusOK
+		}
+	}
+
+	c.JSON(httpStatus, gin.H{
+		"message": message,
+		"status":  status,
+	})
+}
+
+// InstalmentMoneyOut uang tagihan batal masuk
+func InstalmentMoneyOut(c *gin.Context) {
+	session := sessions.Default(c)
+	// User session saat ini
+	nowID := session.Get("userid")
+
+	// id order
+	oid, err := strconv.Atoi(c.Param("oid"))
+	if err != nil || nowID == nil {
+		router.Page404(c)
+		return
+	}
+
+	message := ""
+	next := true
+	httpStatus := http.StatusBadRequest
+	status := ""
+
+	var moneyIn wrapper.InstalmentMoneyOut
+	if err := c.ShouldBindJSON(&moneyIn); err != nil {
+		log.Warn("Gagal unmarshal json")
+		log.Error(err)
+
+		message = "Request tidak valid"
+		status = "error"
+		next = false
+	}
+
+	// Batal masuk angsuran
+	if next {
+		if err := dbquery.InstalmentsMoneyOut(oid, moneyIn.PaymentId); err != nil {
+			message = "Gagal menghapus angsuran"
+			status = "error"
+			next = false
+		} else {
+			message = "Angsuran berhasil dibatalkan"
 			status = "success"
 			next = true
 			httpStatus = http.StatusOK

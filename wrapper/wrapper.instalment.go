@@ -45,3 +45,7 @@ type InstalmentMoneyIn struct {
 	Notes    string `json:"notes" binding:"omitempty"`
 	Mode     string `json:"mode" binding:"required"`
 }
+
+type InstalmentMoneyOut struct {
+	PaymentId int `json:"paymentid" binding:"numeric"`
+}
