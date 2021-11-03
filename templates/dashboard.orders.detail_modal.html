@@ -595,7 +595,7 @@
                 </tr>
               </thead>
               <tbody class="bg-white dark:divide-gray-700 dark:bg-gray-800">
-                <template x-if="payments !== null && payments.length > 0">
+                <template x-if="payments !== null">
                   <template x-for="(p, index) in payments" :key="index">
                     <tr
                       @contextmenu.prevent="if (selectedPayment == p.ID) { selectedPayment = null; } else { selectedPayment = p.ID; }"
@@ -649,7 +649,7 @@
                 </template>
                 <template x-if="info.Remaining > 0">
                   <tr
-                    class="text-sm tracking-wide text-center hover:bg-green-100"
+                    class="text-sm tracking-wide text-center"
                   >
                     <td class="px-4"></td>
                     <td class="px-4">Sisa angsuran</td>
@@ -708,7 +708,11 @@
               this.shippingAddress = json.order.ShippingAddress;
               this.billingAddress = json.order.BillingAddress;
               this.items = json.order.Items;
-              this.payments = json.order.PaymentLogs;
+              if (json.order.PaymentLogs != null) {
+                this.payments = json.order.PaymentLogs;
+              } else {
+                this.payments = [];
+              }
               this.info = json.order.CreditDetail;
             }
           })
@@ -733,6 +737,9 @@
                 type: json.status,
                 message: json.message,
               });
+            }
+            if (json.status == "success") {
+              this.fetchById($dispatch);
             }
           })
           .catch((err) => {
