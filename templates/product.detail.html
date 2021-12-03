@@ -332,7 +332,7 @@
                 </div>
               </dl>
 
-              {{ if and (.login) (ne .user.Role "Customer") }}
+              {{ if and (.login) (eq .user.Role "Dev" .user.Role "Admin") }}
               <!-- Harga produk -->
               <dl class="w-full whitespace-no-wrap">
                 <div

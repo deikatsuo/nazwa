@@ -213,6 +213,7 @@
       </div>
     </dl>
 
+    {{ if and (.login) (eq .user.Role "Dev" .user.Role "Admin") }}
     <!-- Harga produk -->
     <dl class="w-full whitespace-no-wrap">
       <div
@@ -251,6 +252,7 @@
         </dd>
       </div>
     </dl>
+    {{ end }}
 
     <!-- Harga Kredit -->
     <dl class="w-full whitespace-no-wrap">
